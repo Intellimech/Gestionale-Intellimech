@@ -21,6 +21,7 @@ import Tasks from './tasks.js';
 import OfferTeam from './offerteam.js';
 import InvoiceLine from './invoicelines.js';
 import Notification from './notification.js';
+import Purchase from './purchase.js';
 
 // Define associations
 User.belongsTo(Role, { foreignKey: 'role' });
@@ -166,6 +167,9 @@ User.hasMany(Notification, { foreignKey: 'createdBy', as: 'createdByUser' });
 User.hasMany(Notification, { foreignKey: 'updatedBy', as: 'updatedByUser' });
 User.hasMany(Notification, { foreignKey: 'deletedBy', as: 'deletedByUser' });
 
+Purchase.belongsTo(User, { foreignKey: 'createdBy', as: 'createdByUser' });
+Purchase.belongsTo(User, { foreignKey: 'updatedBy', as: 'updatedByUser' });
+Purchase.belongsTo(User, { foreignKey: 'deletedBy', as: 'deletedByUser' });
 export default {
     User,
     Role,

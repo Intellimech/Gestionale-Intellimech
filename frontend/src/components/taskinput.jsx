@@ -56,7 +56,7 @@ export default function TaskForm ({ task, onChange, onAddChild, onRemove, level 
               </button>
             </div>
             <div className="pl-6">
-              {task.children.map((child, index) => (
+              {task.children?.map((child, index) => (
                 <TaskForm
                   key={index}
                   task={child}

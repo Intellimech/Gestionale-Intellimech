@@ -43,12 +43,15 @@ const App = () => {
             <Route index element={<Navigate to="/app/home" />} />
             <Route path="home" element={<PrivateRoute element={<Homepage />} />} />
             <Route path="reporting" element={<PrivateRoute element={<Reporting />} />} />
+            
             <Route path="calendar" element={<PrivateRoute element={<Calendar />} />} />
             <Route path="quotation-request" element={<PrivateRoute element={<Quotationrequesttable />} />} />
             <Route path="offer" element={<PrivateRoute element={<Offer />} />} />
             <Route path="sales-order" element={<PrivateRoute element={<Salesorder />} />} />
+
             <Route path="purchase" element={<PrivateRoute element={<Purchase />} />} />
             <Route path="profile" element={<PrivateRoute element={<Profile />} />} />
+
             <Route path="job" element={<PrivateRoute element={<Job />} />} />
             <Route path="invoices">
               <Route path="passive" element={<PrivateRoute element={<Invoicetable invoicetype={"PassivaSdI"}/>} />} />

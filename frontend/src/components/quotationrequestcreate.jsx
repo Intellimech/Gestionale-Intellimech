@@ -9,6 +9,8 @@ export default function UserCreateForm() {
   const [company, setCompany] = useState([]);
   const [category, setCategory] = useState([]);
   const [subcategory, setSubcategory] = useState([]);
+  
+  const [purchaseOrder, setPurchaseOrder] = useState([])
   const [technicalArea, setTechnicalArea] = useState([]);
 
   useEffect(() => {
@@ -50,6 +52,8 @@ export default function UserCreateForm() {
     axios.get(`${process.env.REACT_APP_API_URL}/subcategory/read/${event.target.value}`, { headers: { authorization: `Bearer ${token}` } })
     .then((response) => {
       setSubcategory(response.data.subcategories);
+      console.log(response.data.subcategories)
+      console.log(event.target.value)
     })
     .catch((error) => {
       console.error('Error fetching subcategory data:', error);

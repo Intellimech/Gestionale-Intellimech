@@ -7,7 +7,6 @@ import Cookies from 'js-cookie';
 import { UserContext } from '../module/userContext';
 
 import PurchaseCreateForm from './purchasecreate';
-import PurchaseInfo from './purchaseinfo';
 
 const mockUp = [
     {
@@ -91,7 +90,6 @@ const mockUp = [
       },
       "updatedByUser": null,
       "deletedByUser": null,
-
     }
 ]
 
@@ -368,6 +366,18 @@ export default function Example({ permissions }) {
                           ) : item.status === 'Rifiutata' ? (
                             <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
                               Rifiutata
+                            </span>
+                          ) : item.status === 'Scaduta' ? (
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-zinc-100 text-zinc-800">
+                              Scaduta
+                            </span>
+                          ) : item.status === 'Nuova' ? (
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                              Nuova
+                            </span>
+                          ) : item.status === 'Revisionata' ? (
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
+                              Revisionata
                             </span>
                           ) : (
                             <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">

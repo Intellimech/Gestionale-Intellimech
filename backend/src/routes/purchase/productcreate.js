@@ -12,8 +12,15 @@ const __dirname = path.resolve();
  
 const publickey = fs.readFileSync(__dirname + "/src/keys/public.key", "utf8");
  
-router.get("/read", (req, res) => {
-    const token = req.headers.authorization?.split(" ")[1];
+router.post("/create", (req, res) => {
+    const { purchase_id, category, subcategory, quantity, unit_price } = req.body;
+    const token = req.headers.authorization.split(" ")[1];
+ 
+    if (!purchase_id || !category || !subcategory || !quantity || !unit_price) {
+        return res.status(400).json({
+            message: "Bad request, view documentation for more information",
+        });
+    }
  
     if (!token) {
         return res.status(401).json({
@@ -29,18 +36,19 @@ router.get("/read", (req, res) => {
         }
  
         try {
-            const purchases = await Purchase.findAll({
-                include: [
-                    {
-                        model: Product,
-                        attributes: ['category', 'subcategory', 'quantity', 'unit_price']
-                    }
-                ]
+            const newProduct = await Product.create({
+                purchase_id,
+                category,
+                subcategory,
+                quantity,
+                unit_price,
+                createdAt: new Date(),
+                updatedAt: new Date()
             });
  
-            res.status(200).json({
-                message: "Purchases found",
-                purchases: purchases
+            res.status(201).json({
+                message: "Product created",
+                product: newProduct,
             });
         } catch (error) {
             console.error(error);

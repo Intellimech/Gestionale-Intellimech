@@ -1,4 +1,3 @@
-// purchase-order-model.js
 import { DataTypes, Model } from 'sequelize';
 import db from '../utils/db.js';
 
@@ -11,69 +10,44 @@ Purchase.init(
       primaryKey: true,
       autoIncrement: true
     },
-    azienda: {
-      type: DataTypes.STRING(20),
-      allowNull: false,
-    },
-    p_iva: {
-      type: DataTypes.STRING(20),
-      allowNull: false,
-    },
-    cf: {
-      type: DataTypes.STRING(20),
-      allowNull: false,
-    },
-    description: {
-      type: DataTypes.STRING(255),
-      allowNull: true,
-    },
-    unit_price: {
-      type: DataTypes.DECIMAL(20, 2),
-      allowNull: false,
-    },
-    quantity: {
+    id_company: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true
     },
-    iva: {
-      type: DataTypes.DECIMAL(20, 2),
-      allowNull: true,
-    },
-    payment_method: {
+    payment: {
       type: DataTypes.STRING(50),
-      allowNull: true,
+      allowNull: true
     },
-    approved_by: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
+    IVA: {
+      type: DataTypes.STRING(50),
+      allowNull: true
     },
-    createdAt: {
-      type: DataTypes.DATE,
+    total: {
+      type: DataTypes.STRING(50),
+      allowNull: true
     },
-    updatedAt: {
-      type: DataTypes.DATE,
-    },
-    deletedAt: {
-      type: DataTypes.DATE,
+    status: {
+      type: DataTypes.STRING(50),
+      allowNull: true
     },
     createdBy: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: true
     },
     updatedBy: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: true
     },
     deletedBy: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: true
     }
   },
   {
     sequelize: db,
     modelName: 'Purchase',
     tableName: 'purchase',
-    timestamps: false // Disable timestamps
+    timestamps: false // Disable automatic timestamps
   }
 );
 

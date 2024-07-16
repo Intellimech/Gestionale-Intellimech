@@ -12,7 +12,8 @@ const __dirname = path.resolve();
  
 const publickey = fs.readFileSync(__dirname + "/src/keys/public.key", "utf8");
  
-router.get("/read", (req, res) => {
+router.get("/read/:purchase_id", (req, res) => {
+    const { purchase_id } = req.params;
     const token = req.headers.authorization?.split(" ")[1];
  
     if (!token) {
@@ -29,18 +30,15 @@ router.get("/read", (req, res) => {
         }
  
         try {
-            const purchases = await Purchase.findAll({
-                include: [
-                    {
-                        model: Product,
-                        attributes: ['category', 'subcategory', 'quantity', 'unit_price']
-                    }
-                ]
+            const products = await Product.findAll({
+                where: {
+                    purchase_id: purchase_id
+                }
             });
  
             res.status(200).json({
-                message: "Purchases found",
-                purchases: purchases
+                message: "Products found",
+                products: products
             });
         } catch (error) {
             console.error(error);
@@ -52,3 +50,4 @@ router.get("/read", (req, res) => {
 });
  
 export default router;
+ 

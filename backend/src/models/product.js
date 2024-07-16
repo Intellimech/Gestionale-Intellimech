@@ -18,12 +18,20 @@ Product.init(
         key: 'id_purchase'
       }
     },
+    category: {
+        type: DataTypes.STRING(50),
+        allowNull: false
+      },
+    subcategory: {
+        type: DataTypes.STRING(50),
+        allowNull: false
+    },
     description: {
       type: DataTypes.STRING(50),
       allowNull: false
     },
-    price: {
-      type: DataTypes.INTEGER,
+    unit_price: {
+      type: DataTypes.DOUBLE,
       allowNull: false
     },
     quantity: {
@@ -33,8 +41,8 @@ Product.init(
   },
   {
     sequelize: db,
-    modelName: 'Product',  // Il nome del modello può rimanere 'Product'
-    tableName: 'purchaserow',  // Nome della tabella nel database
+    modelName: 'Product',  
+    tableName: 'purchaserow',  
     timestamps: false // Disabilita i timestamp automatici
   }
 );

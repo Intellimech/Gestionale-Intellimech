@@ -23,12 +23,13 @@ Purchase.init(
       allowNull: true
     },
     total: {
-      type: DataTypes.STRING(50),
+      type: DataTypes.DOUBLE,
       allowNull: true
     },
     status: {
       type: DataTypes.STRING(50),
-      allowNull: true
+      allowNull: true,
+      defaultValue: "In Approvazione"
     },
     createdBy: {
       type: DataTypes.INTEGER,

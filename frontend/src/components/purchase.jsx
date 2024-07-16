@@ -7,7 +7,7 @@ import Cookies from 'js-cookie';
 import { UserContext } from '../module/userContext';
 
 import PurchaseCreateForm from './purchasecreate';
-import PurchaseInfo from './purchaseinfo'
+import PurchaseInfo from './purchaseinfo';
 
 const mockUp = [
     {
@@ -92,7 +92,7 @@ const mockUp = [
       "updatedByUser": null,
       "deletedByUser": null,
     }
-]
+];
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -121,6 +121,22 @@ export default function Example({ permissions }) {
     if (checkbox.current) checkbox.current.indeterminate = isIndeterminate;
   }, [selectedItems, items]);
 
+  useEffect(() => {
+    const token = Cookies.get('token');
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/purchase`, {
+          headers: { authorization: `Bearer ${token}` },
+        });
+        setPurchaseOrder(response.data);
+      } catch (error) {
+        console.error('Error fetching purchase orders:', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   function toggleAll() {
     setSelectedItems(checked || indeterminate ? [] : items);
     setChecked(!checked && !indeterminate);
@@ -145,7 +161,8 @@ export default function Example({ permissions }) {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', 'data.csv');
+    const download = 'data.csv'
+    link.setAttribute('download', download);
     document.body.appendChild(link);
     link.click();
   }

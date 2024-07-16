@@ -1,22 +1,20 @@
+// routes/productCreate.js
 import express from "express";
 import jwt from "jsonwebtoken";
 import fs from "fs";
 import path from "path";
 import sequelize from "../../utils/db.js";
 import Product from "../../models/product.js";  
-// Setup the express router
+
 const router = express.Router();
-
-// __dirname
 const __dirname = path.resolve();
-
 const publickey = fs.readFileSync(__dirname + "/src/keys/public.key", "utf8");
 
 router.post("/create", (req, res) => {
-    const { purchase_id, category, subcategory, quantity, unit_price } = req.body;
+    const { id_purchase, category, subcategory, quantity, unit_price, description } = req.body;  // Correggi 'purchase_id' in 'id_purchase'
     const token = req.headers.authorization?.split(" ")[1];
 
-    if (!purchase_id || !category || !subcategory || !quantity || !unit_price) {
+    if (!id_purchase || !category || !subcategory || !quantity || !unit_price || !description) {
         return res.status(400).json({
             message: "Bad request, view documentation for more information",
         });

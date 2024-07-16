@@ -26,10 +26,6 @@ Product.init(
         type: DataTypes.STRING(50),
         allowNull: false
     },
-    description: {
-      type: DataTypes.STRING(50),
-      allowNull: false
-    },
     unit_price: {
       type: DataTypes.DOUBLE,
       allowNull: false

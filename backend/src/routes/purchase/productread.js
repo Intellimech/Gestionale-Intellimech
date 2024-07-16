@@ -13,7 +13,7 @@ const __dirname = path.resolve();
 
 const publickey = fs.readFileSync(__dirname + "/src/keys/public.key", "utf8");
 
-router.get("/read/:purchase_id", (req, res) => {
+router.get("/read/", (req, res) => {
     const { purchase_id } = req.params;
     const token = req.headers.authorization?.split(" ")[1];
 

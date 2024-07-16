@@ -7,30 +7,89 @@ import Cookies from 'js-cookie';
 import { UserContext } from '../module/userContext';
 
 import PurchaseCreateForm from './purchasecreate';
-import OfferInformation from './offerinformation';
 
 const mockUp = [
     {
-      "id_order": 12,
+      "id_order": "1",
+      "name": "ODA24_00001",
       "description": "Lorem Ipsum Dolor",
-      "category": 2,
-      "subcategory": 25,
+      "Category": {
+        "id_company": 3,
+        "name": "IT e Laboratori"
+      },
+      "Subcategory": {
+        "id_company": 3,
+        "name": "Software"
+      },
       "IVA" : "Esclusa",
       "status": "Approvata",
-      "createdAt": "2024-05-18T14:17:36.000Z",
-      "updatedAt": "2024-06-20T09:03:58.000Z",
-      "deletedAt": null,
-      "createdBy": 7,
-      "updatedBy": null,
-      "deletedBy": null,
+      "payment_method": "Bonifico",
+      "total": "1000.00",
+      "currency": "EUR",
       "Company": {
         "id_company": 3,
         "name": "ABB SPA"
       },
+      "products": [
+        {
+          "id_product": 1,
+          "name": "ODA24_00001_01",
+          "description": "Lorem Ipsum Dolor",
+          "quantity": 1,
+          "VAT": "Esclusa",
+          "unit_price": 1000.00
+        },
+        {
+          "id_product": 1,
+          "name": "ODA24_00001_02",
+          "description": "Lorem Ipsum Dolor",
+          "quantity": 1,
+          "VAT": "Esclusa",
+          "unit_price": 1000.00
+        },
+        {
+          "id_product": 1,
+          "name": "ODA24_00001_03",
+          "description": "Lorem Ipsum Dolor",
+          "quantity": 1,
+          "VAT": "Esclusa",
+          "unit_price": 1000.00
+        },
+        {
+          "id_product": 1,
+          "name": "ODA24_00001_04",
+          "description": "Lorem Ipsum Dolor",
+          "quantity": 1,
+          "VAT": "Esclusa",
+          "unit_price": 1000.00
+        },
+        {
+          "id_product": 1,
+          "name": "ODA24_00001_05",
+          "description": "Lorem Ipsum Dolor",
+          "quantity": 1,
+          "VAT": "Esclusa",
+          "unit_price": 1000.00
+        },
+      ],
+      "invoices": [
+        {
+          "id_invoice": 1,
+          "number": "FTP24_00001",
+          "date": "2024-05-18",
+          "url": "https://www.google.com",
+        },
+      ],
+      "createdAt": "2024-05-18T14:17:36.000Z",
+      "updatedAt": "2024-06-20T09:03:58.000Z",
+      "deletedAt": null,
+      "createdByUser": {
+        "id_user": 7,
+        "name": "Mattia",
+        "surname": "Capelli",
+      },
       "updatedByUser": null,
       "deletedByUser": null,
-      "payment_method": "Bonifico",
-      "total": "1000.00"
     }
 ]
 
@@ -128,7 +187,7 @@ export default function Example({ permissions }) {
                           </div>
                         </div>
                       </div>
-                      <div className="relative mt-6 flex-1 px-4 sm:px-6">{ <OfferInformation item={selectedItemInfo} /> }</div>
+                      <div className="relative mt-6 flex-1 px-4 sm:px-6">{ <PurchaseInfo purchase={selectedItemInfo} /> }</div>
                     </div>
                   </Dialog.Panel>
                 </Transition.Child>
@@ -141,45 +200,44 @@ export default function Example({ permissions }) {
       <Transition.Root show={showCreate} as={Fragment}>
         <Dialog className="relative z-50" onClose={setShowCreate}>
           <div className="fixed inset-0" />
-
-          <div className="fixed inset-0 overflow-hidden">
-            <div className="absolute inset-0 overflow-hidden">
-              <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-16">
-                <Transition.Child
-                  as={Fragment}
-                  enter="transform transition ease-in-out duration-500 sm:duration-700"
-                  enterFrom="translate-x-full"
-                  enterTo="translate-x-0"
-                  leave="transform transition ease-in-out duration-500 sm:duration-700"
-                  leaveFrom="translate-x-0"
-                  leaveTo="translate-x-full"
-                >
-                  <Dialog.Panel className="pointer-events-auto w-screen max-w-7xl">
-                    <div className="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
-                      <div className="px-4 sm:px-6">
-                        <div className="flex items-start justify-between">
-                          <Dialog.Title className="text-base font-semibold leading-6 text-gray-900">
-                            Crea un nuovo ordine di acquisto
-                          </Dialog.Title>
-                          <div className="ml-3 flex h-7 items-center">
-                            <button
-                              type="button"
-                              className="relative rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-                              onClick={() => setShowCreate(false)}
-                            >
-                              <span className="absolute -inset-2.5" />
-                              <span className="sr-only">Chiudi pannello</span>
-                              <XMarkIcon className="h-6 w-6" aria-hidden="true" />
-                            </button>
+            <div className="fixed inset-0 overflow-hidden">
+              <div className="absolute inset-0 overflow-hidden">
+                <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-16">
+                  <Transition.Child
+                    as={Fragment}
+                    enter="transform transition ease-in-out duration-500 sm:duration-700"
+                    enterFrom="translate-x-full"
+                    enterTo="translate-x-0"
+                    leave="transform transition ease-in-out duration-500 sm:duration-700"
+                    leaveFrom="translate-x-0"
+                    leaveTo="translate-x-full"
+                  >
+                    <Dialog.Panel className="pointer-events-auto w-screen max-w-7xl">
+                      <div className="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
+                        <div className="px-4 sm:px-6">
+                          <div className="flex items-start justify-between">
+                            <Dialog.Title className="text-base font-semibold leading-6 text-gray-900">
+                              Crea un nuovo ordine di acquisto
+                            </Dialog.Title>
+                            <div className="ml-3 flex h-7 items-center">
+                              <button
+                                type="button"
+                                className="relative rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                                onClick={() => setShowCreate(false)}
+                              >
+                                <span className="absolute -inset-2.5" />
+                                <span className="sr-only">Chiudi pannello</span>
+                                <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+                              </button>
+                            </div>
                           </div>
                         </div>
+                        <div className="relative mt-6 flex-1 px-4 sm:px-6"><PurchaseCreateForm /></div>
                       </div>
-                      <div className="relative mt-6 flex-1 px-4 sm:px-6"><PurchaseCreateForm /></div>
-                    </div>
-                  </Dialog.Panel>
-                </Transition.Child>
+                    </Dialog.Panel>
+                  </Transition.Child>
+                </div>
               </div>
-            </div>
           </div>
         </Dialog>
       </Transition.Root>
@@ -239,22 +297,22 @@ export default function Example({ permissions }) {
                 <thead>
                   <tr>
                     <th scope="col" className="px-3 py-3.5 pr-3 text-left text-sm font-semibold text-gray-900">
-                      N.Ordine
+                      N° Ordine
                     </th>
                     <th scope="col" className="px-3 py-3.5 pr-3 text-left text-sm font-semibold text-gray-900">
                       Azienda
                     </th>
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                       Descrizione
-                    </th>    
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                      IVA 
                     </th>
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                       Metodo di Pagamento
-                    </th>
+                    </th> 
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                       Totale
+                    </th>
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                      IVA 
                     </th>
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                       Stato
@@ -279,7 +337,7 @@ export default function Example({ permissions }) {
                             selectedItems.includes(item) ? 'text-red-600' : 'text-gray-900'
                           )}
                         >
-                          {item.id_order}
+                          {item.name}
                         </td>
                         <td className="whitespace-normal max-w-[200px] overflow-hidden text-sm text-gray-500 px-3 py-4 break-words">
                           {item.Company.name}
@@ -288,18 +346,18 @@ export default function Example({ permissions }) {
                           {item.description}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {item.IVA}
-                        </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           {item.payment_method}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {item.total}
+                          {item.total + ' ' + item.currency}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {item.status === 'Inviata al cliente' ? (
+                          {item.IVA}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          {item.status === 'In Approvazione' ? (
                             <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                              Inviata
+                              In Approvazione
                             </span>
                           ) : item.status === 'Approvata' ? (
                             <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">

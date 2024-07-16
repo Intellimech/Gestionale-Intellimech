@@ -23,8 +23,12 @@ import Job from './components/jobtable';
 import Invoicetable from './components/invoicetable';
 import Company from './components/company/companytable';
 
+import Profile from './components/userinfo';
+
 import Purchase from  './components/purchase';
 import PurchaseCreate from  './components/purchasecreate';
+
+import UsersTable from './components/userstable';
 
 const Logo = './assets/intellimech.svg'
 
@@ -46,7 +50,7 @@ const App = () => {
             <Route path="sales-order" element={<PrivateRoute element={<Salesorder />} />} />
 
             <Route path="purchase" element={<PrivateRoute element={<Purchase />} />} />
-            
+            <Route path="profile" element={<PrivateRoute element={<Profile />} />} />
 
             <Route path="job" element={<PrivateRoute element={<Job />} />} />
             <Route path="invoices">
@@ -57,6 +61,7 @@ const App = () => {
               <Route path="customers" element={<PrivateRoute element={<Company companytype={"Customers"}/>} />} />
               <Route path="suppliers" element={<PrivateRoute element={<Company companytype={"Suppliers"}/>} />} />
             </Route>
+            <Route path="users" element={<PrivateRoute element={<UsersTable />} />} />
           </Route>
           <Route path="*" element={<Lost />} />
           <Route path="/unauthorized" element={<Unauthorized />} />

@@ -52,7 +52,8 @@ export default function ProductInput({ product, onChange, onRemove, categories, 
           id="quantity"
           name="quantity"
           type="number"
-          value={product.quantity}
+          min={1}
+          value={product.quantity || 1}
           onChange={(e) => onChange({ ...product, quantity: e.target.value })}
           className="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:max-w-xs sm:text-sm"
         />

@@ -16,42 +16,40 @@ export default function PurchaseCreateForm() {
   const [companies, setCompanies] = useState([]);
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [selectedTeam, setSelectedTeam] = useState(null);
-  const [products, setProducts] = useState([{ category: '', subcategory: '', quantity: '', unit_price: '', subcategories: [] }]);
+  const [products, setProducts] = useState([{ category: '', subcategory: '', unit_price: '', subcategories: [] }]);
   const [currency, setCurrency] = useState('EUR');
   const currencies = ['EUR', 'USD', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'SEK', 'NZD'];
 
-  const handleTeamChange = (value) => setSelectedTeam(value);
-  const handleCompanyChange = (value) => setSelectedCompany(value);
+  console.log("PurchaseCreateForm", companies)
+
+  const handleTeamChange = setSelectedTeam;
+  const handleCompanyChange = setSelectedCompany;
 
   useEffect(() => {
     const token = Cookies.get('token');
     const fetchData = async () => {
       try {
         const [
-          quotationRequestRes,
-          categoryRes,
-          technicalAreaRes,
-          usersRes,
-          companyRes
+          { data: { quotationrequest } },
+          { data: { categories } },
+          { data: { technicalareas } },
+          { data: { users } },
+          { data: { value: companies } },
         ] = await Promise.all([
           axios.get(`${process.env.REACT_APP_API_URL}/quotationrequest/read/free`, { headers: { authorization: `Bearer ${token}` } }),
           axios.get(`${process.env.REACT_APP_API_URL}/category/read`, { headers: { authorization: `Bearer ${token}` } }),
           axios.get(`${process.env.REACT_APP_API_URL}/technicalarea/read`, { headers: { authorization: `Bearer ${token}` } }),
           axios.get(`${process.env.REACT_APP_API_URL}/user/read`, { headers: { authorization: `Bearer ${token}` } }),
-          axios.get(`${process.env.REACT_APP_API_URL}/company/read`, { headers: { authorization: `Bearer ${token}` }, params: { filter: "Suppliers" }})
+          axios.get(`${process.env.REACT_APP_API_URL}/company/read`, { headers: { authorization: `Bearer ${token}` }, params: { filter: "Suppliers" } }),
         ]);
 
-        setQuotationRequests(quotationRequestRes.data.quotationrequest);
-        setCategories(categoryRes.data.categories);
-        setTechnicalAreas(technicalAreaRes.data.technicalareas);
-        setUsers(usersRes.data.users.map((user) => ({
-          value: user.id_user,
-          label: `${user.name} ${user.surname}`,
-        })));
-        setCompanies(companyRes.data.value.sort((a, b) => new Date(b.ReceptionDate) - new Date(a.ReceptionDate)).map((company) => ({
-          value: company.id,
-          label: company.name
-        })));
+        setQuotationRequests(quotationrequest);
+        setCategories(categories);
+        setTechnicalAreas(technicalareas);
+        setUsers(users.map(({ id_user, name, surname }) => ({ value: id_user, label: `${name} ${surname}` })));
+        setCompanies(companies
+          .sort((a, b) => new Date(b.ReceptionDate) - new Date(a.ReceptionDate))
+          .map(({ id_company, name }) => ({ value: id_company, label: name })));
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -60,38 +58,34 @@ export default function PurchaseCreateForm() {
     fetchData();
   }, []);
 
-  const handleCategoryChange = (event) => {
+  const handleCategoryChange = async (event) => {
     const token = Cookies.get('token');
-    axios.get(`${process.env.REACT_APP_API_URL}/subcategory/read/${event.target.value}`, { headers: { authorization: `Bearer ${token}` } })
-      .then((response) => {
-        setSubcategories(response.data.subcategories);
-      })
-      .catch((error) => {
-        console.error('Error fetching subcategory data:', error);
-      });
+    try {
+      const { data: { subcategories } } = await axios.get(`${process.env.REACT_APP_API_URL}/subcategory/read/${event.target.value}`, { headers: { authorization: `Bearer ${token}` } });
+      setSubcategories(subcategories);
+    } catch (error) {
+      console.error('Error fetching subcategory data:', error);
+    }
   };
 
-  const addProduct = () => {
-    setProducts([...products, { category: '', subcategory: '', quantity: '', unit_price: '', subcategories: [] }]);
-  };
-
-  const updateProduct = (index, updatedProduct) => {
-    const newProducts = [...products];
-    newProducts[index] = updatedProduct;
-    setProducts(newProducts);
-  };
+  const addProduct = () => setProducts([...products, { category: '', subcategory: '', unit_price: '', subcategories: [] }]);
+  const removeProduct = (index) => setProducts(products.filter((_, i) => i !== index));
+  const updateProduct = (index, updatedProduct) => setProducts(products.map((product, i) => (i === index ? updatedProduct : product)));
 
   const createPurchaseOrder = async (event) => {
     event.preventDefault();
     const token = Cookies.get('token');
-    const form = document.forms.createpurchaseorder;
-    const formData = new FormData(form);
-    const jsonObject = Object.fromEntries(formData.entries());
-    jsonObject.team = selectedTeam?.map((team) => team.value);
+    const form = new FormData(event.target);
+    const jsonObject = Object.fromEntries(form.entries());
+    //remove empty products
+    jsonObject.products = products.filter((product) => product.category !== '');
+    //remove the quantity field from order
+    jsonObject.quantity = undefined;
     jsonObject.products = products;
+    jsonObject.Company = selectedCompany.value;
 
     try {
-      await axios.post(`${process.env.REACT_APP_API_URL}/purchase-order/create`, jsonObject, { headers: { authorization: `Bearer ${token}` } });
+      console.log(jsonObject);
       setCreateSuccess(true);
     } catch (error) {
       setErrorMessages(error.response?.data?.message || 'An error occurred');
@@ -100,14 +94,14 @@ export default function PurchaseCreateForm() {
   };
 
   return (
-    <form name="createpurchaseorder">
+    <form name="createpurchaseorder" onSubmit={createPurchaseOrder}>
       <div className="space-y-12">
         <div className="border-b border-gray-900/10 pb-12">
           <h2 className="text-base font-semibold leading-7 text-gray-900">Informazioni Ordine di Acquisto</h2>
           <p className="mt-1 text-sm leading-6 text-gray-600">Ricorda, i dati inseriti ora saranno quelli che verranno utilizzati per creare l'ordine di acquisto</p>
 
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-            <div className="sm:col-span-3">
+            <div className="sm:col-span-2">
               <label htmlFor="azienda" className="block text-sm font-medium leading-6 text-gray-900">
                 Azienda
               </label>
@@ -118,12 +112,14 @@ export default function PurchaseCreateForm() {
                   className="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"
                   value={selectedCompany}
                   onChange={handleCompanyChange}
-                  options={companies}
+                  options={(companies || []).map(({ value, label }) => ({ value, label }))}
+                  primaryColor='red'
+                  isSearchable
                 />
               </div>
             </div>
 
-            <div className="sm:col-span-3">
+            <div className="sm:col-span-2">
               <label htmlFor="dateorder" className="block text-sm font-medium leading-6 text-gray-900">
                 Data
               </label>
@@ -136,22 +132,6 @@ export default function PurchaseCreateForm() {
                   min={new Date().toISOString().split('T')[0]}
                   defaultValue={new Date().toISOString().split('T')[0]}
                 />
-              </div>
-            </div>
-
-            <div className="col-span-full">
-              <label htmlFor="description" className="block text-sm font-medium leading-6 text-gray-900">
-                Descrizione
-              </label>
-              <div className="mt-2">
-                <textarea
-                  rows={4}
-                  maxLength={150}
-                  name="description"
-                  id="description"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"
-                />
-                <p className="mt-1 text-xs text-gray-500">Massimo 150 caratteri</p>
               </div>
             </div>
           </div>
@@ -170,6 +150,7 @@ export default function PurchaseCreateForm() {
                   key={index}
                   product={product}
                   onChange={(updatedProduct) => updateProduct(index, updatedProduct)}
+                  onRemove={() => removeProduct(index)}
                   categories={categories}
                   subcategories={subcategories}
                   handleCategoryChange={handleCategoryChange}
@@ -191,7 +172,7 @@ export default function PurchaseCreateForm() {
       </div>
 
       <div className="mt-6 flex items-center justify-end gap-x-6">
-        {createSuccess === true && (
+        {createSuccess && (
           <div className="mt-4 rounded-md bg-green-50 p-4">
             <div className="flex">
               <CheckBadgeIcon className="h-5 w-5 text-green-400" aria-hidden="true" />
@@ -210,7 +191,6 @@ export default function PurchaseCreateForm() {
         )}
 
         <button
-          onClick={createPurchaseOrder}
           type="submit"
           className="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-600"
         >

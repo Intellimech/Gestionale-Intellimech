@@ -49,7 +49,7 @@ router.get("/verify", async (req, res) => {
 
         const user = await User.findOne({
             where: { id_user: decoded.id, sessionId: decoded.sessionId },
-            attributes: ["id_user", "name", "surname", "birthdate", "username", "email", "isDeleted", "isActive", "createdAt", "updatedAt", "sessionId", "subgroup"],
+            attributes: ["id_user", "name", "surname", "birthdate", "username", "email", "isDeleted", "isActive", "createdAt", "updatedAt", "sessionId", "subgroup", "changepass"],
             include: [
                 {
                     model: sequelize.models.Role,
@@ -95,6 +95,7 @@ router.get("/verify", async (req, res) => {
             group: user.Group.name,
             subgroup: user.Subgroup.name,
             notification: user.receiverUser,
+            changepass: user.changepass,
         };
 
         return res.status(200).json({

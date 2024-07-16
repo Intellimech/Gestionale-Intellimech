@@ -30,9 +30,10 @@ import Scrollbar from 'tailwind-scrollbar'
 import { UserContext } from '../module/userContext'
 import { Outlet } from 'react-router-dom'
 import UniversalSearch from '../components/universalsearch'
+import ChangePassword from '../components/changepass'
 
 const userNavigation = [
-  { name: 'Your profile', href: '#' },
+  { name: 'Your profile', href: '/app/profile' },
   { name: 'Sign out', href: '#' },
 ]
 
@@ -51,6 +52,8 @@ export default function Layout() {
   const [notifyMessage, setNotifyMessage] = useState('')
   const [notifyType, setNotifyType] = useState('')
 
+  const [ChangePasswordPopup, setChangePasswordPopup] = useState(false)
+
   const [showNotifySidebar, setShowNotifySidebar] = useState(false)
   const [notifySidebarTitle, setNotifySidebarTitle] = useState('')
   const [notifySidebarChildren, setNotifySidebarChildren] = useState('')
@@ -61,10 +64,17 @@ export default function Layout() {
     setShowNotifySidebar(true)
   }
 
+  useEffect(() => {
+    if (user?.changepass) {
+      setChangePasswordPopup(true)
+    }
+  }, [user])
+
   return (
     <>
       <Notify setShow={setShowNotify} show={showNotify} title={notifyTitle} message={notifyMessage} type={notifyType} />
       <Sidebar open={showNotifySidebar} setOpen={setShowNotifySidebar} title={notifySidebarTitle} children={notifySidebarChildren}/>
+      <ChangePassword openChangePass={ChangePasswordPopup} setOpenChangePass={setChangePasswordPopup} />
       <UniversalSearch open={universalsearchopen} setOpen={setUniversalsearchopen} />
       <div>
         <Dialog className="relative z-50 lg:hidden" open={navbarOpen} onClose={setNavbarOpen}>

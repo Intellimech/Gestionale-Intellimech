@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useContext } from 'react';
+import { UserContext } from '../module/userContext'
 
 function isToday(date) {
   const today = new Date();
@@ -11,14 +13,8 @@ function isToday(date) {
 
 export default function UserInfo({ userdata }) {
   // get user info
-  const [user, setUser] = useState(null);
   const [Propic, setPropic] = useState(null);
-
-  useEffect(() => {
-    setUser(userdata);
-    console.log(userdata);
-    setPropic(`https://api.dicebear.com/7.x/notionists/svg?seed=${userdata.id_user}&background=%23fff&radius=50`);
-  }, [userdata]);
+  const { user } = useContext(UserContext);
 
   return (
     <div className="overflow-hidden bg-white shadow sm:rounded-lg">

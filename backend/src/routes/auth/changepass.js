@@ -36,7 +36,43 @@ router.post("/changepassword", async (req, res) => {
     const User = sequelize.models.User;
     const user = await User.findOne({ where: { email: email } });
 
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
 
+    if (user.isActive === false) {
+      return res.status(403).json({
+        message: "User is not active",
+      });
+    }
+
+    if (user.isVerified === false) {
+      return res.status(403).json({
+        message: "User is not verified",
+      });
+    }
+
+    if (user.isDeleted === true) {
+      return res.status(403).json({
+        message: "User is deleted",
+      });
+    }
+
+    if (user.changepass === true) {
+      //set it as false
+      await User.update({ changepass: false }, { where: { email: email } });
+    }
+
+    const salt = bcrypt.genSaltSync(10);
+    const hash = bcrypt.hashSync(password, salt);
+
+    await User.update({ password: hash, changepass: false, sessionId: null }, { where: { email: email } });
+
+    res.status(200).json({
+      message: "Password changed successfully",
+    });
   } catch (error) {
     res.status(500).json({
       message: "Internal server error, contact the administrator",

@@ -81,7 +81,7 @@ export default function Example({ open, setOpen }) {
               id: job.id_job,
               name: job.name,
               category: 'Projects',
-              url: '#',
+              url: '/app/job/',
             };
             console.log(jobdata)
             setProjects((projects) => [...projects, jobdata]);
@@ -198,10 +198,10 @@ export default function Example({ open, setOpen }) {
             {rawQuery === '?' && (
               <div className="px-6 py-14 text-center text-sm sm:px-14">
                 <LifebuoyIcon className="mx-auto h-6 w-6 text-gray-400" aria-hidden="true" />
-                <p className="mt-4 font-semibold text-gray-900">Help with searching</p>
+                <p className="mt-4 font-semibold text-gray-900">Aiuto con la ricerca</p>
                 <p className="mt-2 text-gray-500">
-                  Use this tool to quickly search for users and projects across our entire platform. You can also use
-                  the search modifiers found in the footer below to limit the results to just users or projects.
+                  Usa questo strumento per cercare rapidamente utenti e progetti su tutta la nostra piattaforma. Puoi anche utilizzare
+                  i modificatori di ricerca che si trovano nel piè di pagina qui sotto per limitare i risultati solo agli utenti o ai progetti.
                 </p>
               </div>
             )}

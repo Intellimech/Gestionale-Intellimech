@@ -7,7 +7,7 @@ import Cookies from 'js-cookie';
 import { UserContext } from '../module/userContext';
 
 import PurchaseCreateForm from './purchasecreate';
-import PurchaseInfo from './purchaseinfo'
+import PurchaseInfo from './purchaseinfo';
 
 const mockUp = [
     {
@@ -173,7 +173,7 @@ export default function Example({ permissions }) {
                       <div className="px-4 sm:px-6">
                         <div className="flex items-start justify-between">
                           <Dialog.Title className="text-base font-semibold leading-6 text-gray-900">
-                            {selectedItemInfo?.description}
+                            {selectedItemInfo.name + ' - ' + selectedItemInfo.description}
                           </Dialog.Title>
                           <div className="ml-3 flex h-7 items-center">
                             <button
@@ -328,10 +328,14 @@ export default function Example({ permissions }) {
                         className={selectedItems.includes(item) ? 'bg-gray-50' : undefined}
                       >
                         <td
-                          onClick={() => {
-                            setShowInfo(true);
-                            setSelectedItemInfo(item);
-                            console.log(item);
+                          onClick={(event) => {
+                            //ctrl + click per aprire un nuovo tab
+                            if (event.ctrlKey) {
+                              window.open(`/app/purchase/${item.id_order}`);
+                            } else {
+                              setShowInfo(true);
+                              setSelectedItemInfo(item);
+                            }
                           }}
                           className={classNames(
                             'whitespace-nowrap px-3 py-4 pr-3 text-sm font-medium',

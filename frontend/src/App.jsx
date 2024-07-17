@@ -26,7 +26,7 @@ import Company from './components/company/companytable';
 import Profile from './components/userinfo';
 
 import Purchase from  './components/purchase';
-import PurchaseCreate from  './components/purchasecreate';
+import PurchaseInfo from './components/purchaseinfo';
 
 import UsersTable from './components/userstable';
 
@@ -50,6 +50,7 @@ const App = () => {
             <Route path="sales-order" element={<PrivateRoute element={<Salesorder />} />} />
 
             <Route path="purchase" element={<PrivateRoute element={<Purchase />} />} />
+            <Route path="purchase/:id" element={<PrivateRoute element={<PurchaseInfo />} />} />
             <Route path="profile" element={<PrivateRoute element={<Profile />} />} />
 
             <Route path="job" element={<PrivateRoute element={<Job />} />} />

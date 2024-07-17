@@ -1,6 +1,6 @@
 import { Fragment, useState, useRef, useEffect, useContext } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
-import { XMarkIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, CheckIcon, PaperAirplaneIcon, EyeIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
@@ -8,7 +8,6 @@ import { UserContext } from '../module/userContext';
 
 import PurchaseCreateForm from './purchasecreate';
 import PurchaseInfo from './purchaseinfo';
-
 const mockUp = [
     {
       "id_order": "1",
@@ -104,8 +103,8 @@ export default function Example({ permissions }) {
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
-  const [purchaseOrder, setPurchaseOrder] = useState(mockUp); // Inizializza con mockUp
-  const [items, setItems] = useState([]);
+  const [purchaseOrder, setPurchaseOrder] = useState([]); // Inizializza con array vuoto
+  const [items, setItems] = useState([]); // Inizializza con array vuoto
   const [showCreate, setShowCreate] = useState(false);
   
   const [showInfo, setShowInfo] = useState(false);
@@ -127,17 +126,86 @@ export default function Example({ permissions }) {
     setIndeterminate(false);
   }
 
-  // Funzione per gestire l'input di ricerca
+  const Accept = (orderId) => {
+    axios
+    .post(`${process.env.REACT_APP_API_URL}/purchase/accept/${orderId}`, {}, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + Cookies.get('token'),
+      },
+    })
+    .then((response) => {
+      console.log(response.data);
+      fetchOrders();
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  }
+
+  const Refuse = (orderId) => {
+    axios
+    .post(`${process.env.REACT_APP_API_URL}/purchase/refuse/${orderId}`, {}, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + Cookies.get('token'),
+      },
+    })
+    .then((response) => {
+      console.log(response.data);
+      fetchOrders();
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  }
+
+  const Sent = (orderId) => {
+    axios
+    .post(`${process.env.REACT_APP_API_URL}/purchase/sent/${orderId}`, {}, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + Cookies.get('token'),
+      },
+    })
+    .then((response) => {
+      console.log(response.data);
+      fetchOrders();
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  }
+
+  const fetchOrders = () => {
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/purchase/read`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + Cookies.get('token'),
+        },
+      })
+      .then((response) => {
+        setPurchaseOrder(Array.isArray(response.data.purchases) ? response.data.purchases : []);
+        setItems(Array.isArray(response.data.purchases) ? response.data.purchases : []);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
   function handleSearchInputChange(event) {
     setSearchQuery(event.target.value);
   }
 
-  // Funzione per gestire il cambio di stato
   function handleStatusSelectChange(event) {
     setSelectedStatus(event.target.value);
   }
 
-  // Funzione per esportare i dati in formato CSV
   function exportData() {
     const csvContent =
       'data:text/csv;charset=utf-8,' +
@@ -145,7 +213,8 @@ export default function Example({ permissions }) {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', 'data.csv');
+    const download = 'data.csv'
+    link.setAttribute('download', download);
     document.body.appendChild(link);
     link.click();
   }
@@ -264,8 +333,7 @@ export default function Example({ permissions }) {
             onChange={handleStatusSelectChange}
             className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
           >
-            {/* Popolare lo status con dati */}
-            {items.map((item) => (
+            {Array.isArray(items) && items.map((item) => (
               <option key={item.status} value={item.status}>
                 {item.status}
               </option>
@@ -318,10 +386,11 @@ export default function Example({ permissions }) {
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                       Stato
                     </th>
+                    <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-3"></th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
-                  {purchaseOrder.length > 0 ? (
+                  {Array.isArray(purchaseOrder) && purchaseOrder.length > 0 ? (
                     purchaseOrder.map((item) => (
                       <tr
                         key={item.id_order}
@@ -345,7 +414,7 @@ export default function Example({ permissions }) {
                           {item.name}
                         </td>
                         <td className="whitespace-normal max-w-[200px] overflow-hidden text-sm text-gray-500 px-3 py-4 break-words">
-                          {item.Company.name}
+                          {item.Company?.name}
                         </td>
                         <td className="whitespace-normal max-w-[300px] overflow-hidden text-sm text-gray-500 px-3 py-4 break-words">
                           {item.description}
@@ -390,11 +459,67 @@ export default function Example({ permissions }) {
                             </span>
                           )}
                         </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          <div className="flex items-center space-x-2">
+                            {item.createdByUser?.id_user === user.id_user && (
+                              <>
+                                {item.status === 'Inviata al cliente' && (
+                                  <>
+                                    <button
+                                      type="button"
+                                      className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
+                                      onClick={() => Accept(item.id_order)}
+                                      title="Approva"
+                                    >
+                                      <CheckIcon className="h-5 w-4 text-gray-500" />
+                                    </button>
+                                    <button
+                                      type="button"
+                                      className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
+                                      onClick={() => Refuse(item.id_order)}
+                                      title="Rifiuta"
+                                    >
+                                      <XMarkIcon className="h-5 w-4 text-gray-500" />
+                                    </button>
+                                    <button
+                                      type="button"
+                                      className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
+                                      onClick={() => Revision(item.id_order)}
+                                      title="Revisione"
+                                    >
+                                      <ArrowPathIcon className="h-5 w-4 text-gray-500" />
+                                    </button>
+                                  </>
+                                )}
+                                {item.status === 'Nuova' && (
+                                  <>
+                                    <button
+                                      type="button"
+                                      className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
+                                      onClick={() => Sent(item.id_order)}
+                                      title="Invia al cliente"
+                                    >
+                                      <PaperAirplaneIcon className="h-5 w-4 text-gray-500" />
+                                    </button>
+                                    <button
+                                      type="button"
+                                      className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
+                                      onClick={() => Revision(item.id_order)}
+                                      title="Revisione"
+                                    >
+                                      <ArrowPathIcon className="h-5 w-4 text-gray-500" />
+                                    </button>
+                                  </>
+                                )}
+                              </>
+                            )}
+                          </div>
+                        </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="7" className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                      <td colSpan="8" className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
                         Non ci sono ordini di acquisto
                       </td>
                     </tr>

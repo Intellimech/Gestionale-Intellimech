@@ -50,7 +50,7 @@ class Logger {
         ip_address: req?.ip
       }
     ).catch((err) => {
-      console.log("Error saving log to database");
+      // console.log("Error saving log to database");
     });
   }
 }

@@ -3,7 +3,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { CheckBadgeIcon, XCircleIcon } from '@heroicons/react/20/solid';
 import Select from "react-tailwindcss-select";
-import ProductInput from './productinput.jsx';
+import PurchaseRowInput from './purchaserowinput.jsx';
 
 export default function PurchaseCreateForm() {
   const [createSuccess, setCreateSuccess] = useState(null);
@@ -26,6 +26,7 @@ export default function PurchaseCreateForm() {
   const handleTeamChange = setSelectedTeam;
   const handleCompanyChange = setSelectedCompany;
   const handlePaymentMethodChange = setSelectedPaymentMethod;
+  const handleCurrencyChange = setCurrency;
   const handleDateChange = (event) => setSelectedDate(event.target.value);
 
   useEffect(() => {
@@ -87,29 +88,28 @@ export default function PurchaseCreateForm() {
     const formDataObject = Object.fromEntries(form.entries());
 
     const jsonObject = {
-      id_purchase: "01",
       id_company: selectedCompany.value,
       payment: selectedPaymentMethod.value,
       date: selectedDate,
-      products: products.filter(product => product.category && product.subcategory && product.unit_price && product.quantity).map((product, index) => ({
-        id_purchaserow: index + 1,
-        id_purchase: "01",
+      currency: currency.value,
+      products: products.map((product, index) => ({
         category: product.category,
         subcategory: product.subcategory,
         description: product.description || '',
         unit_price: parseFloat(product.unit_price),
-        quantity: parseInt(product.quantity, 10)
+        quantity: parseInt(product.quantity, 10),
       }))
     };
 
+    console.log(jsonObject);
     axios.post(`${process.env.REACT_APP_API_URL}/purchase/create`, jsonObject, { headers: { authorization: `Bearer ${token}` } })
-    .then((response) => {
-      setCreateSuccess(true);
-    })
-    .catch((error) => {
-      setErrorMessages(error.response.data.message);
-      setCreateSuccess(false);
-    });
+      .then((response) => {
+        setCreateSuccess(true);
+      })
+      .catch((error) => {
+        setErrorMessages(error.response.data.message);
+        setCreateSuccess(false);
+      });
   };
 
   return (
@@ -155,7 +155,7 @@ export default function PurchaseCreateForm() {
               </div>
             </div>
 
-            <div className="sm:col-span-2">
+            <div className="sm:col-span-1">
               <label htmlFor="paymentMethod" className="block text-sm font-medium leading-6 text-gray-900">
                 Modalità di pagamento
               </label>
@@ -167,6 +167,23 @@ export default function PurchaseCreateForm() {
                   value={selectedPaymentMethod}
                   onChange={handlePaymentMethodChange}
                   options={paymentMethods.map((method) => ({ value: method, label: method }))}
+                  primaryColor='red'
+                  isSearchable
+                />
+              </div>
+            </div>
+            <div className="sm:col-span-1">
+              <label htmlFor="paymentMethod" className="block text-sm font-medium leading-6 text-gray-900">
+                Valuta
+              </label>
+              <div className="mt-2">
+                <Select
+                  id="currency"
+                  name="currency"
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"
+                  value={currency}
+                  onChange={handleCurrencyChange}
+                  options={currencies.map((currency) => ({ value: currency, label: currency }))}
                   primaryColor='red'
                   isSearchable
                 />
@@ -184,7 +201,7 @@ export default function PurchaseCreateForm() {
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div className="col-span-full">
               {products.map((product, index) => (
-                <ProductInput
+                <PurchaseRowInput
                   key={index}
                   product={product}
                   onChange={(updatedProduct) => updateProduct(index, updatedProduct)}

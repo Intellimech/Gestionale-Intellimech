@@ -3,11 +3,11 @@ import jwt from "jsonwebtoken";
 import fs from "fs";
 import path from "path";
 import sequelize from "../../utils/db.js";
-import Purchase from "../../models/purchase.js";
-import Product from "../../models/product.js";
-
 // Setup the express router
 const router = express.Router();
+
+const Purchase = sequelize.models.Purchase;
+const PurchaseRow = sequelize.models.PurchaseRow;
 
 // __dirname
 const __dirname = path.resolve();
@@ -15,14 +15,7 @@ const __dirname = path.resolve();
 const publickey = fs.readFileSync(__dirname + "/src/keys/public.key", "utf8");
 
 router.post("/create", (req, res) => {
-  const { id_company, payment, products } = req.body;
   const token = req.headers.authorization?.split(" ")[1];
-
-  if (!id_company || !products || !Array.isArray(products)) {
-    return res.status(400).json({
-      message: "Bad request, view documentation for more information",
-    });
-  }
 
   if (!token) {
     return res.status(401).json({
@@ -37,53 +30,65 @@ router.post("/create", (req, res) => {
       });
     }
 
-    // Calculate the total price
-    const total = products.reduce((sum, product) => {
-      return sum + (product.unit_price * product.quantity);
-    }, 0);
-
     try {
-      const newPurchase = await Purchase.create({
+      const { id_company, products, date, payment, currency } = req.body;
+
+      if (!id_company || !products || !date) {
+        return res.status(400).json({
+          message: "Bad request, view documentation for more information",
+        });
+      }
+
+      const purchaseCount = await Purchase.count({ distinct: "name" });
+
+      let namePurchase = "ODA" + new Date().getFullYear().toString().substr(-2) + "_" + (purchaseCount + 1).toString().padStart(5, "0");
+      //sum all the prices of the products
+      products.forEach((product) => {
+        product.total = product.unit_price * product.quantity;
+      });
+
+      var purchaseTotal = products.reduce((acc, product) => acc + product.total, 0);
+
+      const purchase = await Purchase.create({
         id_company: id_company,
-        payment: payment,
-        IVA: "esclusa",
-        total: total, // use the calculated total
-        createdBy: "7",
-        updatedBy: "7",
-        deletedBy: null,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        name: namePurchase,
+        payment_method: payment,
+        date: date,
+        currency: currency,
+        total: purchaseTotal,
+        createdBy: decoded.id,
       });
 
-      console.log('New Purchase Created:', newPurchase.toJSON());
+      const purchaseId = purchase.id_purchase;
 
-      const productPromises = products.map(product => {
-        const productData = {
-          id_purchase: newPurchase.id_purchase,
+      for (const product of products) {
+        //make a counter
+        let count = 0;
+        count++;
+        let PurchaseRowName = namePurchase + "_" + (count * 10).toString();
+        console.log(PurchaseRowName);
+        await PurchaseRow.create({
+          id_purchase: purchaseId,
+          name: PurchaseRowName,
           category: product.category,
-          price: product.unit_price,
+          subcategory: product.subcategory,
+          unit_price: product.unit_price,
           quantity: product.quantity,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        };
-        console.log('Creating Product:', productData);
-        return Product.create(productData);
-      });
-
-      await Promise.all(productPromises);
+          totalprice: product.total,
+        });
+      };
 
       res.status(201).json({
         message: "Purchase created",
-        purchase: newPurchase,
       });
-
     } catch (error) {
-      console.error('Error creating purchase or products:', error);
+      console.error(error);
       res.status(500).json({
         message: "Internal server error",
       });
     }
   });
-});
+}); 
+
 
 export default router;

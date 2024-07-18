@@ -1,48 +1,43 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import Select from 'react-tailwindcss-select';
 
-export default function ProductInput({ product, onChange, onRemove, categories, subcategories, handleCategoryChange, currencies, currency, setCurrency, level = 1 }) {
+export default function PurchaseRowInput({ product, onChange, onRemove, categories, subcategories, handleCategoryChange, currencies, currency, setCurrency, level = 1 }) {
   const indentStyle = {
     paddingLeft: `${level * 20}px`, // Adjust indentation based on level
     borderLeft: `${level > 0 ? '2px solid #E5E7EB' : 'none'}`, // Indentation border for subproducts
   };
-
+  
   return (
     <div className="border p-4 mb-4 rounded-lg shadow-sm bg-gray-50" style={indentStyle}>
       <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 mb-2">
         <div className="sm:col-span-3">
           <label className="block text-sm font-medium leading-6 text-gray-900">Categoria</label>
-          <select
+          <Select
             id="category"
             name="category"
-            value={product.category}
-            onChange={(e) => {
-              handleCategoryChange(e);
-              onChange({ ...product, category: e.target.value });
+            value={{ value: product.category, label: categories.find(c => c.id_category === product.category)?.name }}
+            onChange={(option) => {
+              handleCategoryChange({ target: { value: option.value } });
+              onChange({ ...product, category: option.value });
             }}
-            autoComplete="category-name"
+            options={categories.map(c => ({ value: c.id_category, label: c.name }))}
             className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:max-w-xs sm:text-sm sm:leading-6"
-          >
-            {categories.map((item) => (
-              <option key={item.id_category} value={item.id_category}>{item.name}</option>
-            ))}
-          </select>
+            primaryColor='red'
+          />
         </div>
 
         <div className="sm:col-span-3">
           <label className="block text-sm font-medium leading-6 text-gray-900">Sotto Categoria</label>
-          <select
+          <Select
             id="subcategory"
             name="subcategory"
-            value={product.subcategory}
-            onChange={(e) => onChange({ ...product, subcategory: e.target.value })}
-            autoComplete="subcategory-name"
+            value={{ value: product.subcategory, label: subcategories.find(s => s.id_subcategory === product.subcategory)?.name }}
+            onChange={(option) => onChange({ ...product, subcategory: option.value })}
+            options={subcategories.map(s => ({ value: s.id_subcategory, label: s.name }))}
             className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:max-w-xs sm:text-sm sm:leading-6"
-            disabled={subcategories.length === 0}
-          >
-            {subcategories.map((item) => (
-              <option key={item.id_subcategory} value={item.id_subcategory}>{item.name}</option>
-            ))}
-          </select>
+            isDisabled={subcategories.length === 0}
+            primaryColor='red'
+          />
         </div>
       </div>
 
@@ -63,7 +58,9 @@ export default function ProductInput({ product, onChange, onRemove, categories, 
         <label className="block text-sm font-medium leading-6 text-gray-900">Prezzo Unitario</label>
         <div className="relative mt-2 rounded-md shadow-sm">
           <input
-            type="text"
+            type="number"
+            step="0.01"
+            defaultValue={0.00}
             name="unit_price"
             id={`unit_price`}
             value={product.unit_price}
@@ -72,20 +69,6 @@ export default function ProductInput({ product, onChange, onRemove, categories, 
             placeholder="0.00"
             aria-describedby="price-currency"
           />
-          <div className="absolute inset-y-0 right-0 flex items-center">
-            <select
-              value={currency}
-              onChange={(e) => setCurrency(e.target.value)}
-              className="block w-full h-full py-0 pl-3 pr-8 bg-transparent border-transparent text-gray-500 focus:border-red-500 focus:ring-red-500 sm:text-sm rounded-md appearance-none"
-            >
-              {currencies.map((cur) => (
-                <option key={cur} value={cur}>{cur}</option>
-              ))}
-            </select>
-            <svg className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2" width="20" height="20" fill="none" stroke="currentColor">
-              <path d="M6 9l6 6 6-6" />
-            </svg>
-          </div>
         </div>
       </div>
 

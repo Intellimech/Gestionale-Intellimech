@@ -14,7 +14,11 @@ Purchase.init(
       type: DataTypes.INTEGER,
       allowNull: true
     },
-    payment: {
+    name: {
+      type: DataTypes.STRING(50),
+      allowNull: true
+    },
+    payment_method: {
       type: DataTypes.STRING(50),
       allowNull: true
     },
@@ -24,6 +28,10 @@ Purchase.init(
     },
     total: {
       type: DataTypes.DOUBLE,
+      allowNull: true
+    },
+    currency: {
+      type: DataTypes.STRING(50),
       allowNull: true
     },
     status: {
@@ -41,6 +49,20 @@ Purchase.init(
     },
     deletedBy: {
       type: DataTypes.INTEGER,
+      allowNull: true
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: DataTypes.NOW
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: true,
+      defaultValue: DataTypes.NOW
+    },
+    deletedAt: {
+      type: DataTypes.DATE,
       allowNull: true
     }
   },

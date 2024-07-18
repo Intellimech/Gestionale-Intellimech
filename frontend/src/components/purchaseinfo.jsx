@@ -1,100 +1,36 @@
 import { PaperClipIcon } from '@heroicons/react/20/solid';
 import { useState, useEffect } from 'react';
+import axios from 'axios';
+import Cookies from 'js-cookie';
+import Lost from '../pages/lost';
+import { useParams } from 'react-router-dom';
 
 export default function Example({ purchase: initialpurchase }) {
     const [purchase, setpurchase] = useState(initialpurchase);
+    const { id } = useParams();
 
     useEffect(() => {
+        console.log(id);
         if (!initialpurchase) {
-            setpurchase({
-                "id_order": "1",
-                "name": "ODA24_00001",
-                "description": "Lorem Ipsum Dolor",
-                "Category": {
-                    "id_company": 3,
-                    "name": "IT e Laboratori"
-                },
-                "Subcategory": {
-                    "id_company": 3,
-                    "name": "Software"
-                },
-                "IVA": "Esclusa",
-                "status": "Approvata",
-                "payment_method": "Bonifico",
-                "total": "1000.00",
-                "currency": "EUR",
-                "Company": {
-                    "id_company": 3,
-                    "name": "ABB SPA"
-                },
-                "products": [
-                    {
-                        "id_product": 1,
-                        "name": "ODA24_00001_01",
-                        "description": "Lorem Ipsum Dolor",
-                        "quantity": 1,
-                        "VAT": "Esclusa",
-                        "unit_price": 1000.00,
-                        "status": "Approvata"
-                    },
-                    {
-                        "id_product": 2,
-                        "name": "ODA24_00001_02",
-                        "description": "Lorem Ipsum Dolor",
-                        "quantity": 1,
-                        "VAT": "Esclusa",
-                        "unit_price": 1000.00,
-                        "status": "In Approvazione"
-                    },
-                    {
-                        "id_product": 3,
-                        "name": "ODA24_00001_03",
-                        "description": "Lorem Ipsum Dolor",
-                        "quantity": 1,
-                        "VAT": "Esclusa",
-                        "unit_price": 1000.00,
-                        "status": "Rifiutata"
-                    },
-                    {
-                        "id_product": 4,
-                        "name": "ODA24_00001_04",
-                        "description": "Lorem Ipsum Dolor",
-                        "quantity": 1,
-                        "VAT": "Esclusa",
-                        "unit_price": 1000.00,
-                        "status": "Approvata"
-                    },
-                    {
-                        "id_product": 5,
-                        "name": "ODA24_00001_05",
-                        "description": "Lorem Ipsum Dolor",
-                        "quantity": 1,
-                        "VAT": "Esclusa",
-                        "unit_price": 1000.00,
-                        "status": "In Approvazione"
-                    },
-                ],
-                "invoices": [
-                    {
-                        "id_invoice": 1,
-                        "number": "FTP24_00001",
-                        "date": "2024-05-18",
-                        "url": "https://www.google.com",
-                    },
-                ],
-                "createdAt": "2024-05-18T14:17:36.000Z",
-                "updatedAt": "2024-06-20T09:03:58.000Z",
-                "deletedAt": null,
-                "createdByUser": {
-                    "id_user": 7,
-                    "name": "Mattia",
-                    "surname": "Capelli",
-                },
-                "updatedByUser": null,
-                "deletedByUser": null,
+            axios.get(`http://localhost:3000/purchase/read/${id}`, {
+                headers: {
+                    Authorization: `Bearer ${Cookies.get('token')}`
+                }
+            })
+            .then(response => {
+                setpurchase(response.data.purchases);
+            })
+            .catch(error => {
+                console.error(error);
             });
         }
-    }, [initialpurchase]);
+    }, []);
+
+    useEffect(() => {
+        if (!purchase) {
+            return <Lost />;
+        }
+    }, [purchase]);
 
     return (
         <div>
@@ -168,9 +104,6 @@ export default function Example({ purchase: initialpurchase }) {
                         <table className="min-w-full divide-y divide-gray-300">
                             <thead>
                                 <tr>
-                                    <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
-                                        N° Riga
-                                    </th>
                                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                                         Codice Prodotto
                                     </th>
@@ -195,11 +128,8 @@ export default function Example({ purchase: initialpurchase }) {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200 bg-white">
-                                {purchase?.products.map((product, index) => (
+                                {purchase?.PurchaseRows?.map((product, index) => (
                                     <tr key={product.id_product}>
-                                        <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                                            {index + 1}
-                                        </td>
                                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                             {product.name}
                                         </td>

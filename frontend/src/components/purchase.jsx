@@ -372,9 +372,6 @@ export default function Example({ permissions }) {
                       Azienda
                     </th>
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                      Descrizione
-                    </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                       Metodo di Pagamento
                     </th> 
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
@@ -385,6 +382,9 @@ export default function Example({ permissions }) {
                     </th>
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                       Stato
+                    </th>
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                      Creata da
                     </th>
                     <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-3"></th>
                   </tr>
@@ -400,7 +400,7 @@ export default function Example({ permissions }) {
                           onClick={(event) => {
                             //ctrl + click per aprire un nuovo tab
                             if (event.ctrlKey) {
-                              window.open(`/app/purchase/${item.id_order}`);
+                              window.open(`/app/purchase/${item.id_purchase}`);
                             } else {
                               setShowInfo(true);
                               setSelectedItemInfo(item);
@@ -415,9 +415,6 @@ export default function Example({ permissions }) {
                         </td>
                         <td className="whitespace-normal max-w-[200px] overflow-hidden text-sm text-gray-500 px-3 py-4 break-words">
                           {item.Company?.name}
-                        </td>
-                        <td className="whitespace-normal max-w-[300px] overflow-hidden text-sm text-gray-500 px-3 py-4 break-words">
-                          {item.description}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           {item.payment_method}
@@ -460,10 +457,13 @@ export default function Example({ permissions }) {
                           )}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          {item.createdByUser?.name.slice(0, 2).toUpperCase() + item.createdByUser?.surname.slice(0, 2).toUpperCase()}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           <div className="flex items-center space-x-2">
-                            {item.createdByUser?.id_user === user.id_user && (
+                            {/* {item.createdByUser?.id_user === user.id_user && (
                               <>
-                                {item.status === 'Inviata al cliente' && (
+                                {item.status === 'In Approvazione' && (
                                   <>
                                     <button
                                       type="button"
@@ -512,7 +512,7 @@ export default function Example({ permissions }) {
                                   </>
                                 )}
                               </>
-                            )}
+                            )} */}
                           </div>
                         </td>
                       </tr>

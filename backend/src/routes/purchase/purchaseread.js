@@ -3,13 +3,13 @@ import jwt from 'jsonwebtoken';
 import fs from 'fs';
 import path from 'path';
 import sequelize from '../../utils/db.js';
-import Purchase from '../../models/purchase.js';
-import Product from '../../models/product.js';
-import Company from '../../models/company.js';
-import User from '../../models/user.js';
 
 // Setup the express router
 const router = express.Router();
+
+const Purchase = sequelize.models.Purchase;
+const PurchaseRow = sequelize.models.PurchaseRow;
+const Company = sequelize.models.Company;
 
 // __dirname
 const __dirname = path.resolve();
@@ -25,41 +25,87 @@ router.get('/read', (req, res) => {
   }
 
   jwt.verify(token, publickey, async (err, decoded) => {
-    if (err) {
-      return res.status(401).json({
-        message: 'Unauthorized',
-      });
-    }
+    //get all the purchases
+    const purchases = await Purchase.findAll({
+      include: [
+        {
+          model: sequelize.models.PurchaseRow,
+          attributes: ["id_purchaserow", "name", "category", "subcategory", "unit_price", "quantity", "totalprice"],
+          include: [
+            {
+              model: sequelize.models.Category,
+              attributes: ["name"],
+            },
+            {
+              model: sequelize.models.Subcategory,
+              attributes: ["name"],
+            },
+          ]
+        },
+        {
+          model: Company,
+          attributes: ["id_company", "name"],
+        },
+        {
+          model: sequelize.models.User,
+          as: 'createdByUser',
+          attributes: ['id_user', 'name', 'surname'],
+        }
+      ],
+    });
 
-    try {
-      const purchases = await Purchase.findAll({
-        include: [
-          {
-            model: sequelize.models.Product,
-            attributes: [ 'price', 'quantity'],
-          },
-          {
-            model: sequelize.models.Company,
-            attributes: ['name'],
-          },
-          {
-            model: sequelize.models.User,
-            as: 'createdByUser',
-            attributes: ['name', 'surname'],
-          },
-        ],
-      });
+    res.json({
+      purchases: purchases,
+    });
+  });
+});
 
-      res.status(200).json({
-        message: 'Purchases found',
-        purchases: purchases,
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({
-        message: 'Internal server error',
-      });
-    }
+router.get('/read/:id', (req, res) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  const id = req.params.id;
+
+  if (!token) {
+    return res.status(401).json({
+      message: 'Unauthorized',
+    });
+  }
+
+  jwt.verify(token, publickey, async (err, decoded) => {
+    //get all the purchases
+    const purchases = await Purchase.findOne({
+      where: {
+        id_purchase: id,
+      },
+      include: [
+        {
+          model: sequelize.models.PurchaseRow,
+          attributes: ["id_purchaserow", "name", "category", "subcategory", "unit_price", "quantity", "totalprice"],
+          include: [
+            {
+              model: sequelize.models.Category,
+              attributes: ["name"],
+            },
+            {
+              model: sequelize.models.Subcategory,
+              attributes: ["name"],
+            },
+          ]
+        },
+        {
+          model: Company,
+          attributes: ["id_company", "name"],
+        },
+        {
+          model: sequelize.models.User,
+          as: 'createdByUser',
+          attributes: ['id_user', 'name', 'surname'],
+        }
+      ],
+    });
+
+    res.json({
+      purchases: purchases,
+    });
   });
 });
 

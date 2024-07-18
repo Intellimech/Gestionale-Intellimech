@@ -22,7 +22,7 @@ import OfferTeam from './offerteam.js';
 import InvoiceLine from './invoicelines.js';
 import Notification from './notification.js';
 import Purchase from './purchase.js';
-import Product from './product.js';
+import PurchaseRow from './purchaserow.js';
 
 // Define associations
 User.belongsTo(Role, { foreignKey: 'role' });
@@ -172,8 +172,17 @@ Purchase.belongsTo(User, { foreignKey: 'createdBy', as: 'createdByUser' });
 Purchase.belongsTo(User, { foreignKey: 'updatedBy', as: 'updatedByUser' });
 Purchase.belongsTo(User, { foreignKey: 'deletedBy', as: 'deletedByUser' });
 
-Product.belongsTo(Purchase, { foreignKey: 'id_purchase' });
-Purchase.hasMany(Product, { foreignKey: 'id_purchase' });
+PurchaseRow.belongsTo(Purchase, { foreignKey: 'id_purchase' });
+Purchase.hasMany(PurchaseRow, { foreignKey: 'id_purchase' });
+
+Purchase.belongsTo(Company, { foreignKey: 'id_company' });
+Company.hasMany(Purchase, { foreignKey: 'id_company' });
+
+PurchaseRow.belongsTo(Category, { foreignKey: 'category' });
+Category.hasMany(PurchaseRow, { foreignKey: 'category' });
+
+PurchaseRow.belongsTo(Subcategory, { foreignKey: 'subcategory' });
+Subcategory.hasMany(PurchaseRow, { foreignKey: 'subcategory' });
 
 export default {
     User,
@@ -200,5 +209,5 @@ export default {
     InvoiceLine,
     Notification,
     Purchase,
-    Product
+    PurchaseRow
   };

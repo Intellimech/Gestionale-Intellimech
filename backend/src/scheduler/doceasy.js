@@ -52,9 +52,9 @@ class Doceasy {
       const companyData = this.buildCompanyData(invoice, code);
 
       await this.company.create(companyData);
-      logger('success', 'Company created successfully', null, 'doceasy');
+      // logger('success', 'Company created successfully', null, 'doceasy');
     } catch (error) {
-      logger('error', `Error creating company: ${error.message}`, error, 'doceasy');
+      // logger('error', `Error creating company: ${error.message}`, error, 'doceasy');
     }
   }
 
@@ -88,7 +88,7 @@ class Doceasy {
         await this.createCompany(invoice);
       }
     } catch (error) {
-      logger('error', `Error checking or updating company: ${error.message}`, error, 'doceasy');
+      // logger('error', `Error checking or updating company: ${error.message}`, error, 'doceasy');
     }
   }
 
@@ -127,9 +127,9 @@ class Doceasy {
 
     if (Object.keys(updateData).length > 0) {
       await company.update(updateData);
-      logger('success', 'Updated company data', null, 'doceasy');
+      // logger('success', 'Updated company data', null, 'doceasy');
     } else {
-      logger('success', 'Company found and data is correct', null, 'doceasy');
+      // logger('success', 'Company found and data is correct', null, 'doceasy');
     }
   }
 
@@ -165,7 +165,7 @@ class Doceasy {
         const count = await this.company.count();
         code = `C${(count + 1).toString().padStart(6, '0')}`;
 
-        logger('info', `Generating company code: ${code}`, null, 'doceasy');
+        // logger('info', `Generating company code: ${code}`, null, 'doceasy');
         const existingCompany = await this.company.findOne({
           where: { Code: code }
         });
@@ -179,7 +179,7 @@ class Doceasy {
       
       return code;
     } catch (error) {
-      logger('error', `Error generating company code: ${error.message}`, error, 'doceasy');
+      // logger('error', `Error generating company code: ${error.message}`, error, 'doceasy');
       throw error;
     } finally {
       release();

@@ -66,16 +66,16 @@ export default function PurchaseCreateForm() {
     const token = Cookies.get('token');
     const updatedProducts = [...products];
     updatedProducts[index].category = event.target.value;
-
+  
     try {
       const { data: { subcategories } } = await axios.get(`${process.env.REACT_APP_API_URL}/subcategory/read/${event.target.value}`, { headers: { authorization: `Bearer ${token}` } });
-      setSubcategories(subcategories);
+      updatedProducts[index].subcategories = subcategories;
       updatedProducts[index].subcategory = '';
       setProducts(updatedProducts);
     } catch (error) {
       console.error('Error fetching subcategory data:', error);
     }
-  };
+  };  
 
   const addProduct = () => setProducts([...products, { category: '', subcategory: '', unit_price: '', quantity: 1, description: '', subcategories: [] }]);
   const removeProduct = (index) => setProducts(products.filter((_, i) => i !== index));
@@ -200,20 +200,20 @@ export default function PurchaseCreateForm() {
 
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div className="col-span-full">
-              {products.map((product, index) => (
-                <PurchaseRowInput
-                  key={index}
-                  product={product}
-                  onChange={(updatedProduct) => updateProduct(index, updatedProduct)}
-                  onRemove={() => removeProduct(index)}
-                  categories={categories}
-                  subcategories={subcategories}
-                  handleCategoryChange={(e) => handleCategoryChange(e, index)}
-                  currencies={currencies}
-                  currency={currency}
-                  setCurrency={setCurrency}
-                />
-              ))}
+            {products.map((product, index) => (
+              <PurchaseRowInput
+                key={index}
+                product={product}
+                onChange={(updatedProduct) => updateProduct(index, updatedProduct)}
+                onRemove={() => removeProduct(index)}
+                categories={categories}
+                subcategories={product.subcategories}
+                handleCategoryChange={(e) => handleCategoryChange(e, index)}
+                currencies={currencies}
+                currency={currency}
+                setCurrency={setCurrency}
+              />
+            ))}
               <button
                 type="button"
                 onClick={addProduct}

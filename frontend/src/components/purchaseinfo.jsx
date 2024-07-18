@@ -5,32 +5,37 @@ import Cookies from 'js-cookie';
 import Lost from '../pages/lost';
 import { useParams } from 'react-router-dom';
 
-export default function Example({ purchase: initialpurchase }) {
-    const [purchase, setpurchase] = useState(initialpurchase);
+export default function Example({ purchase: initialPurchase }) {
+    const [purchase, setPurchase] = useState(initialPurchase);
     const { id } = useParams();
 
     useEffect(() => {
-        console.log(id);
-        if (!initialpurchase) {
+        if (!initialPurchase) {
             axios.get(`http://localhost:3000/purchase/read/${id}`, {
                 headers: {
                     Authorization: `Bearer ${Cookies.get('token')}`
                 }
             })
             .then(response => {
-                setpurchase(response.data.purchases);
+                setPurchase(response.data.purchases);
             })
             .catch(error => {
                 console.error(error);
             });
         }
-    }, []);
+    }, [id, initialPurchase]);
 
-    useEffect(() => {
-        if (!purchase) {
-            return <Lost />;
-        }
-    }, [purchase]);
+    if (!purchase) {
+        return <Lost />;
+    }
+
+    const formatCurrency = (amount) => {
+        return `${amount} ${purchase?.currency}`;
+    };
+
+    const formatDate = (date) => {
+        return new Date(date).toLocaleDateString();
+    };
 
     return (
         <div>
@@ -38,23 +43,13 @@ export default function Example({ purchase: initialpurchase }) {
                 <div className="flex items-center">
                     <h3 className="text-base font-semibold leading-7 text-gray-900">
                         Dettagli sull'ordine di Acquisto 
-                        {purchase?.status === 'In Approvazione' ? (
-                            <span className="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                                In Approvazione
-                            </span>
-                        ) : purchase?.status === 'Approvata' ? (
-                            <span className="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                Approvata
-                            </span>
-                        ) : purchase?.status === 'Rifiutata' ? (
-                            <span className="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                                Rifiutata
-                            </span>
-                        ) : (
-                            <span className="ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                                Nessuno
-                            </span>
-                        )}
+                        <span className={`ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${{
+                            'In Approvazione': 'bg-yellow-100 text-yellow-800',
+                            'Approvata': 'bg-green-100 text-green-800',
+                            'Rifiutata': 'bg-red-100 text-red-800',
+                        }[purchase?.status] || 'bg-gray-100 text-gray-800'}`}>
+                            {purchase?.status || 'Nessuno'}
+                        </span>
                     </h3>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -64,12 +59,6 @@ export default function Example({ purchase: initialpurchase }) {
                     >
                         Modifica
                     </button>
-                    {/* <button
-                        type="button"
-                        className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-                    >
-                        Scarica
-                    </button> */}
                 </div>
             </div>
             <div className="mt-6">
@@ -84,11 +73,11 @@ export default function Example({ purchase: initialpurchase }) {
                     </div>
                     <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
                         <dt className="text-sm font-medium leading-6 text-gray-900">Data di creazione</dt>
-                        <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{new Date(purchase?.createdAt).toLocaleDateString()}</dd>
+                        <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{formatDate(purchase?.createdAt)}</dd>
                     </div>
                     <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
                         <dt className="text-sm font-medium leading-6 text-gray-900">Totale IVA Esclusa</dt>
-                        <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{purchase?.total + " " + purchase?.currency}</dd>
+                        <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{formatCurrency(purchase?.total)}</dd>
                     </div>
                     <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
                         <dt className="text-sm font-medium leading-6 text-gray-900">Modalita di Pagamento</dt>
@@ -128,7 +117,7 @@ export default function Example({ purchase: initialpurchase }) {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200 bg-white">
-                                {purchase?.PurchaseRows?.map((product, index) => (
+                                {purchase?.PurchaseRows?.map((product) => (
                                     <tr key={product.id_product}>
                                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                             {product.name}
@@ -140,13 +129,13 @@ export default function Example({ purchase: initialpurchase }) {
                                             {product.quantity}
                                         </td>
                                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                            {product.unit_price.toFixed(2) + " " + purchase?.currency}
+                                            {formatCurrency(product.unit_price)}
                                         </td>
                                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                             {product.VAT}
                                         </td>
                                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                            {(product.unit_price * product.quantity).toFixed(2) + " " + purchase?.currency}
+                                            {formatCurrency(product.unit_price * product.quantity)}
                                         </td>
                                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                             {product.status}
@@ -160,28 +149,28 @@ export default function Example({ purchase: initialpurchase }) {
                         <dt className="text-sm font-medium leading-6 text-gray-900">Ordine di Acquisto</dt>
                         <dd className="mt-2 text-sm text-gray-900">
                             <ul role="list" className="divide-y divide-gray-100 rounded-md border border-gray-200">
-                            <li className="flex items-center justify-between py-4 pl-4 pr-5 text-sm leading-6">
-                                <div className="flex w-0 flex-1 items-center">
-                                <PaperClipIcon className="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
-                                <div className="ml-4 flex min-w-0 flex-1 gap-2">
-                                    <span className="truncate font-medium">{purchase?.name}.pdf</span>
-                                    <span className="flex-shrink-0 text-gray-400">2.4mb</span>
-                                </div>
-                                </div>
-                                <div className="ml-4 flex-shrink-0">
-                                <a href="#" className="font-medium text-red-600 hover:text-red-500">
-                                    Download
-                                </a>
-                                </div>
-                            </li>
+                                <li className="flex items-center justify-between py-4 pl-4 pr-5 text-sm leading-6">
+                                    <div className="flex w-0 flex-1 items-center">
+                                        <PaperClipIcon className="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
+                                        <div className="ml-4 flex min-w-0 flex-1 gap-2">
+                                            <span className="truncate font-medium">{purchase?.name}.pdf</span>
+                                            <span className="flex-shrink-0 text-gray-400">2.4mb</span>
+                                        </div>
+                                    </div>
+                                    <div className="ml-4 flex-shrink-0">
+                                        <a href="#" className="font-medium text-red-600 hover:text-red-500">
+                                            Download
+                                        </a>
+                                    </div>
+                                </li>
                             </ul>
                         </dd>
                     </div>
                     <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-3">
-                        <dt className="text-sm font-medium leading-6 text-gray-900">Fattur{purchase?.invoices?.length > 1 ? "e" : "a" }</dt>
+                        <dt className="text-sm font-medium leading-6 text-gray-900">Fattur{purchase?.invoices?.length > 1 ? "e" : "a"}</dt>
                         <dd className="mt-2 text-sm text-gray-900">
                             <ul role="list" className="divide-y divide-gray-100 rounded-md border border-gray-200">
-                                {purchase?.invoices?.map((item, index) => (
+                                {purchase?.invoices?.map((item) => (
                                     <li key={item.id} className="flex items-center justify-between py-4 pl-4 pr-5 text-sm leading-6">
                                         <div className="flex w-0 flex-1 items-center">
                                             <PaperClipIcon className="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
@@ -196,8 +185,7 @@ export default function Example({ purchase: initialpurchase }) {
                                             </a>
                                         </div>
                                     </li>
-                                ))    
-                                }
+                                ))}
                             </ul>
                         </dd>
                     </div>

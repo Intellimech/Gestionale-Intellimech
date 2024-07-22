@@ -126,56 +126,6 @@ export default function Example({ permissions }) {
     setIndeterminate(false);
   }
 
-  const Accept = (orderId) => {
-    axios
-    .post(`${process.env.REACT_APP_API_URL}/purchase/accept/${orderId}`, {}, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + Cookies.get('token'),
-      },
-    })
-    .then((response) => {
-      console.log(response.data);
-      fetchOrders();
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-  }
-
-  const Refuse = (orderId) => {
-    axios
-    .post(`${process.env.REACT_APP_API_URL}/purchase/refuse/${orderId}`, {}, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + Cookies.get('token'),
-      },
-    })
-    .then((response) => {
-      console.log(response.data);
-      fetchOrders();
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-  }
-
-  const Sent = (orderId) => {
-    axios
-    .post(`${process.env.REACT_APP_API_URL}/purchase/sent/${orderId}`, {}, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + Cookies.get('token'),
-      },
-    })
-    .then((response) => {
-      console.log(response.data);
-      fetchOrders();
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-  }
 
   const fetchOrders = () => {
     axios

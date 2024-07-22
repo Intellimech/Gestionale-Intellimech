@@ -78,7 +78,7 @@ export default function PurchaseCreateForm() {
     }
   };  
 
-  const addProduct = () => setProducts([...products, { category: '', subcategory: '',  unit_price: '', quantity: 1, description: '', subcategories: [] }]);
+  const addProduct = () => setProducts([...products, { category: '', subcategory: '', description : '', unit_price: '', quantity: 1, description: '', subcategories: [] }]);
   const removeProduct = (index) => setProducts(products.filter((_, i) => i !== index));
   const updateProduct = (index, updatedProduct) => setProducts(products.map((product, i) => (i === index ? updatedProduct : product)));
 

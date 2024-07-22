@@ -10,6 +10,23 @@ export default function PurchaseRowInput({ product, onChange, onRemove, categori
   return (
     <div className="border p-4 mb-4 rounded-lg shadow-sm bg-gray-50" style={indentStyle}>
       <div className="grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6 mb-2">
+      <div className="mb-2">
+          <label htmlFor="description" className="block text-sm font-medium leading-6 text-gray-900">
+            Descrizione
+          </label>
+          <input
+            id="description"
+            name="description"
+            type="text"
+            maxLength={150} // Use maxLength for text inputs
+            value={product.description || ''} // Ensure default value is an empty string
+            onChange={(e) => onChange({ ...product, description: e.target.value })}
+            className="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:max-w-xs sm:text-sm"
+          />
+          <p className="mt-1 text-xs text-gray-500">Massimo 150 caratteri</p>
+        </div>
+
+
         <div className="sm:col-span-3">
           <label className="block text-sm font-medium leading-6 text-gray-900">Categoria</label>
           <Select

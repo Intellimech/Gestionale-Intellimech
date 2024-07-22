@@ -33,7 +33,7 @@ router.post("/create", (req, res) => {
     try {
       const { id_company, products, date, payment, currency } = req.body;
 
-      if (!id_company || !products || !date) {
+      if (!id_company  || !products || !date) {
         return res.status(400).json({
           message: "Bad request, view documentation for more information",
         });
@@ -70,6 +70,7 @@ router.post("/create", (req, res) => {
         await PurchaseRow.create({
           id_purchase: purchaseId,
           name: PurchaseRowName,
+          description : product.description,
           category: product.category,
           subcategory: product.subcategory,
           unit_price: product.unit_price,

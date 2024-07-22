@@ -4,6 +4,7 @@ import Cookies from 'js-cookie';
 import Lost from '../pages/lost';
 import { useParams } from 'react-router-dom';
 import { jsPDF } from 'jspdf';
+import 'jspdf-autotable';
 import { PaperClipIcon } from '@heroicons/react/20/solid';
 
 export default function Example({ purchase: initialPurchase }) {
@@ -93,40 +94,163 @@ export default function Example({ purchase: initialPurchase }) {
       console.error('Error fetching subcategory data:', error);
     }
   };  
-
+  
   const handleDownloadPdf = () => {
     const doc = new jsPDF();
-  
-    // const logoUrl = '/images/logo.png'; // Percorso del file PNG
-    //doc.addImage(logoUrl, 'PNG', 10, 10, 50, 20);  Posizione (x, y) e dimensioni (larghezza, altezza) dell'immagine
-  
-    // Titolo
+    
+    // Aggiungi il logo
+    const logoPath = '../../../logo.jpg'; // Percorso del logo
+    doc.addImage(logoPath, 'JPEG', 10, 10, 50, 20); // Posizione e dimensioni del logo
+    
+    // Tabella orizzontale per i dettagli dell'ordine
+    const orderDetails = [
+      ['N° Ordine di Acquisto', `${purchase.name}`],
+      ['Data', `${formatDate(purchase.createdAt)}`],
+      ['Riferimento Intellimech', `${purchase.Company.name}`],
+      ['Metodo di Pagamento', `${purchase.payment_method}`],
+      ['Dettagli', `${purchase.details || 'N/A'}`], // Aggiungi i dettagli se disponibili
+      ['Commessa', `${purchase.jobNumber || 'N/A'}`] // Aggiungi il numero di commessa se disponibile
+    ];
+    
+      // Titolo centrato a 30 mm dal margine sinistro
+    const marginLeft = -100; // Margine sinistro in mm
+    const pageWidth = doc.internal.pageSize.width;
+    const title = "Ordine d'Acquisto";
     doc.setFontSize(16);
-    doc.text("Dettagli dell'ordine", 10, 35);
-  
+    doc.setFont('Helvetica', 'bold');
+    const titleWidth = doc.getTextWidth(title);
+    const titleX = marginLeft + (pageWidth - marginLeft - titleWidth) / 2;
+    doc.text(title, titleX, 35);
+      
     // Dati dell'ordine
-    doc.setFontSize(12);
-    doc.text(`Codice Ordine: ${purchase.name}`, 10, 50);
-    doc.text(`Fornitore: ${purchase.Company.name}`, 10, 60);
-    doc.text(`Data di creazione: ${formatDate(purchase.createdAt)}`, 10, 70);
-    doc.text(`Totale IVA Esclusa: ${formatCurrency(purchase.total)}`, 10, 80);
-  
-    // Aggiungi intestazione della tabella
-    doc.text("Righe d'ordine", 10, 100);
-    doc.line(10, 105, 200, 105); // Linea sotto l'intestazione della tabella
-  
-    // Aggiungi righe della tabella
-    const startY = 110;
-    const rowHeight = 10;
-    purchase.PurchaseRows.forEach((row, index) => {
-      const y = startY + (index * rowHeight);
-      doc.text(`${row.name}`, 10, y);
-      //doc.text(`${row.description}`, 50, y);
-      doc.text(`${row.quantity}`, 100, y);
-      doc.text(`${formatCurrency(row.unit_price)}`, 150, y);
-      //doc.text(`${row.VAT}`, 180, y);
+    doc.setFontSize(10);
+    doc.setFont('Helvetica', 'normal');
+    
+    // Usa autoTable per creare una tabella orizzontale
+    doc.autoTable({
+      startY: 45,
+      body: orderDetails,
+      headStyles: {
+        fillColor: [255, 0, 0], // Colore di sfondo rosso per l'intestazione
+        textColor: [255, 255, 255], // Colore del testo bianco
+        fontStyle: 'bold'
+      },
+      styles: {
+        cellPadding: 0.5, // Riduci il padding delle celle per meno spazio tra le righe
+        fontSize: 10 // Riduci la dimensione del font per più spazio
+      },
+      columnStyles: {
+        0: { cellWidth: 50 }, 
+        1: { cellWidth: 120 } 
+      },
+      margin: { top: 10 }
     });
+    
+    // Informazioni della compagnia
+    const companyInfo = [
+      ['Ragione Sociale Fornitore', `${purchase.Company.name}`],
+      ['Via, numero civico', `${purchase.Company.address || 'N/A'}`],
+      ['Cap Comune – Provincia', `${purchase.Company.city || 'N/A'}, ${purchase.Company.province || 'N/A'}`],
+      ['PIVA', `${purchase.Company.VAT || 'N/A'}`],
+      ['CF', `${purchase.Company.fiscal_Code || 'N/A'}`]
+    ];
   
+    doc.autoTable({
+      startY: doc.autoTable.previous.finalY + 15,
+      body: companyInfo,
+      headStyles: {
+        fillColor: [255, 0, 0], // Colore di sfondo rosso per l'intestazione
+        textColor: [255, 255, 255], // Colore del testo bianco
+        fontStyle: 'bold'
+      },
+      styles: {
+        cellPadding: 0.5,
+        fontSize: 10
+      },
+      columnStyles: {
+        0: { cellWidth: 50 },
+        1: { cellWidth: 120 }
+      },
+      margin: { left: 105, top: 10 }
+    });
+    
+    // Tabelle delle righe d'ordine
+    doc.text("Righe d'ordine", 10, doc.autoTable.previous.finalY + 10);
+    doc.autoTable({
+      startY: doc.autoTable.previous.finalY + 15,
+      head: [['Description', 'Category', 'Subcategory', 'Unit Price', 'Qty', 'Total Amount', 'Currency']],
+      body: purchase.PurchaseRows.map(row => [
+        row.description,
+        row.category,
+        row.subcategory,
+        formatCurrency(row.unit_price),
+        row.quantity,
+        formatCurrency(row.unit_price * row.quantity),
+        purchase.currency // Aggiungi la valuta per ogni riga
+      ]),
+      columnStyles: {
+        0: { cellWidth: 55 }, // Riduci la larghezza della colonna "Description"
+        1: { cellWidth: 20 }, // Larghezza della colonna "Category"
+        2: { cellWidth: 25 }, // Larghezza della colonna "Subcategory"
+        3: { cellWidth: 22 }, // Aumenta la larghezza della colonna "Unit Price"
+        4: { cellWidth: 10 }, // Larghezza della colonna "Qty"
+        5: { cellWidth: 30 }, // Larghezza della colonna "Total Amount"
+        6: { cellWidth: 20 }  // Riduci la larghezza della colonna "Currency"
+      },
+      headStyles: {
+        fillColor: [255, 0, 0], // Colore di sfondo rosso per l'intestazione
+        textColor: [255, 255, 255], // Colore del testo bianco
+        fontStyle: 'bold'
+      },
+      margin: { top: 10 }
+    });
+    
+    // Aggiungi la tabella con i totali e altre informazioni
+    const summaryDetails = [
+      ['Total Amount', `${formatCurrency(purchase.total)}`],
+      ['IVA', `${formatCurrency(purchase.VAT || 0)}`],
+      ['Approved by', 'Stefano Ierace']
+      
+    ];
+  
+    doc.autoTable({
+      startY: doc.autoTable.previous.finalY + 15,
+      body: summaryDetails,
+      headStyles: {
+        fillColor: [255, 0, 0], // Colore di sfondo rosso per l'intestazione
+        textColor: [255, 255, 255], // Colore del testo bianco
+        fontStyle: 'bold'
+      },
+      styles: {
+        cellPadding: 1,
+        fontSize: 10
+      },
+      columnStyles: {
+        0: { cellWidth: 60 },
+        1: { cellWidth: 100 }
+      },
+      margin: { top: 10 }
+    });
+    
+    // Aggiungi il piè di pagina
+    const footerText = [
+      "Sede Legale e Operativa c/o Kilometro Rosso (Gate 4) - Via Stezzano, 87 24126 Bergamo",
+      "Tel. +39 035 0690366 - C.F. 95160560165 - P.I. 03388700167",
+      "REA BG 3713330 - Iscrizione CCIAA di BG n° 03388700167 - SDI J6URRTW",
+      "PEC: intellimech@legalmail.it - Amministrazione: m.innovati@confindustriabergamo.it"
+    ];
+  
+    doc.setFontSize(8);
+    doc.setFont('Helvetica', 'normal');
+    
+    const pageHeight = doc.internal.pageSize.height;
+    let yOffset = pageHeight - 20; // Imposta un margine dal fondo
+    
+    footerText.forEach(line => {
+      doc.text(line, 10, yOffset);
+      yOffset += 3; // Spazio tra le righe del piè di pagina
+    });
+    
     // Salva il PDF
     doc.save("fattura.pdf");
   };

@@ -10,6 +10,7 @@ export default function PurchaseCreateForm() {
   const [errorMessages, setErrorMessages] = useState('');
   const [quotationRequests, setQuotationRequests] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [description, setDescription] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
   const [users, setUsers] = useState([]);
   const [technicalAreas, setTechnicalAreas] = useState([]);
@@ -21,7 +22,7 @@ export default function PurchaseCreateForm() {
   const [products, setProducts] = useState([{ category: '', subcategory: '', unit_price: '', quantity: 1, description: '', subcategories: [] }]);
   const [currency, setCurrency] = useState('EUR');
   const currencies = ['EUR', 'USD', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'SEK', 'NZD'];
-  const paymentMethods = ['Bank Transfer', 'Cash', 'Credit Card Floreani', 'Credit Card Fasanotti,', 'Credit Card Ierace', 'Paypal']; // Payment methods options
+  const paymentMethods = ['Bank Transfer', 'Cash', 'Credit Card Floreani', 'Credit Card Fasanotti', 'Credit Card Ierace', 'Paypal']; // Payment methods options
  
   const handleTeamChange = setSelectedTeam;
   const handleCompanyChange = setSelectedCompany;
@@ -77,7 +78,7 @@ export default function PurchaseCreateForm() {
     }
   };  
 
-  const addProduct = () => setProducts([...products, { category: '', subcategory: '', unit_price: '', quantity: 1, description: '', subcategories: [] }]);
+  const addProduct = () => setProducts([...products, { category: '', subcategory: '',  unit_price: '', quantity: 1, description: '', subcategories: [] }]);
   const removeProduct = (index) => setProducts(products.filter((_, i) => i !== index));
   const updateProduct = (index, updatedProduct) => setProducts(products.map((product, i) => (i === index ? updatedProduct : product)));
 

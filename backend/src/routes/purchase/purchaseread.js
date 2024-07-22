@@ -30,7 +30,7 @@ router.get('/read', (req, res) => {
       include: [
         {
           model: sequelize.models.PurchaseRow,
-          attributes: ["id_purchaserow", "name", "category", "subcategory", "unit_price", "quantity", "totalprice"],
+          attributes: ["id_purchaserow", "name", "description" ,"category", "subcategory", "unit_price", "quantity", "totalprice"],
           include: [
             {
               model: sequelize.models.Category,
@@ -79,7 +79,7 @@ router.get('/read/:id', (req, res) => {
       include: [
         {
           model: sequelize.models.PurchaseRow,
-          attributes: ["id_purchaserow", "name", "category", "subcategory", "unit_price", "quantity", "totalprice"],
+          attributes: ["id_purchaserow", "name", "description" , "category", "subcategory", "unit_price", "quantity", "totalprice"],
           include: [
             {
               model: sequelize.models.Category,

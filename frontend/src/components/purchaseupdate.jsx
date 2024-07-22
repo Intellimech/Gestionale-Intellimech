@@ -249,15 +249,40 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
                     {purchase?.PurchaseRows?.map((product) => (
                       <tr key={product.id_product}>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{product.name}</td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{product.category || 'N/A'}</td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{product.subcategory || 'N/A'}</td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                        <Select
+                          id="category"
+                          name="category"
+                          value={{ value: product.category, label: categories.find(c => c.id_category === product.category)?.name }}
+                          onChange={(option) => {
+                            handleCategoryChange({ target: { value: option.value } });
+                            onChange({ ...product, category: option.value });
+                          }}
+                          options={categories.map(c => ({ value: c.id_category, label: c.name }))}
+                          className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:text-sm sm:leading-6"
+                          primaryColor='red'
+                        />
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                        <Select
+                          id="subcategory"
+                          name="subcategory"
+                          value={{ value: product.subcategory, label: subcategories.find(s => s.id_subcategory === product.subcategory)?.name }}
+                          onChange={(option) => onChange({ ...product, subcategory: option.value })}
+                          options={subcategories.map(s => ({ value: s.id_subcategory, label: s.name }))}
+                          className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:text-sm sm:leading-6"
+                          isDisabled={subcategories.length === 0}
+                          primaryColor='red'
+                        />
+                        </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           <input
                             type="text"
                             name={`PurchaseRows[${product.id_product}].description`}
+                            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:text-sm sm:leading-6"s
                             value={formData?.PurchaseRows.find(row => row.id_product === product.id_product)?.description || ''}
                             onChange={(e) => onChange({ ...product, description: e.target.value })}
-                            className="text-sm text-gray-500"
+                            
                           />
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
@@ -275,20 +300,22 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
                           />
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          <input
-                            type="number"
-                            step="0.01"
-                            name={`PurchaseRows[${product.id_product}].unit_price`}
-                            value={formData?.PurchaseRows.find(row => row.id_product === product.id_product)?.unit_price || ''}
-                            className="text-sm text-gray-500"
-                          />
+                        <input
+                          id="quantity"
+                          name="quantity"
+                          type="number"
+                          min={1}
+                          value={product.quantity || 1}
+                          onChange={(e) => onChange({ ...product, quantity: e.target.value })}
+                          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:max-w-xs sm:text-sm"
+                        />
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           <input
                             type="number"
                             name={`PurchaseRows[${product.id_product}].VAT`}
                             value={formData?.PurchaseRows.find(row => row.id_product === product.id_product)?.VAT || ''}
-                            className="text-sm text-gray-500"
+                            className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:text-sm sm:leading-6"
                           />
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">

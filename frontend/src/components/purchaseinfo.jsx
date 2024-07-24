@@ -111,20 +111,20 @@ export default function Example({ purchase: initialPurchase }) {
     const orderDetails = [
       ['N° Ordine di Acquisto', `${purchase.name}`],
       ['Data', `${formatDate(purchase.createdAt)}`],
-      ['Riferimento Intellimech', `${purchase.Company.name}`],
+      ['Riferimento Intellimech', `${purchase?.createdByUser?.name.slice(0, 2).toUpperCase() + purchase?.createdByUser?.surname.slice(0, 2).toUpperCase() + " (" + purchase?.createdByUser.name + " " + purchase?.createdByUser.surname + ")"}`],
       ['Metodo di Pagamento', `${purchase.payment_method}`],
       ['Dettagli', `${purchase.details || 'N/A'}`], // Aggiungi i dettagli se disponibili
       ['Commessa', `${purchase.jobNumber || 'N/A'}`] // Aggiungi il numero di commessa se disponibile
     ];
     
-      // Titolo centrato a 30 mm dal margine sinistro
+    // Titolo centrato a 30 mm dal margine sinistro
     const marginLeft = -100; // Margine sinistro in mm
     const pageWidth = doc.internal.pageSize.width;
     const title = "Ordine d'Acquisto";
     doc.setFontSize(16);
     doc.setFont('Helvetica', 'bold');
     const titleWidth = doc.getTextWidth(title);
-    const titleX = marginLeft + (pageWidth - marginLeft - titleWidth) / 2;
+    const titleX = marginLeft;
     doc.text(title, titleX, 35);
       
     // Dati dell'ordine
@@ -213,9 +213,8 @@ export default function Example({ purchase: initialPurchase }) {
     // Aggiungi la tabella con i totali e altre informazioni
     const summaryDetails = [
       ['Total Amount', `${formatCurrency(purchase.total)}`],
-      ['IVA', `${formatCurrency(purchase.VAT || 0)}`],
+      ['IVA', purchase.VAT + "%" || "22%"],
       ['Approved by', 'Stefano Ierace']
-      
     ];
   
     doc.autoTable({
@@ -259,6 +258,7 @@ export default function Example({ purchase: initialPurchase }) {
     // Salva il PDF
     doc.save("fattura.pdf");
   };
+  
   
 
   const handleEditClick = () => {
@@ -395,150 +395,132 @@ export default function Example({ purchase: initialPurchase }) {
       </div>
       <div className="mt-6">
         <dl className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6">
-          <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-gray-900">Codice Ordine</dt>
-            {
-              <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{purchase?.name}</dd>
-            }
-          </div>
-          <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-gray-900">Fornitore</dt>
-            {isEditing ? (
-              <input
-                type="text"
-                name="Company.name"
-                value={formData?.Company?.name || ''}
-                onChange={handleInputChange}
-                className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2"
-              />
-            ) : (
-              <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{purchase?.Company.name}</dd>
-            )}
-          </div>
-        
-          <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-6 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-gray-900">Righe d'ordine</dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2"></dd>
-            <table className="min-w-full divide-y divide-gray-300">
-              <thead>
-                <tr>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    Codice Prodotto
-                  </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    Descrizione
-                  </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    Quantità
-                  </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    Prezzo Unitario
-                  </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    IVA
-                  </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    Totale
-                  </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    Stato
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200 bg-white">
-                {purchase?.PurchaseRows?.map((product) => (
-                  <tr key={product.id_product}>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      {
-                        product.name
-                      }
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      {isEditing ? (
-                        <input
-                          type="text"
-                          name={`PurchaseRows[${product.id_product}].description`}
-                          value={formData?.PurchaseRows.find(row => row.id_product === product.id_product)?.description || ''}
-                          onChange={handleInputChange}
-                          className="text-sm text-gray-500"
-                        />
-                      ) : (
-                        product.description
-                      )}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      {isEditing ? (
-                        <input
-                          type="number"
-                          name={`PurchaseRows[${product.id_product}].quantity`}
-                          value={formData?.PurchaseRows.find(row => row.id_product === product.id_product)?.quantity || ''}
-                          onChange={handleInputChange}
-                          className="text-sm text-gray-500"
-                        />
-                      ) : (
-                        product.quantity
-                      )}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      {isEditing ? (
-                        <input
-                          type="number"
-                          step="0.01"
-                          name={`PurchaseRows[${product.id_product}].unit_price`}
-                          value={formData?.PurchaseRows.find(row => row.id_product === product.id_product)?.unit_price || ''}
-                          onChange={handleInputChange}
-                          className="text-sm text-gray-500"
-                        />
-                      ) : (
-                        formatCurrency(product.unit_price)
-                      )}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      {isEditing ? (
-                        <input
-                          type="number"
-                          name={`PurchaseRows[${product.id_product}].VAT`}
-                          value={formData?.PurchaseRows.find(row => row.id_product === product.id_product)?.VAT || ''}
-                          onChange={handleInputChange}
-                          className="text-sm text-gray-500"
-                        />
-                      ) : (
-                        product.VAT
-                      )}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      {formatCurrency(product.unit_price * product.quantity)}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      {product.status}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          
-          <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-3">
-            <dt className="text-sm font-medium leading-6 text-gray-900">Ordine di Acquisto</dt>
-            <dd className="mt-2 text-sm text-gray-900">
-              <ul role="list" className="divide-y divide-gray-100 rounded-md border border-gray-200">
-                <li className="flex items-center justify-between py-4 pl-4 pr-5 text-sm leading-6">
-                  <div className="flex w-0 flex-1 items-center">
-                    <PaperClipIcon className="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
-                    <div className="ml-4 flex min-w-0 flex-1 gap-2">
-                      <span className="truncate font-medium">{purchase.name}.pdf</span>
-                      <span className="flex-shrink-0 text-gray-400">2.4mb</span>
+                    <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
+                        <dt className="text-sm font-medium leading-6 text-gray-900">Codice Ordine</dt>
+                        <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{purchase?.name}</dd>
                     </div>
-                  </div>
-                  <div className="ml-4 flex-shrink-0">
-                    <button onClick={handleDownloadPdf} className="font-medium text-red-600 hover:text-red-500">
-                      Download
-                    </button>
-                  </div>
-                </li>
-              </ul>
-            </dd>
-          </div>
+                    <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
+                        <dt className="text-sm font-medium leading-6 text-gray-900">Fornitore</dt>
+                        <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{purchase?.Company.name}</dd>
+                    </div>
+                    <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
+                        <dt className="text-sm font-medium leading-6 text-gray-900">Data di creazione</dt>
+                        <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{formatDate(purchase?.createdAt)}</dd>
+                    </div>
+                    <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
+                        <dt className="text-sm font-medium leading-6 text-gray-900">Totale IVA Esclusa</dt>
+                        <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{formatCurrency(purchase?.total)}</dd>
+                    </div>
+                    <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
+                        <dt className="text-sm font-medium leading-6 text-gray-900">Modalita di Pagamento</dt>
+                        <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{purchase?.payment_method}</dd>
+                    </div>
+                    <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
+                        <dt className="text-sm font-medium leading-6 text-gray-900">Riferimento Interno</dt>
+                        <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{purchase?.createdByUser?.name.slice(0, 2).toUpperCase() + purchase?.createdByUser?.surname.slice(0, 2).toUpperCase() + " (" + purchase?.createdByUser.name + " " + purchase?.createdByUser.surname + ")"}</dd>
+                    </div>
+                    <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-6 sm:px-0">
+                        <dt className="text-sm font-medium leading-6 text-gray-900">Righe d'ordine</dt>
+                        <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2"></dd>
+                        <table className="min-w-full divide-y divide-gray-300">
+                            <thead>
+                                <tr>
+                                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        Codice Prodotto
+                                    </th>
+                                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        Descrizione
+                                    </th>
+                                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        Quantità
+                                    </th>
+                                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        Prezzo Unitario
+                                    </th>
+                                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        IVA
+                                    </th>
+                                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        Totale
+                                    </th>
+                                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        Stato
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-gray-200 bg-white">
+                                {purchase?.PurchaseRows?.map((product) => (
+                                    <tr key={product.id_product}>
+                                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                            {product.name}
+                                        </td>
+                                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                            {product.description}
+                                        </td>
+                                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                            {product.quantity}
+                                        </td>
+                                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                            {formatCurrency(product.unit_price)}
+                                        </td>
+                                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                            {product.VAT}
+                                        </td>
+                                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                            {formatCurrency(product.unit_price * product.quantity)}
+                                        </td>
+                                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                            {product.status}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-3">
+                        <dt className="text-sm font-medium leading-6 text-gray-900">Ordine di Acquisto</dt>
+                        <dd className="mt-2 text-sm text-gray-900">
+                            <ul role="list" className="divide-y divide-gray-100 rounded-md border border-gray-200">
+                                <li className="flex items-center justify-between py-4 pl-4 pr-5 text-sm leading-6">
+                                    <div className="flex w-0 flex-1 items-center">
+                                        <PaperClipIcon className="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
+                                        <div className="ml-4 flex min-w-0 flex-1 gap-2">
+                                            <span className="truncate font-medium">{purchase?.name}.pdf</span>
+                                            <span className="flex-shrink-0 text-gray-400">2.4mb</span>
+                                        </div>
+                                    </div>
+                                    <div className="ml-4 flex-shrink-0">
+                                        <a onClick={handleDownloadPdf} className="font-medium text-red-600 hover:text-red-500">
+                                            Download
+                                        </a>
+                                    </div>
+                                </li>
+                            </ul>
+                        </dd>
+                    </div>
+                    <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-3">
+                        <dt className="text-sm font-medium leading-6 text-gray-900">Fattur{purchase?.invoices?.length > 1 ? "e" : "a"}</dt>
+                        <dd className="mt-2 text-sm text-gray-900">
+                            <ul role="list" className="divide-y divide-gray-100 rounded-md border border-gray-200">
+                                {purchase?.invoices?.map((item) => (
+                                    <li key={item.id} className="flex items-center justify-between py-4 pl-4 pr-5 text-sm leading-6">
+                                        <div className="flex w-0 flex-1 items-center">
+                                            <PaperClipIcon className="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
+                                            <div className="ml-4 flex min-w-0 flex-1 gap-2">
+                                                <span className="truncate font-medium">{item.number}.pdf</span>
+                                                <span className="flex-shrink-0 text-gray-400">2.4mb</span>
+                                            </div>
+                                        </div>
+                                        <div className="ml-4 flex-shrink-0">
+                                            <a href="#" className="font-medium text-red-600 hover:text-red-500">
+                                                Download
+                                            </a>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                        </dd>
+                    </div>
         </dl>
       </div>
     </div>

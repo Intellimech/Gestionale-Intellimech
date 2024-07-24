@@ -423,7 +423,7 @@ export default function Example({ purchase: initialPurchase }) {
                         <dt className="text-sm font-medium leading-6 text-gray-900">Riferimento Interno</dt>
                         <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{purchase?.createdByUser?.name.slice(0, 2).toUpperCase() + purchase?.createdByUser?.surname.slice(0, 2).toUpperCase() + " (" + purchase?.createdByUser.name + " " + purchase?.createdByUser.surname + ")"}</dd>
                     </div>
-                    <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-6 sm:px-0">
+                    <div className="border-t border-gray-100 px-4 py-6 sm:col-span-2 lg:col-span-6 sm:px-0">
                         <dt className="text-sm font-medium leading-6 text-gray-900">Righe d'ordine</dt>
                         <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2"></dd>
                         <table className="min-w-full divide-y divide-gray-300">

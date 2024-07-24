@@ -99,7 +99,6 @@ export default function Example({ purchase: initialPurchase }) {
       console.error('Error fetching subcategory data:', error);
     }
   };  
-  
   const handleDownloadPdf = () => {
     const doc = new jsPDF();
     
@@ -148,7 +147,8 @@ export default function Example({ purchase: initialPurchase }) {
         0: { cellWidth: 50 }, 
         1: { cellWidth: 120 } 
       },
-      margin: { top: 10 }
+      margin: { top: 10 },
+      alternateRowStyles: { fillColor: [255, 255, 255] } 
     });
     
     // Informazioni della compagnia
@@ -180,34 +180,38 @@ export default function Example({ purchase: initialPurchase }) {
     });
     
     // Tabelle delle righe d'ordine
+    const rows = purchase.PurchaseRows.map((row, index) => [
+      (index + 1) * 10, // Numero della riga incrementale (10, 20, 30, ecc.)
+      row.description,
+      row.Category.name, // Mostra il nome della categoria
+      row.Subcategory.name, // Mostra il nome della sottocategoria
+      row.unit_price,
+      row.quantity,
+      row.unit_price * row.quantity,
+      purchase.currency // Aggiungi la valuta per ogni riga
+    ]);
+  
     doc.text("Righe d'ordine", 10, doc.autoTable.previous.finalY + 10);
     doc.autoTable({
       startY: doc.autoTable.previous.finalY + 15,
-      head: [['Description', 'Category', 'Subcategory', 'Unit Price', 'Qty', 'Total Amount', 'Currency']],
-      body: purchase.PurchaseRows.map(row => [
-        row.description,
-        row.category,
-        row.subcategory,
-        row.unit_price,
-        row.quantity,
-        row.unit_price * row.quantity,
-        purchase.currency // Aggiungi la valuta per ogni riga
-      ]),
+      head: [['#', 'Description', 'Category', 'Subcategory', 'Unit Price', 'Qty', 'Total Amount', 'Currency']],
+      body: rows,
       columnStyles: {
-        0: { cellWidth: 55 }, // Riduci la larghezza della colonna "Description"
-        1: { cellWidth: 20 }, // Larghezza della colonna "Category"
-        2: { cellWidth: 25 }, // Larghezza della colonna "Subcategory"
-        3: { cellWidth: 22 }, // Aumenta la larghezza della colonna "Unit Price"
-        4: { cellWidth: 10 }, // Larghezza della colonna "Qty"
-        5: { cellWidth: 30 }, // Larghezza della colonna "Total Amount"
-        6: { cellWidth: 20 }  // Riduci la larghezza della colonna "Currency"
+        0: { cellWidth: 10 }, // Larghezza della colonna "Row Number"
+        1: { cellWidth: 55 }, // Riduci la larghezza della colonna "Description"
+        2: { cellWidth: 30 }, // Larghezza della colonna "Category"
+        3: { cellWidth: 30 }, // Larghezza della colonna "Subcategory"
+        4: { cellWidth: 22 }, // Aumenta la larghezza della colonna "Unit Price"
+        5: { cellWidth: 10 }, // Larghezza della colonna "Qty"
+        6: { cellWidth: 20 }, // Larghezza della colonna "Total Amount"
+        7: { cellWidth: 20}  // Riduci la larghezza della colonna "Currency"
       },
       headStyles: {
         fillColor: [255, 0, 0], // Colore di sfondo rosso per l'intestazione
         textColor: [255, 255, 255], // Colore del testo bianco
         fontStyle: 'bold'
       },
-      margin: { top: 10 }
+      margin: { left: 10, top: 10 }
     });
     
     // Aggiungi la tabella con i totali e altre informazioni
@@ -233,7 +237,7 @@ export default function Example({ purchase: initialPurchase }) {
         0: { cellWidth: 60 },
         1: { cellWidth: 100 }
       },
-      margin: { top: 10 }
+      margin: { left: 10, top: 10 }
     });
     
     // Aggiungi il piè di pagina
@@ -255,8 +259,8 @@ export default function Example({ purchase: initialPurchase }) {
       yOffset += 3; // Spazio tra le righe del piè di pagina
     });
     
-    // Salva il PDF
-    doc.save("fattura.pdf");
+    const safeFileName = `${purchase.name.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`; // Sostituisci i caratteri non validi
+    doc.save(safeFileName);
   };
   
   

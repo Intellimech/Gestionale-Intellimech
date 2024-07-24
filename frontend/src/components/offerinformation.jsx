@@ -67,12 +67,46 @@ export default function Example({ offer }) {
             margin: { top: 10 },
             alternateRowStyles: { fillColor: [255, 255, 255] } 
         });
-      
-        
-        const safeFileName =  `${offer.name}.pdf`; 
-        doc.save(safeFileName);
-    };
+
+        const descriptionTitle = "Obiettivo";
+        const descriptionText = `
+            Il progetto nasce dalla necessità da parte di Co.Mac di verticalizzare, in una soluzione applicabile all’interno delle proprie linee di confezionamento fusti.
+            `;
     
+        // Imposta il titolo e il testo
+        doc.setFontSize(10);
+        doc.setFont('Helvetica', 'bold');
+        doc.text(descriptionTitle, 15, 85);
+    
+        doc.setFontSize(10);
+        doc.setFont('Helvetica', 'normal');
+        doc.text(descriptionText, 15, 90, {
+            maxWidth: 180 // Imposta una larghezza massima per il testo
+        });
+
+        const descriptionTitle2 = "Offerta Tecnica";
+        const descriptionText2 = `
+        Il sistema deve essere in grado di determinare il verso dei fusti (fusto rivolto verso l’alto, fusto rivolto verso il basso) che passano sotto al sensore. Il sensore comunicherà con un PC industriale tramite un PLC di acquisizione dati. Il PC industriale processerà il segnale per discriminare i fusti e sarà a sua volta collegato al PLC della linea di confezionamento fusti.
+        Il sistema deve essere in grado di analizzare le immagini acquisite tramite video camera e discriminare tra fusti con capsula e fusti senza capsula e tra fusti con collare e fusti senza collare. Anche il sistema di visione sarà collegato ad un PC industriale; il PC Industriale processerà le immagini per discriminare la presenza delle capsule e sarà a sua volta collegato al PLC della linea di confezionamento fusti.
+        Il sistema deve essere in grado di analizzare le immagini acquisite tramite video camera e determinare la tipologia di fitting presente sul fusto; le tipologie possibili sono in tutto 7 e quindi la discriminazione terrà in considerazione tale variabilità. Il sistema di visione sarà il medesimo previsto per l’assolvimento della funzionalità A2.
+
+        `;
+
+        // Imposta il titolo e il testo
+        doc.setFontSize(10);
+        doc.setFont('Helvetica', 'bold');
+        doc.text(descriptionTitle2, 15, 110);
+
+        doc.setFontSize(10);
+        doc.setFont('Helvetica', 'normal');
+        doc.text(descriptionText2, 15, 115, {
+            maxWidth: 180 // Imposta una larghezza massima per il testo
+        });
+            
+            const safeFileName =  `${offer.name}.pdf`; 
+            doc.save(safeFileName);
+        };
+        
     
   return (
     <div>

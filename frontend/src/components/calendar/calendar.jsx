@@ -5,6 +5,8 @@ import {
 } from '@heroicons/react/20/solid';
 import { startOfMonth, endOfMonth, eachDayOfInterval, isToday, format, addDays, subDays } from 'date-fns';
 import CalendarPopup from './calendarpopup';
+import axios from 'axios';
+import Cookies from 'js-cookie';
 
 function generateCalendarArrayWithLocations(targetDate, locations) {
   const startDate = startOfMonth(targetDate);
@@ -68,9 +70,9 @@ function generateCalendarArrayWithLocations(targetDate, locations) {
     if (dayLocations.length > 0) {
       dayLocations.forEach(loc => {
         if (loc.period === 'morning') {
-          day.morningLocation = loc.name;
+          day.morningLocation = loc.location;
         } else if (loc.period === 'afternoon') {
-          day.afternoonLocation = loc.name;
+          day.afternoonLocation = loc.location;
         }
       });
     }
@@ -89,15 +91,27 @@ export default function Calendar() {
     async function fetchLocations() {
       try {
         // Simulating fetching locations from API
-        setLocations([
-          { id: 1, name: 'Permesso', date: '2024-06-24', period: 'morning' },
-          { id: 2, name: 'Fuori Ufficio', date: '2024-06-24', period: 'afternoon' },
-          { id: 3, name: 'Ferie', date: '2024-06-25', period: 'morning' },
-          { id: 4, name: 'Trasferta', date: '2024-06-25', period: 'afternoon' },
-          { id: 5, name: 'SmartWorking', date: '2024-06-27', period: 'morning' },
-          { id: 6, name: 'Malattia', date: '2024-06-27', period: 'afternoon' },
-          { id: 7, name: 'Presenza', date: '2024-06-26', period: 'morning' },
-        ]);
+        // setLocations([
+        //   { id: 1, location: 'Permesso', date: '2024-06-24', period: 'morning' },
+        //   { id: 2, location: 'Fuori Ufficio', date: '2024-06-24', period: 'afternoon' },
+        //   { id: 3, location: 'Ferie', date: '2024-06-25', period: 'morning' },
+        //   { id: 4, location: 'Trasferta', date: '2024-06-25', period: 'afternoon' },
+        //   { id: 5, location: 'SmartWorking', date: '2024-06-27', period: 'morning' },
+        //   { id: 6, location: 'Malattia', date: '2024-06-27', period: 'afternoon' },
+        //   { id: 7, location: 'Presenza', date: '2024-06-26', period: 'morning' },
+        // ]);
+        axios.get('http://localhost:3000/calendar/read', {
+          headers: {
+            Authorization: `Bearer ${Cookies.get('token')}`
+          }
+        })
+          .then(response => {
+            console.log('Locations:', response.data.calendars);
+            setLocations(response.data.calendars);
+          })
+          .catch(error => {
+            console.error('Error fetching locations:', error);
+          });
       } catch (error) {
         console.error('Error fetching locations:', error);
       }
@@ -116,8 +130,8 @@ export default function Calendar() {
     console.log('Clicked date:', date);
     //check is the morning or afternoon location is already set
     //if morning or afternoon location is already set, then show a popup to edit the location else show a popup to add location
-    setAddLocationPopupOpen(true);
     setSelectedDate(date);
+    setAddLocationPopupOpen(true);
   };
 
   function classNames(...classes) {

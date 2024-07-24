@@ -29,6 +29,7 @@ import Purchase from  './components/purchase';
 import PurchaseInfo from './components/purchaseinfo';
 
 import UsersTable from './components/userstable';
+import EmployeesConsultant from './components/peopletable';
 
 const Logo = './assets/intellimech.svg'
 
@@ -63,6 +64,7 @@ const App = () => {
               <Route path="suppliers" element={<PrivateRoute element={<Company companytype={"Suppliers"}/>} />} />
             </Route>
             <Route path="users" element={<PrivateRoute element={<UsersTable />} />} />
+            <Route path="employees-consultants" element={<PrivateRoute element={<EmployeesConsultant />} />} />
           </Route>
           <Route path="*" element={<Lost />} />
           <Route path="/unauthorized" element={<Unauthorized />} />

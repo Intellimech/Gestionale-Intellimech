@@ -65,9 +65,12 @@ const Login = () => {
     <div className="flex items-center justify-center h-screen">
       <div className="bg-white p-8 rounded-md w-full max-w-md">
         <img className="mx-auto h-10 w-auto mb-6" src={Logo} alt="Your Company" />
-        <h2 className="text-center text-xl font-bold leading-9 text-gray-900 mb-6">
+        <h2 className="text-center text-xl font-bold leading-9 text-gray-900 mb-2">
           Sign in to your account
         </h2>
+        <h3 className="text-center text-sm leading-5 text-gray-600 mb-6">
+          Enter your email and password to access your account
+        </h3>
 
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div>

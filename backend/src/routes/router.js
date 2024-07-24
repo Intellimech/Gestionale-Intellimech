@@ -37,6 +37,7 @@ import reporting from './reporting/reportingrouter.js';
 import task from './tasks/taskrouter.js';
 //import product from './product/productrouter.js';
 import notification from './notification/notificationrouter.js';
+import calendar from './calendar/calendarrouter.js';
  
 router.use((req, res, next) => {
     // Log the request
@@ -95,6 +96,7 @@ router.use('/', reporting);
 router.use('/', task);
 //router.use('/', product);
 router.use('/', notification);
+router.use('/', calendar);
  
  
 export default router;

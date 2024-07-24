@@ -23,6 +23,7 @@ import InvoiceLine from './invoicelines.js';
 import Notification from './notification.js';
 import Purchase from './purchase.js';
 import PurchaseRow from './purchaserow.js';
+import Calendar from './calendar.js';
 
 // Define associations
 User.belongsTo(Role, { foreignKey: 'role' });
@@ -184,6 +185,11 @@ Category.hasMany(PurchaseRow, { foreignKey: 'category' });
 PurchaseRow.belongsTo(Subcategory, { foreignKey: 'subcategory' });
 Subcategory.hasMany(PurchaseRow, { foreignKey: 'subcategory' });
 
+Calendar.belongsTo(User, { foreignKey: 'owner', as: 'ownerUser' });
+Calendar.belongsTo(User, { foreignKey: 'createdBy', as: 'createdByUser' });
+Calendar.belongsTo(User, { foreignKey: 'updatedBy', as: 'updatedByUser' });
+Calendar.belongsTo(User, { foreignKey: 'deletedBy', as: 'deletedByUser' });
+
 export default {
     User,
     Role,
@@ -209,5 +215,6 @@ export default {
     InvoiceLine,
     Notification,
     Purchase,
-    PurchaseRow
+    PurchaseRow,
+    Calendar
   };

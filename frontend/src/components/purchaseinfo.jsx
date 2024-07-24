@@ -147,7 +147,8 @@ export default function Example({ purchase: initialPurchase }) {
         0: { cellWidth: 50 }, 
         1: { cellWidth: 120 } 
       },
-      margin: { top: 10 }
+      margin: { top: 10 },
+      alternateRowStyles: { fillColor: [255, 255, 255] } 
     });
     
     // Informazioni della compagnia

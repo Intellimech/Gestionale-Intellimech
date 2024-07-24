@@ -1,6 +1,79 @@
 import { PaperClipIcon } from '@heroicons/react/20/solid'
+import { jsPDF } from 'jspdf';
+import 'jspdf-autotable';
 
 export default function Example({ offer }) {
+
+    const handleDownloadPdf = () => {
+        const doc = new jsPDF();
+    
+        // Dati dell'intestazione
+        const headerText = `
+    cid:60e23365-6651-4074-b933-e737d4c5eacf@eurprd03.prod.outlook.com
+    CONSORZIO INTELLIMECH
+    c/o Kilomentro Rosso Innovation District - Via Stezzano, 87 24126 Bergamo
+    Tel. +39 035 0690366 - C.C.I.A.A. di BG n. 03388700167 C.F. 95160560165
+    REA N. BG 3713330 - Codice Identificativo SDI: J6URRTW
+    PEC: intellimech@legalmail.it - www.intellimech.it
+        `;
+        doc.setFontSize(6); // Riduci la dimensione del font dell'intestazione
+        doc.setFont('Helvetica', 'normal');
+    
+        // Calcola la larghezza della pagina e la larghezza del testo
+        const pageWidth = doc.internal.pageSize.width;
+    
+        doc.text(headerText, 120, 10);
+    
+        // Dati dell'offerta
+        const offerDetails = [
+            ['Offerta', 'OFF24_00001'],
+            ['Revisione', 'R0'],
+            ['Data', '10/03/2024'],
+            ['Cliente', 'Co.Mac. SRL']
+        ];
+    
+        // Titolo centrato a 30 mm dal margine sinistro
+        const marginLeft = 10; // Margine sinistro in mm
+        const title = "Dettagli dell'Offerta";
+        doc.setFontSize(12); // Riduci la dimensione del font del titolo
+        doc.setFont('Helvetica', 'bold');
+        const titleWidth = doc.getTextWidth(title);
+        doc.text(title, 15, 50);
+    
+        // Dati dell'offerta
+        doc.setFontSize(10);
+        doc.setFont('Helvetica', 'normal');
+        
+        // Usa autoTable per creare una tabella orizzontale
+        
+    // Usa autoTable per creare una tabella orizzontale
+        doc.autoTable({
+            startY: 55,
+            body: offerDetails,
+            headStyles: {
+            fillColor: [255, 0, 0], // Colore di sfondo rosso per l'intestazione
+            textColor: [255, 255, 255], // Colore del testo bianco
+            fontStyle: 'bold'
+            },
+            styles: {
+            cellPadding: 0.5, // Riduci il padding delle celle per meno spazio tra le righe
+            fontSize: 10, // Riduci la dimensione del font per più spazio
+            fillColor: [255, 255, 255] 
+            },
+            columnStyles: {
+            0: { cellWidth: 50 }, 
+            1: { cellWidth: 120 } 
+            },
+            margin: { top: 10 },
+            alternateRowStyles: { fillColor: [255, 255, 255] } 
+        });
+      
+        
+        const safeFileName =  `${offer.name}.pdf`; 
+        doc.save(safeFileName);
+    };
+    
+    
   return (
     <div>
       <div className="px-4 sm:px-0">
@@ -99,9 +172,9 @@ export default function Example({ offer }) {
                         </div>
                         </div>
                         <div className="ml-4 flex-shrink-0">
-                        <a href="#" className="font-medium text-red-600 hover:text-red-500">
-                            Download
-                        </a>
+                            <button onClick={handleDownloadPdf} className="font-medium text-red-600 hover:text-red-500">
+                                Download
+                            </button>
                         </div>
                     </li>
                     </ul>

@@ -65,7 +65,7 @@ export default function PurchaseRowInput({
       </td>
 
       <td className="px-4 py-1 whitespace-nowrap">
-        <label htmlFor={`description-${index}`} className="block text-sm font-medium text-gray-700">
+        <label htmlFor={`description-${index}`} className="block text-sm font-medium text-gray-700 ">
           Descrizione
         </label>
         <textarea
@@ -84,6 +84,7 @@ export default function PurchaseRowInput({
         </label>
         <input
           type="number"
+          placeholder='0.00'
           id={`unit_price-${index}`}
           name={`unit_price-${index}`}
           value={product.unit_price}

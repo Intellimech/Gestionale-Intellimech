@@ -74,196 +74,238 @@ export default function Example({ purchase: initialPurchase }) {
   
       fetchData();
 
-  }, [id, initialPurchase]);
+    }, [id, initialPurchase]);
 
-  const formatCurrency = (amount) => {
-    return `${amount} ${purchase?.currency}`;
-  };
+    const formatCurrency = (amount) => {
+      return `${amount} ${purchase?.currency}`;
+    };
 
-  const formatDate = (date) => {
-    return new Date(date).toLocaleDateString();
-  };
+    const formatDate = (date) => {
+      return new Date(date).toLocaleDateString();
+    };
 
-  
-  const handleCategoryChange = async (event, index) => {
-    const token = Cookies.get('token');
-    const updatedProducts = [...products];
-    updatedProducts[index].category = event.target.value;
-  
-    try {
-      const { data: { subcategories } } = await axios.get(`${process.env.REACT_APP_API_URL}/subcategory/read/${event.target.value}`, { headers: { authorization: `Bearer ${token}` } });
-      updatedProducts[index].subcategories = subcategories;
-      updatedProducts[index].subcategory = '';
-      setProducts(updatedProducts);
-    } catch (error) {
-      console.error('Error fetching subcategory data:', error);
-    }
-  };  
-  const handleDownloadPdf = () => {
-    const doc = new jsPDF();
     
-    // Aggiungi il logo
-    const logoPath = '../../../logo.jpg'; // Percorso del logo
-    doc.addImage(logoPath, 'JPEG', 10, 10, 50, 20); // Posizione e dimensioni del logo
+    const handleCategoryChange = async (event, index) => {
+      const token = Cookies.get('token');
+      const updatedProducts = [...products];
+      updatedProducts[index].category = event.target.value;
     
-    // Tabella orizzontale per i dettagli dell'ordine
-    const orderDetails = [
-      ['N° Ordine di Acquisto', `${purchase.name}`],
-      ['Data', `${formatDate(purchase.createdAt)}`],
-      ['Riferimento Intellimech', `${purchase?.createdByUser?.name.slice(0, 2).toUpperCase() + purchase?.createdByUser?.surname.slice(0, 2).toUpperCase() + " (" + purchase?.createdByUser.name + " " + purchase?.createdByUser.surname + ")"}`],
-      ['Metodo di Pagamento', `${purchase.payment_method}`],
-      ['Dettagli', `${purchase.details || 'N/A'}`], // Aggiungi i dettagli se disponibili
-      ['Commessa', `${purchase.jobNumber || 'N/A'}`] // Aggiungi il numero di commessa se disponibile
-    ];
+      try {
+        const { data: { subcategories } } = await axios.get(`${process.env.REACT_APP_API_URL}/subcategory/read/${event.target.value}`, { headers: { authorization: `Bearer ${token}` } });
+        updatedProducts[index].subcategories = subcategories;
+        updatedProducts[index].subcategory = '';
+        setProducts(updatedProducts);
+      } catch (error) {
+        console.error('Error fetching subcategory data:', error);
+      }
+    };  
     
-    // Titolo centrato a 30 mm dal margine sinistro
-    const marginLeft = -100; // Margine sinistro in mm
-    const pageWidth = doc.internal.pageSize.width;
-    const title = "Ordine d'Acquisto";
-    doc.setFontSize(16);
-    doc.setFont('Helvetica', 'bold');
-    const titleWidth = doc.getTextWidth(title);
-    const titleX = marginLeft;
-    doc.text(title, titleX, 35);
+    const handleDownloadPdf = () => {
+      const doc = new jsPDF();
+
+      // Margini
+      const marginLeft = 15; // Margine sinistro
+      const marginRight = 15; // Margine destro
+      const pageWidth = doc.internal.pageSize.width;
+      const pageHeight = doc.internal.pageSize.height;
       
-    // Dati dell'ordine
-    doc.setFontSize(10);
-    doc.setFont('Helvetica', 'normal');
-    
-    // Usa autoTable per creare una tabella orizzontale
-    doc.autoTable({
-      startY: 45,
-      body: orderDetails,
-      headStyles: {
-        fillColor: [255, 0, 0], // Colore di sfondo rosso per l'intestazione
-        textColor: [255, 255, 255], // Colore del testo bianco
-        fontStyle: 'bold'
-      },
-      styles: {
-        cellPadding: 0.5, // Riduci il padding delle celle per meno spazio tra le righe
-        fontSize: 10 // Riduci la dimensione del font per più spazio
-      },
-      columnStyles: {
-        0: { cellWidth: 50 }, 
-        1: { cellWidth: 120 } 
-      },
-      margin: { top: 10 },
-      alternateRowStyles: { fillColor: [255, 255, 255] } 
-    });
-    
-    // Informazioni della compagnia
-    const companyInfo = [
-      ['Ragione Sociale Fornitore', `${purchase.Company.name}`],
-      ['Via, numero civico', `${purchase.Company.address || 'N/A'}`],
-      ['Cap Comune – Provincia', `${purchase.Company.city || 'N/A'}, ${purchase.Company.province || 'N/A'}`],
-      ['PIVA', `${purchase.Company.VAT || 'N/A'}`],
-      ['CF', `${purchase.Company.fiscal_Code || 'N/A'}`]
-    ];
-  
-    doc.autoTable({
-      startY: doc.autoTable.previous.finalY + 15,
-      body: companyInfo,
-      headStyles: {
-        fillColor: [255, 0, 0], // Colore di sfondo rosso per l'intestazione
-        textColor: [255, 255, 255], // Colore del testo bianco
-        fontStyle: 'bold'
-      },
-      styles: {
-        cellPadding: 0.5,
-        fontSize: 10
-      },
-      columnStyles: {
-        0: { cellWidth: 50 },
-        1: { cellWidth: 120 }
-      },
-      margin: { left: 95, top: 10 }
-    });
-    
-    // Tabelle delle righe d'ordine
-    const rows = purchase.PurchaseRows.map((row, index) => [
-      (index + 1) * 10, // Numero della riga incrementale (10, 20, 30, ecc.)
-      row.description,
-      row.Category.name, // Mostra il nome della categoria
-      row.Subcategory.name, // Mostra il nome della sottocategoria
-      row.unit_price,
-      row.quantity,
-      row.unit_price * row.quantity,
-      purchase.currency // Aggiungi la valuta per ogni riga
-    ]);
-  
-    doc.text("Righe d'ordine", 10, doc.autoTable.previous.finalY + 10);
-    doc.autoTable({
-      startY: doc.autoTable.previous.finalY + 15,
-      head: [['#', 'Description', 'Category', 'Subcategory', 'Unit Price', 'Qty', 'Total Amount', 'Currency']],
-      body: rows,
-      columnStyles: {
-        0: { cellWidth: 10 }, // Larghezza della colonna "Row Number"
-        1: { cellWidth: 55 }, // Riduci la larghezza della colonna "Description"
-        2: { cellWidth: 30 }, // Larghezza della colonna "Category"
-        3: { cellWidth: 30 }, // Larghezza della colonna "Subcategory"
-        4: { cellWidth: 22 }, // Aumenta la larghezza della colonna "Unit Price"
-        5: { cellWidth: 10 }, // Larghezza della colonna "Qty"
-        6: { cellWidth: 20 }, // Larghezza della colonna "Total Amount"
-        7: { cellWidth: 20}  // Riduci la larghezza della colonna "Currency"
-      },
-      headStyles: {
-        fillColor: [255, 0, 0], // Colore di sfondo rosso per l'intestazione
-        textColor: [255, 255, 255], // Colore del testo bianco
-        fontStyle: 'bold'
-      },
-      margin: { left: 10, top: 10 }
-    });
-    
-    // Aggiungi la tabella con i totali e altre informazioni
-    const summaryDetails = [
-      ['Total Amount', `${formatCurrency(purchase.total)}`],
-      ['IVA', purchase.VAT + "%" || "22%"],
-      ['Approved by', 'Stefano Ierace']
-    ];
-  
-    doc.autoTable({
-      startY: doc.autoTable.previous.finalY + 15,
-      body: summaryDetails,
-      headStyles: {
-        fillColor: [255, 0, 0], // Colore di sfondo rosso per l'intestazione
-        textColor: [255, 255, 255], // Colore del testo bianco
-        fontStyle: 'bold'
-      },
-      styles: {
-        cellPadding: 1,
-        fontSize: 10
-      },
-      columnStyles: {
-        0: { cellWidth: 60 },
-        1: { cellWidth: 100 }
-      },
-      margin: { left: 10, top: 10 }
-    });
-    
-    // Aggiungi il piè di pagina
-    const footerText = [
-      "Sede Legale e Operativa c/o Kilometro Rosso (Gate 4) - Via Stezzano, 87 24126 Bergamo",
-      "Tel. +39 035 0690366 - C.F. 95160560165 - P.I. 03388700167",
-      "REA BG 3713330 - Iscrizione CCIAA di BG n° 03388700167 - SDI J6URRTW",
-      "PEC: intellimech@legalmail.it - Amministrazione: m.innovati@confindustriabergamo.it"
-    ];
-  
-    doc.setFontSize(8);
-    doc.setFont('Helvetica', 'normal');
-    
-    const pageHeight = doc.internal.pageSize.height;
-    let yOffset = pageHeight - 20; // Imposta un margine dal fondo
-    
-    footerText.forEach(line => {
-      doc.text(line, 10, yOffset);
-      yOffset += 3; // Spazio tra le righe del piè di pagina
-    });
-    
-    const safeFileName = `${purchase.name.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`; // Sostituisci i caratteri non validi
-    doc.save(safeFileName);
+      // Imposta i margini nella pagina
+      doc.internal.pageSize.width = pageWidth - marginLeft - marginRight;
+      
+      // Aggiungi il logo
+      const logoPath = '../../../logo.jpg'; 
+      doc.addImage(logoPath, 'JPEG', marginLeft, 10, 50, 20); // Modifica la posizione del logo se necessario
+      
+      // Titolo
+      doc.setFontSize(15);
+      doc.setFont('Aptos', 'bold');
+      doc.text('Ordine di acquisto', marginLeft, 40);
+      
+      // Dettagli dell'ordine
+      const orderDetails = [
+          ['N° Ordine di Acquisto', `${purchase.name}`],
+          ['Data', `${formatDate(purchase.createdAt)}`],
+          ['Riferimento Intellimech', `${purchase?.createdByUser?.name.slice(0, 2).toUpperCase() + purchase?.createdByUser?.surname.slice(0, 2).toUpperCase() + " (" + purchase?.createdByUser.name + " " + purchase?.createdByUser.surname + ")"}`],
+          ['Metodo di Pagamento', `${purchase.payment_method}`],
+          ['Dettagli', `${purchase.details || 'N/A'}`], 
+          ['Commessa', `${purchase.jobNumber || 'N/A'}`] 
+      ];
+      
+      // Usa autoTable per creare una tabella orizzontale
+      doc.autoTable({
+          startY: 45,
+          body: orderDetails,
+          headStyles: {
+              fillColor: [255, 255, 255], 
+              textColor: [0, 0, 0], 
+              fontStyle: 'Aptos',
+              fontSize: 10,
+              lineWidth: 0.5,
+              lineColor: [0, 0, 0]
+          },
+          styles: {
+              cellPadding: 0.5,
+              fontSize: 10,
+              fontStyle: 'Aptos',
+              textColor: [0, 0, 0]
+          },
+          columnStyles: {
+              0: { cellWidth: 50 }, 
+              1: { cellWidth: pageWidth - 2 * marginLeft - 50 - 10 } // Calcola la larghezza della colonna
+          },
+          margin: { left: marginLeft, right: marginRight },
+          alternateRowStyles: { fillColor: [255, 255, 255] } 
+      });
+
+      // Informazioni sulla compagnia
+      const companyInfo = [
+          ['Ragione Sociale Fornitore', `${purchase.Company.name}`],
+          ['Via, numero civico', `${purchase.Company.address || 'N/A'}`],
+          ['Cap Comune – Provincia', `${purchase.Company.city || 'N/A'}, ${purchase.Company.province || 'N/A'}`],
+          ['PIVA', `${purchase.Company.VAT || 'N/A'}`],
+          ['CF', `${purchase.Company.fiscal_Code || 'N/A'}`]
+      ];
+      
+      doc.autoTable({
+          startY: doc.autoTable.previous.finalY + 15,
+          body: companyInfo,
+          headStyles: {
+              fillColor: [255, 255, 255],
+              textColor: [0, 0, 0],
+              fontStyle: 'italic',
+              lineWidth: 0.5,
+              lineColor: [0, 0, 0]
+          },
+          styles: {
+              cellPadding: 0.5,
+              fontSize: 10,
+              fontStyle: 'italic',
+              textColor: [0, 0, 0]
+          },
+          columnStyles: {
+              0: { cellWidth: 50 },
+              1: { cellWidth: pageWidth - 2 * marginLeft - 50 - 10 }
+          },
+          margin: { left: 90, right: marginRight },
+          alternateRowStyles: { fillColor: [255, 255, 255] } 
+      });
+
+      // Righe d'ordine
+      const rows = purchase.PurchaseRows.map((row, index) => [
+          (index + 1) * 10,
+          row.description,
+          row.Category.name,
+          row.Subcategory.name,
+          row.unit_price,
+          row.quantity,
+          row.unit_price * row.quantity,
+          purchase.currency
+      ]);
+
+      doc.text("Righe d'ordine", marginLeft, doc.autoTable.previous.finalY + 10);
+      
+      doc.autoTable({
+          startY: doc.autoTable.previous.finalY + 15,
+          head: [['#', 'Description', 'Category', 'Subcategory', 'Unit Price', 'Qty', 'Total Amount', 'Currency']],
+          body: rows,
+          columnStyles: {
+              0: { cellWidth: 7 },
+              1: { cellWidth: 40 },
+              2: { cellWidth: 29 },
+              3: { cellWidth: 29 },
+              4: { cellWidth: 12 },
+              5: { cellWidth: 7 },
+              6: { cellWidth: 15 },
+              7: { cellWidth: 10 }
+          },
+          headStyles: {
+              fillColor: [255, 255, 255],
+              textColor: [0, 0, 0],
+              fontStyle: 'italic',
+              fontSize: 6,
+              lineWidth: 0.5,
+              lineColor: [200, 200, 200]
+          },
+          styles: {
+              cellPadding: 0.5,
+              fontSize: 8,
+              textColor: [0, 0, 0]
+          },
+          margin: { left: marginLeft, right: marginRight },
+          alternateRowStyles: { fillColor: [255, 255, 255] }
+      });
+
+      // Aggiungi tabella con totali e altre informazioni
+      const summaryDetails = [
+          ['Total Amount', `${formatCurrency(purchase.total)}`],
+          ['IVA', purchase.VAT + "%" || "22%"],
+          ['Approved by', 'Stefano Ierace']
+      ];
+      
+      doc.autoTable({
+          startY: doc.autoTable.previous.finalY + 15,
+          body: summaryDetails,
+          headStyles: {
+              fillColor: [255, 255, 255],
+              textColor: [0, 0, 0],
+              fontStyle: 'italic',
+              fontSize: 3,
+              lineWidth: 0.5,
+              lineColor: [200, 200, 200],
+              borderStyle: 'bottom'
+          },
+          styles: {
+              cellPadding: 1,
+              fontSize: 10,
+              fontStyle: "Aptos",
+              textColor: [0, 0, 0]
+          },
+          columnStyles: {
+              0: { cellWidth: 40 },
+              1: { cellWidth: pageWidth - 2 * marginLeft - 60 - 10 }
+          },
+          margin: { left: marginLeft, right: marginRight }
+      });
+
+      // Aggiungi il footer
+      const footerText = [
+          "Sede Legale e Operativa c/o Kilometro Rosso (Gate 4) - Via Stezzano, 87 24126 Bergamo - Tel. +39 035 0690366 - C.F. 95160560165",
+          "P.I. 03388700167 - REA BG 3713330 - Iscrizione CCIAA di BG n° 03388700167 - SDI J6URRTW - PEC: intellimech@legalmail.it",
+          "Amministrazione: m.innovati@confindustriabergamo.it"
+      ];
+
+      doc.setFontSize(8);
+      doc.setFont('Aptos', 'normal');
+
+      let yOffset = pageHeight - 20;
+      footerText.forEach(line => {
+          doc.text(line, marginLeft, yOffset);
+          yOffset += 3;
+      });
+
+      // Nome del file
+      const fileName = `${purchase.name.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`;
+      const totalPages = doc.internal.getNumberOfPages();
+      for (let i = 1; i <= totalPages; i++) {
+        doc.setPage(i);
+        let yOffset = pageHeight - 20;
+
+        // Aggiungi il testo del footer
+        footerText.forEach(line => {
+            doc.text(line, marginLeft, yOffset);
+            yOffset += 3;
+        });
+
+        // Aggiungi il nome del file e il numero di pagina
+        doc.text(`File: ${fileName}`, marginLeft, pageHeight - 10);
+        doc.text(`Page ${i} of ${totalPages}`, pageWidth - marginRight - 40, pageHeight - 10, { align: 'right' });
+    }
+
+      // Salva il documento
+      
+      doc.save(fileName);
   };
-  
-  
+    
 
   const handleEditClick = () => {
     setIsEditing(true);

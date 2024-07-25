@@ -113,8 +113,8 @@ export default function Example({ purchase: initialPurchase }) {
       doc.internal.pageSize.width = pageWidth - marginLeft - marginRight;
       
       // Aggiungi il logo
-      const logoPath = '../../../logo.jpg'; 
-      doc.addImage(logoPath, 'JPEG', marginLeft, 10, 50, 20); // Modifica la posizione del logo se necessario
+      const logoPath = '../../images/logo.jpg'; 
+      doc.addImage(logoPath, 'JPEG', marginLeft, 10, 10, 10); // Modifica la posizione del logo se necessario
       
       // Titolo
       doc.setFontSize(15);

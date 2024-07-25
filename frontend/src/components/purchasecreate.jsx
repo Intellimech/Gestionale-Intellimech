@@ -78,7 +78,7 @@ export default function PurchaseCreateForm() {
     }
   };  
 
-  const addProduct = () => setProducts([...products, { category: '', subcategory: '', description : '', unit_price: '', quantity: 1, description: '', subcategories: [] }]);
+  const addProduct = () => setProducts([...products, { category: '', subcategory: '',  unit_price: '', quantity: 1, description: '', subcategories: [] }]);
   const removeProduct = (index) => setProducts(products.filter((_, i) => i !== index));
   const updateProduct = (index, updatedProduct) => setProducts(products.map((product, i) => (i === index ? updatedProduct : product)));
 
@@ -193,7 +193,7 @@ export default function PurchaseCreateForm() {
           </div>
         </div>
       </div>
-
+      
       <div className="space-y-12 py-8">
         <div className="border-b border-gray-900/10 pb-12">
           <h2 className="text-base font-semibold leading-7 text-gray-900">Prodotti</h2>

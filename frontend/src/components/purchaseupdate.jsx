@@ -3,7 +3,6 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { CheckBadgeIcon, XCircleIcon, TrashIcon } from '@heroicons/react/20/solid';
 import Select from "react-tailwindcss-select";
-import PurchaseRowInput from './purchaserowinput.jsx';
 
 export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange }) {
   const [createSuccess, setCreateSuccess] = useState(null);

@@ -202,7 +202,7 @@ export default function Example({ purchase: initialPurchase }) {
           purchase.currency
       ]);
 
-      doc.text("Righe d'ordine", marginLeft, doc.autoTable.previous.finalY + 10);
+      
       
       doc.autoTable({
           startY: doc.autoTable.previous.finalY + 15,
@@ -224,7 +224,8 @@ export default function Example({ purchase: initialPurchase }) {
               fontStyle: 'italic',
               fontSize: 6,
               lineWidth: 0.5,
-              lineColor: [200, 200, 200]
+              lineColor: [255, 255, 255],
+              minCellHeight: 5  // Aggiungi questa linea per aumentare la distanza
           },
           styles: {
               cellPadding: 0.5,
@@ -261,7 +262,7 @@ export default function Example({ purchase: initialPurchase }) {
               textColor: [0, 0, 0]
           },
           columnStyles: {
-              0: { cellWidth: 40 },
+              0: { cellWidth: 50},
               1: { cellWidth: pageWidth - 2 * marginLeft - 60 - 10 }
           },
           margin: { left: marginLeft, right: marginRight }
@@ -274,7 +275,7 @@ export default function Example({ purchase: initialPurchase }) {
           "Amministrazione: m.innovati@confindustriabergamo.it"
       ];
 
-      doc.setFontSize(8);
+      doc.setFontSize(6);
       doc.setFont('Aptos', 'normal');
 
       let yOffset = pageHeight - 20;

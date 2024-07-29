@@ -78,7 +78,8 @@ const userNavigation = [
         { name: 'Clienti', href: '/app/company/customers', icon: 'UsersIcon', current: false },
         { name: 'Personale', href: '/app/employees-consultants', icon: 'DocumentDuplicateIcon', current: false },
         { name: 'Categorie', href: '/app/category', icon: 'Squares2X2Icon', current: false},
-        { name: 'Sottocategorie', href: '/app/subcategory', icon: 'Squares2X2Icon', current: false}
+        { name: 'Sottocategorie', href: '/app/subcategory', icon: 'Squares2X2Icon', current: false},
+        { name: 'AreeTecniche', href: '/app/technicalarea', icon: 'Squares2X2Icon', current: false}
       ], 
     },
     { 

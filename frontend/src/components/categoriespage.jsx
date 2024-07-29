@@ -1,0 +1,152 @@
+import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/20/solid';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import Cookies from 'js-cookie';
+
+function classNames(...classes) {
+  return classes.filter(Boolean).join(' ');
+}
+
+export default function CategoryTable() {
+  const [categories, setCategories] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortColumn, setSortColumn] = useState('');
+  const [sortDirection, setSortDirection] = useState('asc');
+  const [filterType, setFilterType] = useState('name'); // Stato per il tipo di filtro
+
+  useEffect(() => {
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/category/read`, {
+        headers: { authorization: `Bearer ${Cookies.get('token')}` },
+      })
+      .then((response) => {
+        console.log('Fetched categories:', response.data.categories); // Log data to inspect structure
+        setCategories(response.data.categories || []);
+      })
+      .catch((error) => {
+        console.error('Error fetching categories:', error);
+      });
+  }, []);
+
+  const handleSearchInputChange = (event) => {
+    setSearchQuery(event.target.value);
+  };
+
+  const handleSort = (columnName) => {
+    if (sortColumn === columnName) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortColumn(columnName);
+      setSortDirection('asc');
+    }
+  };
+
+  const compareValues = (a, b) => {
+    if (typeof a === 'string' && typeof b === 'string') {
+      return a.localeCompare(b, undefined, { numeric: true });
+    } else if (typeof a === 'number' && typeof b === 'number') {
+      return a - b;
+    } else {
+      return a < b ? -1 : a > b ? 1 : 0;
+    }
+  };
+
+  const filteredCategories = categories.filter((category) => {
+    if (filterType === 'name') {
+      return category.name.toLowerCase().includes(searchQuery.toLowerCase());
+    } else if (filterType === 'id_category') {
+      return category.id_category.toString().includes(searchQuery);
+    }
+    return false;
+  });
+
+  const sortedCategories = filteredCategories.sort((a, b) => {
+    if (sortDirection === 'asc') {
+      return compareValues(a[sortColumn], b[sortColumn]);
+    } else {
+      return compareValues(b[sortColumn], a[sortColumn]);
+    }
+  });
+
+  return (
+    <>
+      <div className="px-4 sm:px-6 lg:px-8">
+        <div className="sm:flex-auto">
+          <h1 className="text-base font-semibold leading-6 text-gray-900">Categories</h1>
+          <p className="mt-2 text-sm text-gray-700">List of categories</p>
+        </div>
+        <div className="flex flex-wrap items-center justify-between mt-4 mb-4">
+          <div className="flex items-center">
+            <select
+              value={filterType}
+              onChange={(e) => setFilterType(e.target.value)}
+              className="block w-32 px-4 py-2 border border-gray-300 rounded-l-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+            >
+              <option value="name">Name</option>
+              <option value="id_category">ID</option>
+            </select>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={handleSearchInputChange}
+              placeholder={`Search by ${filterType === 'name' ? 'Name' : 'ID'}`}
+              className="block w-48 px-4 py-2 border border-gray-300 rounded-r-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+            />
+          </div>
+        </div>
+        <div className="flow-root">
+          <div className="-mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+              <table className="min-w-full divide-y divide-gray-300">
+                <thead>
+                  <tr>
+                    <th
+                      scope="col"
+                      className="whitespace-nowrap py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0 cursor-pointer w-20"
+                      onClick={() => handleSort('id_category')}
+                    >
+                      ID{' '}
+                      {sortColumn === 'id_category' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
+                    </th>
+                    <th
+                      scope="col"
+                      className="whitespace-nowrap px-2 py-3 text-left text-sm font-semibold text-gray-900 cursor-pointer w-64"
+                      onClick={() => handleSort('name')}
+                    >
+                      Name{' '}
+                      {sortColumn === 'name' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200 bg-white">
+                  {sortedCategories.map((category) => (
+                    <tr key={category.id_category}>
+                      <td className="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-500 sm:pl-0 w-20">{category.id_category}</td>
+                      <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500 w-64">{category.name}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}

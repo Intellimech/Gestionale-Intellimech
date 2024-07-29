@@ -68,6 +68,7 @@ const logout = () => {
             { name: 'Fornitori', href: '#', icon: FolderIcon, current: false, permissionss: 'fornitori' },
             { name: 'Clienti', href: '#', icon: UsersIcon, current: false, permissionss: 'clienti' },
             { name: 'Prodotti', href: '#', icon: DocumentDuplicateIcon, current: false, permissionss: 'prodotti' },
+            { name: 'Categorie', href: '#', icon: Squares2X2Icon, current: false, permissionss: 'categorie' },
           ], 
         },
         { 

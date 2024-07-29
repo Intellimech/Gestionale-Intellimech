@@ -3,7 +3,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { CheckBadgeIcon, XCircleIcon } from '@heroicons/react/20/solid';
 import Select from "react-tailwindcss-select";
-import PurchaseRowInput from './PurchaseRowInput.jsx';
+import PurchaseRowInput from './purchaserowinput.jsx';
 
 export default function PurchaseCreateForm() {
   const [createSuccess, setCreateSuccess] = useState(null);
@@ -219,7 +219,7 @@ export default function PurchaseCreateForm() {
           type="submit"
           className="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-600"
         >
-          Crea
+          Modifica l'ordine
         </button>
       </div>
     </form>

@@ -1,7 +1,8 @@
 import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/20/solid';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import { Dialog } from '@headlessui/react';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -12,7 +13,11 @@ export default function CategoryTable() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortColumn, setSortColumn] = useState('');
   const [sortDirection, setSortDirection] = useState('asc');
-  const [filterType, setFilterType] = useState('name'); // Stato per il tipo di filtro
+  const [filterType, setFilterType] = useState('name');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState('');
+  const tableRef = useRef(null); // Reference for the table div
 
   useEffect(() => {
     axios
@@ -20,13 +25,26 @@ export default function CategoryTable() {
         headers: { authorization: `Bearer ${Cookies.get('token')}` },
       })
       .then((response) => {
-        console.log('Fetched categories:', response.data.categories); // Log data to inspect structure
+        console.log('Fetched categories:', response.data.categories);
         setCategories(response.data.categories || []);
       })
       .catch((error) => {
         console.error('Error fetching categories:', error);
       });
   }, []);
+
+  useEffect(() => {
+    if (isModalOpen && tableRef.current) {
+      const tableRect = tableRef.current.getBoundingClientRect();
+      const modal = document.querySelector('#category-modal');
+      if (modal) {
+        const modalRect = modal.getBoundingClientRect();
+        modal.style.position = 'absolute';
+        modal.style.top = `${tableRect.top + window.scrollY + (tableRect.height - modalRect.height) / 2}px`;
+        modal.style.left = `${tableRect.left + window.scrollX + (tableRect.width - modalRect.width) / 2}px`;
+      }
+    }
+  }, [isModalOpen]);
 
   const handleSearchInputChange = (event) => {
     setSearchQuery(event.target.value);
@@ -77,7 +95,6 @@ export default function CategoryTable() {
         )
       ).join('\n');
 
-    // Initiate download
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
@@ -85,6 +102,30 @@ export default function CategoryTable() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  const handleCreateCategory = () => {
+    setIsConfirmModalOpen(true); // Show the confirmation modal
+  };
+
+  const confirmCreateCategory = () => {
+    axios
+      .post(`${process.env.REACT_APP_API_URL}/category/create`, 
+      { name: newCategoryName }, 
+      { headers: { authorization: `Bearer ${Cookies.get('token')}` } })
+      .then((response) => {
+        setCategories([...categories, response.data.category]);
+        setNewCategoryName('');
+        setIsModalOpen(false);
+        setIsConfirmModalOpen(false); // Close the confirmation modal
+      })
+      .catch((error) => {
+        console.error('Error creating category:', error);
+      });
+  };
+
+  const cancelCreateCategory = () => {
+    setIsConfirmModalOpen(false); // Close the confirmation modal
   };
 
   return (
@@ -112,16 +153,22 @@ export default function CategoryTable() {
               className="block w-48 px-4 py-2 border border-gray-300 rounded-r-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
             />
           </div>
-          <div className="px-4">
+          <div className="flex items-center space-x-4">
             <button
               onClick={exportCategories}
               className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
             >
               Export
             </button>
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+            >
+              Create
+            </button>
           </div>
         </div>
-        <div className="flow-root">
+        <div className="flow-root" ref={tableRef}>
           <div className="-mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
               <table className="min-w-full divide-y divide-gray-300">
@@ -174,6 +221,78 @@ export default function CategoryTable() {
           </div>
         </div>
       </div>
+
+      {/* Modal for Creating a New Category */}
+      <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+        <div id="category-modal" className="fixed inset-0 flex items-center justify-center p-4">
+          <div className="flex flex-col items-center">
+            <Dialog.Panel className="max-w-sm p-6 bg-white rounded shadow-md">
+              <Dialog.Title className="text-lg font-semibold">Create New Category</Dialog.Title>
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                handleCreateCategory();
+              }}>
+                <div className="mt-4">
+                  <label htmlFor="category-name" className="block text-sm font-medium text-gray-700">Category Name</label>
+                  <input
+                    id="category-name"
+                    type="text"
+                    value={newCategoryName}
+                    onChange={(e) => setNewCategoryName(e.target.value)}
+                    required
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                  />
+                </div>
+                <div className="mt-4 flex gap-4">
+                  <button
+                    type="button"
+                    onClick={() => setIsModalOpen(false)}
+                    className="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="inline-flex justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm ring-1 ring-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                  >
+                    Create
+                  </button>
+                </div>
+              </form>
+            </Dialog.Panel>
+          </div>
+        </div>
+      </Dialog>
+
+      {/* Confirmation Modal */}
+      <Dialog open={isConfirmModalOpen} onClose={() => setIsConfirmModalOpen(false)}>
+        <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+        <div className="fixed inset-0 flex items-center justify-center p-4">
+          <div className="flex flex-col items-center">
+            <Dialog.Panel className="max-w-sm p-6 bg-white rounded shadow-md">
+              <Dialog.Title className="text-lg font-semibold">Confirm Action</Dialog.Title>
+              <p className="mt-2 text-sm text-gray-500">Are you sure you want to create this category?</p>
+              <div className="mt-4 flex gap-4">
+                <button
+                  type="button"
+                  onClick={cancelCreateCategory}
+                  className="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={confirmCreateCategory}
+                  className="inline-flex justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm ring-1 ring-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                >
+                  Confirm
+                </button>
+              </div>
+            </Dialog.Panel>
+          </div>
+        </div>
+      </Dialog>
     </>
   );
 }

@@ -17,6 +17,7 @@ export default function SubcategoryTable() {
   const [filterType, setFilterType] = useState('name');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false); // Added state
   const [newSubcategory, setNewSubcategory] = useState({ name: '', category: '' });
 
   const tableRef = useRef(null); // Reference for the table div
@@ -129,8 +130,12 @@ export default function SubcategoryTable() {
     setIsModalOpen(true); // Show the creation modal
   };
 
-  const submitNewSubcategory = (event) => {
+  const handleSubmitNewSubcategory = (event) => {
     event.preventDefault();
+    setIsConfirmModalOpen(true); // Show the confirmation modal
+  };
+
+  const submitNewSubcategory = () => {
     axios
       .post(`${process.env.REACT_APP_API_URL}/subcategory/create`, newSubcategory, {
         headers: { authorization: `Bearer ${Cookies.get('token')}` },
@@ -141,6 +146,7 @@ export default function SubcategoryTable() {
           setSubcategories([...subcategories, response.data.subcategory]);
           setNewSubcategory({ name: '', category: '' });
           setIsModalOpen(false);
+          setIsConfirmModalOpen(false); // Close confirmation modal
         } else {
           console.error('Unexpected response format:', response.data);
         }
@@ -149,7 +155,7 @@ export default function SubcategoryTable() {
         console.error('Error creating subcategory:', error.response ? error.response.data : error.message);
       });
   };
-  
+
   return (
     <>
       <div className="px-4 sm:px-6 lg:px-8">
@@ -199,7 +205,7 @@ export default function SubcategoryTable() {
               Export
             </button>
             <button
-              onClick={() => setIsModalOpen(true)}
+              onClick={handleCreateSubcategory}
               className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
             >
               Create
@@ -284,7 +290,7 @@ export default function SubcategoryTable() {
           <div className="flex flex-col items-center">
             <Dialog.Panel className="max-w-sm p-6 bg-white rounded shadow-md">
               <Dialog.Title className="text-lg font-semibold">Create New Subcategory</Dialog.Title>
-              <form onSubmit={submitNewSubcategory}>
+              <form onSubmit={handleSubmitNewSubcategory}>
                 <div className="mt-4">
                   <label htmlFor="subcategory-category" className="block text-sm font-medium text-gray-700">Category</label>
                   <select
@@ -330,6 +336,35 @@ export default function SubcategoryTable() {
                   </button>
                 </div>
               </form>
+            </Dialog.Panel>
+          </div>
+        </div>
+      </Dialog>
+
+      {/* Confirmation Modal */}
+      <Dialog open={isConfirmModalOpen} onClose={() => setIsConfirmModalOpen(false)}>
+        <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+        <div className="fixed inset-0 flex items-center justify-center p-4">
+          <div className="flex flex-col items-center">
+            <Dialog.Panel className="max-w-sm p-6 bg-white rounded shadow-md">
+              <Dialog.Title className="text-lg font-semibold">Confirm Creation</Dialog.Title>
+              <p className="mt-2 text-sm text-gray-500">Are you sure you want to create this subcategory?</p>
+              <div className="mt-4 flex gap-4">
+                <button
+                  type="button"
+                  onClick={() => setIsConfirmModalOpen(false)}
+                  className="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={submitNewSubcategory}
+                  className="inline-flex justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm ring-1 ring-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                >
+                  Confirm
+                </button>
+              </div>
             </Dialog.Panel>
           </div>
         </div>

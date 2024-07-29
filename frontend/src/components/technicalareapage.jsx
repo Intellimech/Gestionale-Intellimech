@@ -17,6 +17,7 @@ export default function TechnicalAreaTable() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [newTechnicalAreaName, setNewTechnicalAreaName] = useState('');
+  const [newTechnicalAreaCode, setNewTechnicalAreaCode] = useState('');
   const tableRef = useRef(null); // Reference for the table div
 
   useEffect(() => {
@@ -116,11 +117,12 @@ export default function TechnicalAreaTable() {
   const confirmCreateTechnicalArea = () => {
     axios
       .post(`${process.env.REACT_APP_API_URL}/technicalarea/create`, 
-      { name: newTechnicalAreaName }, 
+      { name: newTechnicalAreaName, code: newTechnicalAreaCode }, 
       { headers: { authorization: `Bearer ${Cookies.get('token')}` } })
       .then((response) => {
         setTechnicalAreas([...technicalAreas, response.data.technicalarea]);
         setNewTechnicalAreaName('');
+        setNewTechnicalAreaCode('');
         setIsModalOpen(false);
         setIsConfirmModalOpen(false); // Close the confirmation modal
       })
@@ -263,6 +265,17 @@ export default function TechnicalAreaTable() {
                     type="text"
                     value={newTechnicalAreaName}
                     onChange={(e) => setNewTechnicalAreaName(e.target.value)}
+                    required
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                  />
+                </div>
+                <div className="mt-4">
+                  <label htmlFor="technical-area-code" className="block text-sm font-medium text-gray-700">Technical Area Code</label>
+                  <input
+                    id="technical-area-code"
+                    type="text"
+                    value={newTechnicalAreaCode}
+                    onChange={(e) => setNewTechnicalAreaCode(e.target.value)}
                     required
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
                   />

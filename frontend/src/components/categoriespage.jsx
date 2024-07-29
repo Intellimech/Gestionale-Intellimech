@@ -132,8 +132,8 @@ export default function CategoryTable() {
     <>
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="sm:flex-auto">
-          <h1 className="text-base font-semibold leading-6 text-gray-900">Categories</h1>
-          <p className="mt-2 text-sm text-gray-700">List of categories</p>
+          <h1 className="text-base font-semibold leading-6 text-gray-900">Categorie</h1>
+          <p className="mt-2 text-sm text-gray-700">Lista delle categorie</p>
         </div>
         <div className="flex flex-wrap items-center justify-between mt-4 mb-4">
           <div className="flex items-center">
@@ -149,7 +149,7 @@ export default function CategoryTable() {
               type="text"
               value={searchQuery}
               onChange={handleSearchInputChange}
-              placeholder={`Search by ${filterType === 'name' ? 'Name' : 'ID'}`}
+              placeholder={`Cerca per${filterType === 'name' ? 'nome' : 'ID'}`}
               className="block w-48 px-4 py-2 border border-gray-300 rounded-r-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
             />
           </div>

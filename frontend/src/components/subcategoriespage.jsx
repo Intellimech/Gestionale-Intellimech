@@ -88,6 +88,25 @@ export default function SubcategoryTable() {
     }
   });
 
+  const exportSubcategories = () => {
+    const csvContent =
+      'data:text/csv;charset=utf-8,' +
+      ['ID,Name,Category'].concat(
+        sortedSubcategories.map((subcategory) =>
+          [subcategory.id_subcategory, subcategory.name, subcategory.category].join(',')
+        )
+      ).join('\n');
+
+    // Initiate download
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', 'subcategories.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <>
       <div className="px-4 sm:px-6 lg:px-8">
@@ -128,6 +147,14 @@ export default function SubcategoryTable() {
                 className="block w-48 px-4 py-2 border border-gray-300 rounded-r-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
               />
             )}
+          </div>
+          <div className="px-4">
+            <button
+              onClick={exportSubcategories}
+              className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+            >
+              Export
+            </button>
           </div>
         </div>
         <div className="flow-root">

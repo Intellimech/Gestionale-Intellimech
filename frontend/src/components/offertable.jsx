@@ -1,5 +1,7 @@
 import { Fragment, useState, useRef, useEffect, useContext } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
+
+import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/20/solid';
 import { XMarkIcon, CheckIcon, PaperAirplaneIcon, EyeIcon, ArrowPathIcon } from '@heroicons/react/24/outline'
 import axios from 'axios';
 import Cookies from 'js-cookie';
@@ -22,6 +24,19 @@ export default function Example({ permissions }) {
   const [offers, setOffer] = useState([]);
   const [showCreate, setShowCreate] = useState(false);
   
+  const [category, setCategory] = useState([]);
+  const [subcategory, setSubcategory] = useState([]);
+  
+  const [purchaseOrder, setPurchaseOrder] = useState([])
+  const [areas, setTechnicalArea] = useState([]);
+  const [subcategories, setSubcategories] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [selectedSubcategory, setSelectedSubcategory] = useState('');
+  const [selectedArea, setSelectedArea] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [sortColumn, setSortColumn] = useState('');
+  const [sortDirection, setSortDirection] = useState('asc');
+  const [filterType, setFilterType] = useState('name');
   const [showInfo, setShowInfo] = useState(false);
   const [selectedOfferInfo, setSelectedOfferInfo] = useState({});
 
@@ -39,6 +54,86 @@ export default function Example({ permissions }) {
     setSelectedOffer(checked || indeterminate ? [] : offers);
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
+  }
+
+  const handleSort = (columnName) => {
+    if (sortColumn === columnName) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortColumn(columnName);
+      setSortDirection('asc');
+    }
+  };
+  
+
+
+  const compareValues = (a, b) => {
+    if (typeof a === 'string' && typeof b === 'string') {
+      return a.localeCompare(b, undefined, { numeric: true });
+    } else if (typeof a === 'number' && typeof b === 'number') {
+      return a - b;
+    } else {
+      return a < b ? -1 : a > b ? 1 : 0;
+    }
+  };
+
+  
+  const filteredSaleOrder = offers.filter((item) => {
+    switch (filterType) {
+      case 'name':
+        return item.name.toLowerCase().includes(searchQuery.toLowerCase());
+      case 'description':
+        return item.description.toLowerCase().includes(searchQuery.toLowerCase());
+      case 'Company':
+        return item.QuotationRequest.Company.name.toLowerCase().includes(searchQuery.toLowerCase());
+      case 'revision':
+        return item.revision.toString().includes(searchQuery.toLowerCase());
+      case 'hour':
+        return item.hour.toString().includes(searchQuery.toLowerCase());
+      case 'amount':
+        return item.amount.toString().includes(searchQuery.toLowerCase())
+      case 'category':
+        return item.QuotationRequest.Category.id_category.toString() === selectedCategory ;
+      case 'subcategory':
+        return item.QuotationRequest.Subcategory.id_subcategory.toString() === selectedSubcategory ; 
+      case 'area':
+        return item.QuotationRequest.TechnicalArea.code.toString()=== selectedArea;
+      case 'start':
+        return item.estimatedstart.toLowerCase().includes(searchQuery.toLowerCase());
+      case 'end':
+        return item.estimatedend.toLowerCase().includes(searchQuery.toLowerCase());
+      case 'deadline':
+        return item.deadline.toLowerCase().includes(searchQuery.toLowerCase())
+      case 'status':
+        return item.status=== selectedStatus;
+
+
+      case 'createdByUser':
+        return (item.createdByUser?.name + ' ' + item.createdByUser?.surname).toLowerCase().includes(searchQuery.toLowerCase());
+      default:
+        return false;
+    }
+  });
+  
+  const sortedSaleOrder = filteredSaleOrder.sort((a, b) => {
+    if (sortDirection === 'asc') {
+      return compareValues(a[sortColumn], b[sortColumn]);
+    } else {
+      return compareValues(b[sortColumn], a[sortColumn]);
+    }
+  });
+
+  function exportData() {
+    const csvContent =
+      'data:text/csv;charset=utf-8,' +
+      offers.map((item) => Object.values(item).join(',')).join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    const download = 'data.csv'
+    link.setAttribute('download', download);
+    document.body.appendChild(link);
+    link.click();
   }
 
   const Accept = (offer) => {
@@ -68,6 +163,7 @@ export default function Example({ permissions }) {
     .catch((error) => {
       console.log(error);
     });
+    
   }
 
   const Refuse = (offer) => {
@@ -144,6 +240,40 @@ export default function Example({ permissions }) {
       .catch((error) => {
         console.log(error);
       });
+
+    axios.get(`${process.env.REACT_APP_API_URL}/technicalarea/read`, { 
+      headers: { authorization: `Bearer ${Cookies.get('token')}` },
+    })
+      .then((response) => {
+        setTechnicalArea(response.data.technicalareas);
+      })
+      .catch((error) => {
+        console.error('Error fetching technical area data:', error);
+      });
+    
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/subcategory/read`, {
+        headers: { authorization: `Bearer ${Cookies.get('token')}` },
+      })
+      .then((response) => {
+        console.log('Fetched subcategories:', response.data.subcategories);
+        setSubcategories(response.data.subcategories || []);
+      })
+      .catch((error) => {
+        console.error('Error fetching subcategories:', error);
+      });
+
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/category/read`, {
+        headers: { authorization: `Bearer ${Cookies.get('token')}` },
+      })
+      .then((response) => {
+        console.log('Fetched categories:', response.data.categories);
+        setCategories(response.data.categories || []);
+      })
+      .catch((error) => {
+        console.error('Error fetching categories:', error);
+      });
   }, []); // Empty dependency array
 
   function handleSearchInputChange(event) {
@@ -151,22 +281,9 @@ export default function Example({ permissions }) {
   }
 
   function handleStatusSelectChange(event) {
-    setSelectedYear(event.target.value);
+    setSelectedStatus(event.target.value);
   }
 
-  function exportUsers() {
-    //export user in the csv file
-    const csvContent =
-    'data:text/csv;charset=utf-8,' +
-    offers.map((user) => Object.values(user).join(',')).join('\n');
-    // Initiate download
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', 'offer.csv');
-    document.body.appendChild(link);
-    link.click();
-  }
 
 
 
@@ -268,32 +385,106 @@ export default function Example({ permissions }) {
         </div>
         {/* Search box and Year filter */}
         <div className="flex flex-wrap justify-between mt-4 mb-4">
-          <div className="flex-grow w-full max-w-xs mr-4 mb-4">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={handleSearchInputChange}
-              placeholder="Search by invoice ID or company name"
-              className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-            />
-          </div>
-          <div className="flex-grow w-full max-w-xs flex items-end mb-4">
+          <div className="flex items-center">
             <select
-              value={selectedStatus}
-              onChange={handleStatusSelectChange}
-              className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+              value={filterType}
+              onChange={(e) => setFilterType(e.target.value)}
+              className="block  px-6 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
             >
-              {/* get the status from user */}
-              {offers.map((offer) => (
-                <option key={offer.status} value={offer.status}>
-                  {offer.status}
-                </option>
-              ))}
+              <option value="name">N° Ordine</option>
+              {/* <option value="description">Descrizione</option> */}
+              <option value="Company">Azienda</option>
+              <option value="revision">Revisione</option>
+              <option value="hour">Ore</option>
+              <option value="amount">Valore</option>
+              <option value="category">Categoria</option>
+              <option value="subcategory">Sotto Categoria</option>
+              <option value="area">Area Tecnica</option>
+              {/* <option value="start">Data Inizio</option>
+              <option value="end">Data Fine</option>
+              <option value="deadline">Scadenza</option> */}
+              
+              <option value="status">Stato</option>
+              <option value="createdByUser">Creato Da</option>
             </select>
+           
+            {filterType === 'category' ? (
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="block w-48 px-4 py-2 border border-gray-300 rounded-r-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+              >
+                <option value="">Seleziona</option>
+                {categories.map((category) => (
+                  <option key={category.id_category} value={category.id_category}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+            ) :
+             filterType === 'status' ? (
+              <select
+                value={selectedStatus}
+                onChange={(e) => setselectedStatus(e.target.value)}
+                className="block w-48 px-4 py-2 border border-gray-300 rounded-r-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+              >
+                
+                <option value="Nessuno">  Nessuno </option>
+                <option value="Nuova"> Nuova </option>
+                <option value="Scaduta"> Scaduta </option>
+                <option value="Inviata"> Inviata </option>
+                <option value="Rifiutata"> Rifiutata </option>
+                <option value="Revisionata"> Revisionata </option>
+                <option value="Approvata"> Approvata </option>
+              </select>
+            ) :
+            filterType === 'subcategory' ? (
+              <select
+                value={selectedSubcategory}
+                onChange={(e) => setSelectedSubcategory(e.target.value)}
+                className="block w-48 px-4 py-2 border border-gray-300 rounded-r-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+              >
+                <option value="">Seleziona</option>
+                {subcategories.map((subcategory) => (
+                  <option key={subcategory.id_subcategory} value={subcategory.id_subcategory}>
+                    {subcategory.name}
+                  </option>
+                ))}
+              </select>
+            ) :
+            filterType === 'area' ? (
+              <select
+                value={selectedArea}
+                onChange={(e) => setSelectedArea(e.target.value)}
+                className="block w-48 px-4 py-2 border border-gray-300 rounded-r-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+              >
+                <option value="">Seleziona</option>
+                {areas.map((area) => (
+                  <option key={area.code} value={area.code}>
+                    {area.name}
+                  </option>
+                ))}
+              </select>
+            ) 
+            : (
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={handleSearchInputChange}
+                placeholder={`Cerca per ${filterType === 'name' ? 'N° Ordine' : filterType === 'Company' ? 'Azienda' : filterType === 'revision' ? 'N° Revisioni' : filterType === 'hour' ? 'N°Ore'   :filterType === 'amount' ? 'Valore' : filterType === 'createByUser' ? 'Proprietaro' :  'Category'}`}
+                className="block w-48 px-4 py-2 border border-gray-300 rounded-r-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+              />
+            )}
+          </div> 
 
-            <div className="px-4">
+
+          <div className="flex-grow w-full max-w-xs flex items-end px-20 mb-4">
+            
+
+            <div className="px-6">
               <button
-                onClick={exportUsers}
+                onClick={exportData
+                }
                 className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
                 >
                 Export
@@ -316,8 +507,21 @@ export default function Example({ permissions }) {
               <table className="min-w-full table-fixed divide-y divide-gray-300">
                 <thead>
                   <tr>
-                    <th scope="col" className="px-3 py-3.5 pr-3 text-left text-sm font-semibold text-gray-900">
-                      
+                  <th
+                      scope="col"
+                      className="px-3 py-3.5 pr-3 text-left text-sm font-semibold text-gray-900 cursor-pointer"
+                      onClick={() => handleSort('id_saleoferder')}
+                    >
+                      N° Ordine
+                      {sortColumn === 'id_saleorder' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
                     </th>
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                       Descrizione
@@ -360,8 +564,8 @@ export default function Example({ permissions }) {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
-                  {offers.length > 0 ? (
-                    offers.map((offer) => (
+                {Array.isArray(sortedSaleOrder) && sortedSaleOrder.length > 0 ? (
+                    sortedSaleOrder.map((offer) => (
                       <tr
                         key={offer.id_user}
                         className={selectedOffer.includes(offer) ? 'bg-gray-50' : undefined}

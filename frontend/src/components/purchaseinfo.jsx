@@ -116,9 +116,9 @@ export default function Example({ purchase: initialPurchase }) {
       
       // Aggiungi il logo
       const logoPath = '../images/logo.jpg'; 
-      const imageWidth = 55; // Increase width
-      const imageHeight = 20; // Increase height
-      doc.addImage(logo, 'JPEG', marginLeft-3, 10, imageWidth, imageHeight);
+      const imageWidth = 49; // Increase width
+      const imageHeight = 10; // Increase height
+      doc.addImage(logo, 'JPEG', marginLeft-3, 15, imageWidth, imageHeight);
       
       // Titolo
       doc.setFontSize(15);
@@ -273,7 +273,7 @@ export default function Example({ purchase: initialPurchase }) {
       });
 
 
-      doc.addImage(firma, 'JPEG', 66, doc.autoTable.previous.finalY + 2, imageWidth/2.8, imageHeight/2);
+      doc.addImage(firma, 'JPEG', 66, doc.autoTable.previous.finalY + 2,20, 11);
 
       // Aggiungi il footer
       const footerText = [

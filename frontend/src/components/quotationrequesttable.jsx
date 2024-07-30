@@ -21,6 +21,18 @@ export default function Example({ permissions }) {
   const [user, setUser] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
 
+  const [category, setCategory] = useState([]);
+  const [subcategory, setSubcategory] = useState([]);
+  
+  const [areas, setTechnicalArea] = useState([]);
+  const [subcategories, setSubcategories] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [selectedSubcategory, setSelectedSubcategory] = useState('');
+  const [selectedArea, setSelectedArea] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [sortColumn, setSortColumn] = useState('');
+  const [sortDirection, setSortDirection] = useState('asc');
+  const [filterType, setFilterType] = useState('name');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setselectedStatus] = useState('');
 
@@ -36,6 +48,76 @@ export default function Example({ permissions }) {
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
   }
+  
+  const compareValues = (a, b) => {
+    if (typeof a === 'string' && typeof b === 'string') {
+      return a.localeCompare(b, undefined, { numeric: true });
+    } else if (typeof a === 'number' && typeof b === 'number') {
+      return a - b;
+    } else {
+      return a < b ? -1 : a > b ? 1 : 0;
+    }
+  };
+
+  
+  const filteredRequest = quotationrequests.filter((item) => {
+    switch (filterType) {
+      case 'name':
+        return item.name.toLowerCase().includes(searchQuery.toLowerCase());
+      case 'description':
+        return item.description.toLowerCase().includes(searchQuery.toLowerCase());
+      case 'Company':
+        return item.Company.name.toLowerCase().includes(searchQuery.toLowerCase());
+      case 'category':
+        return item.Category.id_category.toString() === selectedCategory ;
+      case 'subcategory':
+        return item.Subcategory.id_subcategory.toString() === selectedSubcategory ; 
+      case 'area':
+        return item.TechnicalArea.code.toString()=== selectedArea;
+      case 'creation':
+        return item.createdAt.toLowerCase().includes(searchQuery.toLowerCase());
+      case 'deadline':
+        return item.deadline.toLowerCase().includes(searchQuery.toLowerCase())
+      case 'status':
+        return item.status=== selectedStatus;
+
+
+      case 'createdByUser':
+        return (item.createdByUser?.name + ' ' + item.createdByUser?.surname).toLowerCase().includes(searchQuery.toLowerCase());
+      default:
+        return false;
+    }
+  });
+  const handleSort = (columnName) => {
+    if (sortColumn === columnName) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortColumn(columnName);
+      setSortDirection('asc');
+    }
+  };
+  
+  const sortedRequest = filteredRequest.sort((a, b) => {
+    if (sortDirection === 'asc') {
+      return compareValues(a[sortColumn], b[sortColumn]);
+    } else {
+      return compareValues(b[sortColumn], a[sortColumn]);
+    }
+  });
+
+  function exportData() {
+    const csvContent =
+      'data:text/csv;charset=utf-8,' +
+      quotationrequests.map((item) => Object.values(item).join(',')).join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    const download = 'data.csv'
+    link.setAttribute('download', download);
+    document.body.appendChild(link);
+    link.click();
+  }
+
 
   function handleReloadQuotationRequests() {
     axios
@@ -126,6 +208,39 @@ export default function Example({ permissions }) {
       .catch((error) => {
         console.log(error);
       });
+      axios.get(`${process.env.REACT_APP_API_URL}/technicalarea/read`, { 
+        headers: { authorization: `Bearer ${Cookies.get('token')}` },
+      })
+        .then((response) => {
+          setTechnicalArea(response.data.technicalareas);
+        })
+        .catch((error) => {
+          console.error('Error fetching technical area data:', error);
+        });
+      
+      axios
+        .get(`${process.env.REACT_APP_API_URL}/subcategory/read`, {
+          headers: { authorization: `Bearer ${Cookies.get('token')}` },
+        })
+        .then((response) => {
+          console.log('Fetched subcategories:', response.data.subcategories);
+          setSubcategories(response.data.subcategories || []);
+        })
+        .catch((error) => {
+          console.error('Error fetching subcategories:', error);
+        });
+  
+      axios
+        .get(`${process.env.REACT_APP_API_URL}/category/read`, {
+          headers: { authorization: `Bearer ${Cookies.get('token')}` },
+        })
+        .then((response) => {
+          console.log('Fetched categories:', response.data.categories);
+          setCategories(response.data.categories || []);
+        })
+        .catch((error) => {
+          console.error('Error fetching categories:', error);
+        });
   }, []); // Empty dependency array
 
   function handleSearchInputChange(event) {
@@ -204,32 +319,99 @@ export default function Example({ permissions }) {
 
         {/* Search box and Year filter */}
         <div className="flex flex-wrap justify-between mt-4 mb-4">
-          <div className="flex-grow w-full max-w-xs mr-4 mb-4">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={handleSearchInputChange}
-              placeholder="Search by invoice ID or company name"
-              className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-            />
-          </div>
-          <div className="flex-grow w-full max-w-xs flex items-end mb-4">
+          <div className="flex items-center">
             <select
-              value={selectedStatus}
-              onChange={handleStatusSelectChange}
-              className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+              value={filterType}
+              onChange={(e) => setFilterType(e.target.value)}
+              className="block  px-6 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
             >
-              {/* get the status from user */}
-              {quotationrequests.map((quotationrequest) => (
-                <option key={quotationrequest.status} value={quotationrequest.status}>
-                  {quotationrequest.status}
-                </option>
-              ))}
+              <option value="name">N° Ordine</option>
+              <option value="description">Descrizione</option>
+              <option value="Company">Azienda</option>
+              <option value="category">Categoria</option>
+              <option value="subcategory">Sotto Categoria</option>
+              <option value="area">Area Tecnica</option>
+              
+              <option value="status">Stato</option>
+              <option value="creation">Data Inizio</option>
+              {/*
+              <option value="end">Data Fine</option>
+              <option value="deadline">Scadenza</option> */}
+              <option value="createdByUser">Creato Da</option>
             </select>
+           
+            {filterType === 'category' ? (
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="block w-48 px-4 py-2 border border-gray-300 rounded-r-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+              >
+                <option value="">Seleziona</option>
+                {categories.map((category) => (
+                  <option key={category.id_category} value={category.id_category}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+            ) :
+            filterType === 'status' ? (
+              <select
+                value={selectedStatus}
+                onChange={(e) => setselectedStatus(e.target.value)}
+                className="block w-48 px-4 py-2 border border-gray-300 rounded-r-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+              >
+                
+                <option value="Nessuno">  Nessuno </option>
+                <option value="Scaduta"> Scaduta </option>
+                <option value="In Attesa"> In Attesa</option>
+                <option value="Rifiutata"> Rifiutata </option>
+                <option value="Approvata"> Approvata </option>
+              </select>
+            ) :
+            filterType === 'subcategory' ? (
+              <select
+                value={selectedSubcategory}
+                onChange={(e) => setSelectedSubcategory(e.target.value)}
+                className="block w-48 px-4 py-2 border border-gray-300 rounded-r-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+              >
+                <option value="">Seleziona</option>
+                {subcategories.map((subcategory) => (
+                  <option key={subcategory.id_subcategory} value={subcategory.id_subcategory}>
+                    {subcategory.name}
+                  </option>
+                ))}
+              </select>
+            ) :
+            filterType === 'area' ? (
+              <select
+                value={selectedArea}
+                onChange={(e) => setSelectedArea(e.target.value)}
+                className="block w-48 px-4 py-2 border border-gray-300 rounded-r-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+              >
+                <option value="">Seleziona</option>
+                {areas.map((area) => (
+                  <option key={area.code} value={area.code}>
+                    {area.name}
+                  </option>
+                ))}
+              </select>
+            ) 
+            : (
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={handleSearchInputChange}
+                placeholder={`Cerca per ${filterType === 'name' ? 'N° Ordine' : filterType === 'Company' ? 'Azienda' : filterType === 'revision' ? 'N° Revisioni' : filterType === 'hour' ? 'N°Ore'   :filterType === 'amount' ? 'Valore' : filterType === 'createByUser' ? 'Proprietaro' :  'Category'}`}
+                className="block w-48 px-4 py-2 border border-gray-300 rounded-r-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+              />
+            )}
+          </div>
+          <div className="flex-grow w-full max-w-xs flex items-end px-20 mb-4">
+
 
             <div className="px-4">
               <button
-                onClick={exportUsers}
+                onClick={exportData}
                 className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
                 >
                 Export
@@ -252,29 +434,133 @@ export default function Example({ permissions }) {
               <table className="min-w-full table-fixed divide-y divide-gray-300">
                 <thead>
                   <tr>        
-                    <th scope="col" className="px-3 py-3.5 pr-3 text-left text-sm font-semibold text-gray-900">
-                      
+                  <th
+                      scope="col"
+                      className="px-3 py-3.5 pr-3 text-left text-sm font-semibold text-gray-900 cursor-pointer"
+                      onClick={() => handleSort('id_quotationrequest')}
+                    >
+                      N° Richiesta
+                      {sortColumn === 'id_quotationrequest' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 max-w-[200px] overflow-hidden whitespace-normal break-words max-h-1 overflow-y-auto">
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 pr-3 text-left text-sm font-semibold text-gray-900 cursor-pointer"
+                      onClick={() => handleSort('description')} 
+                    >
                       Descrizione
+                      {sortColumn === 'description' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 max-w-[200px] overflow-hidden whitespace-normal break-words">
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 pr-3 text-left text-sm font-semibold text-gray-900 cursor-pointer"
+                      onClick={() => handleSort('Company.name')} 
+                    >
                       Azienda
+                      {sortColumn === 'Company.name' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
+                      onClick={() => handleSort('category')} //category da solo funziona ma category.name non funziona
+                    >
                       Categoria
+                      {sortColumn === 'category' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
+                      onClick={() => handleSort('technicalarea')}
+                    >
                       Area Tecnica
+                      {sortColumn === 'technicalarea' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
+                      onClick={() => handleSort('createdAt')}
+                    >
                       Creazione
+                      {sortColumn === 'createdAt' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
+                      onClick={() => handleSort('status')}
+                    >
                       Stato
+                      {sortColumn === 'status' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
+                      onClick={() => handleSort('createdByUser?.name')} //non funziona 
+                    >
                       Autore
+                      {sortColumn === 'createdByUser?.name' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
                     </th>
                     <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-3">
                       <span className="sr-only">Edit</span>
@@ -282,8 +568,8 @@ export default function Example({ permissions }) {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
-                  {quotationrequests.length > 0 ? (
-                    quotationrequests.map((quotationrequest) => (
+                {Array.isArray(sortedRequest) && sortedRequest.length > 0 ? (
+                    sortedRequest.map((quotationrequest) => (
                       <tr
                         key={quotationrequest.id_user}
                         className={selectedQuotationRequest.includes(quotationrequest) ? 'bg-gray-50' : undefined}

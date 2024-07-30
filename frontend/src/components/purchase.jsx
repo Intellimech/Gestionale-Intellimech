@@ -206,6 +206,9 @@ export default function Example({ permissions }) {
     }
   });
 
+  const handleStatusSelectChange = (event) => {
+    setSelectedStatus(event.target.value);
+  };
   
 
 
@@ -321,8 +324,6 @@ export default function Example({ permissions }) {
       </div>
 
       <div className="flex flex-wrap justify-between mt-4 mb-4">
-        
-        
         <div className="flex items-center">
           <select
             value={filterType}
@@ -345,7 +346,18 @@ export default function Example({ permissions }) {
           />
         </div> 
         
+        
         <div className="flex items-center space-x-4">
+          <select
+            value={selectedStatus}
+            onChange={handleStatusSelectChange}
+            className="block px-8 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+          >
+            <option value="">All Status</option>
+            <option value="In Approvazione">In Approvazione</option>
+            <option value="Accettato">Accettato</option>
+
+          </select>
           <button
             onClick={exportData}
             className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"

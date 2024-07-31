@@ -1,8 +1,8 @@
-import express from 'express';
-import jwt from 'jsonwebtoken';
-import fs from 'fs';
-import path from 'path';
-import sequelize from '../../utils/db.js';
+import express from "express";
+import jwt from "jsonwebtoken";
+import fs from "fs";
+import path from "path";
+import sequelize from "../../utils/db.js";
 
 // Setup the express router
 const router = express.Router();
@@ -13,74 +13,93 @@ const PurchaseRow = sequelize.models.PurchaseRow;
 // __dirname
 const __dirname = path.resolve();
 
-const publickey = fs.readFileSync(__dirname + '/src/keys/public.key', 'utf8');
+const publickey = fs.readFileSync(__dirname + "/src/keys/public.key", "utf8");
 
-router.put('/update/:id', (req, res) => {
-  const token = req.headers.authorization?.split(' ')[1];
+router.put("/update", (req, res) => {
+  const token = req.headers.authorization?.split(" ")[1];
 
   if (!token) {
     return res.status(401).json({
-      message: 'Unauthorized',
+      message: "Unauthorized",
     });
   }
 
   jwt.verify(token, publickey, async (err, decoded) => {
     if (err) {
       return res.status(401).json({
-        message: 'Unauthorized',
+        message: "Unauthorized",
       });
     }
 
     try {
-      const { id } = req.params;
-      const { id_company, products, date, payment, currency } = req.body;
+      const { id_purchase, id_company, payment_method, date, currency, status, products } = req.body;
 
-      if (!id_company || !products || !date) {
+      if (!id_purchase) {
         return res.status(400).json({
-          message: 'Bad request, view documentation for more information',
+          message: "Purchase ID is required",
         });
       }
 
-      // Check if the purchase exists
-      const purchase = await Purchase.findByPk(id);
+      // Find the purchase
+      const purchase = await Purchase.findByPk(id_purchase);
+
       if (!purchase) {
         return res.status(404).json({
-          message: 'Purchase not found',
+          message: "Purchase not found",
         });
       }
 
-      // Update purchase details
-      purchase.id_company = id_company;
-      purchase.payment_method = payment;
-      purchase.date = date;
-      purchase.currency = currency;
-      purchase.total = products.reduce((acc, product) => acc + (product.unit_price * product.quantity), 0);
+      // Update the purchase fields
+      purchase.id_company = id_company || purchase.id_company;
+      purchase.payment_method = payment_method || purchase.payment_method;
+      purchase.date = date || purchase.date;
+      purchase.currency = currency || purchase.currency;
+      purchase.status = status || purchase.status;
+      purchase.updatedBy = decoded.id;
+      purchase.updatedAt = new Date();
 
       await purchase.save();
 
-      // Delete existing rows
-      await PurchaseRow.destroy({ where: { id_purchase: id } });
-
-      // Add new rows
-      for (const product of products) {
-        await PurchaseRow.create({
-          id_purchase: id,
-          name: product.name,
-          category: product.category,
-          subcategory: product.subcategory,
-          unit_price: product.unit_price,
-          quantity: product.quantity,
-          totalprice: product.unit_price * product.quantity,
-        });
+      // If products are provided, update or create purchase rows
+      if (products) {
+        for (const product of products) {
+          if (product.id_purchaserow) {
+            // Update existing PurchaseRow
+            await PurchaseRow.update(
+              {
+                name: product.name,
+                description: product.description,
+                category: product.category,
+                subcategory: product.subcategory,
+                unit_price: product.unit_price,
+                quantity: product.quantity,
+                totalprice: product.totalprice,
+              },
+              { where: { id_purchaserow: product.id_purchaserow } }
+            );
+          } else {
+            // Create new PurchaseRow
+            await PurchaseRow.create({
+              id_purchase: id_purchase,
+              name: product.name,
+              description: product.description,
+              category: product.category,
+              subcategory: product.subcategory,
+              unit_price: product.unit_price,
+              quantity: product.quantity,
+              totalprice: product.totalprice,
+            });
+          }
+        }
       }
 
       res.status(200).json({
-        message: 'Purchase updated successfully',
+        message: "Purchase updated",
       });
     } catch (error) {
       console.error(error);
       res.status(500).json({
-        message: 'Internal server error',
+        message: "Internal server error",
       });
     }
   });

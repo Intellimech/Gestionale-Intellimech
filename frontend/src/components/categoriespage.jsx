@@ -225,7 +225,7 @@ export default function CategoryTable() {
       {/* Modal for Creating a New Category */}
       <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>
         <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
-        <div id="category-modal" className="fixed inset-0 flex items-center justify-center p-4">
+        <div id="category-modal" className="fixed inset-0 flex items-center justify-center p-4"  style={{ transform: 'translateX(10%)' }}>
           <div className="flex flex-col items-center">
             <Dialog.Panel className="max-w-sm p-6 bg-white rounded shadow-md">
               <Dialog.Title className="text-lg font-semibold">Create New Category</Dialog.Title>

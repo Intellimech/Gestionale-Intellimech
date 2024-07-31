@@ -166,6 +166,8 @@ export default function Example({ permissions }) {
 
 
 
+
+
   const compareValues = (a, b) => {
     if (typeof a === 'string' && typeof b === 'string') {
       return a.localeCompare(b, undefined, { numeric: true });
@@ -198,18 +200,22 @@ export default function Example({ permissions }) {
     }
   });
   
-  const sortedPurchase = filteredPurchase.sort((a, b) => {
-    if (sortDirection === 'asc') {
-      return compareValues(a[sortColumn], b[sortColumn]);
-    } else {
-      return compareValues(b[sortColumn], a[sortColumn]);
-    }
-  });
+
 
   const handleStatusSelectChange = (event) => {
     setSelectedStatus(event.target.value);
   };
   
+  const sortedPurchase = filteredPurchase.sort((a, b) => {
+    const valueA = sortColumn === 'id_company' ? a.Company?.name : sortColumn === 'createdByUser' ? (a.createdByUser?.name + ' ' + a.createdByUser?.surname) : a[sortColumn];
+    const valueB = sortColumn === 'id_company' ? b.Company?.name : sortColumn === 'createdByUser' ? (b.createdByUser?.name + ' ' + b.createdByUser?.surname) : b[sortColumn];
+
+    if (sortDirection === 'asc') {
+      return compareValues(valueA, valueB);
+    } else {
+      return compareValues(valueB, valueA);
+    }
+  });
 
 
   function exportData() {

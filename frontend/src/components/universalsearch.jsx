@@ -22,6 +22,11 @@ export default function Example({ open, setOpen }) {
   const [users, setUsers] = useState([]);
   const [projects, setProjects] = useState([]);
   const [navigation, setNavigation] = useState([]);
+  const [recentSearches, setRecentSearches] = useState([
+    // Add some dummy recent searches for demonstration
+    { name: 'Recent Search 1', href: '#' },
+    { name: 'Recent Search 2', href: '#' },
+  ]);
 
   useEffect(() => {
     // Fetch users and projects
@@ -67,8 +72,8 @@ export default function Example({ open, setOpen }) {
     const fullNavigation = [
       { showedname: "Dashboard", options: [
         { name: 'Dashboard', href: '/app/home' },
-        { name: 'Rendicontazione', href: 'app//reporting' },
-        { name: 'Calendario', href: 'app//calendar' },
+        { name: 'Rendicontazione', href: '/app/reporting' },
+        { name: 'Calendario', href: '/app/calendar' },
       ]},
       { showedname: "Analitycs", options: [
         { name: 'Report', href: '/app/analytics' },
@@ -97,29 +102,29 @@ export default function Example({ open, setOpen }) {
         { name: 'Aree Tecniche', href: '/app/technicalarea' },
       ]},
       { showedname: "Management", options: [
-        { name: 'Users', href: 'app/users' },
-        { name: 'Role', href: 'app/roles' },
+        { name: 'Users', href: '/app/users' },
+        { name: 'Role', href: '7app/roles' },
         { name: 'Permissionss', href: 'app/permissions' },
         
-        { name: 'Settings', href: 'app/settings' },
+        { name: 'Settings', href: '/app/settings' },
       ]},
     ];
     setNavigation(fullNavigation.flatMap(section => section.options));
   }, []);
 
-  const query = rawQuery.toLowerCase().replace(/^[#>]/, '');
+  const query = rawQuery.toLowerCase().replace(/^[#>/]/, '');
 
-  const filteredProjects = query === '' || rawQuery.startsWith('>')
-    ? []
-    : projects.filter(project => project.name.toLowerCase().includes(query));
+  const filteredProjects = (rawQuery.startsWith('#') || !rawQuery.startsWith('>') && !rawQuery.startsWith('/'))
+    ? projects.filter(project => project.name.toLowerCase().includes(query))
+    : [];
 
-  const filteredUsers = query === '' || rawQuery.startsWith('#')
-    ? []
-    : users.filter(user => user.name.toLowerCase().includes(query));
+  const filteredUsers = (rawQuery.startsWith('>') || !rawQuery.startsWith('#') && !rawQuery.startsWith('/'))
+    ? users.filter(user => user.name.toLowerCase().includes(query))
+    : [];
 
-  const filteredNavigation = query === '' || rawQuery.startsWith('/')
-    ? []
-    : navigation.filter(page => page.name.toLowerCase().includes(query));
+  const filteredNavigation = (rawQuery.startsWith('/') || !rawQuery.startsWith('#') && !rawQuery.startsWith('>'))
+    ? navigation.filter(page => page.name.toLowerCase().includes(query))
+    : [];
 
   return (
     <Dialog
@@ -161,12 +166,29 @@ export default function Example({ open, setOpen }) {
               />
             </div>
 
-            {(filteredProjects.length > 0 || filteredUsers.length > 0 || filteredNavigation.length > 0) && (
+            {(filteredProjects.length > 0 || filteredUsers.length > 0 || filteredNavigation.length > 0 || recentSearches.length > 0) && (
               <ComboboxOptions
                 static
                 as="ul"
                 className="max-h-80 transform-gpu scroll-py-10 scroll-pb-2 space-y-4 overflow-y-auto p-4 pb-2"
               >
+                {filteredNavigation.length > 0 && (
+                  <li>
+                    <h2 className="text-xs font-semibold text-gray-900">Pagine</h2>
+                    <ul className="-mx-4 mt-2 text-sm text-gray-700">
+                      {filteredNavigation.map(page => (
+                        <ComboboxOption
+                          as="li"
+                          key={page.name}
+                          value={page}
+                          className="flex cursor-default select-none items-center px-4 py-2 data-[focus]:bg-red-600 data-[focus]:text-white"
+                        >
+                          <span className="ml-3 flex-auto truncate">{page.name}</span>
+                        </ComboboxOption>
+                      ))}
+                    </ul>
+                  </li>
+                )}
                 {filteredProjects.length > 0 && (
                   <li>
                     <h2 className="text-xs font-semibold text-gray-900">Commesse</h2>
@@ -197,34 +219,23 @@ export default function Example({ open, setOpen }) {
                           as="li"
                           key={user.id}
                           value={user}
-                          className="flex cursor-default select-none items-center px-4 py-2 data-[focus]:bg-red-600 data-[focus]:text-white"
+                          className="group flex cursor-default select-none items-center px-4 py-2 data-[focus]:bg-red-600 data-[focus]:text-white"
                         >
-                          <img src={user.imageUrl} alt="" className="h-6 w-6 flex-none rounded-full" />
+                          <img
+                            src={user.imageUrl}
+                            alt=""
+                            className="h-6 w-6 flex-none rounded-full"
+                          />
                           <span className="ml-3 flex-auto truncate">{user.name}</span>
                         </ComboboxOption>
                       ))}
                     </ul>
                   </li>
                 )}
-                {filteredNavigation.length > 0 && (
-                  <li>
-                    <h2 className="text-xs font-semibold text-gray-900">Pagine</h2>
-                    <ul className="-mx-4 mt-2 text-sm text-gray-700">
-                      {filteredNavigation.map(page => (
-                        <ComboboxOption
-                          as="li"
-                          key={page.name}
-                          value={page}
-                          className="flex cursor-default select-none items-center px-4 py-2 data-[focus]:bg-red-600 data-[focus]:text-white"
-                        >
-                          <span className="ml-3 flex-auto truncate">{page.name}</span>
-                        </ComboboxOption>
-                      ))}
-                    </ul>
-                  </li>
-                )}
+                
               </ComboboxOptions>
             )}
+          
 
             {rawQuery === '?' && (
               <div className="px-6 py-14 text-center text-sm sm:px-14">

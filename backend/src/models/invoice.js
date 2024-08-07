@@ -11,6 +11,9 @@ Invoices.init(
       primaryKey: true,
       autoIncrement: true
     },
+    name: {
+      type: DataTypes.STRING(255)
+    },
     DoceasyID: {
       type: DataTypes.INTEGER
     },

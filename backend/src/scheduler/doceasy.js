@@ -2,189 +2,225 @@ import axios from 'axios';
 import logger from '../utils/logger.js';
 import sequelize from '../utils/db.js';
 import { Op } from 'sequelize';
-import { Mutex } from 'async-mutex';  // Ensure to install async-mutex
+import xml2js from 'xml2js';
+import { Mutex } from 'async-mutex';
 
-class Doceasy {
-  constructor() {
-    this.baseUrl = process.env.DOCEASY_URL;
-    this.company = sequelize.models.Company;
-    this.headers = {
-      'APIKey': process.env.DOCEASY_APIKEY,
-      'APISecret': process.env.DOCEASY_APISECRET,
-      'PartitaIva': process.env.DOCEASY_CODICECLIENTE
-    };
-    this.codeMutex = new Mutex();
+const baseUrl = process.env.DOCEASY_URL;
+const headers = {
+  'APIKey': process.env.DOCEASY_APIKEY,
+  'APISecret': process.env.DOCEASY_APISECRET,
+  'PartitaIva': process.env.DOCEASY_CODICECLIENTE
+};
+const codeMutex = new Mutex();
+const parser = new xml2js.Parser({ explicitArray: false });
+
+const Invoice = sequelize.models.Invoices;
+const Company = sequelize.models.Company;
+
+const cleanRegex = /\u0004\u002A|\u0004|\u0003|\u0001e|\u0001|\u0008|\u0000|�|\)|\r|\n|\u0002@|\u0002/g;
+
+const checkServer = async () => {
+  try {
+    await axios.get(`${baseUrl}/api/about/version`);
+    logger('success', 'Doceasy server is up and running', null, 'doceasy');
+  } catch (error) {
+    logger('error', `Doceasy server is down: ${error.message}`, error, 'doceasy');
   }
+};
 
-  async checkServer() {
-    try {
-      await axios.get(`${this.baseUrl}/api/about/version`);
-      logger('success', 'Doceasy server is up and running', null, 'doceasy');
-    } catch (error) {
-      logger('error', `Doceasy server is down: ${error.message}`, error, 'doceasy');
-    }
-  }
+const generateCompanyCode = async () => {
+  return await codeMutex.runExclusive(async () => {
+    const companyCount = await Company.count();
+    return `C${(companyCount + 1).toString().padStart(5, '0')}`;
+  });
+};
 
-  async getInvoices(url, type) {
-    try {
-      const response = await axios.get(url, { headers: this.headers });
-      const invoices = response.data;
-      for (const invoice of invoices) {
-        await this.checkCompany(invoice);
-      }
-      logger('success', `${type} invoices retrieved successfully`, null, 'doceasy');
-    } catch (error) {
-      logger('error', `Error retrieving ${type} invoices: ${error.message}`, error, 'doceasy');
-    }
-  }
-
-  async getActiveInvoices() {
-    await this.getInvoices(`${this.baseUrl}/api/documentoattivo/elenco/`, 'Active');
-  }
-
-  async getPassiveInvoices() {
-    await this.getInvoices(`${this.baseUrl}/api/documentopassivo/elenco/`, 'Passive');
-  }
-
-  async createCompany(invoice) {
-    try {
-      const code = await this.generateCode();
-      const companyData = this.buildCompanyData(invoice, code);
-
-      await this.company.create(companyData);
-      // logger('success', 'Company created successfully', null, 'doceasy');
-    } catch (error) {
-      // logger('error', `Error creating company: ${error.message}`, error, 'doceasy');
-    }
-  }
-
-  buildCompanyData(invoice, code = null) {
-    const companyData = {
-      Code: code,
-      name: invoice?.Denominazione || null,
-      SDI: invoice?.IdentificativoSdI || null,
-      isClient: invoice?.TipoFattura === 'AttivaSdI' ? true : false,
-      isSuppliers: invoice?.TipoFattura === 'PassivaSdI' ? true : false,
-    };
-
-    if (invoice?.PartitaIva) {
-      companyData.VAT = invoice.PartitaIva;
-    }
-    if (invoice?.CodiceFiscale) {
-      companyData.Fiscal_Code = invoice.CodiceFiscale;
-    }
-
-    return companyData;
-  }
-
-  async checkCompany(invoice) {
-    try {
-      const company = await this.findCompany(invoice);
-
-      if (company) {
-        await this.updateCompanyIfNeeded(company, invoice);
-        return company.id_company;
-      } else {
-        await this.createCompany(invoice);
-      }
-    } catch (error) {
-      // logger('error', `Error checking or updating company: ${error.message}`, error, 'doceasy');
-    }
-  }
-
-  async findCompany(invoice) {
-    const queryCriteria = this.buildQueryCriteria(invoice);
-
-    if (queryCriteria.length === 0) {
-      throw new Error('No valid criteria to find the company');
-    }
-
-    return await this.company.findOne({
-      where: {
-        [Op.or]: queryCriteria
-      }
+const generateInvoiceCode = async (invoice) => {
+  const type = invoice.TipoFattura;
+  return await codeMutex.runExclusive(async () => {
+    const invoiceCount = await Invoice.count({ 
+      where: [
+        { InvoiceType: type === 'AttivaSdI' ? 'Attiva' : 'Passiva' },
+        sequelize.where(sequelize.fn('YEAR', sequelize.col('Date')), new Date(invoice.Data).getFullYear())
+      ]
     });
+    const year = new Date(invoice.Data).getFullYear().toString().slice(-2);
+    const prefix = type === 'AttivaSdI' ? `FTA${year}_` : `FTP${year}_`;
+    return `${prefix}${(invoiceCount + 1).toString().padStart(5, '0')}`;
+  });
+};
+
+const fetchInvoiceXML = async (invoice, invoiceType) => {
+  const url = `${baseUrl}/api/documento${invoiceType === 'PassivaSdI' ? 'passivo' : 'attivo'}/${invoice.ID}/file`;
+  try {
+    const response = await axios.get(url, { headers });
+    return response.data;
+  } catch (error) {
+    logger('error', `Error while fetching XML file for invoice ${invoice.ID}: ${error.message}`, error, 'doceasy');
+    throw error;
   }
+};
 
-  buildQueryCriteria(invoice) {
-    const queryCriteria = [];
+const isValidXML = (xml) => {
+  return xml.trim().startsWith('<');
+};
 
-    if (invoice?.PartitaIva) {
-      queryCriteria.push({ VAT: invoice.PartitaIva });
-    }
-    if (invoice?.CodiceFiscale) {
-      queryCriteria.push({ Fiscal_Code: invoice.CodiceFiscale });
-    }
-    if (invoice?.Denominazione) {
-      queryCriteria.push({ name: invoice.Denominazione });
-    }
-
-    return queryCriteria;
+const parseInvoiceXML = async (xml) => {
+  if (!isValidXML(xml)) {
+    throw new Error('Invalid XML format');
   }
+  try {
+    const cleanedXml = xml.trim().replace(cleanRegex, '');
+    return await parser.parseStringPromise(cleanedXml);
+  } catch (parseError) {
+    logger('error', `Error while parsing XML: ${parseError.message}`, parseError, 'doceasy');
+    throw parseError;
+  }
+};
 
-  async updateCompanyIfNeeded(company, invoice) {
-    const updateData = this.buildUpdateData(company, invoice);
+const processCompany = async (invoice) => {
+  const {
+    Denominazione,
+    PartitaIva,
+    CodiceFiscale,
+    SDI,
+    PEC,
+    Indirizzo,
+    CAP,
+    Comune,
+    Provincia,
+    Nazione,
+    TipoFattura
+  } = invoice;
 
-    if (Object.keys(updateData).length > 0) {
-      await company.update(updateData);
-      // logger('success', 'Updated company data', null, 'doceasy');
+  console.log(TipoFattura);
+
+  let company = await Company.findOne({
+    where: {
+      [Op.or]: [
+        { VAT: PartitaIva },
+        { Fiscal_Code: CodiceFiscale }
+      ]
+    }
+  });
+
+  if (!company) {
+    const companyCode = await generateCompanyCode();
+    company = await Company.create({
+      Code: companyCode,
+      name: Denominazione,
+      VAT: PartitaIva,
+      Fiscal_Code: CodiceFiscale,
+      SDI,
+      PEC,
+      Address: Indirizzo,
+      ZIP: CAP,
+      City: Comune,
+      Province: Provincia,
+      Country: Nazione,
+      isClient: TipoFattura == "AttivaSdI",
+      isSuppliers: TipoFattura == "PassivaSdI",
+      isPartner: false
+    });
+  } else {
+    const updatedFields = {
+      name: Denominazione || company.name,
+      SDI: SDI || company.SDI,
+      PEC: PEC || company.PEC,
+      Address: Indirizzo || company.Address,
+      ZIP: CAP || company.ZIP,
+      City: Comune || company.City,
+      Province: Provincia || company.Province,
+      Country: Nazione || company.Country,
+      isClient: TipoFattura == "AttivaSdI" || company.isClient,
+      isSuppliers: TipoFattura == "PassivaSdI" || company.isSuppliers
+    };
+
+    const hasChanges = Object.keys(updatedFields).some(key => updatedFields[key] !== company[key]);
+    
+    if (hasChanges) {
+      Object.assign(company, updatedFields);
+      logger('info', `Updating company: ${JSON.stringify(company)}`, null, 'doceasy');
+      await company.save();
     } else {
-      // logger('success', 'Company found and data is correct', null, 'doceasy');
+      logger('info', `No changes for company: ${JSON.stringify(company)}`, null, 'doceasy');
     }
   }
 
-  buildUpdateData(company, invoice) {
-    const updateData = {};
+  return company;
+};
 
-    if (invoice?.PartitaIva && company.VAT !== invoice.PartitaIva) {
-      updateData.VAT = invoice.PartitaIva;
-    }
-    if (invoice?.CodiceFiscale && company.Fiscal_Code !== invoice.CodiceFiscale) {
-      updateData.Fiscal_Code = invoice.CodiceFiscale;
-    }
-    if (invoice?.Denominazione && company.name !== invoice.Denominazione) {
-      updateData.name = invoice.Denominazione;
-    }
-    if (invoice?.TipoFattura === 'AttivaSdI' && company.isClient !== true) {
-      updateData.isClient = true;
-    }
-    if (invoice?.TipoFattura === 'PassivaSdI' && company.isSuppliers !== true) {
-      updateData.isSuppliers = true;
-    }
+const processInvoice = async (invoice, company) => {
+  try {
+    const invoiceCode = await generateInvoiceCode(invoice);
 
-    return updateData;
+    // Save the invoice data (without XML)
+    const savedInvoice = await Invoice.create({
+      name: invoiceCode,
+      DoceasyID: invoice.ID,
+      DocumentType: invoice.TipoDocumento,
+      InvoiceType: invoice.TipoFattura === 'PassivaSdI' ? 'Passiva' : 'Attiva',
+      InvoiceCompany: company.id_company,
+      Number: invoice.Numero,
+      Date: invoice.Data,
+      ReceptionDate: invoice.DataRicezione,
+      Amount: invoice.Importo,
+      ClientOutcome: invoice.EsitoCliente,
+      FileName: invoice.NomeFile,
+      SDIIdentifier: invoice.IdentificativoSDI,
+      LastMessage: invoice.UltimoMessaggio,
+      Stored: invoice.Conservato === 'true',
+      DocumentStatus: invoice.StatoDocumento,
+    });
+
+    logger('success', `Invoice ${invoice.ID} saved successfully`, null, 'doceasy');
+
+    return savedInvoice;
+  } catch (error) {
+    logger('error', `Error processing invoice ${invoice.ID}: ${error.message}`, error, 'doceasy');
+    return null;
   }
+};
 
-  async generateCode() {
-    const release = await this.codeMutex.acquire();
-    try {
-      let code;
-      let unique = false;
+const updateInvoiceWithXML = async (invoiceId, xml) => {
+  try {
+    const parsedXml = await parseInvoiceXML(xml);
+    const invoice = await Invoice.findByPk(invoiceId);
+    invoice.file = parsedXml;
+    await invoice.save();
+    logger('success', `Invoice ${invoiceId} updated with XML successfully`, null, 'doceasy');
+  } catch (error) {
+    logger('error', `Error updating invoice ${invoiceId} with XML: ${error.message}`, error, 'doceasy');
+  }
+};
 
-      while (!unique) {
-        const count = await this.company.count();
-        code = `C${(count + 1).toString().padStart(6, '0')}`;
-
-        // logger('info', `Generating company code: ${code}`, null, 'doceasy');
-        const existingCompany = await this.company.findOne({
-          where: { Code: code }
-        });
-        
-
-
-        if (!existingCompany) {
-          unique = true;
+const fetchAndProcessInvoices = async (url, tipoFattura) => {
+  try {
+    const response = await axios.get(url, { headers });
+    const invoices = response.data;
+    for (const invoice of invoices) {
+      try {
+        const company = await processCompany(invoice);
+        const processedInvoice = await processInvoice(invoice, company);
+        if (processedInvoice && processedInvoice.TipoDocumento !== 'TD17') {
+          const xml = await fetchInvoiceXML(invoice, invoice.TipoFattura);
+          await updateInvoiceWithXML(processedInvoice.id, xml);
         }
+      } catch (invoiceError) {
+        logger('error', `Skipping invoice ${invoice.ID} due to error: ${invoiceError.message}`, invoiceError, 'doceasy');
       }
-      
-      return code;
-    } catch (error) {
-      // logger('error', `Error generating company code: ${error.message}`, error, 'doceasy');
-      throw error;
-    } finally {
-      release();
     }
+  } catch (error) {
+    logger('error', `Error while fetching ${tipoFattura} invoices: ${error.message}`, error, 'doceasy');
   }
-}
+};
 
-export { Doceasy };
+const importInvoices = async () => {
+  const lastInvoice = await Invoice.findOne({ order: [['DoceasyID', 'DESC']] });
+  const lastId = lastInvoice ? lastInvoice.DoceasyID : "";
+
+  await fetchAndProcessInvoices(`${baseUrl}/api/documentopassivo/elenco/${lastId}`, 'passive');
+  await fetchAndProcessInvoices(`${baseUrl}/api/documentoattivo/elenco/`, 'active');
+};
+
+export { checkServer, importInvoices, processInvoice, processCompany, generateCompanyCode, generateInvoiceCode };

@@ -17,7 +17,7 @@ const UserProvider = ({ children }) => {
         .then((response) => {
           console.log(response.data.user);
           setIsAuthenticated(true);
-          response.data.user.propic = "https://api.dicebear.com/8.x/notionists-neutral/svg?seed=" + response.data.user.id_user + "&backgroundColor=ffbaba"
+          response.data.user.propic = "https://api.dicebear.com/8.x/notionists-neutral/svg?seed=" + response.data.user.id_user
           setUser(response.data.user);
         })
         .catch(() => {

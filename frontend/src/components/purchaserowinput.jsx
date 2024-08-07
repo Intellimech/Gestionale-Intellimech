@@ -73,6 +73,7 @@ export default function PurchaseRowInput({
           name={`description-${index}`}
           value={product.description}
           onChange={(e) => onChange({ ...product, description: e.target.value })}
+          rows={1}
           className="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"
         />
         <p className="mt-1 text-xs text-gray-500">Massimo 150 caratteri</p>

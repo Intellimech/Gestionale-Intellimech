@@ -26,7 +26,7 @@ export default function Homepage() {
             {/* Welcome Section */}
             <div className="flex md:space-x-5">
               <div className="hidden md:block flex-shrink-0">
-                <img className="mx-auto h-20 w-20 rounded-full" src={user?.propic} alt="" />
+                <img className="mx-auto h-20 w-20 shadow-md rounded-full" src={user?.propic} alt="" />
               </div>
               <div className="text-left">
                 <p className="text-sm font-medium text-gray-600">

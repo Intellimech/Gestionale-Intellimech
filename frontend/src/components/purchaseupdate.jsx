@@ -3,18 +3,18 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { CheckBadgeIcon, XCircleIcon } from '@heroicons/react/20/solid';
 import Select from "react-tailwindcss-select";
-import PurchaseRowInput from './PurchaseRowInput.jsx';
+import PurchaseRowInput from './purchaserowinput';
 
-export default function PurchaseCreateForm() {
+export default function PurchaseCreateForm({ purchase }) {
   const [createSuccess, setCreateSuccess] = useState(null);
   const [errorMessages, setErrorMessages] = useState('');
   const [categories, setCategories] = useState([]);
   const [companies, setCompanies] = useState([]);
-  const [selectedCompany, setSelectedCompany] = useState(null);
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
-  const [products, setProducts] = useState([{ category: '', subcategory: '', unit_price: '', quantity: 1, description: '', subcategories: [] }]);
-  const [currency, setCurrency] = useState('EUR');
+  const [selectedCompany, setSelectedCompany] = useState(purchase ? { value: purchase.id_company, label: purchase.company_name } : null);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(purchase ? { value: purchase.payment, label: purchase.payment } : null);
+  const [selectedDate, setSelectedDate] = useState(purchase ? purchase.date : new Date().toISOString().split('T')[0]);
+  const [products, setProducts] = useState(purchase ? purchase.products : [{ category: '', subcategory: '', unit_price: '', quantity: 1, description: '', subcategories: [] }]);
+  const [currency, setCurrency] = useState(purchase ? purchase.currency : 'EUR');
   const currencies = ['EUR', 'USD', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'SEK', 'NZD'];
   const paymentMethods = ['Bank Transfer', 'Cash', 'Credit Card Floreani', 'Credit Card Fasanotti', 'Credit Card Ierace', 'Paypal']; // Payment methods options
 
@@ -90,8 +90,8 @@ export default function PurchaseCreateForm() {
       setErrorMessages(error.response.data.message);
       setCreateSuccess(false);
     }
-  };
-
+  }
+  
   return (
     <form name="createpurchaseorder" onSubmit={createPurchaseOrder}>
       <div className="space-y-12">

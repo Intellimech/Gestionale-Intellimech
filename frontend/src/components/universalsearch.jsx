@@ -37,18 +37,15 @@ export default function Example({ open, setOpen }) {
   const [rawQuery, setRawQuery] = useState('')
   const [users, setUsers] = useState([])
   const [projects, setProjects] = useState([])
+  const [offers, setOffers] = useState([])
+  const [invoices, setInvoices] = useState([])
+  const [quotationrequests, setQuotationrequests] = useState([])
+  const [purchaseorders, setPurchaseorders] = useState([])
 
   useEffect(() => {
     // Fetch users and projects
-    axios
-      .get(`${process.env.REACT_APP_API_URL}/user/read`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + Cookies.get('token'),
-        },
-      })
+    axios.get(`${process.env.REACT_APP_API_URL}/user/read`, { headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + Cookies.get('token'), }})
       .then((response) => {
-
         const usersdata = [];
         response.data.users.forEach((user) => {
           const userdata = {
@@ -68,13 +65,7 @@ export default function Example({ open, setOpen }) {
         console.log(error);
       });
 
-      axios
-        .get(`${process.env.REACT_APP_API_URL}/job/read`, {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + Cookies.get('token'),
-          },
-        })
+      axios.get(`${process.env.REACT_APP_API_URL}/job/read`, { headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + Cookies.get('token'), },})
         .then((response) => {
           response.data.jobs.forEach((job) => {
             const jobdata = {
@@ -90,7 +81,75 @@ export default function Example({ open, setOpen }) {
         .catch((error) => {
           console.log(error);
         });
+      
+      axios.get(`${process.env.REACT_APP_API_URL}/offer/read`, { headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + Cookies.get('token'), },})
+        .then((response) => {
+          response.data.offer.forEach((offer) => {
+            const offerdata = {
+              id: offer.id_offer,
+              name: offer.name,
+              category: 'Offers',
+              url: '/app/offer/',
+            };
+            setOffers((offers) => [...offers, offerdata]);
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+      axios.get(`${process.env.REACT_APP_API_URL}/invoice/read`, { headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + Cookies.get('token'), },})
+        .then((response) => {
+          response.data.value.forEach((invoice) => {
+            const invoicedata = {
+              id: invoice.id_invoice,
+              name: invoice.name,
+              category: 'Invoices',
+              url: '/app/invoice/',
+            };
+            setInvoices((invoices) => [...invoices, invoicedata]);
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+      axios.get(`${process.env.REACT_APP_API_URL}/quotationrequest/read`, { headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + Cookies.get('token'), },})
+        .then((response) => {
+          response.data.quotationrequest.forEach((quotationrequest) => {
+            const quotationrequestdata = {
+              id: quotationrequest.id_quotationrequest,
+              name: quotationrequest.name,
+              category: 'Quotation Requests',
+              url: '/app/quotationrequest/',
+            };
+            console.log(quotationrequestdata)
+            setQuotationrequests((quotationrequests) => [...quotationrequests, quotationrequestdata]);
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+      axios.get(`${process.env.REACT_APP_API_URL}/purchase/read`, { headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + Cookies.get('token'), },})
+        .then((response) => {
+          response.data.purchases?.forEach((purchase) => {
+            const purchasedata = {
+              id: purchase.id_purchase,
+              name: purchase.name,
+              category: 'Purchases',
+              url: '/app/purchase/',
+            };
+            console.log(purchasedata)
+            setPurchaseorders((purchaseorders) => [...purchaseorders, purchasedata]);
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
   }, [])
+  
   const query = rawQuery.toLowerCase().replace(/^[#>]/, '')
 
   const filteredProjects =
@@ -106,6 +165,34 @@ export default function Example({ open, setOpen }) {
       : query === '' || rawQuery.startsWith('#')
         ? []
         : users.filter((user) => user.name.toLowerCase().includes(query))
+
+  const filteredOffers =
+    rawQuery === '?'
+      ? offers
+      : query === '' || rawQuery.startsWith('#')
+        ? []
+        : offers.filter((offer) => offer.name.toLowerCase().includes(query))
+    
+  const filteredInvoices =
+    rawQuery === '%'
+      ? invoices
+      : query === '' || rawQuery.startsWith('#')
+        ? []
+        : invoices.filter((invoice) => invoice.name.toLowerCase().includes(query)).slice(0, 5)
+
+  const filteredQuotationrequests =
+    rawQuery === '<'
+      ? quotationrequests
+      : query === '' || rawQuery.startsWith('#')
+        ? []
+        : quotationrequests.filter((quotationrequest) => quotationrequest.name.toLowerCase().includes(query))
+
+  const filteredPurchaseorders =
+    rawQuery === '€'
+      ? purchaseorders
+      : query === '' || rawQuery.startsWith('#')
+        ? []
+        : purchaseorders.filter((purchaseorder) => purchaseorder.name.toLowerCase().includes(query))
 
   return (
     <Dialog
@@ -147,7 +234,7 @@ export default function Example({ open, setOpen }) {
               />
             </div>
 
-            {(filteredProjects.length > 0 || filteredUsers.length > 0) && (
+            {(filteredProjects.length > 0 || filteredUsers.length > 0 || filteredOffers.length > 0 || filteredInvoices.length > 0 || filteredQuotationrequests.length > 0 || filteredPurchaseorders.length > 0) && (
               <ComboboxOptions
                 static
                 as="ul"
@@ -192,6 +279,90 @@ export default function Example({ open, setOpen }) {
                     </ul>
                   </li>
                 )}
+                {filteredOffers.length > 0 && (
+                  <li>
+                    <h2 className="text-xs font-semibold text-gray-900">Offerte</h2>
+                    <ul className="-mx-4 mt-2 text-sm text-gray-700">
+                      {filteredOffers.map((offer) => (
+                        <ComboboxOption
+                          as="li"
+                          key={offer.id}
+                          value={offer}
+                          className="group flex cursor-default select-none items-center px-4 py-2 data-[focus]:bg-red-600 data-[focus]:text-white"
+                        >
+                          <FolderIcon
+                            className="h-6 w-6 flex-none text-gray-400 group-data-[focus]:text-white"
+                            aria-hidden="true"
+                          />
+                          <span className="ml-3 flex-auto truncate">{offer.name}</span>
+                        </ComboboxOption>
+                      ))}
+                    </ul>
+                  </li>
+                )}
+                {filteredInvoices.length > 0 && (
+                  <li>
+                    <h2 className="text-xs font-semibold text-gray-900">Fatture</h2>
+                    <ul className="-mx-4 mt-2 text-sm text-gray-700">
+                      {filteredInvoices.map((invoice) => (
+                        <ComboboxOption
+                          as="li"
+                          key={invoice.id}
+                          value={invoice}
+                          className="group flex cursor-default select-none items-center px-4 py-2 data-[focus]:bg-red-600 data-[focus]:text-white"
+                        >
+                          <FolderIcon
+                            className="h-6 w-6 flex-none text-gray-400 group-data-[focus]:text-white"
+                            aria-hidden="true"
+                          />
+                          <span className="ml-3 flex-auto truncate">{invoice.name}</span>
+                        </ComboboxOption>
+                      ))}
+                    </ul>
+                  </li>
+                )}
+                {filteredQuotationrequests.length > 0 && (
+                  <li>
+                    <h2 className="text-xs font-semibold text-gray-900">Richieste di Preventivo</h2>
+                    <ul className="-mx-4 mt-2 text-sm text-gray-700">
+                      {filteredQuotationrequests.map((quotationrequest) => (
+                        <ComboboxOption
+                          as="li"
+                          key={quotationrequest.id}
+                          value={quotationrequest}
+                          className="group flex cursor-default select-none items-center px-4 py-2 data-[focus]:bg-red-600 data-[focus]:text-white"
+                        >
+                          <FolderIcon
+                            className="h-6 w-6 flex-none text-gray-400 group-data-[focus]:text-white"
+                            aria-hidden="true"
+                          />
+                          <span className="ml-3 flex-auto truncate">{quotationrequest.name}</span>
+                        </ComboboxOption>
+                      ))}
+                    </ul>
+                  </li>
+                )}
+                {filteredPurchaseorders.length > 0 && (
+                  <li>
+                    <h2 className="text-xs font-semibold text-gray-900">Ordini di Acquisto</h2>
+                    <ul className="-mx-4 mt-2 text-sm text-gray-700">
+                      {filteredPurchaseorders.map((purchaseorder) => (
+                        <ComboboxOption
+                          as="li"
+                          key={purchaseorder.id}
+                          value={purchaseorder}
+                          className="group flex cursor-default select-none items-center px-4 py-2 data-[focus]:bg-red-600 data-[focus]:text-white"
+                        >
+                          <FolderIcon
+                            className="h-6 w-6 flex-none text-gray-400 group-data-[focus]:text-white"
+                            aria-hidden="true"
+                          />
+                          <span className="ml-3 flex-auto truncate">{purchaseorder.name}</span>
+                        </ComboboxOption>
+                      ))}
+                    </ul>
+                  </li>
+                )}
               </ComboboxOptions>
             )}
 
@@ -200,8 +371,8 @@ export default function Example({ open, setOpen }) {
                 <LifebuoyIcon className="mx-auto h-6 w-6 text-gray-400" aria-hidden="true" />
                 <p className="mt-4 font-semibold text-gray-900">Aiuto con la ricerca</p>
                 <p className="mt-2 text-gray-500">
-                  Usa questo strumento per cercare rapidamente utenti e progetti su tutta la nostra piattaforma. Puoi anche utilizzare
-                  i modificatori di ricerca che si trovano nel piè di pagina qui sotto per limitare i risultati solo agli utenti o ai progetti.
+                  Usa questo strumento per cercare rapidamente le informazioni di cui hai bisogno.
+                  Puoi utilizzare <kbd>#</kbd> per i progetti, <kbd>&gt;</kbd> per gli utenti, e{' '}
                 </p>
               </div>
             )}

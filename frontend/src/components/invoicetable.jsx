@@ -25,9 +25,16 @@ export default function invoicetable({ invoicetype }) {
         // Filter and sort invoices
         setInvoices(
           response.data.value
-            //filter if invoicetype equal to passive show only passive invoices else show only active invoices
+            //filter if invoicetype equal to passive show only passive invoices else show only the firt 100 invoices
             .filter((invoice) => invoice.InvoiceType === invoicetype)
             .sort((a, b) => new Date(b.ReceptionDate) - new Date(a.ReceptionDate))
+            .slice(0, 100)
+
+        );
+
+        console.log(response.data.value
+          .filter((invoice) => invoice.InvoiceType === invoicetype)
+          .sort((a, b) => new Date(b.ReceptionDate) - new Date(a.ReceptionDate))
         );
       })
       .catch((error) => {
@@ -115,7 +122,7 @@ export default function invoicetable({ invoicetype }) {
     <>
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="sm:flex-auto">
-          <h1 className="text-base font-semibold leading-6 text-gray-900">Fatture { invoicetype == 'PassivaSdI' ? 'passive' : 'attive' }</h1>
+          <h1 className="text-base font-semibold leading-6 text-gray-900">Fatture { invoicetype == 'Passiva' ? 'passive' : 'attive' }</h1>
           <p className="mt-2 text-sm text-gray-700">Lista delle fatture</p>
         </div>
         {/* Search box and Year filter */}
@@ -267,7 +274,7 @@ export default function invoicetable({ invoicetype }) {
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {filteredInvoices.map((invoice) => (
                     <tr key={invoice.id_invoices}>
-                      <td className="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-500 sm:pl-0">{invoice.Number}</td>
+                      <td className="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-500 sm:pl-0">{invoice.name}</td>
                       <td className="whitespace-nowrap px-2 py-2 text-sm font-medium text-gray-900">{invoice.Company.name}</td>
                       <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-900">{invoice.DocumentType}</td>
                       <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">{invoice.Date ? new Date(invoice.Date).toLocaleDateString() : ''}</td>

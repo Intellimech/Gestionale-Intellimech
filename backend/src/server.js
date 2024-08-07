@@ -8,21 +8,19 @@ import https from 'https';
 import sequelize from './utils/db.js';
 import Logger from './utils/logger.js';
 import mail from './utils/smtp.js';
-import { Doceasy } from './scheduler/doceasy.js';
-
 import Role from './models/role.js';
 import User from './models/user.js';
 import Permissions from './models/permissions.js';
 import rolepermissions from './models/rolepermissions.js';
 import Associations from './models/associations.js';
 
+import { importInvoices } from './scheduler/doceasy.js';
+
 // Caricamento delle variabili d'ambiente
 dotenv.config();
 const port = process.env.PORT || 3000;
 
-// Inizializzazione di Doceasy
-const doceasy = new Doceasy();
-doceasy.checkServer();
+importInvoices();
 
 // Inizializzazione dell'applicazione
 const app = express();
@@ -76,7 +74,3 @@ if(process.env.ssl === 'true') {
         Logger('warning', 'SSL is disabled', null, 'http');
         })        
 }
-
-// doceasy.start();
-doceasy.getActiveInvoices();
-doceasy.getPassiveInvoices();

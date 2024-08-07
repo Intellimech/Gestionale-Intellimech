@@ -70,6 +70,18 @@ export default function Layout() {
     }
   }, [user])
 
+  const handleUniversalSearchKey = (e) => {
+    if (e.ctrlKey && e.key === 'f') {
+      e.preventDefault()
+      setUniversalsearchopen(true)
+    }
+  }
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleUniversalSearchKey)
+    return () => window.removeEventListener('keydown', handleUniversalSearchKey)
+  }, [])
+
   return (
     <>
       <Notify setShow={setShowNotify} show={showNotify} title={notifyTitle} message={notifyMessage} type={notifyType} />
@@ -158,7 +170,7 @@ export default function Layout() {
                   <MenuButton className="-m-1.5 flex items-center p-1.5">
                     <span className="sr-only">Open user menu</span>
                     <img
-                      className="h-8 w-8 rounded-full bg-gray-50"
+                      className="h-8 w-8 rounded-full bg-gray-50 shadow"
                       src={user?.propic}
                       alt=""
                     />

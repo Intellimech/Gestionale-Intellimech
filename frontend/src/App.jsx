@@ -34,6 +34,11 @@ import EmployeesConsultant from './components/peopletable';
 const Logo = './assets/intellimech.svg'
 
 const App = () => {
+
+  useEffect(() => {
+    // 
+  }, []);
+
   return (
     <UserProvider>
       <Router>
@@ -49,15 +54,17 @@ const App = () => {
             <Route path="quotation-request" element={<PrivateRoute element={<Quotationrequesttable />} />} />
             <Route path="offer" element={<PrivateRoute element={<Offer />} />} />
             <Route path="sales-order" element={<PrivateRoute element={<Salesorder />} />} />
-
-            <Route path="purchase" element={<PrivateRoute element={<Purchase />} />} />
-            <Route path="purchase/:id" element={<PrivateRoute element={<PurchaseInfo />} />} />
+            <Route path="purchase">
+              <Route index element={<PrivateRoute element={<Purchase />} />} />
+              <Route path=":id" element={<PrivateRoute element={<PurchaseInfo />} />} />
+            </Route>
+            
             <Route path="profile" element={<PrivateRoute element={<Profile />} />} />
 
             <Route path="job" element={<PrivateRoute element={<Job />} />} />
             <Route path="invoices">
-              <Route path="passive" element={<PrivateRoute element={<Invoicetable invoicetype={"PassivaSdI"}/>} />} />
-              <Route path="active" element={<PrivateRoute element={<Invoicetable invoicetype={"AttivaSdI"}/>} />} />
+              <Route path="passive" element={<PrivateRoute element={<Invoicetable invoicetype={"Passiva"}/>} />} />
+              <Route path="active" element={<PrivateRoute element={<Invoicetable invoicetype={"Attiva"}/>} />} />
             </Route>
             <Route path="company">
               <Route path="customers" element={<PrivateRoute element={<Company companytype={"Customers"}/>} />} />

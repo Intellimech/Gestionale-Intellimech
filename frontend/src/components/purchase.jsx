@@ -1,4 +1,5 @@
 import { Fragment, useState, useRef, useEffect, useContext } from 'react';
+import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/20/solid';
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon, CheckIcon, PaperAirplaneIcon, EyeIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import axios from 'axios';
@@ -22,7 +23,9 @@ export default function Example({ permissions }) {
   const [purchaseOrder, setPurchaseOrder] = useState([]); // Inizializza con array vuoto
   const [items, setItems] = useState([]); // Inizializza con array vuoto
   const [showCreate, setShowCreate] = useState(false);
-  
+  const [sortColumn, setSortColumn] = useState('');
+  const [sortDirection, setSortDirection] = useState('asc');
+  const [filterType, setFilterType] = useState('name');
   const [showInfo, setShowInfo] = useState(false);
   const [selectedItemInfo, setSelectedItemInfo] = useState({});
 
@@ -64,13 +67,72 @@ export default function Example({ permissions }) {
     fetchOrders();
   }, []);
 
-  function handleSearchInputChange(event) {
+  const handleSort = (columnName) => {
+    if (sortColumn === columnName) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortColumn(columnName);
+      setSortDirection('asc');
+    }
+  };
+  
+  const handleSearchInputChange = (event) => {
     setSearchQuery(event.target.value);
-  }
+  };
 
-  function handleStatusSelectChange(event) {
+
+
+
+
+  const compareValues = (a, b) => {
+    if (typeof a === 'string' && typeof b === 'string') {
+      return a.localeCompare(b, undefined, { numeric: true });
+    } else if (typeof a === 'number' && typeof b === 'number') {
+      return a - b;
+    } else {
+      return a < b ? -1 : a > b ? 1 : 0;
+    }
+  };
+
+  
+  const filteredPurchase = purchaseOrder.filter((item) => {
+    switch (filterType) {
+      case 'name':
+        return item.name.toLowerCase().includes(searchQuery.toLowerCase());
+      case 'id_company':
+        return item.Company?.name.toLowerCase().includes(searchQuery.toLowerCase());
+      case 'payment_method':
+        return item.payment_method.toLowerCase().includes(searchQuery.toLowerCase());
+      case 'total':
+        return item.total.toString().includes(searchQuery);
+      case 'IVA':
+        return item.IVA.toLowerCase().includes(searchQuery.toLowerCase());
+      case 'status':
+        return item.status.toLowerCase().includes(searchQuery.toLowerCase());
+      case 'createdByUser':
+        return (item.createdByUser?.name + ' ' + item.createdByUser?.surname).toLowerCase().includes(searchQuery.toLowerCase());
+      default:
+        return false;
+    }
+  });
+  
+
+
+  const handleStatusSelectChange = (event) => {
     setSelectedStatus(event.target.value);
-  }
+  };
+  
+  const sortedPurchase = filteredPurchase.sort((a, b) => {
+    const valueA = sortColumn === 'id_company' ? a.Company?.name : sortColumn === 'createdByUser' ? (a.createdByUser?.name + ' ' + a.createdByUser?.surname) : a[sortColumn];
+    const valueB = sortColumn === 'id_company' ? b.Company?.name : sortColumn === 'createdByUser' ? (b.createdByUser?.name + ' ' + b.createdByUser?.surname) : b[sortColumn];
+
+    if (sortDirection === 'asc') {
+      return compareValues(valueA, valueB);
+    } else {
+      return compareValues(valueB, valueA);
+    }
+  });
+
 
   function exportData() {
     const csvContent =
@@ -184,43 +246,52 @@ export default function Example({ permissions }) {
       </div>
 
       <div className="flex flex-wrap justify-between mt-4 mb-4">
-        <div className="flex-grow w-full max-w-xs mr-4 mb-4">
+        <div className="flex items-center">
+          <select
+            value={filterType}
+            onChange={(e) => setFilterType(e.target.value)}
+            className="block  px-6 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+          >
+            <option value="name">N° Ordine</option>
+            <option value="id_company">Azienda</option>
+            <option value="payment_method">Metodo di Pagamento</option>
+            <option value="total">Totale</option>
+            <option value="IVA">IVA</option>
+            <option value="createdByUser">Creato Da</option>
+          </select>
           <input
             type="text"
             value={searchQuery}
             onChange={handleSearchInputChange}
-            placeholder="Cerca per P.IVA o C.F."
-            className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+            className="block px-6 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+            placeholder={`Cerca per ${filterType === 'name' ? 'n° ordine' : filterType === 'id_company' ? 'Azienda' : filterType === 'total' ? 'import totale':  filterType === 'payment_method' ? 'pagamento' : filterType === 'IVA' ? 'IVA':  filterType === 'createdByUser' ? 'user creazione': 'n° ordine' }`}
           />
-        </div>
-        <div className="flex-grow w-full max-w-xs flex items-end mb-4">
+        </div> 
+        
+        
+        <div className="flex items-center space-x-4">
           <select
             value={selectedStatus}
             onChange={handleStatusSelectChange}
-            className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+            className="block px-8 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
           >
-            {Array.isArray(items) && items.map((item) => (
-              <option key={item.status} value={item.status}>
-                {item.status}
-              </option>
-            ))}
+            <option value="">All Status</option>
+            <option value="In Approvazione">In Approvazione</option>
+            <option value="Accettato">Accettato</option>
+
           </select>
-          <div className="px-4">
-            <button
-              onClick={exportData}
-              className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
-            >
-              Export
-            </button>
-          </div>
-          <div className="">
-            <button
-              onClick={() => setShowCreate(true)}
-              className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
-            >
-              Create
-            </button>
-          </div>
+          <button
+            onClick={exportData}
+            className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+          >
+            Export
+          </button>
+          <button
+            onClick={() =>setShowCreate(true)}
+            className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+          >
+            Create
+          </button>
         </div>
       </div>
 
@@ -231,35 +302,130 @@ export default function Example({ permissions }) {
               <table className="min-w-full table-fixed divide-y divide-gray-300">
                 <thead>
                   <tr>
-                    <th scope="col" className="px-3 py-3.5 pr-3 text-left text-sm font-semibold text-gray-900">
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 pr-3 text-left text-sm font-semibold text-gray-900 cursor-pointer"
+                      onClick={() => handleSort('id_purchase')}
+                    >
                       N° Ordine
+                      {sortColumn === 'id_purchase' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
                     </th>
-                    <th scope="col" className="px-3 py-3.5 pr-3 text-left text-sm font-semibold text-gray-900">
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 pr-3 text-left text-sm font-semibold text-gray-900 cursor-pointer"
+                      onClick={() => handleSort('id_company')} //non va bene id_company ma non riesco ad indicare come prendere il nome della company 
+                    >
                       Azienda
+                      {sortColumn === 'id_company' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
+                      onClick={() => handleSort('payment_method')}
+                    >
                       Metodo di Pagamento
-                    </th> 
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                      {sortColumn === 'payment_method' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
+                      onClick={() => handleSort('total')}
+                    >
                       Totale
+                      {sortColumn === 'total' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                      IVA 
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
+                      onClick={() => handleSort('IVA')}
+                    >
+                      IVA
+                      {sortColumn === 'IVA' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
+                      onClick={() => handleSort('status')}
+                    >
                       Stato
+                      {sortColumn === 'status' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
+                      onClick={() => handleSort('createdByUser')} //non funziona 
+                    >
                       Creata da
+                      {sortColumn === 'createdByUser' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
                     </th>
-                    <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-3"></th>
+                    <th
+                      scope="col"
+                      className="relative py-3.5 pl-3 pr-4 sm:pr-3"
+                    ></th>
                   </tr>
                 </thead>
+
                 <tbody className="divide-y divide-gray-200 bg-white">
-                  {Array.isArray(purchaseOrder) && purchaseOrder.length > 0 ? (
-                    purchaseOrder.map((item) => (
+                  {Array.isArray(sortedPurchase) && sortedPurchase.length > 0 ? (
+                    sortedPurchase.map((item) => (
                       <tr
-                        key={item.id_order}
+                        key={item.id_purchase}
                         className={selectedItems.includes(item) ? 'bg-gray-50' : undefined}
                       >
                         <td

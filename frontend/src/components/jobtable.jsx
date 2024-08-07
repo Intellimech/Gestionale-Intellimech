@@ -1,4 +1,5 @@
 import { Fragment, useState, useRef, useEffect } from 'react'
+import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/20/solid';
 import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon, CheckIcon, PaperAirplaneIcon, EyeIcon, ArrowPathIcon } from '@heroicons/react/24/outline'
 import axios from 'axios';
@@ -20,6 +21,9 @@ export default function Example({ permissions, user }) {
   const [open, setOpen] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
 
+  const [sortColumn, setSortColumn] = useState('');
+  const [sortDirection, setSortDirection] = useState('asc');
+  const [filterType, setFilterType] = useState('name');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setselectedStatus] = useState('');
 
@@ -58,9 +62,80 @@ export default function Example({ permissions, user }) {
     setSearchQuery(event.target.value);
   }
 
+  const getColumnValue = (job, columnName) => {
+    const parts = columnName.split('.');
+    let value = job;
+    for (const part of parts) {
+      if (value) {
+        value = value[part];
+      } else {
+        return undefined;
+      }
+    }
+    return value;
+  };
+
+  const compareValues = (a, b) => {
+    if (a === undefined || b === undefined) return 0;
+    if (typeof a === 'string' && typeof b === 'string') {
+      return a.localeCompare(b, undefined, { numeric: true });
+    } else if (typeof a === 'number' && typeof b === 'number') {
+      return a - b;
+    } else if (Array.isArray(a) && Array.isArray(b)) {
+      return a.length - b.length;
+    } else if (typeof a === 'object' && typeof b === 'object') {
+      // Example for sorting by nested object properties
+      return compareValues(a.value, b.value);
+    }
+    return a < b ? -1 : a > b ? 1 : 0;
+  };
+  
+
+  
+  const filteredJob = 
+  jobs.filter((item) => {
+    switch (filterType) {
+      case 'name':
+        return item.name.toLowerCase().includes(searchQuery.toLowerCase());
+      case 'Company.name':
+        return item.SalesOrders[0]?.Offer.QuotationRequest.Company.name.toLowerCase().includes(searchQuery.toLowerCase());
+      case 'SaleOrders.name':
+        return item.SalesOrders[0]?.name.toLowerCase().includes(searchQuery.toLowerCase());
+      case 'total':
+        return item.SalesOrders[0]?.amount.toString().includes(searchQuery);
+       case 'offerhour':
+        return item.SalesOrder[0]?.hour.toString().includes(searchQuery.toLowerCase());
+      case 'status':
+        return item.status===selectedStatus;
+      // case 'reportedhour':
+      //   return item.status.toLowerCase().includes(searchQuery.toLowerCase());
+      case 'createdByUser':
+        return (item.createdByUser?.name + ' ' + item.createdByUser?.surname).toLowerCase().includes(searchQuery.toLowerCase());
+      default:
+        return false;
+    }
+  });
+  
+  const sortedJob = filteredJob.sort((a, b) => {
+    if (!sortColumn) return 0;
+  
+    const aValue = getColumnValue(a, sortColumn);
+    const bValue = getColumnValue(b, sortColumn);
+  
+    return sortDirection === 'asc'
+      ? compareValues(aValue, bValue)
+      : compareValues(bValue, aValue);
+  });
+
   function handleStatusSelectChange(event) {
     setSelectedYear(event.target.value);
   }
+
+  const handleSort = (columnName) => {
+    setSortDirection(sortColumn === columnName && sortDirection === 'asc' ? 'desc' : 'asc');
+    setSortColumn(columnName);
+  };
+
 
   function exportUsers() {
     //export user in the csv file
@@ -130,28 +205,47 @@ export default function Example({ permissions, user }) {
         </div>
         {/* Search box and Year filter */}
         <div className="flex flex-wrap justify-between mt-4 mb-4">
-          <div className="flex-grow w-full max-w-xs mr-4 mb-4">
+          <div className="flex items-center">
+            <select
+              value={filterType}
+              onChange={(e) => setFilterType(e.target.value)}
+              className="block  px-6 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+            >
+              <option value="name">Nome</option>
+              <option value="Company.name">Azienda</option>
+              <option value="SaleOrders.name">Ordine</option>
+              
+              <option value="status">Stato</option>
+              {/* <option value="offerhour">Ore Stimate</option>
+              <option value="total">Valore</option>
+              <option value="reportedhour">Ore Lavorate</option> non so se ha senso filtrare per questi valori, essendoci la possibiliutà di ordinare le colonne */}
+              <option value="createdByUser">Proprietario</option>
+            </select>
+            {filterType === 'status' ? (
+              <select
+                value={selectedStatus}
+                onChange={(e) => setselectedStatus(e.target.value)}
+                className="block w-48 px-4 py-2 border border-gray-300 rounded-r-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+              >
+                
+                <option value="Nessuno"> Nessuno </option>
+                <option value="Scaduta"> Scaduta </option>
+                <option value="Chiusa"> Chiusa </option>
+                <option value="Aperta"> Aperta </option>
+              </select>
+            ) :
+            ( 
             <input
               type="text"
               value={searchQuery}
               onChange={handleSearchInputChange}
-              placeholder="Search by invoice ID or company name"
-              className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+              className="block px-6 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+              placeholder={`Cerca per ${filterType === 'name' ? 'Nome' : filterType === 'Company.name' ? 'Azienda' : filterType === 'SaleOrders.name' ? 'Ordine':  filterType === 'createdByUser' ? 'Proprietario': 'Nome' }`}
             />
-          </div>
-          <div className="flex-grow w-full max-w-xs flex items-end mb-4">
-            <select
-              value={selectedStatus}
-              onChange={handleStatusSelectChange}
-              className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-            >
-              {/* get the status from user */}
-              {jobs.map((job) => (
-                <option key={job.status} value={job.status}>
-                  {job.status}
-                </option>
-              ))}
-            </select>
+             )}
+          </div> 
+          <div className="flex-grow w-full max-w-xs flex items-end px-36 mb-4">
+            
 
             <div className="px-4">
               <button
@@ -178,40 +272,146 @@ export default function Example({ permissions, user }) {
               <table className="min-w-full table-fixed divide-y divide-gray-300">
                 <thead>
                   <tr>                
-                    <th scope="col" className="px-3 py-3.5 pr-3 text-left text-sm font-semibold text-gray-900">
+                    <th scope="col" className="px-3 py-3.5 pr-3 text-left text-sm font-semibold text-gray-900"
+                        onClick={() => handleSort('name')}>
                       Nome
+                      {sortColumn === 'name' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <th 
+                      scope="col" 
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                      onClick={() => handleSort('Company.name')}>
                       Azienda
+                      {sortColumn === 'Company.name' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <th 
+                      scope="col" 
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                      onClick={() => handleSort('Saleorder.name')}>
                       Ordini di vendita
+                      {sortColumn === 'Saleorder.name' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <th 
+                      scope="col" 
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                      onClick={() => handleSort('offertotal')}>
                       Valore Contrattuale
+                      {sortColumn === 'offertotal' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <th 
+                      scope="col" 
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                      onClick={() => handleSort('oferhour')}>
                       Ore Stimate
+                      {sortColumn === 'offerhour' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <th 
+                      scope="col" 
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                      onClick={() => handleSort('total')}>
                       Valore Reale
+                      {sortColumn === 'total' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <th 
+                      scope="col" 
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                      onClick={() => handleSort('reportedhour')}>
                       Ore Lavorate
+                      {sortColumn === 'reportedhour' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <th 
+                      scope="col" 
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                      onClick={() => handleSort('createdByUser')}>
                       Proprietario
+                      {sortColumn === 'createdByUser' && (
+                        <span>
+                          {sortDirection === 'createdByUser' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <th 
+                      scope="col" 
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                      onClick={() => handleSort('status')}>
                       Stato
+                      {sortColumn === 'status' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
                     </th>
                     <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-3">
                     </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
-                  {jobs.length > 0 ? (
-                    jobs.map((job) => (
+                  {Array.isArray(sortedJob) && sortedJob.length > 0  ? (
+                    sortedJob.map((job) => (
                       <tr key={job.id_user} onClick={() => console.log('banana' + job.id_job)} className={selectedJobs.includes(job) ? 'bg-gray-50' : undefined}>
                         <td
                           className={classNames(
@@ -221,7 +421,10 @@ export default function Example({ permissions, user }) {
                         >
                           {job.name}
                         </td>
-                        <td className="px-3 py-4 text-sm text-gray-500">
+                        <td className={classNames(
+                            'whitespace-nowrap px-3 py-4 pr-3 text-sm font-medium',
+                            selectedJobs.includes(job) ? 'text-red-600' : 'text-gray-900'
+                          )}>
                           {
                             job.SalesOrders.length > 1 ? job.SalesOrders[0].Offer.QuotationRequest.Company.name + '...' + " (" + job.SalesOrders.length + ")" : job.SalesOrders[0]?.Offer.QuotationRequest.Company.name
                           }

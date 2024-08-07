@@ -8,6 +8,8 @@ import { useParams } from 'react-router-dom';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import { PaperClipIcon } from '@heroicons/react/20/solid';
+import logo from '../images/logo.jpg'
+import firma from '../images/firma.png'
 
 import PurchaseUpdateForm from './purchaseupdate.jsx';
 
@@ -113,8 +115,10 @@ export default function Example({ purchase: initialPurchase }) {
       doc.internal.pageSize.width = pageWidth - marginLeft - marginRight;
       
       // Aggiungi il logo
-      const logoPath = '../../images/logo.jpg'; 
-      doc.addImage(logoPath, 'JPEG', marginLeft, 10, 10, 10); // Modifica la posizione del logo se necessario
+      const logoPath = '../images/logo.jpg'; 
+      const imageWidth = 49; // Increase width
+      const imageHeight = 10; // Increase height
+      doc.addImage(logo, 'JPEG', marginLeft-3, 15, imageWidth, imageHeight);
       
       // Titolo
       doc.setFontSize(15);
@@ -267,6 +271,9 @@ export default function Example({ purchase: initialPurchase }) {
           },
           margin: { left: marginLeft, right: marginRight }
       });
+
+
+      doc.addImage(firma, 'JPEG', 66, doc.autoTable.previous.finalY + 2,20, 11);
 
       // Aggiungi il footer
       const footerText = [

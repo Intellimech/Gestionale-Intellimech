@@ -8,6 +8,9 @@ const router = express.Router();
 import jobread from './jobread.js';
 import jobcreate from './jobcreate.js';
 
+import Protect from '../../middleware/authmiddleware.js'; 
+router.use(Protect);
+
 router.use('/job', jobread);
 router.use('/job', jobcreate);
 

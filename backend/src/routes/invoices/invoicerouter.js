@@ -8,6 +8,9 @@ const router = express.Router();
 import invoiceread from './invoiceread.js';
 import invoicestats from './invoicestats.js';
 
+import Protect from '../../middleware/authmiddleware.js'; 
+router.use(Protect);
+
 router.use('/invoice', invoiceread);
 router.use('/invoice', invoicestats);
 

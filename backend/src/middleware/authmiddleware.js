@@ -1,5 +1,9 @@
 import jwt from 'jsonwebtoken';
-import User from '../models/userModel.js';
+import fs from 'fs';
+import path from 'path';
+import sequelize from '../utils/db.js';
+
+const __dirname = path.resolve();
 
 const protect = async (req, res, next) => {
     try {
@@ -12,7 +16,7 @@ const protect = async (req, res, next) => {
         }
 
         const publicKey = fs.readFileSync(
-            path.resolve(__dirname, "./src/keys/public.key")
+            path.resolve(__dirname, "src/keys/public.key") // Corrected the path
         );
 
         const decoded = jwt.verify(token, publicKey, {
@@ -42,11 +46,21 @@ const protect = async (req, res, next) => {
                     attributes: ["id_subgroup", "name"],
                 }
             ],
-        });    
+        });
+
+        if (!user) {
+            return res.status(401).json({
+                message: "Unauthorized",
+            });
+        }
+        req.user = user;
         next();
     } catch (error) {
         console.error(error);
-        res.status(401);
-        throw new Error('Not authorized, token failed');
+        res.status(401).json({
+            message: 'Not authorized, token failed'
+        });
     }
-}
+};
+
+export default protect;

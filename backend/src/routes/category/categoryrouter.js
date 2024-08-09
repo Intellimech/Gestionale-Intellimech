@@ -8,6 +8,8 @@ const router = express.Router();
 import categoryread from './categoryread.js';
 import categorycreate from './categorycreate.js';
 
+import Protect from '../../middleware/authmiddleware.js'; 
+router.use(Protect);
 
 router.use('/category', categoryread);
 router.use('/category', categorycreate);

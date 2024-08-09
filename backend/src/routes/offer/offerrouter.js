@@ -11,6 +11,8 @@ import offeraccept from './offeraccept.js';
 import offerrefused from './offerrefused.js';
 import offersent from './offersent.js';
 
+import Protect from '../../middleware/authmiddleware.js'; 
+router.use(Protect);
 
 router.use('/offer', offerread);
 router.use('/offer', offercreate);

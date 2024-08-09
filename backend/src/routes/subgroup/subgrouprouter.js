@@ -7,6 +7,9 @@ const router = express.Router();
 // Routes
 import subgroupread from './subgroupread.js';
 
+import Protect from '../../middleware/authmiddleware.js'; 
+router.use(Protect);
+
 router.use('/subgroup', subgroupread);
 
 export default router;

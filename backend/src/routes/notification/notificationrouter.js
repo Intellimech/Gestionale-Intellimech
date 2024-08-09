@@ -7,6 +7,9 @@ const router = express.Router();
 // Routes
 import notificationread from './notificationread.js';
 
+import Protect from '../../middleware/authmiddleware.js'; 
+router.use(Protect);
+
 router.use('/notification', notificationread);
 
 export default router;

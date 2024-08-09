@@ -14,6 +14,9 @@ import userconfig from './userconfig.js';
 import useraccess from './useraccess.js';
 import forceaction from './forceaction.js';
 
+import Protect from '../../middleware/authmiddleware.js'; 
+router.use(Protect);
+
 router.use('/user', usercreate);
 router.use('/user', userdelete);
 router.use('/user', userupdate);

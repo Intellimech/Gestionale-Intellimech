@@ -4,9 +4,11 @@ import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon, CheckIcon, PaperAirplaneIcon, EyeIcon, ArrowPathIcon } from '@heroicons/react/24/outline'
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import JobInformation from './jobinformation';
 
 
 import OfferCreate from './jobcreate';
+import { set } from 'date-fns';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -20,6 +22,8 @@ export default function Example({ permissions, user }) {
   const [jobs, setJob] = useState([]);
   const [open, setOpen] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+  const [showInfo, setShowInfo] = useState(false);
+  const [selectedJob, setSelectedJob] = useState({});
 
   const [sortColumn, setSortColumn] = useState('');
   const [sortDirection, setSortDirection] = useState('asc');
@@ -151,10 +155,59 @@ export default function Example({ permissions, user }) {
     link.click();
   }
 
+  function handleJobClick(job) {
+    setSelectedJob(job);
+    setShowInfo(true);
+  }
 
 
   return (
     <div className="px-4 sm:px-6 lg:px-8">
+      <Transition.Root show={showInfo} as={Fragment}>
+        <Dialog className="relative z-50" onClose={setShowInfo}>
+          <div className="fixed inset-0" />
+
+          <div className="fixed inset-0 overflow-hidden">
+            <div className="absolute inset-0 overflow-hidden">
+              <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-16">
+                <Transition.Child
+                  as={Fragment}
+                  enter="transform transition ease-in-out duration-500 sm:duration-700"
+                  enterFrom="translate-x-full"
+                  enterTo="translate-x-0"
+                  leave="transform transition ease-in-out duration-500 sm:duration-700"
+                  leaveFrom="translate-x-0"
+                  leaveTo="translate-x-full"
+                >
+                  <Dialog.Panel className="pointer-events-auto w-screen max-w-7xl">
+                    <div className="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
+                      <div className="px-4 sm:px-6">
+                        <div className="flex items-start justify-between">
+                          <Dialog.Title className="text-base font-semibold leading-6 text-gray-900">
+                            Informazioni Commessa
+                          </Dialog.Title>
+                          <div className="ml-3 flex h-7 items-center">
+                            <button
+                              type="button"
+                              className="relative rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                              onClick={() => setShowInfo(false)}
+                            >
+                              <span className="absolute -inset-2.5" />
+                              <span className="sr-only">Close panel</span>
+                              <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="relative mt-6 flex-1 px-4 sm:px-6">{ <JobInformation job={selectedJob}/> }</div>
+                    </div>
+                  </Dialog.Panel>
+                </Transition.Child>
+              </div>
+            </div>
+          </div>
+        </Dialog>
+      </Transition.Root>
       <Transition.Root show={open} as={Fragment}>
        <Dialog as="div" className="relative z-20" onClose={setOpen}>
         <div className="fixed inset-0" />
@@ -333,7 +386,7 @@ export default function Example({ permissions, user }) {
                     <th 
                       scope="col" 
                       className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                      onClick={() => handleSort('oferhour')}>
+                      onClick={() => handleSort('offerhour')}>
                       Ore Stimate
                       {sortColumn === 'offerhour' && (
                         <span>
@@ -412,7 +465,8 @@ export default function Example({ permissions, user }) {
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {Array.isArray(sortedJob) && sortedJob.length > 0  ? (
                     sortedJob.map((job) => (
-                      <tr key={job.id_user} onClick={() => console.log('banana' + job.id_job)} className={selectedJobs.includes(job) ? 'bg-gray-50' : undefined}>
+                      <tr key={job.id_user} onClick={() => handleJobClick(job)}
+                      className={selectedJobs.includes(job) ? 'bg-gray-50' : undefined}>
                         <td
                           className={classNames(
                             'whitespace-nowrap px-3 py-4 pr-3 text-sm font-medium',

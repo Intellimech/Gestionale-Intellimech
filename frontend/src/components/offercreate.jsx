@@ -74,13 +74,13 @@ export default function UserCreateForm() {
     jsonObject.tasks = tasks; // Add tasks to the payload
 
     console.log('Create offer payload:', jsonObject);
-    // try {
-    //   await axios.post(`${process.env.REACT_APP_API_URL}/offer/create`, jsonObject, { headers: { authorization: `Bearer ${token}` } });
-    //   setCreateSuccess(true);
-    // } catch (error) {
-    //   setErrorMessages(error.response?.data?.message || 'An error occurred');
-    //   setCreateSuccess(false);
-    // }
+    try {
+      await axios.post(`${process.env.REACT_APP_API_URL}/offer/create`, jsonObject, { headers: { authorization: `Bearer ${token}` } });
+      setCreateSuccess(true);
+    } catch (error) {
+      setErrorMessages(error.response?.data?.message || 'An error occurred');
+      setCreateSuccess(false);
+    }
   };
 
   return (

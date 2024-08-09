@@ -50,7 +50,13 @@ router.get("/read/:category", (req, res) => {
     Subcategory.findAll({
         where: {
             category: category,
-        }
+        },
+        include: [
+            {
+                model: Category,
+                attributes: ["name"],
+            },
+        ],
     })
     .then((subcategories) => {
         res.status(200).json({

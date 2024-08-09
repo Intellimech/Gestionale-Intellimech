@@ -1,7 +1,4 @@
 import express from 'express';
-import jwt from 'jsonwebtoken';
-import fs from 'fs';
-import path from 'path';
 import sequelize from '../../utils/db.js';
 
 // Setup the express router
@@ -11,25 +8,13 @@ const Purchase = sequelize.models.Purchase;
 const PurchaseRow = sequelize.models.PurchaseRow;
 const Company = sequelize.models.Company;
 
-// __dirname
-const __dirname = path.resolve();
-const publickey = fs.readFileSync(__dirname + '/src/keys/public.key', 'utf8');
-
-router.get('/read', (req, res) => {
-  const token = req.headers.authorization?.split(' ')[1];
-
-  if (!token) {
-    return res.status(401).json({
-      message: 'Unauthorized',
-    });
-  }
-
-  jwt.verify(token, publickey, async (err, decoded) => {
-    //get all the purchases
+router.get('/read', async (req, res) => {
+  try {
+    // Get all the purchases
     const purchases = await Purchase.findAll({
       include: [
         {
-          model: sequelize.models.PurchaseRow,
+          model: PurchaseRow,
           attributes: ["id_purchaserow", "name", "description" ,"category", "subcategory", "unit_price", "quantity", "totalprice"],
           include: [
             {
@@ -57,28 +42,26 @@ router.get('/read', (req, res) => {
     res.json({
       purchases: purchases,
     });
-  });
-});
-
-router.get('/read/:id', (req, res) => {
-  const token = req.headers.authorization?.split(' ')[1];
-  const id = req.params.id;
-
-  if (!token) {
-    return res.status(401).json({
-      message: 'Unauthorized',
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: 'Internal server error',
     });
   }
+});
 
-  jwt.verify(token, publickey, async (err, decoded) => {
-    //get all the purchases
-    const purchases = await Purchase.findOne({
+router.get('/read/:id', async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    // Get the specific purchase by ID
+    const purchase = await Purchase.findOne({
       where: {
         id_purchase: id,
       },
       include: [
         {
-          model: sequelize.models.PurchaseRow,
+          model: PurchaseRow,
           attributes: ["id_purchaserow", "name", "description" , "category", "subcategory", "unit_price", "quantity", "totalprice"],
           include: [
             {
@@ -103,10 +86,21 @@ router.get('/read/:id', (req, res) => {
       ],
     });
 
+    if (!purchase) {
+      return res.status(404).json({
+        message: 'Purchase not found',
+      });
+    }
+
     res.json({
-      purchases: purchases,
+      purchase: purchase,
     });
-  });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: 'Internal server error',
+    });
+  }
 });
 
 export default router;

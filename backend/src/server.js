@@ -14,13 +14,13 @@ import Permissions from './models/permissions.js';
 import rolepermissions from './models/rolepermissions.js';
 import Associations from './models/associations.js';
 
-import { importInvoices } from './scheduler/doceasy.js';
+import { startDoceasy } from './scheduler/doceasy.js';
+
+startDoceasy();
 
 // Caricamento delle variabili d'ambiente
 dotenv.config();
 const port = process.env.PORT || 3000;
-
-importInvoices();
 
 // Inizializzazione dell'applicazione
 const app = express();

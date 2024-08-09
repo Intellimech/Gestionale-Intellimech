@@ -43,13 +43,13 @@ const userNavigation = [
       ], 
     },
     {
-      showedname: "Analytics",
+      showedname: "Analisi",
       options: [
         { name: 'Report', href: '/app/analytics', icon: 'ChartPieIcon', current: false, permissions: 'report' },
       ],
     },
     { 
-      showedname: "Project Orders", 
+      showedname: "Vendite", 
       options: [
         { name: 'Richieste di Offerta', href: '/app/quotation-request', icon: 'ClipboardIcon', current: false, permissions: 'offerte' },
         { name: 'Offerte', href: '/app/offer', icon: 'DocumentTextIcon', current: false, permissions: 'offerte' },
@@ -59,35 +59,41 @@ const userNavigation = [
       ], 
     },
     { 
-      showedname: "Costs", 
+      showedname: "Acquisti", 
       options: [
         { name: 'Acquisti', href: '/app/purchase', icon: 'ShoppingCartIcon', current: false, permissions: 'acquisti' },
       ], 
     },
+    { 
+      showedname: "Amministrazione", 
+      options: [
+        { name: 'Annuncia', href: '/app/broadcast', icon: 'MegaphoneIcon', current: false },
+      ], 
+    },
     {
-      showedname: "Fatture",
+      showedname: "Fatturazione",
       options: [
         { name: 'Fatture Attive', href: '/app/invoices/active', icon: 'DocumentPlusIcon', current: false, },
         { name: 'Fatture Passive', href: '/app/invoices/passive', icon: 'DocumentMinusIcon', current: false, }
       ],
     },
     { 
-      showedname: "Registry", 
+      showedname: "Anagrafiche", 
       options: [
         { name: 'Fornitori', href: '/app/company/suppliers', icon: 'FolderIcon', current: false },
         { name: 'Clienti', href: '/app/company/customers', icon: 'UsersIcon', current: false },
         { name: 'Personale', href: '/app/employees-consultants', icon: 'DocumentDuplicateIcon', current: false },
-        { name: 'Categorie', href: '/app/category', icon: 'Squares2X2Icon', current: false},
-        { name: 'Sottocategorie', href: '/app/subcategory', icon: 'Squares2X2Icon', current: false},
-        { name: 'AreeTecniche', href: '/app/technicalarea', icon: 'Squares2X2Icon', current: false}
+        { name: 'Categorie', href: '/app/category', icon: 'TagIcon', current: false},
+        { name: 'Sotto categorie', href: '/app/subcategory', icon: 'SwatchIcon', current: false},
+        { name: 'Aree Tecniche', href: '/app/technicalarea', icon: 'WrenchScrewdriverIcon', current: false}
       ], 
     },
     { 
-      showedname: "Management", 
+      showedname: "Gestione di sistema", 
       options: [
         { name: 'Utenti', href: '/app/users', icon: 'UsersIcon', current: false },
-        { name: 'Ruoli', href: '/app/roles', icon: 'TagIcon' , current: false },
-        { name: 'Permessi', href: '/app/permission', icon: 'CheckBadgeIcon', current: false },
+        { name: 'Ruoli', href: '/app/roles', icon: 'CheckBadgeIcon' , current: false },
+        { name: 'Permessi', href: '/app/permission', icon: 'ShieldCheckIcon', current: false },
       ], 
     },
     { 

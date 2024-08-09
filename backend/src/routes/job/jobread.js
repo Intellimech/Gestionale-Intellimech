@@ -50,6 +50,16 @@ router.get("/read/", (req, res) => {
                 },
                 {
                     model: sequelize.models.Reporting,
+                    include: [
+                        {
+                            model: sequelize.models.User,
+                            as: "createdByUser",
+                            attributes: ["id_user", "name", "surname"],
+                        },
+                        {
+                            model: sequelize.models.Tasks,
+                        }
+                    ],
                 },
                 {
                     model: sequelize.models.User,

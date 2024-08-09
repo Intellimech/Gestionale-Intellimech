@@ -1,64 +1,51 @@
 import express from "express";
-import bodyParser from "body-parser";
-import cors from "cors";
-import http from "http";
-import dotenv from "dotenv";
-import jwt from "jsonwebtoken";
-import fs from "fs";
 import path from "path";
-import bcrypt from "bcrypt";
 import sequelize from "../../utils/db.js";
-import Logger from "../../utils/logger.js";
 
 // Setup the express router
 const router = express.Router();
 
-// __dirname
-const __dirname = path.resolve();
-
 router.post("/accept/:id", async (req, res) => {
-    // Get the role from the database
     const Offer = sequelize.models.Offer;
+    const SalesOrder = sequelize.models.SalesOrder;
+    const user = req.user; // Assuming req.user is populated by the authentication middleware
 
     try {
-        const updatedOffer = await Offer.update(
-            {
-                status: "Approvata",
-            },
-            {
-                where: {
-                    id_offer: req.params.id,
-                },
-            }
-        );
-
-        // Create the sales order
-        const SalesOrder = sequelize.models.SalesOrder;
-        const countOffer = await SalesOrder.count({ distinct: "name" });
-        const name =
-            "ODV" +
-            new Date().getFullYear().toString().substr(-2) +
-            "_" +
-            (countOffer + 1).toString().padStart(5, "0");
-
+        // Find the offer to ensure it exists
         const offer = await Offer.findOne({
-            where: {
-                id_offer: req.params.id,
-            },
+            where: { id_offer: req.params.id },
         });
 
+        if (!offer) {
+            return res.status(404).json({
+                message: "Offer not found",
+            });
+        }
+
+        // Update the offer's status to "Approvata"
+        await Offer.update(
+            { status: "Approvata" },
+            { where: { id_offer: req.params.id } }
+        );
+
+        // Count the existing sales orders to generate a unique name
+        const countSalesOrders = await SalesOrder.count();
+        const salesOrderName = `ODV${new Date().getFullYear().toString().substr(-2)}_${(countSalesOrders + 1).toString().padStart(5, "0")}`;
+
+        // Create a new SalesOrder associated with the offer
         const salesOrder = await SalesOrder.create({
-            name: name,
+            name: salesOrderName,
             offer: offer.id_offer,
+            createdBy: user.id_user, // Use the user ID from req.user
         });
 
         res.status(200).json({
             message: "Offer approved",
             offer: offer,
-            salesorder: salesOrder,
+            salesOrder: salesOrder,
         });
     } catch (error) {
-        console.log(error);
+        console.error(error);
         res.status(500).json({
             message: "Internal server error",
         });

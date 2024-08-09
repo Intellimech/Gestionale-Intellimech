@@ -23,10 +23,6 @@ Reporting.init(
         type: DataTypes.INTEGER,
         allowNull: true
     },
-    date: {
-        type: DataTypes.DATE,
-        allowNull: true
-    },
     createdAt: {
       type: DataTypes.DATE,
     },

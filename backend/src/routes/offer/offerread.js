@@ -20,7 +20,6 @@ router.get("/read/", async (req, res) => {
     try {
         // Get the role from the database
         const Offer = sequelize.models.Offer;
-
         const offers = await Offer.findAll({
             include: [
                 {

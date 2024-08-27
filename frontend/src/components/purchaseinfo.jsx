@@ -8,6 +8,9 @@ import { useParams } from 'react-router-dom';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import { PaperClipIcon } from '@heroicons/react/20/solid';
+import logo from '../images/logo.jpg'
+
+import firma from '../images/firma.png'
 
 import PurchaseUpdateForm from './purchaseupdate.jsx';
 
@@ -102,9 +105,10 @@ export default function Example({ purchase: initialPurchase }) {
   const handleDownloadPdf = () => {
     const doc = new jsPDF();
     
-    // Aggiungi il logo
-    const logoPath = '../../../logo.jpg'; // Percorso del logo
-    doc.addImage(logoPath, 'JPEG', 10, 10, 50, 20); // Posizione e dimensioni del logo
+      const logoPath = '../images/logo.jpg'; 
+      const imageWidth = 49; // Increase width
+      const imageHeight = 10; // Increase height
+      doc.addImage(logo, 'JPEG', 15, 15, imageWidth, imageHeight);
     
     // Tabella orizzontale per i dettagli dell'ordine
     const orderDetails = [
@@ -239,7 +243,7 @@ export default function Example({ purchase: initialPurchase }) {
       },
       margin: { left: 10, top: 10 }
     });
-    
+    doc.addImage(firma, 'JPEG', 66, doc.autoTable.previous.finalY + 2,20, 11);
     // Aggiungi il piè di pagina
     const footerText = [
       "Sede Legale e Operativa c/o Kilometro Rosso (Gate 4) - Via Stezzano, 87 24126 Bergamo",

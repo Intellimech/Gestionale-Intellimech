@@ -4,11 +4,8 @@ import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon, CheckIcon, PaperAirplaneIcon, EyeIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-
 import { UserContext } from '../module/userContext';
-
 import PurchaseCreateForm from './purchasecreate';
-
 import PurchaseInfo from './purchaseinfo';
 
 function classNames(...classes) {
@@ -21,8 +18,8 @@ export default function Example({ permissions }) {
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
-  const [purchaseOrder, setPurchaseOrder] = useState([]); // Inizializza con array vuoto
-  const [items, setItems] = useState([]); // Inizializza con array vuoto
+  const [purchaseOrder, setPurchaseOrder] = useState([]);
+  const [items, setItems] = useState([]);
   const [showCreate, setShowCreate] = useState(false);
   const [sortColumn, setSortColumn] = useState('');
   const [sortDirection, setSortDirection] = useState('asc');
@@ -30,8 +27,15 @@ export default function Example({ permissions }) {
   const [showInfo, setShowInfo] = useState(false);
   const [selectedItemInfo, setSelectedItemInfo] = useState({});
 
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState('');
+  const [searchQueries, setSearchQueries] = useState({
+    name: '',
+    id_company: '',
+    payment_method: '',
+    total: '',
+    IVA: '',
+    status: '',
+    createdByUser: ''
+  });
 
   useEffect(() => {
     const isIndeterminate = selectedItems.length > 0 && selectedItems.length < items.length;
@@ -45,7 +49,6 @@ export default function Example({ permissions }) {
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
   }
-
 
   const fetchOrders = () => {
     axios
@@ -76,14 +79,10 @@ export default function Example({ permissions }) {
       setSortDirection('asc');
     }
   };
-  
-  const handleSearchInputChange = (event) => {
-    setSearchQuery(event.target.value);
+
+  const handleSearchInputChange = (column) => (event) => {
+    setSearchQueries({ ...searchQueries, [column]: event.target.value });
   };
-
-
-
-
 
   const compareValues = (a, b) => {
     if (typeof a === 'string' && typeof b === 'string') {
@@ -95,34 +94,18 @@ export default function Example({ permissions }) {
     }
   };
 
-  
   const filteredPurchase = purchaseOrder.filter((item) => {
-    switch (filterType) {
-      case 'name':
-        return item.name.toLowerCase().includes(searchQuery.toLowerCase());
-      case 'id_company':
-        return item.Company?.name.toLowerCase().includes(searchQuery.toLowerCase());
-      case 'payment_method':
-        return item.payment_method.toLowerCase().includes(searchQuery.toLowerCase());
-      case 'total':
-        return item.total.toString().includes(searchQuery);
-      case 'IVA':
-        return item.IVA.toLowerCase().includes(searchQuery.toLowerCase());
-      case 'status':
-        return item.status.toLowerCase().includes(searchQuery.toLowerCase());
-      case 'createdByUser':
-        return (item.createdByUser?.name + ' ' + item.createdByUser?.surname).toLowerCase().includes(searchQuery.toLowerCase());
-      default:
-        return false;
-    }
+    return (
+      (searchQueries.name === '' || item.name.toLowerCase().includes(searchQueries.name.toLowerCase())) &&
+      (searchQueries.id_company === '' || item.Company?.name.toLowerCase().includes(searchQueries.id_company.toLowerCase())) &&
+      (searchQueries.payment_method === '' || item.payment_method.toLowerCase().includes(searchQueries.payment_method.toLowerCase())) &&
+      (searchQueries.total === '' || item.total.toString().includes(searchQueries.total)) &&
+      (searchQueries.IVA === '' || item.IVA.toLowerCase().includes(searchQueries.IVA.toLowerCase())) &&
+      (searchQueries.status === '' || item.status.toLowerCase().includes(searchQueries.status.toLowerCase())) &&
+      (searchQueries.createdByUser === '' || (item.createdByUser?.name + ' ' + item.createdByUser?.surname).toLowerCase().includes(searchQueries.createdByUser.toLowerCase()))
+    );
   });
-  
 
-
-  const handleStatusSelectChange = (event) => {
-    setSelectedStatus(event.target.value);
-  };
-  
   const sortedPurchase = filteredPurchase.sort((a, b) => {
     const valueA = sortColumn === 'id_company' ? a.Company?.name : sortColumn === 'createdByUser' ? (a.createdByUser?.name + ' ' + a.createdByUser?.surname) : a[sortColumn];
     const valueB = sortColumn === 'id_company' ? b.Company?.name : sortColumn === 'createdByUser' ? (b.createdByUser?.name + ' ' + b.createdByUser?.surname) : b[sortColumn];
@@ -133,7 +116,6 @@ export default function Example({ permissions }) {
       return compareValues(valueB, valueA);
     }
   });
-
 
   function exportData() {
     const csvContent =
@@ -236,63 +218,41 @@ export default function Example({ permissions }) {
                     </Dialog.Panel>
                   </Transition.Child>
                 </div>
+
+
+
               </div>
+
           </div>
         </Dialog>
       </Transition.Root>
 
-      <div className="sm:flex-auto">
-        <h1 className="text-base font-semibold leading-6 text-gray-900">Ordini di Acquisto</h1>
-        <p className="mt-2 text-sm text-gray-700">Lista degli ordini di acquisto presenti a sistema</p>
-      </div>
+      <div className="py-4">
+        <div className="sm:flex-auto">
+          <h1 className="text-base font-semibold leading-6 text-gray-900">Ordini di Acquisto</h1>
+          <p className="mt-2 text-sm text-gray-700">Lista degli ordini di acquisto presenti a sistema</p>
+        </div>
 
-      <div className="flex flex-wrap justify-between mt-4 mb-4">
-        <div className="flex items-center">
-          <select
-            value={filterType}
-            onChange={(e) => setFilterType(e.target.value)}
-            className="block  px-6 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-          >
-            <option value="name">N° Ordine</option>
-            <option value="id_company">Azienda</option>
-            <option value="payment_method">Metodo di Pagamento</option>
-            <option value="total">Totale</option>
-            <option value="IVA">IVA</option>
-            <option value="createdByUser">Creato Da</option>
-          </select>
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={handleSearchInputChange}
-            className="block px-6 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-            placeholder={`Cerca per ${filterType === 'name' ? 'n° ordine' : filterType === 'id_company' ? 'Azienda' : filterType === 'total' ? 'import totale':  filterType === 'payment_method' ? 'pagamento' : filterType === 'IVA' ? 'IVA':  filterType === 'createdByUser' ? 'user creazione': 'n° ordine' }`}
-          />
-        </div> 
+        <div className="flex flex-wrap justify-between mt-4 mb-4">
         
-        
-        <div className="flex items-center space-x-4">
-          <select
-            value={selectedStatus}
-            onChange={handleStatusSelectChange}
-            className="block px-8 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-          >
-            <option value="">All Status</option>
-            <option value="In Approvazione">In Approvazione</option>
-            <option value="Accettato">Accettato</option>
+          <div className="flex items-center space-x-4">
+            
+            <button
+              onClick={exportData}
+              className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
 
-          </select>
-          <button
-            onClick={exportData}
-            className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
-          >
-            Export
-          </button>
-          <button
-            onClick={() =>setShowCreate(true)}
-            className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
-          >
-            Create
-          </button>
+            >
+              Export
+            </button>
+            <button
+              onClick={() =>setShowCreate(true)}
+              className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+
+            >
+              Create
+
+            </button>
+          </div>
         </div>
       </div>
 
@@ -303,150 +263,115 @@ export default function Example({ permissions }) {
               <table className="min-w-full table-fixed divide-y divide-gray-300">
                 <thead>
                   <tr>
-                    <th
-                      scope="col"
-                      className="px-3 py-3.5 pr-3 text-left text-sm font-semibold text-gray-900 cursor-pointer"
-                      onClick={() => handleSort('id_purchase')}
-                    >
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
                       N° Ordine
-                      {sortColumn === 'id_purchase' && (
-                        <span>
-                          {sortDirection === 'asc' ? (
-                            <ArrowUpIcon className="h-4 w-4 inline" />
-                          ) : (
-                            <ArrowDownIcon className="h-4 w-4 inline" />
-                          )}
-                        </span>
-                      )}
+                      {sortColumn === 'name' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <input
+                        type="text"
+                        value={searchQueries.name}
+                        onChange={handleSearchInputChange('name')}
+                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                        placeholder="Cerca per n° ordine"
+                      />
+                    
                     </th>
-                    <th
-                      scope="col"
-                      className="px-3 py-3.5 pr-3 text-left text-sm font-semibold text-gray-900 cursor-pointer"
-                      onClick={() => handleSort('id_company')} //non va bene id_company ma non riesco ad indicare come prendere il nome della company 
-                    >
+                    <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('id_company')}>
                       Azienda
-                      {sortColumn === 'id_company' && (
-                        <span>
-                          {sortDirection === 'asc' ? (
-                            <ArrowUpIcon className="h-4 w-4 inline" />
-                          ) : (
-                            <ArrowDownIcon className="h-4 w-4 inline" />
-                          )}
-                        </span>
-                      )}
+                      {sortColumn === 'id_company' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <input
+                        type="text"
+                        value={searchQueries.id_company}
+                        onChange={handleSearchInputChange('id_company')}
+                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                        placeholder="Cerca per azienda"
+                      />
+                      
                     </th>
-                    <th
-                      scope="col"
-                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
-                      onClick={() => handleSort('payment_method')}
-                    >
-                      Metodo di Pagamento
-                      {sortColumn === 'payment_method' && (
-                        <span>
-                          {sortDirection === 'asc' ? (
-                            <ArrowUpIcon className="h-4 w-4 inline" />
-                          ) : (
-                            <ArrowDownIcon className="h-4 w-4 inline" />
-                          )}
-                        </span>
-                      )}
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('payment_method')}>
+                      Metodo di Pagamento 
+                      {sortColumn === 'payment_method' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <input
+                        type="text"
+                        value={searchQueries.payment_method}
+                        onChange={handleSearchInputChange('payment_method')}
+                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                        placeholder="Cerca per metodo"
+                      />
+                     
                     </th>
-                    <th
-                      scope="col"
-                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
-                      onClick={() => handleSort('total')}
-                    >
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('total')}>
                       Totale
-                      {sortColumn === 'total' && (
-                        <span>
-                          {sortDirection === 'asc' ? (
-                            <ArrowUpIcon className="h-4 w-4 inline" />
-                          ) : (
-                            <ArrowDownIcon className="h-4 w-4 inline" />
-                          )}
-                        </span>
-                      )}
+                      {sortColumn === 'total' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <input
+                        type="text"
+                        value={searchQueries.total}
+                        onChange={handleSearchInputChange('total')}
+                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                        placeholder="Cerca per totale"
+                      />
+                     
                     </th>
-                    <th
-                      scope="col"
-                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
-                      onClick={() => handleSort('IVA')}
-                    >
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('IVA')}>
                       IVA
-                      {sortColumn === 'IVA' && (
-                        <span>
-                          {sortDirection === 'asc' ? (
-                            <ArrowUpIcon className="h-4 w-4 inline" />
-                          ) : (
-                            <ArrowDownIcon className="h-4 w-4 inline" />
-                          )}
-                        </span>
-                      )}
+                      {sortColumn === 'IVA' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <input
+                        type="text"
+                        value={searchQueries.IVA}
+                        onChange={handleSearchInputChange('IVA')}
+                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                        placeholder="Cerca per IVA"
+                      />
+                    
                     </th>
-                    <th
-                      scope="col"
-                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
-                      onClick={() => handleSort('status')}
-                    >
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('status')}>
                       Stato
-                      {sortColumn === 'status' && (
-                        <span>
-                          {sortDirection === 'asc' ? (
-                            <ArrowUpIcon className="h-4 w-4 inline" />
-                          ) : (
-                            <ArrowDownIcon className="h-4 w-4 inline" />
-                          )}
-                        </span>
-                      )}
+                      {sortColumn === 'status' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <input
+                        type="text"
+                        value={searchQueries.status}
+                        onChange={handleSearchInputChange('status')}
+                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                        placeholder="Cerca per stato"
+                      />
+                     
                     </th>
-                    <th
-                      scope="col"
-                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
-                      onClick={() => handleSort('createdByUser')} //non funziona 
-                    >
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('createdByUser')}>
                       Creata da
-                      {sortColumn === 'createdByUser' && (
-                        <span>
-                          {sortDirection === 'asc' ? (
-                            <ArrowUpIcon className="h-4 w-4 inline" />
-                          ) : (
-                            <ArrowDownIcon className="h-4 w-4 inline" />
-                          )}
-                        </span>
-                      )}
+                      {sortColumn === 'createdByUser' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <input
+                        type="text"
+                        value={searchQueries.createdByUser}
+                        onChange={handleSearchInputChange('createdByUser')}
+                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                        placeholder="Cerca per creatore"
+                      />
                     </th>
-                    <th
-                      scope="col"
-                      className="relative py-3.5 pl-3 pr-4 sm:pr-3"
-                    ></th>
+                    <th scope="col" className="relative px-3 py-3.5">
+                      <span className="sr-only">Azioni</span>
+                    </th>
                   </tr>
                 </thead>
-
                 <tbody className="divide-y divide-gray-200 bg-white">
-                  {Array.isArray(sortedPurchase) && sortedPurchase.length > 0 ? (
-                    sortedPurchase.map((item) => (
-                      <tr
-                        key={item.id_purchase}
-                        className={selectedItems.includes(item) ? 'bg-gray-50' : undefined}
+                  {sortedPurchase.map((item) => (
+                    <tr key={item.id}>
+                      <td
+                        onClick={(event) => {
+                          //ctrl + click per aprire un nuovo tab
+                          if (event.ctrlKey) {
+                            window.open(`/app/purchase/${item.id_purchase}`);
+                          } else {
+                            setShowInfo(true);
+                            setSelectedItemInfo(item);
+                          }
+                        }}
+                        className={classNames(
+                          'whitespace-nowrap px-3 py-4 pr-3 text-sm font-medium',
+                          selectedItems.includes(item) ? 'text-red-600' : 'text-gray-900'
+                        )}
                       >
-                        <td
-                          onClick={(event) => {
-                            //ctrl + click per aprire un nuovo tab
-                            if (event.ctrlKey) {
-                              window.open(`/app/purchase/${item.id_purchase}`);
-                            } else {
-                              setShowInfo(true);
-                              setSelectedItemInfo(item);
-                            }
-                          }}
-                          className={classNames(
-                            'whitespace-nowrap px-3 py-4 pr-3 text-sm font-medium',
-                            selectedItems.includes(item) ? 'text-red-600' : 'text-gray-900'
-                          )}
-                        >
-                          {item.name}
-                        </td>
-                        <td className="whitespace-normal max-w-[200px] overflow-hidden text-sm text-gray-500 px-3 py-4 break-words">
+                        {item.name}
+                      </td>
+                      <td className="whitespace-normal max-w-[200px] overflow-hidden text-sm text-gray-500 px-3 py-4 break-words">
                           {item.Company?.name}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
@@ -492,71 +417,9 @@ export default function Example({ permissions }) {
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           {item.createdByUser?.name.slice(0, 2).toUpperCase() + item.createdByUser?.surname.slice(0, 2).toUpperCase()}
                         </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          <div className="flex items-center space-x-2">
-                            {/* {item.createdByUser?.id_user === user.id_user && (
-                              <>
-                                {item.status === 'In Approvazione' && (
-                                  <>
-                                    <button
-                                      type="button"
-                                      className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
-                                      onClick={() => Accept(item.id_order)}
-                                      title="Approva"
-                                    >
-                                      <CheckIcon className="h-5 w-4 text-gray-500" />
-                                    </button>
-                                    <button
-                                      type="button"
-                                      className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
-                                      onClick={() => Refuse(item.id_order)}
-                                      title="Rifiuta"
-                                    >
-                                      <XMarkIcon className="h-5 w-4 text-gray-500" />
-                                    </button>
-                                    <button
-                                      type="button"
-                                      className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
-                                      onClick={() => Revision(item.id_order)}
-                                      title="Revisione"
-                                    >
-                                      <ArrowPathIcon className="h-5 w-4 text-gray-500" />
-                                    </button>
-                                  </>
-                                )}
-                                {item.status === 'Nuova' && (
-                                  <>
-                                    <button
-                                      type="button"
-                                      className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
-                                      onClick={() => Sent(item.id_order)}
-                                      title="Invia al cliente"
-                                    >
-                                      <PaperAirplaneIcon className="h-5 w-4 text-gray-500" />
-                                    </button>
-                                    <button
-                                      type="button"
-                                      className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
-                                      onClick={() => Revision(item.id_order)}
-                                      title="Revisione"
-                                    >
-                                      <ArrowPathIcon className="h-5 w-4 text-gray-500" />
-                                    </button>
-                                  </>
-                                )}
-                              </>
-                            )} */}
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="8" className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
-                        Non ci sono ordini di acquisto
-                      </td>
+                     
                     </tr>
-                  )}
+                  ))}
                 </tbody>
               </table>
             </div>

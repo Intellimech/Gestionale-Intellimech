@@ -116,10 +116,33 @@ export default function Example({ permissions }) {
   });
   
   const sortedSaleOrder = filteredSaleOrder.sort((a, b) => {
-    if (sortDirection === 'asc') {
-      return compareValues(a[sortColumn], b[sortColumn]);
+
+    const getValue = (item, column) => {
+      switch (column) {
+        case 'Company':
+          return item.QuotationRequest?.Company?.name || '';
+        case 'category':
+          return item.QuotationRequest?.Category?.name || '';
+        case 'subcategory':
+          return item.QuotationRequest?.Subcategory?.name || '';
+        case 'technicalarea':
+          return item.QuotationRequest?.TechnicalArea?.name || '';
+        case 'description':
+          return item.QuotationRequest?.description || '';
+        case 'createdByUser':
+          return item.createdByUser ? `${item.createdByUser.name} ${item.createdByUser.surname}` : '';
+        default:
+          return item[column] || '';
+      }
+    };
+  
+    const valueA = getValue(a, sortColumn);
+    const valueB = getValue(b, sortColumn);
+
+     if (sortDirection === 'asc') {
+      return compareValues(valueA, valueB);
     } else {
-      return compareValues(b[sortColumn], a[sortColumn]);
+      return compareValues(valueB, valueA);
     }
   });
 
@@ -510,10 +533,10 @@ export default function Example({ permissions }) {
                   <th
                       scope="col"
                       className="px-3 py-3.5 pr-3 text-left text-sm font-semibold text-gray-900 cursor-pointer"
-                      onClick={() => handleSort('id_saleoferder')}
+                      onClick={() => handleSort('name')}
                     >
                       N° Ordine
-                      {sortColumn === 'id_saleorder' && (
+                      {sortColumn === 'name' && (
                         <span>
                           {sortDirection === 'asc' ? (
                             <ArrowUpIcon className="h-4 w-4 inline" />
@@ -523,41 +546,197 @@ export default function Example({ permissions }) {
                         </span>
                       )}
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 pr-3 text-left text-sm font-semibold text-gray-900 cursor-pointer"
+                      onClick={() => handleSort('description')}
+                    >
                       Descrizione
+                      {sortColumn === 'description' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 pr-3 text-left text-sm font-semibold text-gray-900 cursor-pointer"
+                      onClick={() => handleSort('Company')}
+                    >
                       Azienda
+                      {sortColumn === 'Company' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
                     </th>    
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 pr-3 text-left text-sm font-semibold text-gray-900 cursor-pointer"
+                      onClick={() => handleSort('revision')}
+                    >
                       Revisione
-                    </th>                
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                      {sortColumn === 'revision' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
+                    </th>                  
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 pr-3 text-left text-sm font-semibold text-gray-900 cursor-pointer"
+                      onClick={() => handleSort('hour')}
+                    >
                       Ore
-                    </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                      {sortColumn === 'hour' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
+                    </th>   
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 pr-3 text-left text-sm font-semibold text-gray-900 cursor-pointer"
+                      onClick={() => handleSort('amount')}
+                    >
                       Valore
-                    </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                      {sortColumn === 'amount' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
+                    </th>   
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
+                      onClick={() => handleSort('category')} //category da solo funziona ma category.name non funziona
+                    >
                       Categoria
+                      {sortColumn === 'category' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
+                      onClick={() => handleSort('technicalarea')}
+                    >
                       Area Tecnica
+                      {sortColumn === 'technicalarea' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
+                      onClick={() => handleSort('estimatedstart')} //non funziona 
+                    >
                       Inizio Stimato
-                    </th>                    
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                      Fine Stimata
+                      {sortColumn === 'estimatedstart' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
+                    </th>                
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
+                      onClick={() => handleSort('estimatedend')} //non funziona 
+                    >
+                      Fine Stimata 
+                      {sortColumn === 'estimatedend' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
+                      onClick={() => handleSort('deadline')}
+                    >
                       Scadenza
+                      {sortColumn === 'deadline' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
+                      onClick={() => handleSort('status')}
+                    >
                       Stato
+                      {sortColumn === 'status' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                      Proprietario
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
+                      onClick={() => handleSort('createdByUser')} //non funziona 
+                    >
+                      Autore
+                      {sortColumn === 'createdByUser' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
                     </th>
                     <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-3">
                     </th>
@@ -653,7 +832,7 @@ export default function Example({ permissions }) {
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           <div className="flex items-center space-x-2">
-                            {offer.createdByUser.id_user === user.id_user && (
+                            {offer.createdByUser === user.id_user && (
                               <>
                                 {offer.status === 'Inviata al cliente' && (
                                   <>

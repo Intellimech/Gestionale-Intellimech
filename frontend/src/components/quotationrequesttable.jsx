@@ -98,12 +98,33 @@ export default function Example({ permissions }) {
   };
   
   const sortedRequest = filteredRequest.sort((a, b) => {
+    const getValue = (item, column) => {
+      switch (column) {
+        case 'Company':
+          return item.Company?.name || '';
+        case 'category':
+          return item.Category?.name || '';
+        case 'subcategory':
+          return item.Subcategory?.name || '';
+        case 'technicalarea':
+          return item.TechnicalArea?.name || '';
+        case 'createdByUser':
+          return item.createdByUser ? `${item.createdByUser.name} ${item.createdByUser.surname}` : '';
+        default:
+          return item[column] || '';
+      }
+    };
+  
+    const valueA = getValue(a, sortColumn);
+    const valueB = getValue(b, sortColumn);
+  
     if (sortDirection === 'asc') {
-      return compareValues(a[sortColumn], b[sortColumn]);
+      return compareValues(valueA, valueB);
     } else {
-      return compareValues(b[sortColumn], a[sortColumn]);
+      return compareValues(valueB, valueA);
     }
   });
+  
 
   function exportData() {
     const csvContent =
@@ -437,10 +458,10 @@ export default function Example({ permissions }) {
                   <th
                       scope="col"
                       className="px-3 py-3.5 pr-3 text-left text-sm font-semibold text-gray-900 cursor-pointer"
-                      onClick={() => handleSort('id_quotationrequest')}
+                      onClick={() => handleSort('name')}
                     >
                       N° Richiesta
-                      {sortColumn === 'id_quotationrequest' && (
+                      {sortColumn === 'name' && (
                         <span>
                           {sortDirection === 'asc' ? (
                             <ArrowUpIcon className="h-4 w-4 inline" />
@@ -469,10 +490,10 @@ export default function Example({ permissions }) {
                     <th
                       scope="col"
                       className="px-3 py-3.5 pr-3 text-left text-sm font-semibold text-gray-900 cursor-pointer"
-                      onClick={() => handleSort('Company.name')} 
+                      onClick={() => handleSort('Company')} 
                     >
                       Azienda
-                      {sortColumn === 'Company.name' && (
+                      {sortColumn === 'Company' && (
                         <span>
                           {sortDirection === 'asc' ? (
                             <ArrowUpIcon className="h-4 w-4 inline" />
@@ -549,10 +570,10 @@ export default function Example({ permissions }) {
                     <th
                       scope="col"
                       className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
-                      onClick={() => handleSort('createdByUser?.name')} //non funziona 
+                      onClick={() => handleSort('createdByUser')} //non funziona 
                     >
                       Autore
-                      {sortColumn === 'createdByUser?.name' && (
+                      {sortColumn === 'createdByUser' && (
                         <span>
                           {sortDirection === 'asc' ? (
                             <ArrowUpIcon className="h-4 w-4 inline" />

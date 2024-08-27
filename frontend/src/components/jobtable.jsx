@@ -101,7 +101,7 @@ export default function Example({ permissions, user }) {
     switch (filterType) {
       case 'name':
         return item.name.toLowerCase().includes(searchQuery.toLowerCase());
-      case 'Company.name':
+      case 'Company':
         return item.SalesOrders[0]?.Offer.QuotationRequest.Company.name.toLowerCase().includes(searchQuery.toLowerCase());
       case 'SaleOrders.name':
         return item.SalesOrders[0]?.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -120,26 +120,37 @@ export default function Example({ permissions, user }) {
     }
   });
   
-  const sortedJob = filteredJob.sort((a, b) => {
-    if (!sortColumn) return 0;
+  const sortedJob = filteredJob.sort((a, b) =>  {
+    const getValue = (item, column) => {
+      switch (column) {
+        case 'Company':
+          return item.SalesOrders[0]?.Offer.QuotationRequest.Company.name || '';
+        case 'Saleorder.name':
+          return item.SalesOrders[0]?.name || '';
+        case 'offertotal':
+          return item.SalesOrders[0]?.Offer.amount || '';
+        case 'offerhour':
+          return item.SalesOrders[0]?.Offer.hour || '';
+        case 'reportedhour':
+          return item.Reportings.hour|| '';
+        case 'total':
+          return item.Reportings.hour || ''; //non corretto
+        case 'createdByUser':
+          return item.createdByUser ? `${item.createdByUser.name} ${item.createdByUser.surname}` : '';
+        default:
+          return item[column] || '';
+      }
+    };
   
-    const aValue = getColumnValue(a, sortColumn);
-    const bValue = getColumnValue(b, sortColumn);
+    const valueA = getValue(a, sortColumn);
+    const valueB = getValue(b, sortColumn);
   
-    return sortDirection === 'asc'
-      ? compareValues(aValue, bValue)
-      : compareValues(bValue, aValue);
+    if (sortDirection === 'asc') {
+      return compareValues(valueA, valueB);
+    } else {
+      return compareValues(valueB, valueA);
+    }
   });
-
-  function handleStatusSelectChange(event) {
-    setSelectedYear(event.target.value);
-  }
-
-  const handleSort = (columnName) => {
-    setSortDirection(sortColumn === columnName && sortDirection === 'asc' ? 'desc' : 'asc');
-    setSortColumn(columnName);
-  };
-
 
   function exportUsers() {
     //export user in the csv file
@@ -154,6 +165,16 @@ export default function Example({ permissions, user }) {
     document.body.appendChild(link);
     link.click();
   }
+  
+  const handleSort = (columnName) => {
+    if (sortColumn === columnName) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortColumn(columnName);
+      setSortDirection('asc');
+    }
+  };
+    
 
   function handleJobClick(job) {
     setSelectedJob(job);
@@ -265,7 +286,7 @@ export default function Example({ permissions, user }) {
               className="block  px-6 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
             >
               <option value="name">Nome</option>
-              <option value="Company.name">Azienda</option>
+              <option value="Company">Azienda</option>
               <option value="SaleOrders.name">Ordine</option>
               
               <option value="status">Stato</option>
@@ -293,7 +314,7 @@ export default function Example({ permissions, user }) {
               value={searchQuery}
               onChange={handleSearchInputChange}
               className="block px-6 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-              placeholder={`Cerca per ${filterType === 'name' ? 'Nome' : filterType === 'Company.name' ? 'Azienda' : filterType === 'SaleOrders.name' ? 'Ordine':  filterType === 'createdByUser' ? 'Proprietario': 'Nome' }`}
+              placeholder={`Cerca per ${filterType === 'name' ? 'Nome' : filterType === 'Company' ? 'Azienda' : filterType === 'SaleOrders.name' ? 'Ordine':  filterType === 'createdByUser' ? 'Proprietario': 'Nome' }`}
             />
              )}
           </div> 
@@ -341,9 +362,9 @@ export default function Example({ permissions, user }) {
                     <th 
                       scope="col" 
                       className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                      onClick={() => handleSort('Company.name')}>
+                      onClick={() => handleSort('Company')}>
                       Azienda
-                      {sortColumn === 'Company.name' && (
+                      {sortColumn === 'Company' && (
                         <span>
                           {sortDirection === 'asc' ? (
                             <ArrowUpIcon className="h-4 w-4 inline" />

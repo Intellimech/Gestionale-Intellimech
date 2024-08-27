@@ -88,10 +88,28 @@ export default function Example({ permissions }) {
   });
   
   const sortedSaleOrder = filteredSaleOrder.sort((a, b) => {
+    const getValue = (item, column) => {
+      switch (column) {
+        case 'Company':
+          return item.Offer.QuotationRequest.Company.name || '';
+        case 'description':
+          return item.Offer.QuotationRequest.description || '';
+        case 'offer':
+          return item.Offer.name || '';
+        case 'createdByUser':
+          return item.createdByUser ? `${item.createdByUser.name} ${item.createdByUser.surname}` : '';
+        default:
+          return item[column] || '';
+      }
+    };
+  
+    const valueA = getValue(a, sortColumn);
+    const valueB = getValue(b, sortColumn);
+  
     if (sortDirection === 'asc') {
-      return compareValues(a[sortColumn], b[sortColumn]);
+      return compareValues(valueA, valueB);
     } else {
-      return compareValues(b[sortColumn], a[sortColumn]);
+      return compareValues(valueB, valueA);
     }
   });
 
@@ -99,7 +117,7 @@ export default function Example({ permissions }) {
     setSelectedStatus(event.target.value);
   };
 
-  
+
   
 
   const exportUsers = () => {
@@ -292,9 +310,9 @@ export default function Example({ permissions }) {
                     <th 
                       scope="col" 
                       className="px-3 py-3.5 pr-3 text-left text-sm font-semibold text-gray-900"
-                      onClick={() => handleSort('Offer.QuotationRequest.Company.name')}>
+                      onClick={() => handleSort('Company')}>
                       Azienda
-                      {sortColumn === 'Offer.QuotationRequest.Company.name' && (
+                      {sortColumn === 'Company' && (
                         <span>
                           {sortDirection === 'asc' ? (
                             <ArrowUpIcon className="h-4 w-4 inline" />
@@ -304,15 +322,27 @@ export default function Example({ permissions }) {
                         </span>
                       )}
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <th 
+                      scope="col" 
+                      className="px-3 py-3.5 pr-3 text-left text-sm font-semibold text-gray-900"
+                      onClick={() => handleSort('offer')}>
                       Offerta
+                      {sortColumn === 'offer' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
                     </th>
                     <th 
                       scope="col" 
                       className="px-3 py-3.5 pr-3 text-left text-sm font-semibold text-gray-900"
-                      onClick={() => handleSort('Offer.QuotationRequest.description')}>
+                      onClick={() => handleSort('description')}>
                       Descrizione
-                      {sortColumn === 'Offer.QuotationRequest.description' && (
+                      {sortColumn === 'description' && (
                         <span>
                           {sortDirection === 'asc' ? (
                             <ArrowUpIcon className="h-4 w-4 inline" />
@@ -337,8 +367,21 @@ export default function Example({ permissions }) {
                         </span>
                       )}
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
+                      onClick={() => handleSort('createdByUser')} 
+                    >
                       Proprietario
+                      {sortColumn === 'createdByUser' && (
+                        <span>
+                          {sortDirection === 'asc' ? (
+                            <ArrowUpIcon className="h-4 w-4 inline" />
+                          ) : (
+                            <ArrowDownIcon className="h-4 w-4 inline" />
+                          )}
+                        </span>
+                      )}
                     </th>
                     <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-3">
                     </th>

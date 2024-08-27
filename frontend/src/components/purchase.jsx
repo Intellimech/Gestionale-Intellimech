@@ -8,6 +8,7 @@ import Cookies from 'js-cookie';
 import { UserContext } from '../module/userContext';
 
 import PurchaseCreateForm from './purchasecreate';
+
 import PurchaseInfo from './purchaseinfo';
 
 function classNames(...classes) {

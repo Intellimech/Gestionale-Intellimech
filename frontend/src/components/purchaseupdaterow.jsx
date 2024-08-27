@@ -40,6 +40,7 @@ export default function PurchaseUpdateRow({
           options={categories.map(c => ({ value: c.id_category, label: c.name }))}
           className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:max-w-xs sm:text-sm sm:leading-6"
           primaryColor='red'
+          isSearchable
         />
       </td>
 
@@ -51,15 +52,11 @@ export default function PurchaseUpdateRow({
           id={`subcategory-${index}`}
           name={`subcategory-${index}`}
           placeholder="Seleziona una sottocategoria"
-          value={
-            product.subcategory
-              ? { value: product.subcategory, label: subcategories.find(s => s.id_subcategory === product.subcategory)?.name }
-              : null
-          }
+          value={{ value: product?.Subcategory.name, label:  product?.Subcategory.name } }
           onChange={(option) => onChange({ ...product, subcategory: option.value })}
           options={subcategories.map(s => ({ value: s.id_subcategory, label: s.name }))}
           className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:max-w-xs sm:text-sm sm:leading-6"
-          isDisabled={subcategories.length === 0}
+          isSearchable
           primaryColor='red'
         />
       </td>

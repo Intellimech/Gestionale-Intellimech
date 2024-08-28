@@ -61,10 +61,10 @@ export default function Example({ permissions, user }) {
         console.log(error);
       });
   }, []); // Empty dependency array
+  const handleSearchInputChange = (column) => (event) => {
+    setSearchQueries({ ...searchQueries, [column]: event.target.value });
+  };
 
-  function handleSearchInputChange(event) {
-    setSearchQuery(event.target.value);
-  }
 
   const getColumnValue = (job, columnName) => {
     const parts = columnName.split('.');
@@ -95,37 +95,42 @@ export default function Example({ permissions, user }) {
   };
   
 
-  
-  const filteredJob = 
-  jobs.filter((item) => {
-    switch (filterType) {
-      case 'name':
-        return item.name.toLowerCase().includes(searchQuery.toLowerCase());
-      case 'Company':
-        return item.SalesOrders[0]?.Offer.QuotationRequest.Company.name.toLowerCase().includes(searchQuery.toLowerCase());
-      case 'SaleOrders.name':
-        return item.SalesOrders[0]?.name.toLowerCase().includes(searchQuery.toLowerCase());
-      case 'total':
-        return item.SalesOrders[0]?.amount.toString().includes(searchQuery);
-       case 'offerhour':
-        return item.SalesOrder[0]?.hour.toString().includes(searchQuery.toLowerCase());
-      case 'status':
-        return item.status===selectedStatus;
-      // case 'reportedhour':
-      //   return item.status.toLowerCase().includes(searchQuery.toLowerCase());
-      case 'createdByUser':
-        return (item.createdByUser?.name + ' ' + item.createdByUser?.surname).toLowerCase().includes(searchQuery.toLowerCase());
-      default:
-        return false;
-    }
+  const [searchQueries, setSearchQueries] = useState({
+    name: '',
+    Company: '',
+    status: '',
+    offer: '',
+    offerhour: '',
+    total: '',
+   
+    reportedhour: '',
+    offertotal: '',
+    createdByUser: ''
   });
+
+
+  const filteredJob = jobs.filter((item) => {
+    // Default filter to true for all conditions
+    return (
+      (searchQueries.name === '' || (item.name && item.name.toLowerCase().includes(searchQueries.name.toLowerCase()))) &&
+      (searchQueries.offer === '' || (item.SalesOrders[0] && item.SalesOrders[0].name && item.SalesOrders[0].name.toLowerCase().includes(searchQueries.offer.toLowerCase()))) &&
+      (searchQueries.Company === '' || (item.SalesOrders[0] && item.SalesOrders[0].Offer && item.SalesOrders[0].Offer.QuotationRequest && item.SalesOrders[0].Offer.QuotationRequest.Company && item.SalesOrders[0].Offer.QuotationRequest.Company.name && item.SalesOrders[0].Offer.QuotationRequest.Company.name.toLowerCase().includes(searchQueries.Company.toLowerCase()))) &&
+      (searchQueries.status === '' || (item.status.toLowerCase().includes(searchQueries.status.toLowerCase()))) &&
+      (searchQueries.reportedhour === '' || (item.Reportings && item.Reportings.some(report => report.hour.toString().includes(searchQueries.reportedhour.toString())))) &&
+      (searchQueries.offerhour === '' || (item.SalesOrders[0] && item.SalesOrders[0].Offer && item.SalesOrders[0].Offer.hour && item.SalesOrders[0].Offer.hour.toString().includes(searchQueries.offerhour.toString()))) &&
+      (searchQueries.total === '' || (item.Reportings && item.Reportings.total.toString().includes(searchQueries.total.toString()))) &&
+      (searchQueries.offertotal === '' || (item.SalesOrders[0] && item.SalesOrders[0].Offer && item.SalesOrders[0].Offer.amount && item.SalesOrders[0].Offer.amount.toString().includes(searchQueries.offertotal.toString()))) &&
+      (searchQueries.createdByUser === '' || (item.createdByUser && (item.createdByUser.name + ' ' + item.createdByUser.surname).toLowerCase().includes(searchQueries.createdByUser.toLowerCase())))
+    );
+  });
+  
   
   const sortedJob = filteredJob.sort((a, b) =>  {
     const getValue = (item, column) => {
       switch (column) {
         case 'Company':
           return item.SalesOrders[0]?.Offer.QuotationRequest.Company.name || '';
-        case 'Saleorder.name':
+        case 'Saleorder':
           return item.SalesOrders[0]?.name || '';
         case 'offertotal':
           return item.SalesOrders[0]?.Offer.amount || '';
@@ -137,6 +142,8 @@ export default function Example({ permissions, user }) {
           return item.Reportings.hour || ''; //non corretto
         case 'createdByUser':
           return item.createdByUser ? `${item.createdByUser.name} ${item.createdByUser.surname}` : '';
+        case 'status':
+          return item.status || '';
         default:
           return item[column] || '';
       }
@@ -273,214 +280,145 @@ export default function Example({ permissions, user }) {
           </div>
         </Dialog>
       </Transition.Root>
-      <div className="sm:flex-auto">
-          <h1 className="text-base font-semibold leading-6 text-gray-900">Commesse</h1>
-          <p className="mt-2 text-sm text-gray-700">Lista commesse presenti a sistema</p>
-        </div>
-        {/* Search box and Year filter */}
-        <div className="flex flex-wrap justify-between mt-4 mb-4">
-          <div className="flex items-center">
-            <select
-              value={filterType}
-              onChange={(e) => setFilterType(e.target.value)}
-              className="block  px-6 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-            >
-              <option value="name">Nome</option>
-              <option value="Company">Azienda</option>
-              <option value="SaleOrders.name">Ordine</option>
-              
-              <option value="status">Stato</option>
-              {/* <option value="offerhour">Ore Stimate</option>
-              <option value="total">Valore</option>
-              <option value="reportedhour">Ore Lavorate</option> non so se ha senso filtrare per questi valori, essendoci la possibiliutà di ordinare le colonne */}
-              <option value="createdByUser">Proprietario</option>
-            </select>
-            {filterType === 'status' ? (
-              <select
-                value={selectedStatus}
-                onChange={(e) => setselectedStatus(e.target.value)}
-                className="block w-48 px-4 py-2 border border-gray-300 rounded-r-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-              >
-                
-                <option value="Nessuno"> Nessuno </option>
-                <option value="Scaduta"> Scaduta </option>
-                <option value="Chiusa"> Chiusa </option>
-                <option value="Aperta"> Aperta </option>
-              </select>
-            ) :
-            ( 
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={handleSearchInputChange}
-              className="block px-6 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-              placeholder={`Cerca per ${filterType === 'name' ? 'Nome' : filterType === 'Company' ? 'Azienda' : filterType === 'SaleOrders.name' ? 'Ordine':  filterType === 'createdByUser' ? 'Proprietario': 'Nome' }`}
-            />
-             )}
-          </div> 
-          <div className="flex-grow w-full max-w-xs flex items-end px-36 mb-4">
-            
 
-            <div className="px-4">
-              <button
-                onClick={exportUsers}
-                className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
-                >
-                Export
-              </button>
-            </div>
-            <div className="">
-              <button
-                onClick={() => setOpen(true)}
-                className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
-              >
-                Create
-              </button>
-            </div>
+
+
+
+      
+      <div className="py-4">
+        <div className="sm:flex-auto">
+          <h1 className="text-base font-semibold leading-6 text-gray-900">Ordini di Acquisto</h1>
+          <p className="mt-2 text-sm text-gray-700">Lista degli ordini di acquisto presenti a sistema</p>
+        </div>
+
+        <div className="flex flex-wrap justify-between mt-4 mb-4">
+          <div className="flex items-center space-x-4 ml-auto">
+            {/* Bottoni Export e Create */}
+            <button
+              onClick={exportUsers}
+              className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+            >
+              Export
+            </button>
+            <button
+              onClick={() => setOpen(true)}
+              className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+            >
+              Create
+            </button>
           </div>
         </div>
+      </div>
+
       <div className="mt-8 flow-root">
         <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">          
           <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
             <div className="relative">
               <table className="min-w-full table-fixed divide-y divide-gray-300">
                 <thead>
-                  <tr>                
-                    <th scope="col" className="px-3 py-3.5 pr-3 text-left text-sm font-semibold text-gray-900"
-                        onClick={() => handleSort('name')}>
-                      Nome
-                      {sortColumn === 'name' && (
-                        <span>
-                          {sortDirection === 'asc' ? (
-                            <ArrowUpIcon className="h-4 w-4 inline" />
-                          ) : (
-                            <ArrowDownIcon className="h-4 w-4 inline" />
-                          )}
-                        </span>
-                      )}
+                  <tr>                 
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
+                      Nome Commessa
+                      {sortColumn === 'name' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <input
+                        type="text"
+                        value={searchQueries.name}
+                        onChange={handleSearchInputChange('name')}
+                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                        placeholder="Cerca per n° richiesta"
+                      />
                     </th>
-                    <th 
-                      scope="col" 
-                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                      onClick={() => handleSort('Company')}>
+                    <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Company')}>
                       Azienda
-                      {sortColumn === 'Company' && (
-                        <span>
-                          {sortDirection === 'asc' ? (
-                            <ArrowUpIcon className="h-4 w-4 inline" />
-                          ) : (
-                            <ArrowDownIcon className="h-4 w-4 inline" />
-                          )}
-                        </span>
-                      )}
+                      {sortColumn === 'Company' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <br></br>
+                      <input
+                        type="text"
+                        value={searchQueries.Company}
+                        onChange={handleSearchInputChange('Company')}
+                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                        placeholder="Cerca per azienda"
+                      />
                     </th>
-                    <th 
-                      scope="col" 
-                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                      onClick={() => handleSort('Saleorder.name')}>
-                      Ordini di vendita
-                      {sortColumn === 'Saleorder.name' && (
-                        <span>
-                          {sortDirection === 'asc' ? (
-                            <ArrowUpIcon className="h-4 w-4 inline" />
-                          ) : (
-                            <ArrowDownIcon className="h-4 w-4 inline" />
-                          )}
-                        </span>
-                      )}
-                    </th>
-                    <th 
-                      scope="col" 
-                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                      onClick={() => handleSort('offertotal')}>
+                    <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('SaleOrder')}>
+                      Ordine di Vendita
+                      {sortColumn === 'SaleOrder' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <input
+                        type="text"
+                        value={searchQueries.SaleOrder}
+                        onChange={handleSearchInputChange('SaleOrder')}
+                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                        placeholder="Cerca per valore "
+                      />
+                    </th>  
+                    <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('offertotal')}>
                       Valore Contrattuale
-                      {sortColumn === 'offertotal' && (
-                        <span>
-                          {sortDirection === 'asc' ? (
-                            <ArrowUpIcon className="h-4 w-4 inline" />
-                          ) : (
-                            <ArrowDownIcon className="h-4 w-4 inline" />
-                          )}
-                        </span>
-                      )}
-                    </th>
-                    <th 
-                      scope="col" 
-                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                      onClick={() => handleSort('offerhour')}>
+                      {sortColumn === 'offertotal' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <input
+                        type="text"
+                        value={searchQueries.offertotal}
+                        onChange={handleSearchInputChange('offertotal')}
+                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                        placeholder="Cerca per valore "
+                      />
+                    </th>  
+                    <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('offerhour')}>
                       Ore Stimate
-                      {sortColumn === 'offerhour' && (
-                        <span>
-                          {sortDirection === 'asc' ? (
-                            <ArrowUpIcon className="h-4 w-4 inline" />
-                          ) : (
-                            <ArrowDownIcon className="h-4 w-4 inline" />
-                          )}
-                        </span>
-                      )}
-                    </th>
-                    <th 
-                      scope="col" 
-                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                      onClick={() => handleSort('total')}>
+                      {sortColumn === 'offerhour' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <input
+                        type="text"
+                        value={searchQueries.offerhour}
+                        onChange={handleSearchInputChange('offerhour')}
+                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                        placeholder="Cerca per ore"
+                      />
+                    </th>  
+                    <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('total')}>
                       Valore Reale
-                      {sortColumn === 'total' && (
-                        <span>
-                          {sortDirection === 'asc' ? (
-                            <ArrowUpIcon className="h-4 w-4 inline" />
-                          ) : (
-                            <ArrowDownIcon className="h-4 w-4 inline" />
-                          )}
-                        </span>
-                      )}
-                    </th>
-                    <th 
-                      scope="col" 
-                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                      onClick={() => handleSort('reportedhour')}>
+                      {sortColumn === 'total' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <input
+                        type="text"
+                        value={searchQueries.total}
+                        onChange={handleSearchInputChange('total')}
+                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                        placeholder="Cerca per valore reale"
+                      />
+                    </th>  
+                    <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('reportedhour')}>
                       Ore Lavorate
-                      {sortColumn === 'reportedhour' && (
-                        <span>
-                          {sortDirection === 'asc' ? (
-                            <ArrowUpIcon className="h-4 w-4 inline" />
-                          ) : (
-                            <ArrowDownIcon className="h-4 w-4 inline" />
-                          )}
-                        </span>
-                      )}
-                    </th>
-                    <th 
-                      scope="col" 
-                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                      onClick={() => handleSort('createdByUser')}>
-                      Proprietario
-                      {sortColumn === 'createdByUser' && (
-                        <span>
-                          {sortDirection === 'createdByUser' ? (
-                            <ArrowUpIcon className="h-4 w-4 inline" />
-                          ) : (
-                            <ArrowDownIcon className="h-4 w-4 inline" />
-                          )}
-                        </span>
-                      )}
-                    </th>
-                    <th 
-                      scope="col" 
-                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                      onClick={() => handleSort('status')}>
+                      {sortColumn === 'reportedhour' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <input
+                        type="text"
+                        value={searchQueries.reportedhour}
+                        onChange={handleSearchInputChange('reportedhour')}
+                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                        placeholder="Cerca per ore"
+                      />
+                    </th>  
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('status')}>
                       Stato
-                      {sortColumn === 'status' && (
-                        <span>
-                          {sortDirection === 'asc' ? (
-                            <ArrowUpIcon className="h-4 w-4 inline" />
-                          ) : (
-                            <ArrowDownIcon className="h-4 w-4 inline" />
-                          )}
-                        </span>
-                      )}
+                      {sortColumn === 'status' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <input
+                        type="text"
+                        value={searchQueries.status}
+                        onChange={handleSearchInputChange('status')}
+                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                        placeholder="Cerca per stato"
+                      />
+                    
                     </th>
-                    <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-3">
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('createdByUser')}>
+                      Creata da
+                      {sortColumn === 'createdByUser' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <input
+                        type="text"
+                        value={searchQueries.createdByUser}
+                        onChange={handleSearchInputChange('createdByUser')}
+                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                        placeholder="Cerca per creatore"
+                      />
                     </th>
+                    
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
@@ -528,9 +466,6 @@ export default function Example({ permissions, user }) {
                           {
                             job.Reportings.reduce((total, reported) => total + reported.hour, 0) + ' h'
                           }
-                        </td>
-                        <td className="px-3 py-4 text-sm text-gray-500">
-                          {job.createdByUser?.name.slice(0, 2).toUpperCase() + job.createdByUser?.surname.slice(0, 2).toUpperCase()}
                         </td> 
                         <td className="px-3 py-4 text-sm text-gray-500">
                         {
@@ -553,7 +488,10 @@ export default function Example({ permissions, user }) {
                               </span>
                             )
                           }                 
-                        </td> 
+                        </td>
+                        <td className="px-3 py-4 text-sm text-gray-500">
+                          {job.createdByUser?.name.slice(0, 2).toUpperCase() + job.createdByUser?.surname.slice(0, 2).toUpperCase()}
+                        </td>
                       </tr>
                     ))
                   ) : (

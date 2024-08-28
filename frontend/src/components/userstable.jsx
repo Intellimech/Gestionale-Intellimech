@@ -20,11 +20,10 @@ export default function Example({ permissions }) {
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
-
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedStatus, setselectedStatus] = useState('');
   const [sortColumn, setSortColumn] = useState('');
   const [sortDirection, setSortDirection] = useState('asc');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedStatus, setselectedStatus] = useState('');
 
   useEffect(() => {
     const isIndeterminate = selectedPeople.length > 0 && selectedPeople.length < people.length;
@@ -38,6 +37,78 @@ export default function Example({ permissions }) {
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
   }
+
+  
+
+  const handleSort = (columnName) => {
+    if (sortColumn === columnName) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortColumn(columnName);
+      setSortDirection('asc');
+    }
+  };
+
+  const compareValues = (a, b) => {
+    if (typeof a === 'string' && typeof b === 'string') {
+      return a.localeCompare(b, undefined, { numeric: true });
+    } else if (typeof a === 'number' && typeof b === 'number') {
+      return a - b;
+    } else {
+      return a < b ? -1 : a > b ? 1 : 0;
+    }
+  };
+  
+
+  
+  
+  const [searchQueries, setSearchQueries] = useState({
+    name: '',
+    email: '',
+    surname:'',
+    username: '',
+    updatedAt: '',
+    createdAt: '',
+    lastLoginIp: '',
+    lastLoginAt: '',
+    role: '',
+  });
+
+const filteredUsers = people.filter((item) => {
+    return (
+    
+    (searchQueries.name === '' || item.name.toLowerCase().includes(searchQueries.name.toLowerCase())) &&
+    (searchQueries.email === '' || item.email.toLowerCase().includes(searchQueries.email.toLowerCase())) &&
+    
+    (searchQueries.surname === '' || item.surname.toLowerCase().includes(searchQueries.surname.toLowerCase())) &&
+    
+    (searchQueries.username === '' || item.username.toLowerCase().includes(searchQueries.username.toLowerCase())) &&
+    
+    (searchQueries.updatedAt === '' || item.updatedAt.toLowerCase().includes(searchQueries.updatedAt.toLowerCase())) &&
+    
+    (searchQueries.createdAt === '' || item.createdAt.toLowerCase().includes(searchQueries.createdAt.toLowerCase())) &&
+    
+    (searchQueries.lastLoginAt === '' || item.lastLoginAt.toLowerCase().includes(searchQueries.lastLoginAt.toLowerCase())) &&
+    
+    (searchQueries.lastLoginIp === '' || item.lastLoginIp.toLowerCase().includes(searchQueries.lastLoginIp.toLowerCase())) &&
+    
+    (searchQueries.role === '' || item.Role.name.toLowerCase().includes(searchQueries.role.toLowerCase())) 
+
+  );
+});
+const sortedUsers = filteredUsers.sort((a, b) => {
+  if (sortDirection === 'asc') {
+    return compareValues(a[sortColumn], b[sortColumn]);
+  } else {
+    return compareValues(b[sortColumn], a[sortColumn]);
+  }
+});
+
+const handleSearchInputChange = (column) => (event) => {
+  setSearchQueries({ ...searchQueries, [column]: event.target.value });
+};
+
+  
 
   function deleteAll() {
     // Make a copy of selectedPeople before modifying it
@@ -128,10 +199,6 @@ export default function Example({ permissions }) {
 
 
 
-  function handleSearchInputChange(event) {
-    setSearchQuery(event.target.value);
-  }
-
   function handleStatusSelectChange(event) {
     setSelectedYear(event.target.value);
   }
@@ -196,55 +263,35 @@ export default function Example({ permissions }) {
           </div>
         </Dialog>
       </Transition.Root>
+
+
+
       <div className="sm:flex-auto">
-          <h1 className="text-base font-semibold leading-6 text-gray-900">Utenti</h1>
-          <p className="mt-2 text-sm text-gray-700">Lista utenti presenti nel sistema</p>
+        <h1 className="text-base font-semibold leading-6 text-gray-900">Utenti</h1>
+        <p className="mt-2 text-sm text-gray-700">Lista utenti presenti nel sistema</p>
+      </div>
+      {/* Search box and Year filter */}
+        
+        
+      <div className="flex flex-wrap items-center justify-between mt-4 mb-4">
+        
+        <div className="flex items-center space-x-4 ml-auto">
+          <button
+            onClick={exportUsers}
+            className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+          >
+            Export
+          </button>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+          >
+            Create
+          </button>
         </div>
-        {/* Search box and Year filter */}
-        <div className="flex flex-wrap justify-between mt-4 mb-4">
-          <div className="flex-grow w-full max-w-xs mr-4 mb-4">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={handleSearchInputChange}
-              placeholder="Search by invoice ID or company name"
-              className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-            />
-          </div>
-          <div className="flex-grow w-full max-w-xs flex items-end mb-4">
-            <select
-              value={selectedStatus}
-              onChange={handleStatusSelectChange}
-              className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-            >
-              <option value="">All Years</option>
-              {/* get the status from user */}
-              {people.map((person) => (
-                <option key={person.id_user} value={person.id_user}>
-                  {person.name}
-                </option>
-              ))}
-            </select>
-            <div className="px-4">
-              <button
-                onClick={exportUsers}
-                className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
-                >
-                Export
-              </button>
-            </div>
-            <div className="">
-            {permissions && permissions.some(permission => permission.actionType === 'Create') && (
-              <button
-                onClick={() => setOpen(true)}
-                className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
-              >
-                Create
-              </button>
-            )}
-            </div>
-          </div>
-        </div>
+      </div>
+
+
       <div className="mt-8 flow-root">
         <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">          
           <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
@@ -264,7 +311,7 @@ export default function Example({ permissions }) {
               )}
               <table className="min-w-full table-fixed divide-y divide-gray-300">
                 <thead>
-                  <tr>
+                  <tr>    
                     <th scope="col" className="relative px-7 sm:w-12 sm:px-6">
                       <input
                         type="checkbox"
@@ -277,32 +324,104 @@ export default function Example({ permissions }) {
                     <th scope="col" className="py-3.5 text-left text-sm font-semibold text-gray-900">
                       
                     </th>
-                    <th scope="col" className="py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('email')}>
                       Email
+                      {sortColumn === 'email' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <input
+                        type="text"
+                        value={searchQueries.email}
+                        onChange={handleSearchInputChange('email')}
+                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                        placeholder="Cerca per email"
+                      />
                     </th>
-                    <th scope="col" className="px-3 py-3.5 pr-3 text-left text-sm font-semibold text-gray-900">
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
                       Name
+                      {sortColumn === 'name' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <input
+                        type="text"
+                        value={searchQueries.name}
+                        onChange={handleSearchInputChange('name')}
+                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                        placeholder="Cerca per nome"
+                      />
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('surname')}>
                       Surname
+                      {sortColumn === 'surname' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <input
+                        type="text"
+                        value={searchQueries.surname}
+                        onChange={handleSearchInputChange('surname')}
+                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                        placeholder="Cerca per cognome"
+                      />
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('username')}>
                       Username
+                      {sortColumn === 'username' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <input
+                        type="text"
+                        value={searchQueries.username}
+                        onChange={handleSearchInputChange('username')}
+                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                        placeholder="Cerca per username"
+                      />
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                      Updated at
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('updatedAt')}>
+                      Updated At
+                      {sortColumn === 'updatedAt' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <input
+                        type="text"
+                        value={searchQueries.updatedAt}
+                        onChange={handleSearchInputChange('updatedAt')}
+                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                        placeholder="Cerca"
+                      />
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                      Created at
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('ncreatedAtame')}>
+                      Created At
+                      {sortColumn === 'createdAt' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <input
+                        type="text"
+                        value={searchQueries.createdAt}
+                        onChange={handleSearchInputChange('createdAt')}
+                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                        placeholder="Cerca"
+                      />
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('lastLoginAt')}>
                       Last Login
+                      {sortColumn === 'lastLoginAt' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <input
+                        type="text"
+                        value={searchQueries.lastLoginAt}
+                        onChange={handleSearchInputChange('lastLoginAt')}
+                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                        placeholder="Cerca "
+                      />
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('lastLoginIp')}>
                       Last Login IP
+                      {sortColumn === 'lastLoginIp' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <input
+                        type="text"
+                        value={searchQueries.lastLoginIp}
+                        onChange={handleSearchInputChange('lastLoginIp')}
+                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                        placeholder="Cerca "
+                      />
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('role')}>
                       Role
+                      {sortColumn === 'role' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <input
+                        type="text"
+                        value={searchQueries.role}
+                        onChange={handleSearchInputChange('role')}
+                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                        placeholder="Cerca per ruolo"
+                      />
                     </th>
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                       Stato

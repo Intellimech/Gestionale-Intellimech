@@ -47,9 +47,26 @@ export default function TechnicalAreaTable() {
     }
   }, [isModalOpen]);
 
-  const handleSearchInputChange = (event) => {
-    setSearchQuery(event.target.value);
+  const [searchQueries, setSearchQueries] = useState({
+    name: '',
+    code:'',
+    id_technicalarea: ''
+  });
+
+  const handleSearchInputChange = (column) => (event) => {
+    setSearchQueries({ ...searchQueries, [column]: event.target.value });
   };
+  
+  // Filter and sort invoices based on search query, selected year, and sorting
+  const filteredTechnicalAreas = technicalAreas.filter((item) => {
+    return (
+    (searchQueries.code === '' || item.code.toLowerCase().includes(searchQueries.code.toLowerCase())) &&
+    (searchQueries.id_technicalarea === '' || item.id_technicalarea.toString().includes(searchQueries.id_technicalarea.toString())) &&
+    (searchQueries.name === '' || item.name.toLowerCase().includes(searchQueries.name.toLowerCase()))
+  );
+});
+
+ 
 
   const handleSort = (columnName) => {
     if (sortColumn === columnName) {
@@ -70,19 +87,6 @@ export default function TechnicalAreaTable() {
     }
   };
 
-  const filteredTechnicalAreas = technicalAreas.filter((technicalArea) => {
-    const searchQueryLower = searchQuery.toLowerCase();
-    const technicalAreaId = technicalArea.id_technicalarea ? technicalArea.id_technicalarea.toString() : '';
-    
-    if (filterType === 'name') {
-      return technicalArea.name.toLowerCase().includes(searchQueryLower);
-    } else if (filterType === 'id_technicalarea') {
-      return technicalAreaId.includes(searchQueryLower);
-    } else if (filterType === 'code') {
-      return technicalArea.code.toLowerCase().includes(searchQueryLower);
-    }
-    return false;
-  });
 
   const sortedTechnicalAreas = filteredTechnicalAreas.sort((a, b) => {
     if (sortDirection === 'asc') {
@@ -139,29 +143,14 @@ export default function TechnicalAreaTable() {
     <>
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="sm:flex-auto">
-          <h1 className="text-base font-semibold leading-6 text-gray-900">Technical Areas</h1>
-          <p className="mt-2 text-sm text-gray-700">List of technical areas</p>
+          <h1 className="text-base font-semibold leading-6 text-gray-900">Aree Tecniche</h1>
+          <p className="mt-2 text-sm text-gray-700">Lista aree tecniche</p>
         </div>
+
+
         <div className="flex flex-wrap items-center justify-between mt-4 mb-4">
-          <div className="flex items-center">
-            <select
-              value={filterType}
-              onChange={(e) => setFilterType(e.target.value)}
-              className="block w-32 px-4 py-2 border border-gray-300 rounded-l-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-            >
-              <option value="name">Name</option>
-              <option value="id_technicalarea">ID</option>
-              <option value="code">Code</option>
-            </select>
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={handleSearchInputChange}
-              placeholder={`Search by ${filterType === 'name' ? 'Name' : filterType === 'id_technicalarea' ? 'ID' : 'Code'}`}
-              className="block w-48 px-4 py-2 border border-gray-300 rounded-r-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-            />
-          </div>
-          <div className="flex items-center space-x-4">
+          
+          <div className="flex items-center space-x-4 ml-auto">
             <button
               onClick={exportTechnicalAreas}
               className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
@@ -176,60 +165,51 @@ export default function TechnicalAreaTable() {
             </button>
           </div>
         </div>
-        <div className="flow-root" ref={tableRef}>
-          <div className="-mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
+
+
+        <div className="mt-8 flow-root">
+          <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">          
             <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-              <table className="min-w-full divide-y divide-gray-300">
-                <thead>
-                  <tr>
-                    <th
-                      scope="col"
-                      className="whitespace-nowrap py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0 cursor-pointer w-20"
-                      onClick={() => handleSort('id_technicalarea')}
-                    >
-                      ID{' '}
-                      {sortColumn === 'id_technicalarea' && (
-                        <span>
-                          {sortDirection === 'asc' ? (
-                            <ArrowUpIcon className="h-4 w-4 inline" />
-                          ) : (
-                            <ArrowDownIcon className="h-4 w-4 inline" />
-                          )}
-                        </span>
-                      )}
-                    </th>
-                    <th
-                      scope="col"
-                      className="whitespace-nowrap px-2 py-3 text-left text-sm font-semibold text-gray-900 cursor-pointer w-64"
-                      onClick={() => handleSort('name')}
-                    >
-                      Name{' '}
-                      {sortColumn === 'name' && (
-                        <span>
-                          {sortDirection === 'asc' ? (
-                            <ArrowUpIcon className="h-4 w-4 inline" />
-                          ) : (
-                            <ArrowDownIcon className="h-4 w-4 inline" />
-                          )}
-                        </span>
-                      )}
-                    </th>
-                    <th
-                      scope="col"
-                      className="whitespace-nowrap px-2 py-3 text-left text-sm font-semibold text-gray-900 cursor-pointer w-64"
-                      onClick={() => handleSort('code')}
-                    >
-                      Code{' '}
-                      {sortColumn === 'code' && (
-                        <span>
-                          {sortDirection === 'asc' ? (
-                            <ArrowUpIcon className="h-4 w-4 inline" />
-                          ) : (
-                            <ArrowDownIcon className="h-4 w-4 inline" />
-                          )}
-                        </span>
-                      )}
-                    </th>
+              <div className="relative">
+                <table className="min-w-full table-fixed divide-y divide-gray-300">
+                  <thead>
+                    <tr>    
+                      <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('id_technicalarea')}>
+                        ID
+                        {sortColumn === 'id_technicalarea' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                        <br></br>
+                        <input
+                          type="text"
+                          value={searchQueries.id_technicalarea}
+                          onChange={handleSearchInputChange('id_technicalarea')}
+                          className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                          placeholder="Cerca per IDD"
+                        />
+                      </th>
+                      <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
+                        Nome
+                        {sortColumn === 'name' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                        <br></br>
+                        <input
+                          type="text"
+                          value={searchQueries.name}
+                          onChange={handleSearchInputChange('name')}
+                          className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                          placeholder="Cerca per nome "
+                        />
+                      </th>
+                      <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('code')}>
+                        Codice
+                        {sortColumn === 'code' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                        <br></br>
+                        <input
+                          type="text"
+                          value={searchQueries.code}
+                          onChange={handleSearchInputChange('code')}
+                          className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                          placeholder="Cerca per nome "
+                        />
+                      </th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
@@ -240,12 +220,13 @@ export default function TechnicalAreaTable() {
                       <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500 w-64">{technicalArea.code}</td>
                     </tr>
                   ))}
-                </tbody>
+                 </tbody>
               </table>
             </div>
           </div>
         </div>
       </div>
+    </div>
 
       {/* Modal for Creating a New Technical Area */}
       <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>

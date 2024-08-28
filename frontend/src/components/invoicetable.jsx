@@ -42,11 +42,6 @@ export default function invoicetable({ invoicetype }) {
       });
   }, []);
 
-  // Function to handle search query change
-  const handleSearchInputChange = (event) => {
-    setSearchQuery(event.target.value);
-  };
-
   // Function to handle year select change
   const handleYearSelectChange = (event) => {
     setSelectedYear(event.target.value);
@@ -79,6 +74,39 @@ export default function invoicetable({ invoicetype }) {
     link.click();
   };
 
+  const [searchQueries, setSearchQueries] = useState({
+    Number: '',
+    DocumentType: '',
+    Company: '',
+    Date: '',
+    Amount: '',
+    Lines: '',
+    InvoiceType: ''
+  });
+
+  
+  
+  // Filter and sort invoices based on search query, selected year, and sorting
+  const filteredInvoices = invoices.filter((item) => {
+    return (
+    (searchQueries.Number === '' || item.name.toLowerCase().includes(searchQueries.Number.toLowerCase())) &&
+    
+    (searchQueries.Company === '' || item.Company?.name.toLowerCase().includes(searchQueries.Company.toLowerCase())) &&
+  
+    (searchQueries.DocumentType === '' || item.DocumentType.toLowerCase().includes(searchQueries.DocumentType.toLowerCase())) &&
+    (searchQueries.InvoiceType === '' || item.InvoiceType.toLowerCase().includes(searchQueries.InvoiceType.toLowerCase())) &&
+    
+    (searchQueries.Lines === '' || item.InvoiceLines.length.toString().includes(searchQueries.Lines.toString())) &&
+    
+    (searchQueries.Date=== '' || item.Date.includes(searchQueries.Date)) &&
+    (searchQueries.status === '' || item.status.toLowerCase().includes(searchQueries.status.toLowerCase())) &&
+    (searchQueries.Amount=== '' || item.Amount.toString().includes(searchQueries.Amount.toString())) 
+  
+  );
+});
+
+
+
   // Function to sort invoices by column
   const handleSort = (columnName) => {
     if (sortColumn === columnName) {
@@ -101,195 +129,160 @@ export default function invoicetable({ invoicetype }) {
     }
   };
 
+  const handleSearchInputChange = (column) => (event) => {
+    setSearchQueries({ ...searchQueries, [column]: event.target.value });
+  };
+
+
+
   // Filter and sort invoices based on search query, selected year, and sorting
-  const filteredInvoices = invoices
-    .filter((invoice) =>
-      (selectedYear === '' ||
-        new Date(invoice.Date).getFullYear().toString() === selectedYear) &&
-      (invoice.Number.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        invoice.Company.name.toLowerCase().includes(searchQuery.toLowerCase()))
-    )
-    .sort((a, b) => {
-      if (sortColumn !== '') {
-        const aValue = a[sortColumn];
-        const bValue = b[sortColumn];
-        return sortDirection === 'asc' ? compareValues(aValue, bValue) : compareValues(bValue, aValue);
-      }
-      return 0;
-    });
+  // const filteredInvoices = invoices
+  //   .filter((invoice) =>
+  //     (selectedYear === '' ||
+  //       new Date(invoice.Date).getFullYear().toString() === selectedYear) &&
+  //     (invoice.Number.toLowerCase().includes(searchQuery.toLowerCase()) ||
+  //       invoice.Company.name.toLowerCase().includes(searchQuery.toLowerCase()))
+  //   )
+  //   .sort((a, b) => {
+  //     if (sortColumn !== '') {
+  //       const aValue = a[sortColumn];
+  //       const bValue = b[sortColumn];
+  //       return sortDirection === 'asc' ? compareValues(aValue, bValue) : compareValues(bValue, aValue);
+  //     }
+  //     return 0;
+  //   });
 
   return (
-    <>
-      <div className="px-4 sm:px-6 lg:px-8">
-        <div className="sm:flex-auto">
-          <h1 className="text-base font-semibold leading-6 text-gray-900">Fatture { invoicetype == 'Passiva' ? 'passive' : 'attive' }</h1>
-          <p className="mt-2 text-sm text-gray-700">Lista delle fatture</p>
+    
+    <div className="px-4 sm:px-6 lg:px-8">
+
+
+      <div className="sm:flex-auto">
+        <h1 className="text-base font-semibold leading-6 text-gray-900">Fatture { invoicetype == 'Passiva' ? 'passive' : 'attive' }</h1>
+        <p className="mt-2 text-sm text-gray-700">Lista delle fatture</p>
+      </div>
+      <div className="flex flex-wrap justify-between mt-4 mb-4">
+        <div className="flex items-center space-x-4 ml-auto">
+          {/* Bottoni Export */}
+          <button
+            onClick={exportInvoices}
+            className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+          >
+            Export
+          </button>
+          
         </div>
-        {/* Search box and Year filter */}
-        <div className="flex flex-wrap justify-between mt-4 mb-4">
-          <div className="flex-grow w-full max-w-xs mr-4 mb-4">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={handleSearchInputChange}
-              placeholder="Search by invoice ID or company name"
-              className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-            />
-          </div>
-          <div className="flex-grow w-full max-w-xs flex items-end mb-4">
-            <select
-              value={selectedYear}
-              onChange={handleYearSelectChange}
-              className="block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-            >
-              <option value="">All Years</option>
-              {/* get the year from invoices */}
-              {invoices.map((invoice) => new Date(invoice.ReceptionDate).getFullYear().toString()).filter((value, index, self) => self.indexOf(value) === index).map((year) => (
-                <option key={year} value={year}>
-                  {year}
-                </option>
-              ))}
-            </select>
-            <div className="px-4">
-              <button
-                onClick={exportInvoices}
-                className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
-                >
-                Export
-              </button>
-            </div>
-          </div>
-        </div>
-        <div className="flow-root">
-          <div className="-mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
-            <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-              <table className="min-w-full divide-y divide-gray-300">
+      </div>
+
+
+      <div className="mt-8 flow-root">
+        <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">          
+          <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+            <div className="relative">
+              <table className="min-w-full table-fixed divide-y divide-gray-300">
                 <thead>
-                  <tr>
-                    <th
-                      scope="col"
-                      className="whitespace-nowrap py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0 cursor-pointer"
-                      onClick={() => handleSort('Number')}
-                    >
-                      {' '}
-                      {sortColumn === 'Number' && (
-                        <span>
-                          {sortDirection === 'asc' ? (
-                            <ArrowUpIcon className="h-4 w-4 inline" />
-                          ) : (
-                            <ArrowDownIcon className="h-4 w-4 inline" />
-                          )}
-                        </span>
-                      )}
+                  <tr>       
+                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Number')}>
+                    N° Fattura
+                    {sortColumn === 'Number' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <input
+                      type="text"
+                      value={searchQueries.Number}
+                      onChange={handleSearchInputChange('Number')}
+                      className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                      placeholder="Cerca per fattura"
+                    />
+                  </th>
+                  
+                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Company')}>
+                    Azienda
+                    {sortColumn === 'Company' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <input
+                      type="text"
+                      value={searchQueries.Company}
+                      onChange={handleSearchInputChange('Company')}
+                      className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                      placeholder="Cerca per azienda"
+                    />
                     </th>
-                    <th
-                      scope="col"
-                      className="whitespace-nowrap px-2 py-3 text-left text-sm font-semibold text-gray-900 cursor-pointer"
-                    >
-                      Azienda
-                    </th>
-                    <th
-                      scope="col"
-                      className="whitespace-nowrap px-2 py-3 text-left text-sm font-semibold text-gray-900 cursor-pointer"
-                      onClick={() => handleSort('DocumentType')}
-                    >
-                      Tipo di documento{' '}
-                      {sortColumn === 'DocumentType' && (
-                        <span>
-                          {sortDirection === 'asc' ? (
-                            <ArrowUpIcon className="h-4 w-4 inline" />
-                          ) : (
-                            <ArrowDownIcon className="h-4 w-4 inline" />
-                          )}
-                        </span>
-                      )}
-                    </th>
-                    <th
-                      scope="col"
-                      className="whitespace-nowrap px-2 py-3 text-left text-sm font-semibold text-gray-900 cursor-pointer"
-                      onClick={() => handleSort('Date')}
-                    >
-                      Data{' '}
-                      {sortColumn === 'Date' && (
-                        <span>
-                          {sortDirection === 'asc' ? (
-                            <ArrowUpIcon className="h-4 w-4 inline" />
-                          ) : (
-                            <ArrowDownIcon className="h-4 w-4 inline" />
-                          )}
-                        </span>
-                      )}
-                    </th>
-                    <th
-                      scope="col"
-                      className="whitespace-nowrap px-2 py-3 text-left text-sm font-semibold text-gray-900 cursor-pointer"
-                      onClick={() => handleSort('InvoiceType')}
-                    >
-                      Tipo di Fattura{' '}
-                      {sortColumn === 'InvoiceType' && (
-                        <span>
-                          {sortDirection === 'asc' ? (
-                            <ArrowUpIcon className="h-4 w-4 inline" />
-                          ) : (
-                            <ArrowDownIcon className="h-4 w-4 inline" />
-                          )}
-                        </span>
-                      )}
-                    </th>
-                    <th
-                      scope="col"
-                      className="whitespace-nowrap px-2 py-3 text-left text-sm font-semibold text-gray-900 cursor-pointer"
-                      onClick={() => handleSort('InvoiceType')}
-                    >
-                      Numero di Righe{' '}
-                      {sortColumn === 'InvoiceType' && (
-                        <span>
-                          {sortDirection === 'asc' ? (
-                            <ArrowUpIcon className="h-4 w-4 inline" />
-                          ) : (
-                            <ArrowDownIcon className="h-4 w-4 inline" />
-                          )}
-                        </span>
-                      )}
-                    </th>
-                    
-                    <th
-                      scope="col"
-                      className="whitespace-nowrap px-2 py-3 text-left text-sm font-semibold text-gray-900 cursor-pointer"
-                      onClick={() => handleSort('Amount')}
-                    >
-                      Amount{' '}
-                      {sortColumn === 'Amount' && (
-                        <span>
-                          {sortDirection === 'asc' ? (
-                            <ArrowUpIcon className="h-4 w-4 inline" />
-                          ) : (
-                            <ArrowDownIcon className="h-4 w-4 inline" />
-                          )}
-                        </span>
-                      )}
-                    </th>
+                    <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('DocumentType')}>
+                    Tipo di Documento 
+                    {sortColumn === 'DocumentType' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <input
+                      type="text"
+                      value={searchQueries.DocumentType}
+                      onChange={handleSearchInputChange('DocumentType')}
+                      className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                      placeholder="Cerca per tipo"
+                    />
+                  </th>  
+                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Date')}>
+                    Data
+                    {sortColumn === 'Date' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <input
+                      type="text"
+                      value={searchQueries.Date}
+                      onChange={handleSearchInputChange('Date')}
+                      className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                      placeholder="Cerca per data"
+                    />
+                  </th>  
+                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('InvoiceType')}>
+                    Tipo Fattura
+                    {sortColumn === 'InvoiceType' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <input
+                      type="text"
+                      value={searchQueries.InvoiceType}
+                      onChange={handleSearchInputChange('InvoiceType')}
+                      className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                      placeholder="Cerca per tipo"
+                    />
+                  </th>  
+                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Lines')}>
+                    Numero Righe
+                    {sortColumn === 'Lines' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <input
+                      type="text"
+                      value={searchQueries.Lines}
+                      onChange={handleSearchInputChange('Lines')}
+                      className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                      placeholder="Cerca per n° righe"
+                    />
+                  </th>  
+                  
+                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Amount')}>
+                    Valore
+                    {sortColumn === 'Amount' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <input
+                      type="text"
+                      value={searchQueries.Amount}
+                      onChange={handleSearchInputChange('Amount')}
+                      className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                      placeholder="Cerca per valore"
+                    />
+                  </th>  
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200 bg-white">
+                {filteredInvoices.map((invoice) => (
+                  <tr key={invoice.id_invoices}>
+                    <td className="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-500 sm:pl-0">{invoice.name}</td>
+                    <td className="whitespace-nowrap px-2 py-2 text-sm font-medium text-gray-900">{invoice.Company.name}</td>
+                    <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-900">{invoice.DocumentType}</td>
+                    <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">{invoice.Date ? new Date(invoice.Date).toLocaleDateString() : ''}</td>
+                    <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">{invoice.InvoiceType}</td>
+                    <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">{invoice.InvoiceLines.length}</td>
+                    <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">{invoice.Amount + " €"}</td>
+                    <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">{invoice.Status}</td>
                   </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200 bg-white">
-                  {filteredInvoices.map((invoice) => (
-                    <tr key={invoice.id_invoices}>
-                      <td className="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-500 sm:pl-0">{invoice.name}</td>
-                      <td className="whitespace-nowrap px-2 py-2 text-sm font-medium text-gray-900">{invoice.Company.name}</td>
-                      <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-900">{invoice.DocumentType}</td>
-                      <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">{invoice.Date ? new Date(invoice.Date).toLocaleDateString() : ''}</td>
-                      <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">{invoice.InvoiceType}</td>
-                      <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">{invoice.InvoiceLines.length}</td>
-                      <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">{invoice.Amount + " €"}</td>
-                      <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">{invoice.Status}</td>
-                    </tr>
-                  ))}
-                </tbody>
+                ))}
+              </tbody>
               </table>
             </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
+    
   );
 }

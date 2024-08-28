@@ -1,56 +1,24 @@
 import React, { useState } from 'react';
-
-// Modal component
-const Modal = ({ isOpen, onClose, onConfirm, title, message }) => {
-  if (!isOpen) return null;
-
-  return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-white rounded-lg shadow-lg w-96 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">{title}</h3>
-        <p className="text-sm text-gray-700 mb-6">{message}</p>
-        <div className="flex justify-end space-x-4">
-          <button
-            onClick={onClose}
-            className="bg-gray-500 text-white px-4 py-2 rounded-md shadow-sm hover:bg-gray-600"
-          >
-            Cancel
-          </button>
-          <button
-            onClick={onConfirm}
-            className="bg-red-600 text-white px-4 py-2 rounded-md shadow-sm hover:bg-red-700"
-          >
-            Confirm
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
+import { EyeIcon, EyeOffIcon } from '@heroicons/react/24/outline'; // Assicurati di avere questi icone installati
 
 const SettingsPage = () => {
-  // State hooks for form data
   const [generalSettings, setGeneralSettings] = useState({
     companyName: '',
     email: '',
   });
   const [newEmail, setNewEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [supportMessage, setSupportMessage] = useState('');
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [showSupportModal, setShowSupportModal] = useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
 
-  // Handle input changes
   const handleChange = (field, value) => {
     setGeneralSettings({ ...generalSettings, [field]: value });
-  };
-
-  // Handle form submission
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    // Handle form submission logic here
-    console.log('General Settings:', generalSettings);
   };
 
   const handleEmailUpdate = () => {
@@ -68,7 +36,7 @@ const SettingsPage = () => {
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <h1 className="text-2xl font-semibold text-gray-900 mb-6">Settings</h1>
-      <form onSubmit={handleSubmit} className="space-y-8">
+      <form onSubmit={(e) => e.preventDefault()} className="space-y-8">
 
         {/* General Settings */}
         <section className="bg-white shadow-md rounded-lg p-6">
@@ -108,49 +76,53 @@ const SettingsPage = () => {
           </div>
         </section>
 
-        {/* User Preferences */}
-        <section className="bg-white shadow-md rounded-lg p-6">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">User Preferences</h2>
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="theme" className="block text-sm font-medium text-gray-700">Theme</label>
-              <select
-                id="theme"
-                value={generalSettings.theme}
-                onChange={(e) => handleChange('theme', e.target.value)}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-              >
-                <option value="light">Light</option>
-                <option value="dark">Dark</option>
-              </select>
-            </div>
-            <div className="flex items-center">
-              <input
-                id="notifications"
-                type="checkbox"
-                checked={generalSettings.notifications}
-                onChange={(e) => handleChange('notifications', e.target.checked)}
-                className="h-4 w-4 text-red-600 focus:ring-red-600 border-gray-300 rounded"
-              />
-              <label htmlFor="notifications" className="ml-2 text-sm font-medium text-gray-700">Enable Notifications</label>
-            </div>
-          </div>
-        </section>
-
         {/* Security Settings */}
         <section className="bg-white shadow-md rounded-lg p-6">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">Security Settings</h2>
           <div className="space-y-4">
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">New Password</label>
+            <div className="relative">
+              <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700">Current Password</label>
               <input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                id="currentPassword"
+                type={showCurrentPassword ? 'text' : 'password'}
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                placeholder="Current Password"
+              />
+              <button
+                type="button"
+                onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                className="absolute inset-y-0 right-0 flex items-center pr-3"
+              >
+                {showCurrentPassword ? (
+                  <EyeOffIcon className="h-5 w-5 text-gray-500" />
+                ) : (
+                  <EyeIcon className="h-5 w-5 text-gray-500" />
+                )}
+              </button>
+            </div>
+            <div>
+              <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700">New Password</label>
+              <input
+                id="newPassword"
+                type={showNewPassword ? 'text' : 'password'}
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
                 placeholder="New Password"
               />
+              <button
+                type="button"
+                onClick={() => setShowNewPassword(!showNewPassword)}
+                className="absolute inset-y-0 right-0 flex items-center pr-3"
+              >
+                {showNewPassword ? (
+                  <EyeOffIcon className="h-5 w-5 text-gray-500" />
+                ) : (
+                  <EyeIcon className="h-5 w-5 text-gray-500" />
+                )}
+              </button>
             </div>
             <div>
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">Confirm Password</label>
@@ -176,12 +148,19 @@ const SettingsPage = () => {
         {/* Contact Support */}
         <section className="bg-white shadow-md rounded-lg p-6">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">Contact Support</h2>
+          <textarea
+            value={supportMessage}
+            onChange={(e) => setSupportMessage(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+            rows="4"
+            placeholder="Enter your message here..."
+          />
           <button
             type="button"
             onClick={handleSupportRequest}
-            className="bg-red-600 text-white px-4 py-2 rounded-md shadow-sm hover:bg-red-700"
+            className="mt-4 bg-red-600 text-white px-4 py-2 rounded-md shadow-sm hover:bg-red-700"
           >
-            Contact Support
+            Send Message
           </button>
         </section>
 
@@ -202,6 +181,7 @@ const SettingsPage = () => {
         onClose={() => setShowEmailModal(false)}
         onConfirm={() => {
           setGeneralSettings({ ...generalSettings, email: newEmail });
+          setNewEmail('');
           setShowEmailModal(false);
         }}
         title="Confirm Email Update"
@@ -213,8 +193,9 @@ const SettingsPage = () => {
         onClose={() => setShowPasswordModal(false)}
         onConfirm={() => {
           // Handle password change logic
-          console.log('Password changed:', password);
-          setPassword('');
+          console.log('Password changed:', newPassword);
+          setCurrentPassword('');
+          setNewPassword('');
           setConfirmPassword('');
           setShowPasswordModal(false);
         }}
@@ -227,13 +208,47 @@ const SettingsPage = () => {
         onClose={() => setShowSupportModal(false)}
         onConfirm={() => {
           // Handle support request logic
-          console.log('Support request sent');
+          console.log('Support request sent:', supportMessage);
+          setSupportMessage('');
           setShowSupportModal(false);
         }}
-        title="Contact Support"
-        message="Your request has been sent to support."
+        title="Confirm Support Request"
+        message="Are you sure you want to send this support request?"
       />
+    </div>
+  );
+};
 
+// Modal Component
+const Modal = ({ isOpen, onClose, onConfirm, title, message }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 flex items-center justify-center p-4 bg-black/50">
+      <div className="bg-white rounded-lg shadow-md w-full max-w-sm">
+        <div className="p-4 border-b border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+        </div>
+        <div className="p-4">
+          <p className="text-sm text-gray-700">{message}</p>
+        </div>
+        <div className="flex justify-end p-4 border-t border-gray-200">
+          <button
+            type="button"
+            onClick={onClose}
+            className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md shadow-sm hover:bg-gray-400"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={onConfirm}
+            className="ml-2 bg-red-600 text-white px-4 py-2 rounded-md shadow-sm hover:bg-red-700"
+          >
+            Confirm
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

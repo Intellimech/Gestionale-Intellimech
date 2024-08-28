@@ -148,59 +148,62 @@ export default function Company({ companytype }) {
             <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
               <div className="relative">
                 <table className="min-w-full table-fixed divide-y divide-gray-300">
-                  <thead>
-                    <tr>       
+                <thead>
+                  <tr>
                     <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Code')}>
                       Company Code
                       {sortColumn === 'Code' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <br></br>
-                      <input
-                        type="text"
+                      <br />
+                      <textarea
                         value={searchQueries.Code}
                         onChange={handleSearchInputChange('Code')}
-                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                        placeholder="Cerca per azienda"
+                        className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                        placeholder="Codice azienda"
+                        rows={1}
                       />
                     </th>
+
                     <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Name')}>
                       Company Name
                       {sortColumn === 'Name' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <br></br>
-                      <input
-                        type="text"
+                      <br />
+                      <textarea
                         value={searchQueries.Name}
                         onChange={handleSearchInputChange('Name')}
-                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                        placeholder="Cerca per nome azienda"
+                        className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                        placeholder="Nome azienda"
+                        rows={1}
                       />
                     </th>
+
                     <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('VAT')}>
                       VAT
                       {sortColumn === 'VAT' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <br></br>
-
-                      <input
-                        type="text"
+                      <br />
+                      <textarea
                         value={searchQueries.VAT}
                         onChange={handleSearchInputChange('VAT')}
-                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                        placeholder="Cerca per VAT"
+                        className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                        placeholder="VAT"
+                        rows={1}
                       />
                     </th>
+
                     <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Fiscal_Code')}>
-                      VAT
+                      Fiscal Code
                       {sortColumn === 'Fiscal_Code' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <br></br>
-                      <input
-                        type="text"
+                      <br />
+                      <textarea
                         value={searchQueries.Fiscal_Code}
                         onChange={handleSearchInputChange('Fiscal_Code')}
-                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                        placeholder="Cerca per codice fiscale"
+                        className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                        placeholder="Codice Fiscale"
+                        rows={1}
                       />
                     </th>
                   </tr>
                 </thead>
+
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {filteredCompanies.map((company) => (
                     <tr key={company.id_invoices}>

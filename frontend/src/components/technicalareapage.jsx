@@ -171,46 +171,49 @@ export default function TechnicalAreaTable() {
             <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
               <div className="relative">
                 <table className="min-w-full table-fixed divide-y divide-gray-300">
-                  <thead>
-                    <tr>    
-                      <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('id_technicalarea')}>
-                        ID
-                        {sortColumn === 'id_technicalarea' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                        <br></br>
-                        <input
-                          type="text"
-                          value={searchQueries.id_technicalarea}
-                          onChange={handleSearchInputChange('id_technicalarea')}
-                          className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                          placeholder="Cerca per IDD"
-                        />
-                      </th>
-                      <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
-                        Nome
-                        {sortColumn === 'name' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                        <br></br>
-                        <input
-                          type="text"
-                          value={searchQueries.name}
-                          onChange={handleSearchInputChange('name')}
-                          className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                          placeholder="Cerca per nome "
-                        />
-                      </th>
-                      <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('code')}>
-                        Codice
-                        {sortColumn === 'code' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                        <br></br>
-                        <input
-                          type="text"
-                          value={searchQueries.code}
-                          onChange={handleSearchInputChange('code')}
-                          className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                          placeholder="Cerca per nome "
-                        />
-                      </th>
+                <thead>
+                  <tr>    
+                    <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('id_technicalarea')}>
+                      ID
+                      {sortColumn === 'id_technicalarea' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <br />
+                      <textarea
+                        value={searchQueries.id_technicalarea}
+                        onChange={handleSearchInputChange('id_technicalarea')}
+                        className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                        placeholder="ID"
+                        rows={1}
+                      />
+                    </th>
+
+                    <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
+                      Nome
+                      {sortColumn === 'name' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <br />
+                      <textarea
+                        value={searchQueries.name}
+                        onChange={handleSearchInputChange('name')}
+                        className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                        placeholder="Nome"
+                        rows={1}
+                      />
+                    </th>
+
+                    <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('code')}>
+                      Codice
+                      {sortColumn === 'code' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <br />
+                      <textarea
+                        value={searchQueries.code}
+                        onChange={handleSearchInputChange('code')}
+                        className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                        placeholder="Codice"
+                        rows={1}
+                      />
+                    </th>
                   </tr>
                 </thead>
+
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {sortedTechnicalAreas.map((technicalArea) => (
                     <tr key={technicalArea.id_technicalarea}>

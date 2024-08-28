@@ -185,89 +185,101 @@ export default function invoicetable({ invoicetype }) {
           <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
             <div className="relative">
               <table className="min-w-full table-fixed divide-y divide-gray-300">
-                <thead>
-                  <tr>       
+              <thead>
+                <tr>
                   <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Number')}>
                     N° Fattura
                     {sortColumn === 'Number' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                    <input
+                    <br />
+                     <textarea
                       type="text"
                       value={searchQueries.Number}
                       onChange={handleSearchInputChange('Number')}
-                      className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                      placeholder="Cerca per fattura"
-                    />
+                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                      placeholder="Fattura"
+                     rows= {1} />
                   </th>
-                  
+
                   <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Company')}>
                     Azienda
                     {sortColumn === 'Company' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                    <input
+                    <br />
+                     <textarea
                       type="text"
                       value={searchQueries.Company}
                       onChange={handleSearchInputChange('Company')}
-                      className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                      placeholder="Cerca per azienda"
-                    />
-                    </th>
-                    <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('DocumentType')}>
-                    Tipo di Documento 
+                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                      placeholder="Azienda"
+                     rows= {1} />
+                  </th>
+
+                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('DocumentType')}>
+                    Tipo di Documento
                     {sortColumn === 'DocumentType' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                    <input
+                    <br />
+                     <textarea
                       type="text"
                       value={searchQueries.DocumentType}
                       onChange={handleSearchInputChange('DocumentType')}
-                      className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                      placeholder="Cerca per tipo"
-                    />
-                  </th>  
+                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                      placeholder="Documento"
+                     rows= {1} />
+                  </th>
+
                   <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Date')}>
                     Data
                     {sortColumn === 'Date' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                    <input
+                    <br />
+                     <textarea
                       type="text"
                       value={searchQueries.Date}
                       onChange={handleSearchInputChange('Date')}
-                      className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                      placeholder="Cerca per data"
-                    />
-                  </th>  
+                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                      placeholder="Data"
+                     rows= {1} />
+                  </th>
+
                   <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('InvoiceType')}>
                     Tipo Fattura
                     {sortColumn === 'InvoiceType' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                    <input
+                    <br />
+                     <textarea
                       type="text"
                       value={searchQueries.InvoiceType}
                       onChange={handleSearchInputChange('InvoiceType')}
-                      className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                      placeholder="Cerca per tipo"
-                    />
-                  </th>  
+                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                      placeholder="Tipo Fattura"
+                     rows= {1} />
+                  </th>
+
                   <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Lines')}>
                     Numero Righe
                     {sortColumn === 'Lines' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                    <input
+                    <br />
+                     <textarea
                       type="text"
                       value={searchQueries.Lines}
                       onChange={handleSearchInputChange('Lines')}
-                      className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                      placeholder="Cerca per n° righe"
-                    />
-                  </th>  
-                  
+                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                      placeholder="Righe"
+                     rows= {1} />
+                  </th>
+
                   <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Amount')}>
                     Valore
                     {sortColumn === 'Amount' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                    <input
+                    <br />
+                     <textarea
                       type="text"
                       value={searchQueries.Amount}
                       onChange={handleSearchInputChange('Amount')}
-                      className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                      placeholder="Cerca per valore"
-                    />
-                  </th>  
+                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                      placeholder="Valore"
+                     rows= {1}/>
+                  </th>
                 </tr>
               </thead>
+
               <tbody className="divide-y divide-gray-200 bg-white">
                 {filteredInvoices.map((invoice) => (
                   <tr key={invoice.id_invoices}>

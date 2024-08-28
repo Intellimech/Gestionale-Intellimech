@@ -236,26 +236,26 @@ export default function Example({ permissions }) {
 
   return (
     <div className="px-4 sm:px-6 lg:px-8">
-     <div className="px-4 sm:px-6 lg:px-8 py-4">
-      {/* Contenitore principale con Flexbox */}
-      <div className="flex items-center justify-between">
-        {/* Titolo e descrizione */}
-        <div className="sm:flex-auto">
-          <h1 className="text-base font-semibold leading-6 text-gray-900">Ordini di vendita</h1>
-          <p className="mt-2 text-sm text-gray-700">Lista offerte presenti a sistema</p>
-        </div>
+        <div className="px-4 sm:px-6 lg:px-8 py-4">
+          {/* Contenitore principale con Flexbox */}
+          <div className="flex items-center justify-between">
+            {/* Titolo e descrizione */}
+            <div className="sm:flex-auto">
+              <h1 className="text-base font-semibold leading-6 text-gray-900">Ordini di vendita</h1>
+              <p className="mt-2 text-sm text-gray-700">Lista offerte presenti a sistema</p>
+            </div>
 
-        {/* Contenitore Bottone Export */}
-        <div className="flex items-center space-x-4">
-          <button
-            onClick={exportUsers}
-            className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
-          >
-            Export
-          </button>
+            {/* Contenitore Bottone Export */}
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={exportUsers}
+                className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+              >
+                Export
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
 
 
 
@@ -264,77 +264,88 @@ export default function Example({ permissions }) {
         <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">          
           <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
             <div className="relative">
-              <table className="min-w-full table-fixed divide-y divide-gray-300">
+              <table className="min-w-full divide-y divide-gray-300">
                 <thead>
-                  <tr>     
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
-                    N°
-                    {sortColumn === 'name' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                    <input
-                      type="text"
-                      value={searchQueries.name}
-                      onChange={handleSearchInputChange('name')}
-                      className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                      placeholder="Cerca"
-                    />
-                  </th>
-                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Company')}>
-                    Azienda
-                    <br></br>
-                    {sortColumn === 'Company' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                    <input
-                      type="text"
-                      value={searchQueries.Company}
-                      onChange={handleSearchInputChange('Company')}
-                      className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                      placeholder="Cerca per azienda"
-                    />
-                  </th>
-                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('offer')}>
-                    Offerta
-                    {sortColumn === 'offer' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                    <input
-                      type="text"
-                      value={searchQueries.offer}
-                      onChange={handleSearchInputChange('offer')}
-                      className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                      placeholder="Cerca per offerta"
-                    />
-                  </th>
-                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('description')}>
-                    Descrizione
-                    {sortColumn === 'description' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                    <input
-                      type="text"
-                      value={searchQueries.description}
-                      onChange={handleSearchInputChange('description')}
-                      className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                      placeholder="Cerca per descrizione"
-                    />
-                  </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('status')}>
-                    Stato
-                    {sortColumn === 'status' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                    <input
-                      type="text"
-                      value={searchQueries.status}
-                      onChange={handleSearchInputChange('status')}
-                      className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                      placeholder="Cerca per stato"
-                    />
-                  
-                  </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('createdByUser')}>
-                    Creata da
-                    {sortColumn === 'createdByUser' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                    <input
-                      type="text"
-                      value={searchQueries.createdByUser}
-                      onChange={handleSearchInputChange('createdByUser')}
-                      className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                      placeholder="Cerca per creatore"
-                    />
-                  </th>
+                  <tr>
+                    <th scope="col" className="px-2 py-3 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
+                      Ordine
+                      {sortColumn === 'name' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <br></br>
+                      <textarea
+                        type="text"
+                        value={searchQueries.name}
+                        onChange={handleSearchInputChange('name')}
+                       className="mt-1 px-2 py-1       w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                        placeholder="Ordine"
+                        rows= {1}
+                      />
+                    </th>
+                    <th scope="col" className="px-2 py-3 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Company')}>
+                      Azienda
+                      {sortColumn === 'Company' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <br></br>
+                      <textarea
+                        type="textarea"
+                        value={searchQueries.Company}
+                        onChange={handleSearchInputChange('Company')}
+                        className="mt-1       w-20 px-2 py-1 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                        placeholder="Azienda"
+                        rows= {1}
+
+                      />
+                    </th>
+                    <th scope="col" className="px-2 py-3 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('offer')}>
+                      Offerta
+                      {sortColumn === 'offer' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <br></br>
+                      <textarea
+                        type="text"
+                        value={searchQueries.offer}
+                        onChange={handleSearchInputChange('offer')}
+                        className="mt-1 px-2 py-1       w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                        placeholder="Offerta"
+                        rows= {1}
+                      />
+                    </th>
+                    <th scope="col" className="px-2 py-3 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('description')}>
+                      Descrizione
+                      {sortColumn === 'description' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <br></br>
+                      <textarea
+                        type="text"
+                        value={searchQueries.description}
+                        onChange={handleSearchInputChange('description')}
+                       className="mt-1 px-2 py-1       w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                        placeholder="Descrizione"
+                        rows= {1}
+                      />
+                    </th>
+                    <th scope="col" className="px-2 py-3 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('status')}>
+                      Stato
+                      {sortColumn === 'status' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <br></br>
+                      <textarea
+                        type="text"
+                        value={searchQueries.status}
+                        onChange={handleSearchInputChange('status')}
+                       className="mt-1 px-2 py-1       w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                        placeholder="Stato"
+                        rows= {1}
+                      />
+                    </th>
+                    <th scope="col" className="px-2 py-3 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('createdByUser')}>
+                      Creata da
+                      {sortColumn === 'createdByUser' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <br></br>
+                      <textarea
+                        type="text"
+                        value={searchQueries.createdByUser}
+                        onChange={handleSearchInputChange('createdByUser')}
+                       className="mt-1 px-2 py-1       w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                        placeholder="Creatore"
+                        rows= {1}
+                      />
+                    </th>
                     <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-3">
                     </th>
                   </tr>
@@ -343,28 +354,22 @@ export default function Example({ permissions }) {
                   {Array.isArray(sortedSaleOrder) && sortedSaleOrder.length > 0 ? (
                     sortedSaleOrder.map((salesorder) => (
                       <tr
-                        key={salesorders.id_user}
-                        onClick={() => console.log('banana' + salesorder.id_offer)}
+                        key={salesorder.id}
                         className={selectedOffer.includes(salesorder) ? 'bg-gray-50' : undefined}
                       >
-                        <td
-                          className={classNames(
-                            'whitespace-nowrap px-3 py-4 pr-3 text-sm font-medium',
-                            selectedOffer.includes(salesorder) ? 'text-red-600' : 'text-gray-900'
-                          )}
-                        >
+                        <td className="whitespace-nowrap px-2 py-4 text-sm font-medium text-gray-900">
                           {salesorder.name}
                         </td>
-                        <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">
+                        <td className="whitespace-nowrap px-2 py-4 text-sm text-gray-500">
                           {salesorder.Offer.QuotationRequest.Company.name}
                         </td>
-                        <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">
-                          <a href={`/offer/${salesorder.Offer.id_offer}`}>{salesorder.Offer.name}</a>
+                        <td className="whitespace-nowrap px-2 py-4 text-sm text-gray-500">
+                          <a href={`/offer/${salesorder.Offer.id_offer}`} className="truncate">{salesorder.Offer.name}</a>
                         </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {salesorder.Offer.description || salesorder.Offer.QuotationRequest.description}
+                        <td className="whitespace-nowrap px-2 py-4 text-sm text-gray-500">
+                          <span className="truncate">{salesorder.Offer.description || salesorder.Offer.QuotationRequest.description}</span>
                         </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                        <td className="whitespace-nowrap px-2 py-4 text-sm text-gray-500">
                           {salesorder.status === 'Da Fatturare' ? (
                             <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
                               Da fatturare
@@ -379,7 +384,7 @@ export default function Example({ permissions }) {
                             </span>
                           )}
                         </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                        <td className="whitespace-nowrap px-2 py-4 text-sm text-gray-500">
                           {salesorder.createdByUser?.name.slice(0, 2).toUpperCase() + salesorder.createdByUser?.surname.slice(0, 2).toUpperCase()}
                         </td>
                       </tr>
@@ -393,10 +398,12 @@ export default function Example({ permissions }) {
                   )}
                 </tbody>
               </table>
+
             </div>
           </div>
         </div>
       </div>
     </div>
+    
   );
 }

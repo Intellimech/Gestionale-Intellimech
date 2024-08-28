@@ -2,6 +2,8 @@ import { Fragment, useState, useRef, useEffect } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon, PencilSquareIcon, ArrowRightStartOnRectangleIcon } from '@heroicons/react/20/solid'
 import axios from 'axios';
+
+import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/20/solid';
 import Cookies from 'js-cookie';
 
 import UserCreateForm from './userscreate';
@@ -96,6 +98,8 @@ const filteredUsers = people.filter((item) => {
 
   );
 });
+
+
 const sortedUsers = filteredUsers.sort((a, b) => {
   if (sortDirection === 'asc') {
     return compareValues(a[sortColumn], b[sortColumn]);
@@ -266,15 +270,14 @@ const handleSearchInputChange = (column) => (event) => {
 
 
 
-      <div className="sm:flex-auto">
-        <h1 className="text-base font-semibold leading-6 text-gray-900">Utenti</h1>
-        <p className="mt-2 text-sm text-gray-700">Lista utenti presenti nel sistema</p>
-      </div>
-      {/* Search box and Year filter */}
+      <div className="flex items-center justify-between mt-4 mb-4">
+        {/* Titolo e descrizione */}
+        <div className="sm:flex-auto">
+          <h1 className="text-base font-semibold leading-6 text-gray-900">Utenti</h1>
+          <p className="mt-2 text-sm text-gray-700">Lista utenti presenti nel sistema</p>
+        </div>
         
-        
-      <div className="flex flex-wrap items-center justify-between mt-4 mb-4">
-        
+        {/* Bottoni Export e Create */}
         <div className="flex items-center space-x-4 ml-auto">
           <button
             onClick={exportUsers}
@@ -290,7 +293,6 @@ const handleSearchInputChange = (column) => (event) => {
           </button>
         </div>
       </div>
-
 
       <div className="mt-8 flow-root">
         <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">          
@@ -432,7 +434,8 @@ const handleSearchInputChange = (column) => (event) => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
-                  {people.map((person) => (
+                  {Array.isArray(sortedUsers) && sortedUsers.length > 0  ? (
+                    sortedUsers.map((person) => (
                     <tr key={person.id_user} className={selectedPeople.includes(person) ? 'bg-gray-50' : undefined}>
                       <td className="relative px-7 sm:w-12 sm:px-6">
                         {selectedPeople.includes(person) && (
@@ -504,7 +507,14 @@ const handleSearchInputChange = (column) => (event) => {
                         </div>
                       </td>
                     </tr>
-                  ))}
+                   ))
+                  ) : (
+                    <tr>
+                      <td colSpan="12" className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                        Non ci sono commesse
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>

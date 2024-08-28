@@ -36,6 +36,19 @@ export default function Example({ permissions }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setselectedStatus] = useState('');
 
+  const [searchQueries, setSearchQueries] = useState({
+    name: '',
+    description: '',
+    Company: '',
+    category: '',
+    subcategory: '',
+    technicalarea: '',
+    status: '',
+    data: '',
+    createdByUser: ''
+  });
+
+
   useEffect(() => {
     const isIndeterminate = selectedQuotationRequest.length > 0 && selectedQuotationRequest.length < quotationrequests.length;
     setChecked(selectedQuotationRequest.length === quotationrequests.length);
@@ -59,35 +72,23 @@ export default function Example({ permissions }) {
     }
   };
 
-  
   const filteredRequest = quotationrequests.filter((item) => {
-    switch (filterType) {
-      case 'name':
-        return item.name.toLowerCase().includes(searchQuery.toLowerCase());
-      case 'description':
-        return item.description.toLowerCase().includes(searchQuery.toLowerCase());
-      case 'Company':
-        return item.Company.name.toLowerCase().includes(searchQuery.toLowerCase());
-      case 'category':
-        return item.Category.id_category.toString() === selectedCategory ;
-      case 'subcategory':
-        return item.Subcategory.id_subcategory.toString() === selectedSubcategory ; 
-      case 'area':
-        return item.TechnicalArea.code.toString()=== selectedArea;
-      case 'creation':
-        return item.createdAt.toLowerCase().includes(searchQuery.toLowerCase());
-      case 'deadline':
-        return item.deadline.toLowerCase().includes(searchQuery.toLowerCase())
-      case 'status':
-        return item.status=== selectedStatus;
-
-
-      case 'createdByUser':
-        return (item.createdByUser?.name + ' ' + item.createdByUser?.surname).toLowerCase().includes(searchQuery.toLowerCase());
-      default:
-        return false;
-    }
+    return (
+      (searchQueries.name === '' || item.name.toLowerCase().includes(searchQueries.name.toLowerCase())) &&
+      (searchQueries.description=== '' || item.description.toLowerCase().includes(searchQueries.description.toLowerCase())) &&
+      (searchQueries.Company === '' || item.Company?.name.toLowerCase().includes(searchQueries.Company.toLowerCase())) &&
+      (searchQueries.category === '' || 
+        [item.Category?.name, item.Subcategory?.name].some(value => value?.toLowerCase().includes(searchQueries.category.toLowerCase()))
+      ) &&
+      (searchQueries.subcategory === '' || item.Subcategory?.name.toLowerCase().includes(searchQueries.subcategory.toLowerCase())) &&
+      (searchQueries.technicalarea === '' || item.TechnicalArea?.code.toLowerCase().includes(searchQueries.technicalarea.toLowerCase())) &&
+      (searchQueries.status === '' || item.status.toLowerCase().includes(searchQueries.status.toLowerCase())) &&
+      (searchQueries.data === '' || item.createdAt.includes(searchQueries.data)) &&
+      (searchQueries.createdByUser === '' || (item.createdByUser?.name + ' ' + item.createdByUser?.surname).toLowerCase().includes(searchQueries.createdByUser.toLowerCase()))
+    );
   });
+
+  
   const handleSort = (columnName) => {
     if (sortColumn === columnName) {
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
@@ -106,8 +107,8 @@ export default function Example({ permissions }) {
           return item.Category?.name || '';
         case 'subcategory':
           return item.Subcategory?.name || '';
-        case 'technicalarea':
-          return item.TechnicalArea?.name || '';
+        case 'area':
+          return item.Technicaltechnicalarea?.name || '';
         case 'createdByUser':
           return item.createdByUser ? `${item.createdByUser.name} ${item.createdByUser.surname}` : '';
         default:
@@ -264,9 +265,10 @@ export default function Example({ permissions }) {
         });
   }, []); // Empty dependency array
 
-  function handleSearchInputChange(event) {
-    setSearchQuery(event.target.value);
-  }
+  const handleSearchInputChange = (column) => (event) => {
+    setSearchQueries({ ...searchQueries, [column]: event.target.value });
+  };
+
 
   function handleStatusSelectChange(event) {
     setSelectedYear(event.target.value);
@@ -333,255 +335,133 @@ export default function Example({ permissions }) {
           </div>
         </Dialog>
       </Transition.Root>
-      <div className="sm:flex-auto">
-          <h1 className="text-base font-semibold leading-6 text-gray-900">Richieste di Offerta</h1>
-          <p className="mt-2 text-sm text-gray-700">Lista richieste di offerta presenti a sistema</p>
+     
+      
+      <div className="py-4">
+        <div className="sm:flex-auto">
+          <h1 className="text-base font-semibold leading-6 text-gray-900">Ordini di Acquisto</h1>
+          <p className="mt-2 text-sm text-gray-700">Lista degli ordini di acquisto presenti a sistema</p>
         </div>
 
-        {/* Search box and Year filter */}
         <div className="flex flex-wrap justify-between mt-4 mb-4">
-          <div className="flex items-center">
-            <select
-              value={filterType}
-              onChange={(e) => setFilterType(e.target.value)}
-              className="block  px-6 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+          <div className="flex items-center space-x-4 ml-auto">
+            {/* Bottoni Export e Create */}
+            <button
+              onClick={exportData}
+              className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
             >
-              <option value="name">N° Ordine</option>
-              <option value="description">Descrizione</option>
-              <option value="Company">Azienda</option>
-              <option value="category">Categoria</option>
-              <option value="subcategory">Sotto Categoria</option>
-              <option value="area">Area Tecnica</option>
-              
-              <option value="status">Stato</option>
-              <option value="creation">Data Inizio</option>
-              {/*
-              <option value="end">Data Fine</option>
-              <option value="deadline">Scadenza</option> */}
-              <option value="createdByUser">Creato Da</option>
-            </select>
-           
-            {filterType === 'category' ? (
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="block w-48 px-4 py-2 border border-gray-300 rounded-r-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-              >
-                <option value="">Seleziona</option>
-                {categories.map((category) => (
-                  <option key={category.id_category} value={category.id_category}>
-                    {category.name}
-                  </option>
-                ))}
-              </select>
-            ) :
-            filterType === 'status' ? (
-              <select
-                value={selectedStatus}
-                onChange={(e) => setselectedStatus(e.target.value)}
-                className="block w-48 px-4 py-2 border border-gray-300 rounded-r-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-              >
-                
-                <option value="Nessuno">  Nessuno </option>
-                <option value="Scaduta"> Scaduta </option>
-                <option value="In Attesa"> In Attesa</option>
-                <option value="Rifiutata"> Rifiutata </option>
-                <option value="Approvata"> Approvata </option>
-              </select>
-            ) :
-            filterType === 'subcategory' ? (
-              <select
-                value={selectedSubcategory}
-                onChange={(e) => setSelectedSubcategory(e.target.value)}
-                className="block w-48 px-4 py-2 border border-gray-300 rounded-r-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-              >
-                <option value="">Seleziona</option>
-                {subcategories.map((subcategory) => (
-                  <option key={subcategory.id_subcategory} value={subcategory.id_subcategory}>
-                    {subcategory.name}
-                  </option>
-                ))}
-              </select>
-            ) :
-            filterType === 'area' ? (
-              <select
-                value={selectedArea}
-                onChange={(e) => setSelectedArea(e.target.value)}
-                className="block w-48 px-4 py-2 border border-gray-300 rounded-r-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-              >
-                <option value="">Seleziona</option>
-                {areas.map((area) => (
-                  <option key={area.code} value={area.code}>
-                    {area.name}
-                  </option>
-                ))}
-              </select>
-            ) 
-            : (
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={handleSearchInputChange}
-                placeholder={`Cerca per ${filterType === 'name' ? 'N° Ordine' : filterType === 'Company' ? 'Azienda' : filterType === 'revision' ? 'N° Revisioni' : filterType === 'hour' ? 'N°Ore'   :filterType === 'amount' ? 'Valore' : filterType === 'createByUser' ? 'Proprietaro' :  'Category'}`}
-                className="block w-48 px-4 py-2 border border-gray-300 rounded-r-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-              />
-            )}
-          </div>
-          <div className="flex-grow w-full max-w-xs flex items-end px-20 mb-4">
-
-
-            <div className="px-4">
-              <button
-                onClick={exportData}
-                className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
-                >
-                Export
-              </button>
-            </div>
-            <div className="">
-              <button
-                onClick={() => setOpen(true)}
-                className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
-              >
-                Create
-              </button>
-            </div>
+              Export
+            </button>
+            <button
+              onClick={() => setOpen(true)}
+              className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+            >
+              Create
+            </button>
           </div>
         </div>
+      </div>
+
+
+
       <div className="mt-8 flow-root">
         <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">          
           <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
             <div className="relative">
               <table className="min-w-full table-fixed divide-y divide-gray-300">
                 <thead>
-                  <tr>        
-                  <th
-                      scope="col"
-                      className="px-3 py-3.5 pr-3 text-left text-sm font-semibold text-gray-900 cursor-pointer"
-                      onClick={() => handleSort('name')}
-                    >
-                      N° Richiesta
-                      {sortColumn === 'name' && (
-                        <span>
-                          {sortDirection === 'asc' ? (
-                            <ArrowUpIcon className="h-4 w-4 inline" />
-                          ) : (
-                            <ArrowDownIcon className="h-4 w-4 inline" />
-                          )}
-                        </span>
-                      )}
+                  <tr>       
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
+                      N° Ordine
+                      {sortColumn === 'name' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <input
+                        type="text"
+                        value={searchQueries.name}
+                        onChange={handleSearchInputChange('name')}
+                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                        placeholder="Cerca per n° richiesta"
+                      />
                     </th>
-                    <th
-                      scope="col"
-                      className="px-3 py-3.5 pr-3 text-left text-sm font-semibold text-gray-900 cursor-pointer"
-                      onClick={() => handleSort('description')} 
-                    >
+                    <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('description')}>
                       Descrizione
-                      {sortColumn === 'description' && (
-                        <span>
-                          {sortDirection === 'asc' ? (
-                            <ArrowUpIcon className="h-4 w-4 inline" />
-                          ) : (
-                            <ArrowDownIcon className="h-4 w-4 inline" />
-                          )}
-                        </span>
-                      )}
+                      {sortColumn === 'description' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <input
+                        type="text"
+                        value={searchQueries.description}
+                        onChange={handleSearchInputChange('description')}
+                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                        placeholder="Cerca per descrizione"
+                      />
                     </th>
-                    <th
-                      scope="col"
-                      className="px-3 py-3.5 pr-3 text-left text-sm font-semibold text-gray-900 cursor-pointer"
-                      onClick={() => handleSort('Company')} 
-                    >
+                    <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Company')}>
                       Azienda
-                      {sortColumn === 'Company' && (
-                        <span>
-                          {sortDirection === 'asc' ? (
-                            <ArrowUpIcon className="h-4 w-4 inline" />
-                          ) : (
-                            <ArrowDownIcon className="h-4 w-4 inline" />
-                          )}
-                        </span>
-                      )}
+                      {sortColumn === 'Company' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <input
+                        type="text"
+                        value={searchQueries.Company}
+                        onChange={handleSearchInputChange('Company')}
+                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                        placeholder="Cerca per azienda"
+                      />
                     </th>
-                    <th
-                      scope="col"
-                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
-                      onClick={() => handleSort('category')} //category da solo funziona ma category.name non funziona
-                    >
-                      Categoria
-                      {sortColumn === 'category' && (
-                        <span>
-                          {sortDirection === 'asc' ? (
-                            <ArrowUpIcon className="h-4 w-4 inline" />
-                          ) : (
-                            <ArrowDownIcon className="h-4 w-4 inline" />
-                          )}
-                        </span>
-                      )}
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('category')}>
+                        Categoria
+                        {sortColumn === 'category' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                        <input
+                          type="text"
+                          value={searchQueries.category}
+                          onChange={handleSearchInputChange('category')}
+                          className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                          placeholder="Cerca per categoria "
+                        />
                     </th>
-                    <th
-                      scope="col"
-                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
-                      onClick={() => handleSort('technicalarea')}
-                    >
+                    
+    
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('technicalarea')}>
                       Area Tecnica
-                      {sortColumn === 'technicalarea' && (
-                        <span>
-                          {sortDirection === 'asc' ? (
-                            <ArrowUpIcon className="h-4 w-4 inline" />
-                          ) : (
-                            <ArrowDownIcon className="h-4 w-4 inline" />
-                          )}
-                        </span>
-                      )}
+                      {sortColumn === 'technicalarea' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <input
+                        type="text"
+                        value={searchQueries.technicalarea}
+                        onChange={handleSearchInputChange('technicalarea')}
+                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                        placeholder="Cerca per area"
+                      />
                     </th>
-                    <th
-                      scope="col"
-                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
-                      onClick={() => handleSort('createdAt')}
-                    >
-                      Creazione
-                      {sortColumn === 'createdAt' && (
-                        <span>
-                          {sortDirection === 'asc' ? (
-                            <ArrowUpIcon className="h-4 w-4 inline" />
-                          ) : (
-                            <ArrowDownIcon className="h-4 w-4 inline" />
-                          )}
-                        </span>
-                      )}
+  
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('data')}>
+                      Data
+                      {sortColumn === 'data' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <input
+                        type="text"
+                        value={searchQueries.data}
+                        onChange={handleSearchInputChange('data')}
+                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                        placeholder="Cerca per data"
+                      />
                     </th>
-                    <th
-                      scope="col"
-                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
-                      onClick={() => handleSort('status')}
-                    >
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('status')}>
                       Stato
-                      {sortColumn === 'status' && (
-                        <span>
-                          {sortDirection === 'asc' ? (
-                            <ArrowUpIcon className="h-4 w-4 inline" />
-                          ) : (
-                            <ArrowDownIcon className="h-4 w-4 inline" />
-                          )}
-                        </span>
-                      )}
+                      {sortColumn === 'status' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <input
+                        type="text"
+                        value={searchQueries.status}
+                        onChange={handleSearchInputChange('status')}
+                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                        placeholder="Cerca per stato"
+                      />
+                    
                     </th>
-                    <th
-                      scope="col"
-                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
-                      onClick={() => handleSort('createdByUser')} //non funziona 
-                    >
-                      Autore
-                      {sortColumn === 'createdByUser' && (
-                        <span>
-                          {sortDirection === 'asc' ? (
-                            <ArrowUpIcon className="h-4 w-4 inline" />
-                          ) : (
-                            <ArrowDownIcon className="h-4 w-4 inline" />
-                          )}
-                        </span>
-                      )}
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('createdByUser')}>
+                      Creata da
+                      {sortColumn === 'createdByUser' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      <input
+                        type="text"
+                        value={searchQueries.createdByUser}
+                        onChange={handleSearchInputChange('createdByUser')}
+                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                        placeholder="Cerca per creatore"
+                      />
                     </th>
                     <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-3">
                       <span className="sr-only">Edit</span>
@@ -589,12 +469,9 @@ export default function Example({ permissions }) {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
-                {Array.isArray(sortedRequest) && sortedRequest.length > 0 ? (
-                    sortedRequest.map((quotationrequest) => (
-                      <tr
-                        key={quotationrequest.id_user}
-                        className={selectedQuotationRequest.includes(quotationrequest) ? 'bg-gray-50' : undefined}
-                      >
+                  {sortedRequest.map((quotationrequest) => (
+                      <tr key={quotationrequest.id_user}>
+                      
                         <td
                           className={classNames(
                             'whitespace-nowrap px-3 py-4 pr-3 text-sm font-medium',
@@ -668,13 +545,7 @@ export default function Example({ permissions }) {
                         </td>
                       </tr>
                     ))
-                  ) : (
-                    <tr>
-                      <td colSpan="8" className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
-                        Non ci sono richieste di offerta
-                      </td>
-                    </tr>
-                  )}
+                  }
                 </tbody>
               </table>
             </div>

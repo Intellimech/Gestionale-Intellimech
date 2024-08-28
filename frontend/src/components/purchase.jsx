@@ -234,26 +234,23 @@ export default function Example({ permissions }) {
         </div>
 
         <div className="flex flex-wrap justify-between mt-4 mb-4">
-        
-          <div className="flex items-center space-x-4">
-            
+          <div className="flex items-center space-x-4 ml-auto">
+            {/* Bottoni Export e Create */}
             <button
               onClick={exportData}
               className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
-
             >
               Export
             </button>
             <button
-              onClick={() =>setShowCreate(true)}
+              onClick={() => setShowCreate(true)}
               className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
-
             >
               Create
-
             </button>
           </div>
         </div>
+
       </div>
 
       <div className="mt-8 flow-root">

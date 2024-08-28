@@ -338,14 +338,15 @@ export default function Example({ permissions }) {
      
       
       <div className="py-4">
-        <div className="sm:flex-auto">
-          <h1 className="text-base font-semibold leading-6 text-gray-900">Ordini di Acquisto</h1>
-          <p className="mt-2 text-sm text-gray-700">Lista degli ordini di acquisto presenti a sistema</p>
-        </div>
+        <div className="flex items-center justify-between">
+          {/* Titolo e descrizione */}
+          <div className="sm:flex-auto">
+            <h1 className="text-base font-semibold leading-6 text-gray-900">Richieste di Offerta</h1>
+            <p className="mt-2 text-sm text-gray-700">Lista delle richieste di offerta presenti a sistema</p>
+          </div>
 
-        <div className="flex flex-wrap justify-between mt-4 mb-4">
-          <div className="flex items-center space-x-4 ml-auto">
-            {/* Bottoni Export e Create */}
+          {/* Bottoni Export e Create */}
+          <div className="flex items-center space-x-4">
             <button
               onClick={exportData}
               className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
@@ -361,6 +362,7 @@ export default function Example({ permissions }) {
           </div>
         </div>
       </div>
+
 
 
 

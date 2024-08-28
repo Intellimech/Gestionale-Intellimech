@@ -119,28 +119,29 @@ export default function Company({ companytype }) {
 
   return (
     
-      <div className="px-4 sm:px-6 lg:px-8">
-        <div className="sm:flex-auto">
-          <h1 className="text-base font-semibold leading-6 text-gray-900">
-            {companytype === 'Suppliers' ? 'Fornitori' : 'Clienti'}
-          </h1>
-          <p className="mt-2 text-sm text-gray-700">
-            Lista dei {companytype === 'Suppliers' ? 'fornitori' : 'clienti'}
-          </p>
-        </div>
-
-        <div className="flex flex-wrap justify-between mt-4 mb-4">
-          <div className="flex items-center space-x-4 ml-auto">
-            {/* Bottoni Export */}
-            <button
-              onClick={exportInvoices}
-              className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
-            >
-              Export
-            </button>
-            
-          </div>
-        </div>
+    <div className="px-4 sm:px-6 lg:px-8">
+    <div className="flex items-center justify-between py-4">
+      {/* Titolo e descrizione */}
+      <div className="flex-grow">
+        <h1 className="text-base font-semibold leading-6 text-gray-900">
+          {companytype === 'Suppliers' ? 'Fornitori' : 'Clienti'}
+        </h1>
+        <p className="mt-2 text-sm text-gray-700">
+          Lista dei {companytype === 'Suppliers' ? 'fornitori' : 'clienti'}
+        </p>
+      </div>
+  
+      {/* Bottoni Export */}
+      <div className="flex items-center space-x-4">
+        <button
+          onClick={exportInvoices}
+          className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+        >
+          Export
+        </button>
+      </div>
+    </div>
+  
 
         <div className="mt-8 flow-root">
           <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">          

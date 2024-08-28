@@ -157,22 +157,27 @@ export default function invoicetable({ invoicetype }) {
     <div className="px-4 sm:px-6 lg:px-8">
 
 
-      <div className="sm:flex-auto">
-        <h1 className="text-base font-semibold leading-6 text-gray-900">Fatture { invoicetype == 'Passiva' ? 'passive' : 'attive' }</h1>
-        <p className="mt-2 text-sm text-gray-700">Lista delle fatture</p>
-      </div>
-      <div className="flex flex-wrap justify-between mt-4 mb-4">
-        <div className="flex items-center space-x-4 ml-auto">
+      <div className="py-4">
+        {/* Contenitore principale con Flexbox */}
+        <div className="flex items-center justify-between">
+          {/* Titolo e descrizione */}
+          <div className="sm:flex-auto">
+            <h1 className="text-base font-semibold leading-6 text-gray-900">Fatture {invoicetype === 'Passiva' ? 'passive' : 'attive'}</h1>
+            <p className="mt-2 text-sm text-gray-700">Lista delle fatture</p>
+          </div>
+
           {/* Bottoni Export */}
-          <button
-            onClick={exportInvoices}
-            className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
-          >
-            Export
-          </button>
-          
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={exportInvoices}
+              className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+            >
+              Export
+            </button>
+          </div>
         </div>
       </div>
+
 
 
       <div className="mt-8 flow-root">

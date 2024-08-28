@@ -51,11 +51,6 @@ export default function Example({ permissions }) {
     }
   };
     
-  const handleSearchInputChange = (event) => {
-    setSearchQuery(event.target.value);
-  };
-
-
 
   const compareValues = (a, b) => {
     if (typeof a === 'string' && typeof b === 'string') {
@@ -66,26 +61,33 @@ export default function Example({ permissions }) {
       return a < b ? -1 : a > b ? 1 : 0;
     }
   };
+  const [searchQueries, setSearchQueries] = useState({
+    name: '',
+    description: '',
+    Company: '',
+    offer: '',
+    status: '',
+    createdByUser: ''
+  });
+
 
     
   const filteredSaleOrder= salesorders.filter((item) => {
-    switch (filterType) {
-      case 'name':
-        return item.name.toLowerCase().includes(searchQuery.toLowerCase());
-      case 'Company':
-        return item.Offer.QuotationRequest.Company.name.toLowerCase().includes(searchQuery.toLowerCase());
-      case 'offer':
-        return item.Offer.name.toLowerCase().includes(searchQuery.toLowerCase());
-      case 'description':
-        return item.Offer.QuotationRequest.description.toLowerCase().includes(searchQuery.toLowerCase());
-      case 'status':
-        return item.status===selectedStatus;
-      case 'createdByUser':
-        return (item.createdByUser?.name + ' ' + item.createdByUser?.surname).toLowerCase().includes(searchQuery.toLowerCase());
-      default:
-        return false;
-    }
-  });
+    return (
+    (searchQueries.name === '' || item.name.toLowerCase().includes(searchQueries.name.toLowerCase())) &&
+    (searchQueries.description=== '' || item.Offer.QuotationRequest.description.toLowerCase().includes(searchQueries.description.toLowerCase())) &&
+    (searchQueries.Company === '' || item.Offer.QuotationRequest.Company?.name.toLowerCase().includes(searchQueries.Company.toLowerCase())) &&
+  
+   
+    (searchQueries.offer === '' || item.Offer.name.toLowerCase().includes(searchQueries.offer.toLowerCase())) &&
+    (searchQueries.status === '' || item.status.toLowerCase().includes(searchQueries.status.toLowerCase())) &&
+
+    (searchQueries.createdByUser === '' || (item.createdByUser?.name + ' ' + item.createdByUser?.surname).toLowerCase().includes(searchQueries.createdByUser.toLowerCase()))
+  );
+});
+
+    
+  
   
   const sortedSaleOrder = filteredSaleOrder.sort((a, b) => {
     const getValue = (item, column) => {
@@ -102,6 +104,7 @@ export default function Example({ permissions }) {
           return item[column] || '';
       }
     };
+    
   
     const valueA = getValue(a, sortColumn);
     const valueB = getValue(b, sortColumn);
@@ -158,7 +161,10 @@ export default function Example({ permissions }) {
         console.log(error);
       });
   };
-  
+  const handleSearchInputChange = (column) => (event) => {
+    setSearchQueries({ ...searchQueries, [column]: event.target.value });
+  };
+
 
   const Refuse = (salesorderId) => {
     axios.post(`${process.env.REACT_APP_API_URL}/salesorder/refuse/${salesorderId}`, {}, {
@@ -236,42 +242,7 @@ export default function Example({ permissions }) {
       </div>
       {/* Search box and Year filter */}
       <div className="flex flex-wrap justify-between mt-4 mb-4">
-      <div className="flex items-center">
-          <select
-            value={filterType}
-            onChange={(e) => setFilterType(e.target.value)}
-            className="block  px-6 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-          >
-            <option value="name">Nome</option>
-            <option value="Company">Azienda</option>
-            <option value="offer">Offerta</option>
-            <option value="description">Descrizione</option>
-            <option value="status">Stato</option>
-            <option value="createdByUser">Proprietario</option>
-          </select>
-          { filterType === 'status' ? (
-              <select
-                value={selectedStatus}
-                onChange={(e) => setselectedStatus(e.target.value)}
-                className="block w-48 px-4 py-2 border border-gray-300 rounded-r-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                
-              >
-                
-                <option value="Nessuno"> Nessuno </option>
-                <option value="Fatturata"> Fatturata </option>
-                <option value="Da Fatturare"> Da Fatturare </option>
-              </select>
-            ) :
-            ( 
-              <input
-            type="text"
-            value={searchQuery}
-            onChange={handleSearchInputChange}
-            className="block px-6 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-            placeholder={`Cerca per ${filterType === 'name' ? 'Nome' : filterType === 'Company' ? 'Azienda' :filterType === 'total' ? 'import totale':  filterType === 'payment_method' ? 'pagamento' : filterType === 'IVA' ? 'IVA':  filterType === 'createdByUser' ? 'user creazione': 'n° ordine' }`}
-          />)}
-          
-        </div> 
+     
         <div className="flex-grow w-full max-w-xs flex items-end px-36 mb-4">
           
 
@@ -285,104 +256,84 @@ export default function Example({ permissions }) {
           </div>
         </div>
       </div>
+
+
+
       <div className="mt-8 flow-root">
-        <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">          
           <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
             <div className="relative">
               <table className="min-w-full table-fixed divide-y divide-gray-300">
                 <thead>
-                  <tr>
-                    <th 
-                      scope="col" 
-                      className="px-3 py-3.5 pr-3 text-left text-sm font-semibold text-gray-900"
-                      onClick={() => handleSort('name')}>
-
-                      {sortColumn === 'name' && (
-                        <span>
-                          {sortDirection === 'asc' ? (
-                            <ArrowUpIcon className="h-4 w-4 inline" />
-                          ) : (
-                            <ArrowDownIcon className="h-4 w-4 inline" />
-                          )}
-                        </span>
-                      )}
-                    </th>
-                    <th 
-                      scope="col" 
-                      className="px-3 py-3.5 pr-3 text-left text-sm font-semibold text-gray-900"
-                      onClick={() => handleSort('Company')}>
-                      Azienda
-                      {sortColumn === 'Company' && (
-                        <span>
-                          {sortDirection === 'asc' ? (
-                            <ArrowUpIcon className="h-4 w-4 inline" />
-                          ) : (
-                            <ArrowDownIcon className="h-4 w-4 inline" />
-                          )}
-                        </span>
-                      )}
-                    </th>
-                    <th 
-                      scope="col" 
-                      className="px-3 py-3.5 pr-3 text-left text-sm font-semibold text-gray-900"
-                      onClick={() => handleSort('offer')}>
-                      Offerta
-                      {sortColumn === 'offer' && (
-                        <span>
-                          {sortDirection === 'asc' ? (
-                            <ArrowUpIcon className="h-4 w-4 inline" />
-                          ) : (
-                            <ArrowDownIcon className="h-4 w-4 inline" />
-                          )}
-                        </span>
-                      )}
-                    </th>
-                    <th 
-                      scope="col" 
-                      className="px-3 py-3.5 pr-3 text-left text-sm font-semibold text-gray-900"
-                      onClick={() => handleSort('description')}>
-                      Descrizione
-                      {sortColumn === 'description' && (
-                        <span>
-                          {sortDirection === 'asc' ? (
-                            <ArrowUpIcon className="h-4 w-4 inline" />
-                          ) : (
-                            <ArrowDownIcon className="h-4 w-4 inline" />
-                          )}
-                        </span>
-                      )}
-                    </th>
-                    <th 
-                      scope="col" 
-                      className="px-3 py-3.5 pr-3 text-left text-sm font-semibold text-gray-900"
-                      onClick={() => handleSort('status')}>
-                      Stato
-                      {sortColumn === 'status' && (
-                        <span>
-                          {sortDirection === 'asc' ? (
-                            <ArrowUpIcon className="h-4 w-4 inline" />
-                          ) : (
-                            <ArrowDownIcon className="h-4 w-4 inline" />
-                          )}
-                        </span>
-                      )}
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
-                      onClick={() => handleSort('createdByUser')} 
-                    >
-                      Proprietario
-                      {sortColumn === 'createdByUser' && (
-                        <span>
-                          {sortDirection === 'asc' ? (
-                            <ArrowUpIcon className="h-4 w-4 inline" />
-                          ) : (
-                            <ArrowDownIcon className="h-4 w-4 inline" />
-                          )}
-                        </span>
-                      )}
-                    </th>
+                  <tr>     
+                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
+                    N°
+                    {sortColumn === 'name' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <input
+                      type="text"
+                      value={searchQueries.name}
+                      onChange={handleSearchInputChange('name')}
+                      className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                      placeholder="Cerca"
+                    />
+                  </th>
+                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Company')}>
+                    Azienda
+                    <br></br>
+                    {sortColumn === 'Company' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <input
+                      type="text"
+                      value={searchQueries.Company}
+                      onChange={handleSearchInputChange('Company')}
+                      className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                      placeholder="Cerca per azienda"
+                    />
+                  </th>
+                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('offer')}>
+                    Offerta
+                    {sortColumn === 'offer' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <input
+                      type="text"
+                      value={searchQueries.offer}
+                      onChange={handleSearchInputChange('offer')}
+                      className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                      placeholder="Cerca per offerta"
+                    />
+                  </th>
+                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('description')}>
+                    Descrizione
+                    {sortColumn === 'description' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <input
+                      type="text"
+                      value={searchQueries.description}
+                      onChange={handleSearchInputChange('description')}
+                      className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                      placeholder="Cerca per descrizione"
+                    />
+                  </th>
+                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('status')}>
+                    Stato
+                    {sortColumn === 'status' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <input
+                      type="text"
+                      value={searchQueries.status}
+                      onChange={handleSearchInputChange('status')}
+                      className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                      placeholder="Cerca per stato"
+                    />
+                  
+                  </th>
+                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('createdByUser')}>
+                    Creata da
+                    {sortColumn === 'createdByUser' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <input
+                      type="text"
+                      value={searchQueries.createdByUser}
+                      onChange={handleSearchInputChange('createdByUser')}
+                      className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
+                      placeholder="Cerca per creatore"
+                    />
+                  </th>
                     <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-3">
                     </th>
                   </tr>

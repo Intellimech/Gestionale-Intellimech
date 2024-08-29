@@ -217,7 +217,7 @@ export default function Example({ permissions, user }) {
                           <div className="ml-3 flex h-7 items-center">
                             <button
                               type="button"
-                              className="relative rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                              className="relative rounded-md bg-white text-gray-400 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
                               onClick={() => setShowInfo(false)}
                             >
                               <span className="absolute -inset-2.5" />
@@ -261,7 +261,7 @@ export default function Example({ permissions, user }) {
                           <div className="ml-3 flex h-7 items-center">
                             <button
                               type="button"
-                              className="relative rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                              className="relative rounded-md bg-white text-gray-400 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
                               onClick={() => setOpen(false)}
                             >
                               <span className="absolute -inset-2.5" />
@@ -322,7 +322,7 @@ export default function Example({ permissions, user }) {
                     Nome Commessa
                     {sortColumn === 'name' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
-                    <textarea
+                    <input
                       value={searchQueries.name}
                       onChange={handleSearchInputChange('name')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
@@ -334,7 +334,7 @@ export default function Example({ permissions, user }) {
                     Azienda
                     {sortColumn === 'Company' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
-                    <textarea
+                    <input
                       value={searchQueries.Company}
                       onChange={handleSearchInputChange('Company')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
@@ -346,7 +346,7 @@ export default function Example({ permissions, user }) {
                     Ordine di Vendita
                     {sortColumn === 'SaleOrder' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
-                    <textarea
+                    <input
                       value={searchQueries.SaleOrder}
                       onChange={handleSearchInputChange('SaleOrder')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
@@ -358,7 +358,7 @@ export default function Example({ permissions, user }) {
                     Valore Contrattuale
                     {sortColumn === 'offertotal' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
-                    <textarea
+                    <input
                       value={searchQueries.offertotal}
                       onChange={handleSearchInputChange('offertotal')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
@@ -370,7 +370,7 @@ export default function Example({ permissions, user }) {
                     Ore Stimate
                     {sortColumn === 'offerhour' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
-                    <textarea
+                    <input
                       value={searchQueries.offerhour}
                       onChange={handleSearchInputChange('offerhour')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
@@ -382,7 +382,7 @@ export default function Example({ permissions, user }) {
                     Valore Reale
                     {sortColumn === 'total' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
-                    <textarea
+                    <input
                       value={searchQueries.total}
                       onChange={handleSearchInputChange('total')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
@@ -394,7 +394,7 @@ export default function Example({ permissions, user }) {
                     Ore Lavorate
                     {sortColumn === 'reportedhour' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
-                    <textarea
+                    <input
                       value={searchQueries.reportedhour}
                       onChange={handleSearchInputChange('reportedhour')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
@@ -406,7 +406,7 @@ export default function Example({ permissions, user }) {
                     Stato
                     {sortColumn === 'status' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
-                    <textarea
+                    <input
                       value={searchQueries.status}
                       onChange={handleSearchInputChange('status')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
@@ -418,7 +418,7 @@ export default function Example({ permissions, user }) {
                     Creata da
                     {sortColumn === 'createdByUser' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
-                    <textarea
+                    <input
                       value={searchQueries.createdByUser}
                       onChange={handleSearchInputChange('createdByUser')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
@@ -437,45 +437,45 @@ export default function Example({ permissions, user }) {
                         <td
                           className={classNames(
                             'whitespace-nowrap px-3 py-4 pr-3 text-sm font-medium',
-                            selectedJobs.includes(job) ? 'text-red-600' : 'text-gray-900'
+                            selectedJobs.includes(job) ? 'text-red-600' : 'text-gray-700'
                           )}
                         >
                           {job.name}
                         </td>
                         <td className={classNames(
                             'whitespace-nowrap px-3 py-4 pr-3 text-sm font-medium',
-                            selectedJobs.includes(job) ? 'text-red-600' : 'text-gray-900'
+                            selectedJobs.includes(job) ? 'text-red-600' : 'text-gray-700'
                           )}>
                           {
                             job.SalesOrders.length > 1 ? job.SalesOrders[0].Offer.QuotationRequest.Company.name + '...' + " (" + job.SalesOrders.length + ")" : job.SalesOrders[0]?.Offer.QuotationRequest.Company.name
                           }
                         </td>
-                        <td className="px-3 py-4 text-sm text-gray-500">
+                        <td className="px-3 py-4 text-sm text-gray-700">
                           {
                             job.SalesOrders.length > 1 ? job.SalesOrders[0].name + '...' + " (" + job.SalesOrders.length + ")" : job.SalesOrders[0]?.name
                           }
                         </td>
-                        <td className="px-3 py-4 text-sm text-gray-500">
+                        <td className="px-3 py-4 text-sm text-gray-700">
                           {
                             job.SalesOrders.reduce((total, order) => total + parseFloat(order.Offer.amount), 0).toFixed(2) + ' €'
                           }
                         </td>
-                        <td className="px-3 py-4 text-sm text-gray-500">
+                        <td className="px-3 py-4 text-sm text-gray-700">
                           {
                             job.SalesOrders.reduce((total, order) => total + parseFloat(order.Offer.hour), 0) + ' h'
                           }
                         </td>
-                        <td className="px-3 py-4 text-sm text-gray-500">
+                        <td className="px-3 py-4 text-sm text-gray-700">
                           {
                             (job.Reportings.reduce((total, reported) => total + reported.hour, 0) * (job.SalesOrders.reduce((total, order) => total + parseFloat(order.Offer.amount), 0).toFixed(2) / job.SalesOrders.reduce((total, order) => total + parseFloat(order.Offer.hour), 0).toFixed(2))).toFixed(2) + '€'
                           }
                         </td>
-                        <td className="px-3 py-4 text-sm text-gray-500">
+                        <td className="px-3 py-4 text-sm text-gray-700">
                           {
                             job.Reportings.reduce((total, reported) => total + reported.hour, 0) + ' h'
                           }
                         </td> 
-                        <td className="px-3 py-4 text-sm text-gray-500">
+                        <td className="px-3 py-4 text-sm text-gray-700">
                         {
                             // Use a ternary operator to determine the status class
                             job.status === 'Aperta' ? (
@@ -497,14 +497,14 @@ export default function Example({ permissions, user }) {
                             )
                           }                 
                         </td>
-                        <td className="px-3 py-4 text-sm text-gray-500">
+                        <td className="px-3 py-4 text-sm text-gray-700">
                           {job.createdByUser?.name.slice(0, 2).toUpperCase() + job.createdByUser?.surname.slice(0, 2).toUpperCase()}
                         </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="12" className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                      <td colSpan="12" className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 text-center">
                         Non ci sono commesse
                       </td>
                     </tr>

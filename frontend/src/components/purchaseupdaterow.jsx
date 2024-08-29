@@ -72,6 +72,7 @@ export default function PurchaseUpdateRow({
           onChange={(e) => onChange({ ...product, description: e.target.value })}
           className="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"
           maxLength="150"
+          rows= {1}
         />
         <p className="mt-1 text-xs text-gray-500">Massimo 150 caratteri</p>
       </td>
@@ -115,7 +116,7 @@ export default function PurchaseUpdateRow({
           <button
             type="button"
             onClick={handleDeleteClick}
-            className="text-red-600 hover:text-red-900 mt-1 flex items-center"
+            className="text-blue-700 hover:text-blue-900 mt-1 flex items-center"
           >
             <TrashIcon className="h-5 w-5" aria-hidden="true" />
           </button>

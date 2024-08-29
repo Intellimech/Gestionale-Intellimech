@@ -344,7 +344,7 @@ export default function Example({ permissions }) {
                           <div className="ml-3 flex h-7 items-center">
                             <button
                               type="button"
-                              className="relative rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                              className="relative rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#7fb7d4] focus:ring-offset-2"
                               onClick={() => setShowInfo(false)}
                             >
                               <span className="absolute -inset-2.5" />
@@ -389,7 +389,7 @@ export default function Example({ permissions }) {
                           <div className="ml-3 flex h-7 items-center">
                             <button
                               type="button"
-                              className="relative rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                              className="relative rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#7fb7d4] focus:ring-offset-2"
                               onClick={() => setShowCreate(false)}
                             >
                               <span className="absolute -inset-2.5" />
@@ -422,13 +422,13 @@ export default function Example({ permissions }) {
           <div className="flex items-center space-x-4">
             <button
               onClick={exportData}
-              className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+              className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-[#7fb7d4] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
             >
               Export
             </button>
             <button
               onClick={() => setShowCreate(true)}
-              className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+              className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-[#7fb7d4] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
             >
               Create
             </button>
@@ -446,13 +446,13 @@ export default function Example({ permissions }) {
               <thead>
                 <tr>
                   <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
-                    N° Ordine
+                    Ordine
                     {sortColumn === 'name' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
                     <textarea
                       value={searchQueries.name}
                       onChange={handleSearchInputChange('name')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder="Ordine"
                       rows={1}
                     />
@@ -464,7 +464,7 @@ export default function Example({ permissions }) {
                     <textarea
                       value={searchQueries.description}
                       onChange={handleSearchInputChange('description')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder="Descrizione"
                       rows={1}
                     />
@@ -476,7 +476,7 @@ export default function Example({ permissions }) {
                     <textarea
                       value={searchQueries.Company}
                       onChange={handleSearchInputChange('Company')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder="Azienda"
                       rows={1}
                     />
@@ -488,7 +488,7 @@ export default function Example({ permissions }) {
                     <textarea
                       value={searchQueries.revision}
                       onChange={handleSearchInputChange('revision')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder="Revisione"
                       rows={1}
                     />
@@ -500,7 +500,7 @@ export default function Example({ permissions }) {
                     <textarea
                       value={searchQueries.hour}
                       onChange={handleSearchInputChange('hour')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder="Ore"
                       rows={1}
                     />
@@ -512,7 +512,7 @@ export default function Example({ permissions }) {
                     <textarea
                       value={searchQueries.amount}
                       onChange={handleSearchInputChange('amount')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder="Valore"
                       rows={1}
                     />
@@ -524,7 +524,7 @@ export default function Example({ permissions }) {
                     <textarea
                       value={searchQueries.category}
                       onChange={handleSearchInputChange('category')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder="Categoria"
                       rows={1}
                     />
@@ -536,7 +536,7 @@ export default function Example({ permissions }) {
                     <textarea
                       value={searchQueries.technicalarea}
                       onChange={handleSearchInputChange('technicalarea')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder="Area"
                       rows={1}
                     />
@@ -548,7 +548,7 @@ export default function Example({ permissions }) {
                     <textarea
                       value={searchQueries.estimatedstart}
                       onChange={handleSearchInputChange('estimatedstart')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder="Data inizio"
                       rows={1}
                     />
@@ -560,7 +560,7 @@ export default function Example({ permissions }) {
                     <textarea
                       value={searchQueries.estimatedend}
                       onChange={handleSearchInputChange('estimatedend')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder="Data fine"
                       rows={1}
                     />
@@ -572,7 +572,7 @@ export default function Example({ permissions }) {
                     <textarea
                       value={searchQueries.deadline}
                       onChange={handleSearchInputChange('deadline')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder="Scadenza"
                       rows={1}
                     />
@@ -584,7 +584,7 @@ export default function Example({ permissions }) {
                     <textarea
                       value={searchQueries.status}
                       onChange={handleSearchInputChange('status')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder="Stato"
                       rows={1}
                     />
@@ -596,7 +596,7 @@ export default function Example({ permissions }) {
                     <textarea
                       value={searchQueries.createdByUser}
                       onChange={handleSearchInputChange('createdByUser')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder="Creatore"
                       rows={1}
                     />

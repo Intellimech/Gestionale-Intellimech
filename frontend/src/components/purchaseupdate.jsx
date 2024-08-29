@@ -226,8 +226,7 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
               ))}
               <button
                 type="button"
-                className="mt-6 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                onClick={addProduct}
+                 className="block ml-4 rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"onClick={addProduct}
               >
                 Aggiungi Prodotto
               </button>
@@ -266,7 +265,7 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
         <div className="mt-6 flex items-center justify-end gap-x-6">
           <button
             type="submit"
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+             className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
           >
             Aggiorna Ordine di Acquisto
           </button>

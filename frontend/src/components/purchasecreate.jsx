@@ -118,7 +118,7 @@ export default function PurchaseCreateForm() {
       <div className="space-y-12">
         <div className="border-b border-gray-900/10 pb-12">
           <h2 className="text-base font-semibold leading-7 text-gray-900">Informazioni Ordine di Acquisto</h2>
-          <p className="mt-1 text-sm leading-6 text-gray-600">Ricorda, i dati inseriti ora saranno quelli che verranno utilizzati per creare l'ordine di acquisto</p>
+          <p className="mt-1 text-sm leading-6 text-gray-700">Ricorda, i dati inseriti ora saranno quelli che verranno utilizzati per creare l'ordine di acquisto</p>
 
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div className="sm:col-span-2">
@@ -129,7 +129,7 @@ export default function PurchaseCreateForm() {
                 <Select
                   id="azienda"
                   name="azienda"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
                   value={selectedCompany}
                   onChange={handleCompanyChange}
                   options={(companies || []).map(({ value, label }) => ({ value, label }))}
@@ -148,7 +148,7 @@ export default function PurchaseCreateForm() {
                   id="dateorder"
                   name="dateorder"
                   type="date"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:max-w-xs sm:text-sm"
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:max-w-xs sm:text-sm"
                   min={new Date().toISOString().split('T')[0]}
                   defaultValue={new Date().toISOString().split('T')[0]}
                   onChange={handleDateChange}
@@ -164,7 +164,7 @@ export default function PurchaseCreateForm() {
                 <Select
                   id="paymentMethod"
                   name="paymentMethod"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
                   value={selectedPaymentMethod}
                   onChange={handlePaymentMethodChange}
                   options={paymentMethods.map((method) => ({ value: method, label: method }))}
@@ -181,7 +181,7 @@ export default function PurchaseCreateForm() {
                 <Select
                   id="currency"
                   name="currency"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
                   value={currency}
                   onChange={handleCurrencyChange}
                   options={currencies.map((currency) => ({ value: currency, label: currency }))}
@@ -197,7 +197,7 @@ export default function PurchaseCreateForm() {
       <div className="space-y-12 py-8">
         <div className="border-b border-gray-900/10 pb-12">
           <h2 className="text-base font-semibold leading-7 text-gray-900">Prodotti</h2>
-          <p className="mt-1 text-sm leading-6 text-gray-600">Ricorda, i dati inseriti ora saranno quelli che verranno utilizzati per creare l'ordine di acquisto</p>
+          <p className="mt-1 text-sm leading-6 text-gray-700">Ricorda, i dati inseriti ora saranno quelli che verranno utilizzati per creare l'ordine di acquisto</p>
 
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div className="col-span-full">
@@ -218,7 +218,7 @@ export default function PurchaseCreateForm() {
               <button
                 type="button"
                 onClick={addProduct}
-                className="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-600"
+               className="block ml-4 rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
               >
                 Aggiungi Prodotto
               </button>
@@ -248,7 +248,7 @@ export default function PurchaseCreateForm() {
 
         <button
           type="submit"
-          className="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-600"
+         className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
         >
           Crea
         </button>

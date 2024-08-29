@@ -88,14 +88,14 @@ export default function Navbar() {
                       href={subItem.href}
                       className={classNames(
                         subItem.current
-                          ? `bg-gray-50 text-red-300`  // For background color and text color when current
-                          : `text-gray-700 hover:text-red-500 hover:bg-gray-50`, // For text color on hover and background color
+                          ? `bg-gray-50 text-[#7fb7d4]`  // For background color and text color when current
+                          : `text-gray-700 hover:text-[#7fb7d4] hover:bg-gray-50`, // For text color on hover and background color
                         'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
                       )}                      
                     >
                       {subItem.icon && <subItem.icon
                         className={classNames(
-                          subItem.current ? `text-red-600` : `text-gray-400 group-hover:text-red-300`,
+                          subItem.current ? `text-red-600` : `text-gray-400 group-hover:text-[#7fb7d4]`,
                           'h-6 w-6 shrink-0'
                         )}
                         aria-hidden="true"

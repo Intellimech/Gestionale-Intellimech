@@ -334,7 +334,7 @@ export default function Example({ purchase: initialPurchase }) {
                             <div className="ml-3 flex h-7 items-center">
                               <button
                                 type="button"
-                                className="relative rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                                className="relative rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                                 onClick={() => setShowUpdate(false)}
                               >
                                 <span className="absolute -inset-2.5" />
@@ -363,8 +363,8 @@ export default function Example({ purchase: initialPurchase }) {
         <div className="flex items-center">
           <h3 className="text-base font-semibold leading-7 text-gray-900">
             Dettagli sull'ordine di Acquisto
-            <span className={`ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${{
-              'In Approvazione': 'bg-yellow-100 text-yellow-800',
+            <span className={`ml-2 px-2 inline-flex text-xs leading-5 rounded-full ${{
+              'In Approvazione': 'bg-gray-300 text-gray-500',
               'Approvata': 'bg-green-100 text-green-800',
               'Rifiutata': 'bg-red-100 text-red-800',
             }[purchase?.status] || 'bg-gray-100 text-gray-800'}`}>
@@ -498,7 +498,7 @@ export default function Example({ purchase: initialPurchase }) {
                                         </div>
                                     </div>
                                     <div className="ml-4 flex-shrink-0">
-                                        <a onClick={handleDownloadPdf} className="font-medium text-red-600 hover:text-red-500">
+                                        <a onClick={handleDownloadPdf} className="font-medium text-blue-800 hover:text-blue-900">
                                             Download
                                         </a>
                                     </div>
@@ -520,7 +520,7 @@ export default function Example({ purchase: initialPurchase }) {
                                             </div>
                                         </div>
                                         <div className="ml-4 flex-shrink-0">
-                                            <a href="#" className="font-medium text-red-600 hover:text-red-500">
+                                            <a href="#" className="font-medium text-red-600 hover:text-[#7fb7d4]">
                                                 Download
                                             </a>
                                         </div>

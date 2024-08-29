@@ -133,12 +133,12 @@ export default function Company({ companytype }) {
   
       {/* Bottoni Export */}
       <div className="flex items-center space-x-4">
-        <button
-          onClick={exportInvoices}
-          className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
-        >
-          Export
-        </button>
+            <button
+              onClick={exportInvoices}
+              className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+            >
+              Export
+            </button>
       </div>
     </div>
   
@@ -150,54 +150,54 @@ export default function Company({ companytype }) {
                 <table className="min-w-full table-fixed divide-y divide-gray-300">
                 <thead>
                   <tr>
-                    <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Code')}>
-                      Company Code
+                    <th scope="col" className="px-0 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Code')}>
+                      Codice
                       {sortColumn === 'Code' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                       <br />
-                      <textarea
+                      <input
                         value={searchQueries.Code}
                         onChange={handleSearchInputChange('Code')}
-                        className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
-                        placeholder="Codice azienda"
+                        className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                        placeholder=""
                         rows={1}
                       />
                     </th>
 
-                    <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Name')}>
-                      Company Name
+                    <th scope="col" className="px-1.5 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Name')}>
+                      Nome
                       {sortColumn === 'Name' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                       <br />
-                      <textarea
+                      <input
                         value={searchQueries.Name}
                         onChange={handleSearchInputChange('Name')}
-                        className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
-                        placeholder="Nome azienda"
+                        className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                        placeholder=""
                         rows={1}
                       />
                     </th>
 
-                    <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('VAT')}>
+                    <th scope="col" className="px-1.5 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('VAT')}>
                       VAT
                       {sortColumn === 'VAT' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                       <br />
-                      <textarea
+                      <input
                         value={searchQueries.VAT}
                         onChange={handleSearchInputChange('VAT')}
-                        className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
-                        placeholder="VAT"
+                        className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                        placeholder=""
                         rows={1}
                       />
                     </th>
 
-                    <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Fiscal_Code')}>
-                      Fiscal Code
+                    <th scope="col" className="px-1.5 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Fiscal_Code')}>
+                      Codice Fiscale
                       {sortColumn === 'Fiscal_Code' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                       <br />
-                      <textarea
+                      <input
                         value={searchQueries.Fiscal_Code}
                         onChange={handleSearchInputChange('Fiscal_Code')}
-                        className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
-                        placeholder="Codice Fiscale"
+                        className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                        placeholder=""
                         rows={1}
                       />
                     </th>

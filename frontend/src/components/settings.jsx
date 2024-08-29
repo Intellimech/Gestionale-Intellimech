@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { EyeIcon, EyeOffIcon } from '@heroicons/react/24/outline'; // Assicurati di avere questi icone installati
+import { EyeIcon } from '@heroicons/react/24/outline'; // Assicurati di avere questi icone installati
 
 const SettingsPage = () => {
   const [generalSettings, setGeneralSettings] = useState({

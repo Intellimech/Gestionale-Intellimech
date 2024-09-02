@@ -276,7 +276,7 @@ export default function Example({ permissions }) {
                         value={searchQueries.name}
                         onChange={handleSearchInputChange('name')}
                        className="mt-1 px-2 py-1       w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                        placeholder="Ordine"
+                        placeholder=""
                         rows= {1}
                       />
                     </th>
@@ -289,7 +289,7 @@ export default function Example({ permissions }) {
                         value={searchQueries.Company}
                         onChange={handleSearchInputChange('Company')}
                         className="mt-1       w-20 px-2 py-1 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                        placeholder="Azienda"
+                        placeholder=""
                         rows= {1}
 
                       />
@@ -303,7 +303,7 @@ export default function Example({ permissions }) {
                         value={searchQueries.offer}
                         onChange={handleSearchInputChange('offer')}
                         className="mt-1 px-2 py-1       w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                        placeholder="Offerta"
+                        placeholder=""
                         rows= {1}
                       />
                     </th>
@@ -316,7 +316,7 @@ export default function Example({ permissions }) {
                         value={searchQueries.description}
                         onChange={handleSearchInputChange('description')}
                        className="mt-1 px-2 py-1       w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                        placeholder="Descrizione"
+                        placeholder=""
                         rows= {1}
                       />
                     </th>
@@ -329,7 +329,7 @@ export default function Example({ permissions }) {
                         value={searchQueries.status}
                         onChange={handleSearchInputChange('status')}
                        className="mt-1 px-2 py-1       w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                        placeholder="Stato"
+                        placeholder=""
                         rows= {1}
                       />
                     </th>
@@ -342,7 +342,7 @@ export default function Example({ permissions }) {
                         value={searchQueries.createdByUser}
                         onChange={handleSearchInputChange('createdByUser')}
                        className="mt-1 px-2 py-1       w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                        placeholder="Creatore"
+                        placeholder=""
                         rows= {1}
                       />
                     </th>

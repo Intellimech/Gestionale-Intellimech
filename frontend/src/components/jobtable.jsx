@@ -319,14 +319,14 @@ export default function Example({ permissions, user }) {
               <thead>
                 <tr>
                   <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
-                    Nome Commessa
+                    Commessa
                     {sortColumn === 'name' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
                     <input
                       value={searchQueries.name}
                       onChange={handleSearchInputChange('name')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                      placeholder="Commessa"
+                      placeholder=""
                       rows={1}
                     />
                   </th>
@@ -338,7 +338,7 @@ export default function Example({ permissions, user }) {
                       value={searchQueries.Company}
                       onChange={handleSearchInputChange('Company')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                      placeholder="Azienda"
+                      placeholder=""
                       rows={1}
                     />
                   </th>
@@ -350,7 +350,7 @@ export default function Example({ permissions, user }) {
                       value={searchQueries.SaleOrder}
                       onChange={handleSearchInputChange('SaleOrder')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                      placeholder="Ordine di Vendita"
+                      placeholder=""
                       rows={1}
                     />
                   </th>
@@ -362,7 +362,7 @@ export default function Example({ permissions, user }) {
                       value={searchQueries.offertotal}
                       onChange={handleSearchInputChange('offertotal')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                      placeholder="Valore Contrattuale"
+                      placeholder=""
                       rows={1}
                     />
                   </th>
@@ -374,7 +374,7 @@ export default function Example({ permissions, user }) {
                       value={searchQueries.offerhour}
                       onChange={handleSearchInputChange('offerhour')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                      placeholder="Ore Stimate"
+                      placeholder=""
                       rows={1}
                     />
                   </th>
@@ -386,7 +386,7 @@ export default function Example({ permissions, user }) {
                       value={searchQueries.total}
                       onChange={handleSearchInputChange('total')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                      placeholder="Valore Reale"
+                      placeholder=""
                       rows={1}
                     />
                   </th>
@@ -398,7 +398,7 @@ export default function Example({ permissions, user }) {
                       value={searchQueries.reportedhour}
                       onChange={handleSearchInputChange('reportedhour')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                      placeholder="Ore Lavorate"
+                      placeholder=""
                       rows={1}
                     />
                   </th>
@@ -410,7 +410,7 @@ export default function Example({ permissions, user }) {
                       value={searchQueries.status}
                       onChange={handleSearchInputChange('status')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                      placeholder="Stato"
+                      placeholder=""
                       rows={1}
                     />
                   </th>
@@ -422,7 +422,7 @@ export default function Example({ permissions, user }) {
                       value={searchQueries.createdByUser}
                       onChange={handleSearchInputChange('createdByUser')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                      placeholder="Creatore"
+                      placeholder=""
                       rows={1}
                     />
                   </th>

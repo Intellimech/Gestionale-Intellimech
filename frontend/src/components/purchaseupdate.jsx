@@ -100,6 +100,7 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
     const token = Cookies.get('token');
     
     const jsonObject = {
+      id_purchase: purchase.id_purchase, // Assicurati che id_purchase sia presente e corretto
       id_company: selectedCompany?.value,
       payment: selectedPaymentMethod,
       date: selectedDate,
@@ -112,16 +113,17 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
         quantity: parseInt(product.quantity, 10),
       }))
     };
-    
     try {
-      await axios.post(`${process.env.REACT_APP_API_URL}/purchase/update`, jsonObject, { headers: { authorization: `Bearer ${token}` } });
+      await axios.put(`${process.env.REACT_APP_API_URL}/purchase/update`, jsonObject, { headers: { authorization: `Bearer ${token}` } });
       setCreateSuccess(true);
     } catch (error) {
+      console.error('Error details:', error.response ? error.response.data : error.message);
       setErrorMessages(error.response?.data?.message || 'An error occurred');
       setCreateSuccess(false);
     }
+    
   };
-
+  
   return (
     <form name="updatepurchaseorder" onSubmit={updatePurchaseOrder}>
       <div className="space-y-12">

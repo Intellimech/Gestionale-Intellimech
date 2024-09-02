@@ -39,7 +39,7 @@ export default function PurchaseUpdateRow({
           }}
           options={categories.map(c => ({ value: c.id_category, label: c.name }))}
           className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4]  sm:max-w-xs sm:text-sm sm:leading-6"
-          primaryColor='red'
+          primaryColor='#7fb7d4'
           isSearchable
         />
       </td>
@@ -57,7 +57,7 @@ export default function PurchaseUpdateRow({
           options={subcategories.map(s => ({ value: s.id_subcategory, label: s.name }))}
           className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4]  sm:max-w-xs sm:text-sm sm:leading-6"
           isSearchable
-          primaryColor='red'
+          primaryColor='#7fb7d4'
         />
       </td>
 

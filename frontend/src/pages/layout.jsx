@@ -33,7 +33,7 @@ import UniversalSearch from '../components/universalsearch'
 import ChangePassword from '../components/changepass'
 
 const userNavigation = [
-  { name: 'Your profile', href: '/app/profile' },
+  { name: 'Your profile', href: '/app/settings' },
   { name: 'Sign out', href: '#' },
 ]
 

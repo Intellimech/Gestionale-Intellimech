@@ -170,9 +170,9 @@ export default function invoicetable({ invoicetype }) {
           <div className="flex items-center space-x-4">
             <button
               onClick={exportInvoices}
-              className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+             className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
             >
-              Export
+              Esporta
             </button>
           </div>
         </div>
@@ -191,12 +191,12 @@ export default function invoicetable({ invoicetype }) {
                     N° Fattura
                     {sortColumn === 'Number' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
-                     <textarea
+                     <input
                       type="text"
                       value={searchQueries.Number}
                       onChange={handleSearchInputChange('Number')}
                        className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
-                      placeholder="Fattura"
+                      placeholder=""
                      rows= {1} />
                   </th>
 
@@ -204,12 +204,12 @@ export default function invoicetable({ invoicetype }) {
                     Azienda
                     {sortColumn === 'Company' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
-                     <textarea
+                     <input
                       type="text"
                       value={searchQueries.Company}
                       onChange={handleSearchInputChange('Company')}
                        className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
-                      placeholder="Azienda"
+                      placeholder=""
                      rows= {1} />
                   </th>
 
@@ -217,12 +217,12 @@ export default function invoicetable({ invoicetype }) {
                     Tipo di Documento
                     {sortColumn === 'DocumentType' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
-                     <textarea
+                     <input
                       type="text"
                       value={searchQueries.DocumentType}
                       onChange={handleSearchInputChange('DocumentType')}
                        className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
-                      placeholder="Documento"
+                      placeholder=""
                      rows= {1} />
                   </th>
 
@@ -230,12 +230,12 @@ export default function invoicetable({ invoicetype }) {
                     Data
                     {sortColumn === 'Date' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
-                     <textarea
+                     <input
                       type="text"
                       value={searchQueries.Date}
                       onChange={handleSearchInputChange('Date')}
                        className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
-                      placeholder="Data"
+                      placeholder=""
                      rows= {1} />
                   </th>
 
@@ -243,12 +243,12 @@ export default function invoicetable({ invoicetype }) {
                     Tipo Fattura
                     {sortColumn === 'InvoiceType' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
-                     <textarea
+                     <input
                       type="text"
                       value={searchQueries.InvoiceType}
                       onChange={handleSearchInputChange('InvoiceType')}
                        className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
-                      placeholder="Tipo Fattura"
+                      placeholder=""
                      rows= {1} />
                   </th>
 
@@ -256,12 +256,12 @@ export default function invoicetable({ invoicetype }) {
                     Numero Righe
                     {sortColumn === 'Lines' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
-                     <textarea
+                     <input
                       type="text"
                       value={searchQueries.Lines}
                       onChange={handleSearchInputChange('Lines')}
                        className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
-                      placeholder="Righe"
+                      placeholder=""
                      rows= {1} />
                   </th>
 
@@ -269,12 +269,12 @@ export default function invoicetable({ invoicetype }) {
                     Valore
                     {sortColumn === 'Amount' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
-                     <textarea
+                     <input
                       type="text"
                       value={searchQueries.Amount}
                       onChange={handleSearchInputChange('Amount')}
                        className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
-                      placeholder="Valore"
+                      placeholder=""
                      rows= {1}/>
                   </th>
                 </tr>

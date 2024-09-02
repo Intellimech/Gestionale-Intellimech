@@ -206,7 +206,7 @@ export default function Example({ offer }) {
                         </div>
                         </div>
                         <div className="ml-4 flex-shrink-0">
-                            <button onClick={handleDownloadPdf} className="font-medium text-red-600 hover:text-red-500">
+                            <button onClick={handleDownloadPdf} className="font-medium text-[#7fb7d4] hover:text-[#A7D0EB]">
                                 Download
                             </button>
                         </div>

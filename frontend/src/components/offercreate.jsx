@@ -101,7 +101,7 @@ export default function UserCreateForm() {
                   id="quotationrequest"
                   name="quotationrequest"
                   autoComplete="company-name"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4]  focus:ring-[#7fb7d4]  sm:text-sm"
                 >
                   {quotationRequest.map((item) =>
                     item.status === "Approvata" && (
@@ -123,7 +123,7 @@ export default function UserCreateForm() {
                   id="hour"
                   name="hour"
                   type="number"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:max-w-xs sm:text-sm"
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4]  focus:ring-[#7fb7d4]  sm:max-w-xs sm:text-sm"
                 />
               </div>
             </div>
@@ -140,7 +140,7 @@ export default function UserCreateForm() {
                   type="text"
                   name="amount"
                   id="amount"
-                  className="block w-full rounded-md border-gray-300 pl-7 pr-12 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"
+                  className="block w-full rounded-md border-gray-300 pl-7 pr-12 shadow-sm focus:border-[#7fb7d4]  focus:ring-[#7fb7d4]  sm:text-sm"
                   placeholder="0.00"
                   aria-describedby="price-currency"
                 />
@@ -160,7 +160,7 @@ export default function UserCreateForm() {
                 <Select
                   id="team"
                   name="team"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4]  focus:ring-[#7fb7d4]  sm:text-sm"
                   value={selectedTeam}
                   onChange={handleTeamChange}
                   isMultiple={true}
@@ -177,7 +177,7 @@ export default function UserCreateForm() {
                   id="estimatedstart"
                   name="estimatedstart"
                   type="date"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:max-w-xs sm:text-sm"
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4]  focus:ring-[#7fb7d4]  sm:max-w-xs sm:text-sm"
                   min={new Date().toISOString().split('T')[0]}
                   defaultValue={new Date().toISOString().split('T')[0]}
                   onChange={(e) => {
@@ -200,7 +200,7 @@ export default function UserCreateForm() {
                   id="estimatedend"
                   name="estimatedend"
                   type="date"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:max-w-xs sm:text-sm"
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4]  focus:ring-[#7fb7d4]  sm:max-w-xs sm:text-sm"
                   min={new Date().toISOString().split('T')[0]}
                   defaultValue={new Date().toISOString().split('T')[0]}
                 />
@@ -216,7 +216,7 @@ export default function UserCreateForm() {
                   maxLength={150}
                   name="description"
                   id="description"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4]  focus:ring-[#7fb7d4]  sm:text-sm"
                 />
                 <p className="mt-1 text-xs text-gray-500">Massimo 150 caratteri</p>
               </div>
@@ -256,7 +256,7 @@ export default function UserCreateForm() {
               <button
                 type="button"
                 onClick={() => setTasks([...tasks, { name: '', duration: '', assignedTo: '', children: [] }])}
-                className="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-600"
+                className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
               >
                 Add Task
               </button>
@@ -288,7 +288,7 @@ export default function UserCreateForm() {
         <button
           onClick={createOffer}
           type="submit"
-          className="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-600"
+          className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
         >
           Crea
         </button>

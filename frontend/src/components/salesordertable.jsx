@@ -249,7 +249,7 @@ export default function Example({ permissions }) {
             <div className="flex items-center space-x-4">
               <button
                 onClick={exportUsers}
-                className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+                className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
               >
                 Export
               </button>
@@ -271,11 +271,11 @@ export default function Example({ permissions }) {
                       Ordine
                       {sortColumn === 'name' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                       <br></br>
-                      <textarea
+                      <input
                         type="text"
                         value={searchQueries.name}
                         onChange={handleSearchInputChange('name')}
-                       className="mt-1 px-2 py-1       w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                       className="mt-1 px-2 py-1       w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                         placeholder="Ordine"
                         rows= {1}
                       />
@@ -284,11 +284,11 @@ export default function Example({ permissions }) {
                       Azienda
                       {sortColumn === 'Company' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                       <br></br>
-                      <textarea
-                        type="textarea"
+                      <input
+                        type="input"
                         value={searchQueries.Company}
                         onChange={handleSearchInputChange('Company')}
-                        className="mt-1       w-20 px-2 py-1 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                        className="mt-1       w-20 px-2 py-1 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                         placeholder="Azienda"
                         rows= {1}
 
@@ -298,11 +298,11 @@ export default function Example({ permissions }) {
                       Offerta
                       {sortColumn === 'offer' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                       <br></br>
-                      <textarea
+                      <input
                         type="text"
                         value={searchQueries.offer}
                         onChange={handleSearchInputChange('offer')}
-                        className="mt-1 px-2 py-1       w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                        className="mt-1 px-2 py-1       w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                         placeholder="Offerta"
                         rows= {1}
                       />
@@ -311,11 +311,11 @@ export default function Example({ permissions }) {
                       Descrizione
                       {sortColumn === 'description' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                       <br></br>
-                      <textarea
+                      <input
                         type="text"
                         value={searchQueries.description}
                         onChange={handleSearchInputChange('description')}
-                       className="mt-1 px-2 py-1       w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                       className="mt-1 px-2 py-1       w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                         placeholder="Descrizione"
                         rows= {1}
                       />
@@ -324,11 +324,11 @@ export default function Example({ permissions }) {
                       Stato
                       {sortColumn === 'status' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                       <br></br>
-                      <textarea
+                      <input
                         type="text"
                         value={searchQueries.status}
                         onChange={handleSearchInputChange('status')}
-                       className="mt-1 px-2 py-1       w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                       className="mt-1 px-2 py-1       w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                         placeholder="Stato"
                         rows= {1}
                       />
@@ -337,11 +337,11 @@ export default function Example({ permissions }) {
                       Creata da
                       {sortColumn === 'createdByUser' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                       <br></br>
-                      <textarea
+                      <input
                         type="text"
                         value={searchQueries.createdByUser}
                         onChange={handleSearchInputChange('createdByUser')}
-                       className="mt-1 px-2 py-1       w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                       className="mt-1 px-2 py-1       w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                         placeholder="Creatore"
                         rows= {1}
                       />

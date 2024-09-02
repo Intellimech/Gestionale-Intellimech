@@ -520,7 +520,7 @@ export default function Example({ purchase: initialPurchase }) {
                                             </div>
                                         </div>
                                         <div className="ml-4 flex-shrink-0">
-                                            <a href="#" className="font-medium text-red-600 hover:text-[#7fb7d4]">
+                                            <a href="#" className="font-medium text-[#7fb7d4] hover:text-[#A7D0EB]">
                                                 Download
                                             </a>
                                         </div>

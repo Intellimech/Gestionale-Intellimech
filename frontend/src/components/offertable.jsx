@@ -422,13 +422,13 @@ export default function Example({ permissions }) {
           <div className="flex items-center space-x-4">
             <button
               onClick={exportData}
-              className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-[#7fb7d4] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+              className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
             >
               Export
             </button>
             <button
               onClick={() => setShowCreate(true)}
-              className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-[#7fb7d4] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+              className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
             >
               Create
             </button>
@@ -449,11 +449,11 @@ export default function Example({ permissions }) {
                     Ordine
                     {sortColumn === 'name' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
-                    <textarea
+                    <input
                       value={searchQueries.name}
                       onChange={handleSearchInputChange('name')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                      placeholder="Ordine"
+                      placeholder=""
                       rows={1}
                     />
                   </th>
@@ -461,11 +461,11 @@ export default function Example({ permissions }) {
                     Descrizione
                     {sortColumn === 'description' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
-                    <textarea
+                    <input
                       value={searchQueries.description}
                       onChange={handleSearchInputChange('description')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                      placeholder="Descrizione"
+                      placeholder=""
                       rows={1}
                     />
                   </th>
@@ -473,11 +473,11 @@ export default function Example({ permissions }) {
                     Azienda
                     {sortColumn === 'Company' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
-                    <textarea
+                    <input
                       value={searchQueries.Company}
                       onChange={handleSearchInputChange('Company')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                      placeholder="Azienda"
+                      placeholder=""
                       rows={1}
                     />
                   </th>
@@ -485,11 +485,11 @@ export default function Example({ permissions }) {
                     Revisione
                     {sortColumn === 'revision' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
-                    <textarea
+                    <input
                       value={searchQueries.revision}
                       onChange={handleSearchInputChange('revision')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                      placeholder="Revisione"
+                      placeholder=""
                       rows={1}
                     />
                   </th>
@@ -497,11 +497,11 @@ export default function Example({ permissions }) {
                     Ore
                     {sortColumn === 'hour' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
-                    <textarea
+                    <input
                       value={searchQueries.hour}
                       onChange={handleSearchInputChange('hour')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                      placeholder="Ore"
+                      placeholder=""
                       rows={1}
                     />
                   </th>
@@ -509,11 +509,11 @@ export default function Example({ permissions }) {
                     Valore
                     {sortColumn === 'amount' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
-                    <textarea
+                    <input
                       value={searchQueries.amount}
                       onChange={handleSearchInputChange('amount')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                      placeholder="Valore"
+                      placeholder=""
                       rows={1}
                     />
                   </th>
@@ -521,11 +521,11 @@ export default function Example({ permissions }) {
                     Categoria
                     {sortColumn === 'category' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
-                    <textarea
+                    <input
                       value={searchQueries.category}
                       onChange={handleSearchInputChange('category')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                      placeholder="Categoria"
+                      placeholder=""
                       rows={1}
                     />
                   </th>
@@ -533,11 +533,11 @@ export default function Example({ permissions }) {
                     Area Tecnica
                     {sortColumn === 'technicalarea' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
-                    <textarea
+                    <input
                       value={searchQueries.technicalarea}
                       onChange={handleSearchInputChange('technicalarea')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                      placeholder="Area"
+                      placeholder=""
                       rows={1}
                     />
                   </th>
@@ -545,11 +545,11 @@ export default function Example({ permissions }) {
                     Inizio Stimato
                     {sortColumn === 'estimatedstart' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
-                    <textarea
+                    <input
                       value={searchQueries.estimatedstart}
                       onChange={handleSearchInputChange('estimatedstart')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                      placeholder="Data inizio"
+                      placeholder=""
                       rows={1}
                     />
                   </th>
@@ -557,11 +557,11 @@ export default function Example({ permissions }) {
                     Fine Stimata
                     {sortColumn === 'estimatedend' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
-                    <textarea
+                    <input
                       value={searchQueries.estimatedend}
                       onChange={handleSearchInputChange('estimatedend')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                      placeholder="Data fine"
+                      placeholder=""
                       rows={1}
                     />
                   </th>
@@ -569,11 +569,11 @@ export default function Example({ permissions }) {
                     Scadenza
                     {sortColumn === 'deadline' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
-                    <textarea
+                    <input
                       value={searchQueries.deadline}
                       onChange={handleSearchInputChange('deadline')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                      placeholder="Scadenza"
+                      placeholder=""
                       rows={1}
                     />
                   </th>
@@ -581,11 +581,11 @@ export default function Example({ permissions }) {
                     Stato
                     {sortColumn === 'status' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
-                    <textarea
+                    <input
                       value={searchQueries.status}
                       onChange={handleSearchInputChange('status')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                      placeholder="Stato"
+                      placeholder=""
                       rows={1}
                     />
                   </th>
@@ -593,11 +593,11 @@ export default function Example({ permissions }) {
                     Creata da
                     {sortColumn === 'createdByUser' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
-                    <textarea
+                    <input
                       value={searchQueries.createdByUser}
                       onChange={handleSearchInputChange('createdByUser')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                      placeholder="Creatore"
+                      placeholder=""
                       rows={1}
                     />
                   </th>

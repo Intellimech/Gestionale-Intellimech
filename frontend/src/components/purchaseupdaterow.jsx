@@ -38,7 +38,7 @@ export default function PurchaseUpdateRow({
             onChange({ ...product, category: option.value });
           }}
           options={categories.map(c => ({ value: c.id_category, label: c.name }))}
-          className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:max-w-xs sm:text-sm sm:leading-6"
+          className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4]  sm:max-w-xs sm:text-sm sm:leading-6"
           primaryColor='red'
           isSearchable
         />
@@ -55,7 +55,7 @@ export default function PurchaseUpdateRow({
           value={{ value: product?.Subcategory.name, label:  product?.Subcategory.name } }
           onChange={(option) => onChange({ ...product, subcategory: option.value })}
           options={subcategories.map(s => ({ value: s.id_subcategory, label: s.name }))}
-          className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:max-w-xs sm:text-sm sm:leading-6"
+          className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4]  sm:max-w-xs sm:text-sm sm:leading-6"
           isSearchable
           primaryColor='red'
         />
@@ -70,11 +70,11 @@ export default function PurchaseUpdateRow({
           name={`description-${index}`}
           value={product.description || ''}
           onChange={(e) => onChange({ ...product, description: e.target.value })}
-          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"
+          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4]  focus:ring-[#7fb7d4]  sm:text-sm"
           maxLength="150"
           rows= {1}
         />
-        <p className="mt-1 text-xs text-gray-500">Massimo 150 caratteri</p>
+        <p className="mt-1 text-xs text-gray-700">Massimo 150 caratteri</p>
       </td>
 
       <td className="px-4 py-2 whitespace-nowrap">
@@ -88,7 +88,7 @@ export default function PurchaseUpdateRow({
           name={`unit_price-${index}`}
           value={product.unit_price || ''}
           onChange={(e) => onChange({ ...product, unit_price: parseFloat(e.target.value) || '' })}
-          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"
+          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4]  focus:ring-[#7fb7d4]  sm:text-sm"
           min="0"
           step="0.01"
         />
@@ -104,7 +104,7 @@ export default function PurchaseUpdateRow({
           name={`quantity-${index}`}
           value={product.quantity || ''}
           onChange={(e) => onChange({ ...product, quantity: parseInt(e.target.value, 10) || '' })}
-          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"
+          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4]  focus:ring-[#7fb7d4]  sm:text-sm"
           min="0"
           step="1"
         />

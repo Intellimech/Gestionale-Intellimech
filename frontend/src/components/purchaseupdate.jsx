@@ -135,7 +135,7 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
                 <Select
                   id="azienda"
                   name="azienda"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
                   value={selectedCompany} // Assicurati che selectedCompany sia { value: ..., label: ... }
                   onChange={(value) => {
                     setSelectedCompany(value);
@@ -143,7 +143,7 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
                   }}
                   placeholder="Seleziona Azienda"
                   options={companies} // Assicurati che companies sia formattato come [{ value: ..., label: ... }]
-                  primaryColor='red'
+                  primaryColor='[#7fb7d4] '
                   isSearchable
                 />
 
@@ -156,7 +156,7 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
                   id="dateorder"
                   name="dateorder"
                   type="date"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:max-w-xs sm:text-sm"
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:max-w-xs sm:text-sm"
                   min={new Date().toISOString().split('T')[0]}
                   value={selectedDate}
                   onChange={(e) => {
@@ -172,14 +172,14 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
                <Select
                   id="paymentmethod"
                   name="paymentmethod"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
                   value={{value: selectedPaymentMethod, label : selectedPaymentMethod}} 
                   onChange={(selectedOption) => {
                     setSelectedPaymentMethod(selectedOption.value);
                     setPurchase({ ...purchase, selectedPaymentMethod: selectedOption.value });
                   }}
                   options={paymentMethods.map(method => ({ value: method, label: method }))} // Format correct
-                  primaryColor='red'
+                  primaryColor='[#7fb7d4] '
                   isSearchable
                 />
 
@@ -191,14 +191,14 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
                 <Select
                   id="currency"
                   name="currency"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
                   value={{ value: currency, label: currency }}
                   onChange={(selectedOption) => {
                     setCurrency(selectedOption.value);
                     setPurchase({ ...purchase, currency: selectedOption.value });
                   }}
                   options={currencies.map(curr => ({ value: curr, label: curr }))}
-                  primaryColor='red'
+                  primaryColor='[#7fb7d4] '
                   isSearchable
                 />
               </div>

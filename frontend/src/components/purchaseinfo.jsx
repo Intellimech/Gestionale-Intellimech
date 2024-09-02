@@ -365,8 +365,8 @@ export default function Example({ purchase: initialPurchase }) {
             Dettagli sull'ordine di Acquisto
             <span className={`ml-2 px-2 inline-flex text-xs leading-5 rounded-full ${{
               'In Approvazione': 'bg-gray-300 text-gray-500',
-              'Approvata': 'bg-green-100 text-green-800',
-              'Rifiutata': 'bg-red-100 text-red-800',
+              'Approvata': 'bg-gray-100 text-green-800',
+              'Rifiutata': 'bg-gray-100 text-red-800',
             }[purchase?.status] || 'bg-gray-100 text-gray-800'}`}>
               {purchase?.status || 'Nessuno'}
             </span>

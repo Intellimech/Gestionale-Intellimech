@@ -371,11 +371,11 @@ export default function Example({ permissions }) {
                         </td>
                         <td className="whitespace-nowrap px-2 py-4 text-sm text-gray-500">
                           {salesorder.status === 'Da Fatturare' ? (
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-yellow-600">
                               Da fatturare
                             </span>
                           ) : salesorder.status === 'Fatturata' ? (
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-green-800">
                               Fatturata
                             </span>
                           ) : (

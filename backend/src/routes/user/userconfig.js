@@ -28,9 +28,32 @@ const generatePassword = () => {
     return retVal.join("");
 };
 
+const logout = () => {
+  const token = Cookies.get('token');
+  if (!token) {
+    console.log("No token");
+  } else {
+    const headers = {
+      Authorization: `Bearer ${token}`
+    };
+    axios.post(`${process.env.REACT_APP_API_URL}/auth/logout`, {}, { headers: headers })
+      .then((response) => {
+        Cookies.remove('token');
+        localStorage.clear();
+        window.location.href = '/';
+      })
+      .catch((error) => {
+        Cookies.remove('token');
+        localStorage.clear();
+        window.location.href = '/';
+      });
+  }
+};
+
+
 const userNavigation = [
-    { name: 'Your profile', href: '/app/profile' },
-    { name: 'Sign out', onClick: () => logout()},
+    { name: 'Il mio profilo', href: '/app/profile' },
+    { name: 'Esci', onClick: () => logout()},
   ]
 
   const fullnavigation = [
@@ -99,7 +122,7 @@ const userNavigation = [
     { 
       showedname: "", 
       options: [
-        { name: 'Settings', href: '/app/settings', icon: 'Cog6ToothIcon', current: false },
+        { name: 'Impostazioni', href: '/app/settings', icon: 'Cog6ToothIcon', current: false },
       ], 
     },
   ];

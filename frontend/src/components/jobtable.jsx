@@ -432,18 +432,19 @@ export default function Example({ permissions, user }) {
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {Array.isArray(sortedJob) && sortedJob.length > 0  ? (
                     sortedJob.map((job) => (
-                      <tr key={job.id_user} onClick={() => handleJobClick(job)}
+                      <tr key={job.id_user}
                       className={selectedJobs.includes(job) ? 'bg-gray-50' : undefined}>
                         <td
                           className={classNames(
                             'whitespace-nowrap px-3 py-4 pr-3 text-sm font-medium',
                             selectedJobs.includes(job) ? 'text-[#7fb7d4]' : 'text-gray-700'
-                          )}
+                          )}onClick={() => handleJobClick(job)}
                         >
+                           
                           {job.name}
                         </td>
                         <td className={classNames(
-                            'whitespace-nowrap px-3 py-4 pr-3 text-sm font-medium',
+                            'whitespace-nowrap px-3 py-4 pr-3 text-sm ',
                             selectedJobs.includes(job) ? 'text-[#7fb7d4]' : 'text-gray-700'
                           )}>
                           {
@@ -479,15 +480,15 @@ export default function Example({ permissions, user }) {
                         {
                             // Use a ternary operator to determine the status class
                             job.status === 'Aperta' ? (
-                              <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                              <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-green-800">
                                 Aperta
                               </span>
                             ) : job.status === 'Chiusa' ? (
-                              <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                              <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-red-800">
                                 Chiusa
                               </span>
                             ) : job.status === 'Scaduta' ? (
-                              <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                              <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-red-800">
                                 Scaduta
                               </span>
                             ) : (

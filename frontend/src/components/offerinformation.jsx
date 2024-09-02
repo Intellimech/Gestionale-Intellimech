@@ -1,28 +1,37 @@
 import { PaperClipIcon } from '@heroicons/react/20/solid'
 import { jsPDF } from 'jspdf';
+
+import logo from '../images/logo.jpg'
 import 'jspdf-autotable';
 
 export default function Example({ offer }) {
 
     const handleDownloadPdf = () => {
         const doc = new jsPDF();
+        const logoPath = '../images/logo.jpg'; 
+        const imageWidth = 62; // Increase width
+        const imageHeight = 14; // Increase height
+        doc.addImage(logo, 'JPEG', 15, 15, imageWidth, imageHeight);
+      
     
         // Dati dell'intestazione
         const headerText = `
-    cid:60e23365-6651-4074-b933-e737d4c5eacf@eurprd03.prod.outlook.com
+    
     CONSORZIO INTELLIMECH
     c/o Kilomentro Rosso Innovation District - Via Stezzano, 87 24126 Bergamo
     Tel. +39 035 0690366 - C.C.I.A.A. di BG n. 03388700167 C.F. 95160560165
     REA N. BG 3713330 - Codice Identificativo SDI: J6URRTW
     PEC: intellimech@legalmail.it - www.intellimech.it
         `;
-        doc.setFontSize(6); // Riduci la dimensione del font dell'intestazione
-        doc.setFont('Helvetica', 'normal');
+        doc.setFontSize(9); // Riduci la dimensione del font dell'intestazione
+        doc.setFont('Aptos', 'normal');
     
         // Calcola la larghezza della pagina e la larghezza del testo
         const pageWidth = doc.internal.pageSize.width;
     
-        doc.text(headerText, 120, 10);
+        doc.text(headerText, 90, 15);
+    
+        doc.setTextColor(0,0,0);
     
         // Dati dell'offerta
         const offerDetails = [
@@ -33,13 +42,11 @@ export default function Example({ offer }) {
         ];
     
         // Titolo centrato a 30 mm dal margine sinistro
-        const marginLeft = 10; // Margine sinistro in mm
-        const title = "Dettagli dell'Offerta";
-        doc.setFontSize(12); // Riduci la dimensione del font del titolo
-        doc.setFont('Helvetica', 'bold');
-        const titleWidth = doc.getTextWidth(title);
-        doc.text(title, 15, 50);
-    
+        const marginLeft = 15; // Margine sinistro in mm
+        doc.setFontSize(11); // Riduci la dimensione del font del titolo
+        doc.setFont('Aptos', 'bold');
+        doc.setTextColor(0,0,0);
+        
         // Dati dell'offerta
         doc.setFontSize(10);
         doc.setFont('Helvetica', 'normal');
@@ -74,12 +81,12 @@ export default function Example({ offer }) {
             `;
     
         // Imposta il titolo e il testo
-        doc.setFontSize(10);
-        doc.setFont('Helvetica', 'bold');
+        doc.setFontSize(11);
+        doc.setFont('Aptos', 'bold');
         doc.text(descriptionTitle, 15, 85);
     
-        doc.setFontSize(10);
-        doc.setFont('Helvetica', 'normal');
+        doc.setFontSize(11);
+        doc.setFont('Aptos', 'normal');
         doc.text(descriptionText, 15, 90, {
             maxWidth: 180 // Imposta una larghezza massima per il testo
         });
@@ -93,12 +100,12 @@ export default function Example({ offer }) {
         `;
 
         // Imposta il titolo e il testo
-        doc.setFontSize(10);
-        doc.setFont('Helvetica', 'bold');
+        doc.setFontSize(11);
+        doc.setFont('Aptos', 'bold');
         doc.text(descriptionTitle2, 15, 110);
-
-        doc.setFontSize(10);
-        doc.setFont('Helvetica', 'normal');
+        doc.setFontSize(11);
+        doc.setFont('Aptos', 'norma');
+    
         doc.text(descriptionText2, 15, 115, {
             maxWidth: 180 // Imposta una larghezza massima per il testo
         });
@@ -206,7 +213,7 @@ export default function Example({ offer }) {
                         </div>
                         </div>
                         <div className="ml-4 flex-shrink-0">
-                            <button onClick={handleDownloadPdf} className="font-medium text-[#7fb7d4] hover:text-[#A7D0EB]">
+                            <button onClick={handleDownloadPdf} className="font-medium text-[#7fb7d4] hover:text-blue-900">
                                 Download
                             </button>
                         </div>

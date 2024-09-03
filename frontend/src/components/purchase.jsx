@@ -158,7 +158,7 @@ export default function Example({ permissions }) {
                           <div className="ml-3 flex h-7 items-center">
                             <button
                               type="button"
-                              className="relative rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                              className="relative rounded-md bg-white text-gray-400 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#7fb7d4] focus:ring-offset-2"
                               onClick={() => setShowInfo(false)}
                             >
                               <span className="absolute -inset-2.5" />
@@ -203,7 +203,7 @@ export default function Example({ permissions }) {
                             <div className="ml-3 flex h-7 items-center">
                               <button
                                 type="button"
-                                className="relative rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                                className="relative rounded-md bg-white text-gray-400 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#7fb7d4] focus:ring-offset-2"
                                 onClick={() => setShowCreate(false)}
                               >
                                 <span className="absolute -inset-2.5" />
@@ -227,127 +227,132 @@ export default function Example({ permissions }) {
         </Dialog>
       </Transition.Root>
 
-      <div className="py-4">
-        <div className="sm:flex-auto">
-          <h1 className="text-base font-semibold leading-6 text-gray-900">Ordini di Acquisto</h1>
-          <p className="mt-2 text-sm text-gray-700">Lista degli ordini di acquisto presenti a sistema</p>
-        </div>
+      <div className="px-4 sm:px-6 lg:px-8 py-4">
+        {/* Contenitore principale con Flexbox */}
+        <div className="flex items-center justify-between">
+          {/* Titolo e descrizione */}
+          <div>
+            <h1 className="text-base font-semibold leading-6 text-gray-900">Ordini di Acquisto</h1>
+            <p className="mt-2 text-sm text-gray-700">Lista degli ordini di acquisto presenti a sistema</p>
+          </div>
 
-        <div className="flex flex-wrap justify-between mt-4 mb-4">
-          <div className="flex items-center space-x-4 ml-auto">
-            {/* Bottoni Export e Create */}
+          {/* Contenitore Bottoni */}
+          <div className="flex items-center space-x-4">
             <button
               onClick={exportData}
-              className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+              className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
             >
-              Export
+              Esporta
             </button>
             <button
               onClick={() => setShowCreate(true)}
-              className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
-            >
-              Create
+
+             className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+             >
+              Crea
             </button>
           </div>
         </div>
-
       </div>
+
 
       <div className="mt-8 flow-root">
         <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">          
           <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
             <div className="relative">
               <table className="min-w-full table-fixed divide-y divide-gray-300">
-                <thead>
-                  <tr>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
-                      N° Ordine
-                      {sortColumn === 'name' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <input
-                        type="text"
-                        value={searchQueries.name}
-                        onChange={handleSearchInputChange('name')}
-                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                        placeholder="Cerca per n° ordine"
-                      />
-                    
-                    </th>
-                    <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('id_company')}>
-                      Azienda
-                      {sortColumn === 'id_company' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <input
-                        type="text"
-                        value={searchQueries.id_company}
-                        onChange={handleSearchInputChange('id_company')}
-                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                        placeholder="Cerca per azienda"
-                      />
-                      
-                    </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('payment_method')}>
-                      Metodo di Pagamento 
-                      {sortColumn === 'payment_method' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <input
-                        type="text"
-                        value={searchQueries.payment_method}
-                        onChange={handleSearchInputChange('payment_method')}
-                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                        placeholder="Cerca per metodo"
-                      />
-                     
-                    </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('total')}>
-                      Totale
-                      {sortColumn === 'total' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <input
-                        type="text"
-                        value={searchQueries.total}
-                        onChange={handleSearchInputChange('total')}
-                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                        placeholder="Cerca per totale"
-                      />
-                     
-                    </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('IVA')}>
-                      IVA
-                      {sortColumn === 'IVA' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <input
-                        type="text"
-                        value={searchQueries.IVA}
-                        onChange={handleSearchInputChange('IVA')}
-                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                        placeholder="Cerca per IVA"
-                      />
-                    
-                    </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('status')}>
-                      Stato
-                      {sortColumn === 'status' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <input
-                        type="text"
-                        value={searchQueries.status}
-                        onChange={handleSearchInputChange('status')}
-                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                        placeholder="Cerca per stato"
-                      />
-                     
-                    </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('createdByUser')}>
-                      Creata da
-                      {sortColumn === 'createdByUser' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <input
-                        type="text"
-                        value={searchQueries.createdByUser}
-                        onChange={handleSearchInputChange('createdByUser')}
-                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                        placeholder="Cerca per creatore"
-                      />
-                    </th>
-                    <th scope="col" className="relative px-3 py-3.5">
-                      <span className="sr-only">Azioni</span>
-                    </th>
-                  </tr>
-                </thead>
+              <thead>
+                <tr>
+                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
+                    Nome Commessa
+                    {sortColumn === 'name' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <br />
+                    <input
+                      value={searchQueries.name}
+                      onChange={handleSearchInputChange('name')}
+                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      placeholder=""
+                      rows={1}
+                    />
+                  </th>
+                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Company')}>
+                    Azienda
+                    {sortColumn === 'Company' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <br />
+                    <input
+                      value={searchQueries.Company}
+                      onChange={handleSearchInputChange('Company')}
+                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      placeholder=""
+                      rows={1}
+                    />
+                  </th>
+                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('payment_method')}>
+                    Metodo di Pagamento
+                    {sortColumn === 'payment_method' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <br />
+                    <input
+                      value={searchQueries.payment_method}
+                      onChange={handleSearchInputChange('payment_method')}
+                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      placeholder=""
+                      rows={1}
+                    />
+                  </th>
+                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('total')}>
+                    Totale
+                    {sortColumn === 'total' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <br />
+                    <input
+                      value={searchQueries.total}
+                      onChange={handleSearchInputChange('total')}
+                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      placeholder=""
+                      rows={1}
+                    />
+                  </th>
+                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('IVA')}>
+                    IVA
+                    {sortColumn === 'IVA' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <br />
+                    <input
+                      value={searchQueries.IVA}
+                      onChange={handleSearchInputChange('IVA')}
+                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      placeholder=""
+                      rows={1}
+                    />
+                  </th>
+                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('status')}>
+                    Stato
+                    {sortColumn === 'status' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <br />
+                    <input
+                      value={searchQueries.status}
+                      onChange={handleSearchInputChange('status')}
+                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      placeholder=""
+                      rows={1}
+                    />
+                  </th>
+                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('createdByUser')}>
+                    Creata da
+                    {sortColumn === 'createdByUser' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <br />
+                    <input
+                      value={searchQueries.createdByUser}
+                      onChange={handleSearchInputChange('createdByUser')}
+                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      placeholder=""
+                      rows={1}
+                    />
+                  </th>
+                  <th scope="col" className="relative px-3 py-3.5">
+                    <span className="sr-only">Azioni</span>
+                  </th>
+                </tr>
+              </thead>
+
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {sortedPurchase.map((item) => (
                     <tr key={item.id}>
@@ -363,55 +368,55 @@ export default function Example({ permissions }) {
                         }}
                         className={classNames(
                           'whitespace-nowrap px-3 py-4 pr-3 text-sm font-medium',
-                          selectedItems.includes(item) ? 'text-red-600' : 'text-gray-900'
+                          selectedItems.includes(item) ? 'text-red-600' : 'text-gray-700'
                         )}
                       >
                         {item.name}
                       </td>
-                      <td className="whitespace-normal max-w-[200px] overflow-hidden text-sm text-gray-500 px-3 py-4 break-words">
+                      <td className="whitespace-normal max-w-[200px] overflow-hidden text-sm text-gray-700 px-3 py-4 break-words">
                           {item.Company?.name}
                         </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
                           {item.payment_method}
                         </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
                           {item.total + ' ' + item.currency}
                         </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
                           {item.IVA}
                         </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
                           {item.status === 'In Approvazione' ? (
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">
-                              In Approvazione
-                            </span>
+                             <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-yellow-600">
+                             In Approvazione
+                           </span>
                           ) : item.status === 'Approvata' ? (
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100  text-green-800">
                               Approvata
                             </span>
                           ) : item.status === 'Rifiutata' ? (
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100  text-red-800">
                               Rifiutata
                             </span>
                           ) : item.status === 'Scaduta' ? (
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-zinc-100 text-zinc-800">
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100  text-zinc-800">
                               Scaduta
                             </span>
                           ) : item.status === 'Nuova' ? (
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100   text-blue-800">
                               Nuova
                             </span>
                           ) : item.status === 'Revisionata' ? (
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100   text-purple-800">
                               Revisionata
                             </span>
                           ) : (
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100   text-gray-800">
                               Nessuno
                             </span>
                           )}
                         </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
                           {item.createdByUser?.name.slice(0, 2).toUpperCase() + item.createdByUser?.surname.slice(0, 2).toUpperCase()}
                         </td>
                      

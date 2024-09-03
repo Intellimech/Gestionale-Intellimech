@@ -33,8 +33,8 @@ import UniversalSearch from '../components/universalsearch'
 import ChangePassword from '../components/changepass'
 
 const userNavigation = [
-  { name: 'Your profile', href: '/app/profile' },
-  { name: 'Sign out', href: '#' },
+  { name: 'Il mio profilo', href: '/app/settings' },
+  { name: 'Esci', href: '../', onClick: () => logout() },
 ]
 
 function classNames(...classes) {

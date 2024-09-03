@@ -66,16 +66,14 @@ const Login = () => {
       <div className="bg-white p-8 rounded-md w-full max-w-md">
         <img className="mx-auto h-10 w-auto mb-6" src={Logo} alt="Your Company" />
         <h2 className="text-center text-xl font-bold leading-9 text-gray-900 mb-2">
-          Sign in to your account
+          Accedi al tuo account
         </h2>
-        <h3 className="text-center text-sm leading-5 text-gray-600 mb-6">
-          Enter your email and password to access your account
-        </h3>
+        
 
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div>
             <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
-              Email address
+              Email 
             </label>
             <input
               id="email"
@@ -83,7 +81,7 @@ const Login = () => {
               type="email"
               autoComplete="email"
               required
-              className="block w-full rounded-md border-gray-300 py-2 px-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-red-500 focus:outline-none sm:text-sm"
+              className="block w-full rounded-md border-gray-300 py-2 px-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-[#7fb7d4] focus:border-[#7fb7d4] focus:outline-none sm:text-sm"
             />
           </div>
 
@@ -97,7 +95,7 @@ const Login = () => {
               type="password"
               autoComplete="current-password"
               required
-              className="block w-full rounded-md border-gray-300 py-2 px-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-red-500 focus:outline-none sm:text-sm"
+              className="block w-full rounded-md border-gray-300 py-2 px-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-[#7fb7d4] focus:border-[#7fb7d4] focus:outline-none sm:text-sm"
             />
           </div>
 
@@ -107,16 +105,16 @@ const Login = () => {
                 id="remember-me"
                 name="remember-me"
                 type="checkbox"
-                className="h-4 w-4 border-gray-300 text-red-600 focus:ring-red-500 rounded-md focus:outline-none"
+                className="h-4 w-4 border-gray-300 text-[#7fb7d4] focus:ring-[#7fb7d4] rounded-md focus:outline-none"
               />
               <label htmlFor="remember-me" className="ml-2 block text-sm leading-5 text-gray-900">
-                Remember me
+                Ricordami
               </label>
             </div>
 
             <div className="text-sm leading-5">
-              <a href="#" className="font-semibold text-red-600 hover:text-red-500">
-                Forgot password?
+              <a href="#" className="font-semibold text-[#6397d0] hover:text-[#6397d0]-900">
+                Password dimenticata?
               </a>
             </div>
           </div>
@@ -124,9 +122,9 @@ const Login = () => {
           <div>
             <button
               type="submit"
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+              className="w-full flex justify-center  bg-[#A7D0EB] py-2 px-4 border border-transparent rounded-md text-sm font-medium text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
             >
-              Sign in
+              Accedi
             </button>
           </div>
         </form>

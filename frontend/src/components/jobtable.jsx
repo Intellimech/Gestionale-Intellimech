@@ -217,7 +217,7 @@ export default function Example({ permissions, user }) {
                           <div className="ml-3 flex h-7 items-center">
                             <button
                               type="button"
-                              className="relative rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                              className="relative rounded-md bg-white text-gray-400 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#7fb7d4] focus:ring-offset-2"
                               onClick={() => setShowInfo(false)}
                             >
                               <span className="absolute -inset-2.5" />
@@ -261,7 +261,7 @@ export default function Example({ permissions, user }) {
                           <div className="ml-3 flex h-7 items-center">
                             <button
                               type="button"
-                              className="relative rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                              className="relative rounded-md bg-white text-gray-400 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#7fb7d4] focus:ring-offset-2"
                               onClick={() => setOpen(false)}
                             >
                               <span className="absolute -inset-2.5" />
@@ -284,202 +284,211 @@ export default function Example({ permissions, user }) {
 
 
 
-      
       <div className="py-4">
-        <div className="sm:flex-auto">
-          <h1 className="text-base font-semibold leading-6 text-gray-900">Ordini di Acquisto</h1>
-          <p className="mt-2 text-sm text-gray-700">Lista degli ordini di acquisto presenti a sistema</p>
-        </div>
+        <div className="flex items-center justify-between">
+          {/* Titolo e descrizione */}
+          <div className="sm:flex-auto">
+            <h1 className="text-base font-semibold leading-6 text-gray-900">Commesse</h1>
+            <p className="mt-2 text-sm text-gray-700">Lista delle commesse presenti a sistema</p>
+          </div>
 
-        <div className="flex flex-wrap justify-between mt-4 mb-4">
-          <div className="flex items-center space-x-4 ml-auto">
-            {/* Bottoni Export e Create */}
+          {/* Contenitore per i pulsanti Export e Create */}
+          <div className="flex items-center space-x-4">
             <button
               onClick={exportUsers}
-              className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+               className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
             >
-              Export
+              Esporta
             </button>
             <button
               onClick={() => setOpen(true)}
-              className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
+               className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
             >
-              Create
+              Crea
             </button>
           </div>
         </div>
       </div>
+
 
       <div className="mt-8 flow-root">
         <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">          
           <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
             <div className="relative">
               <table className="min-w-full table-fixed divide-y divide-gray-300">
-                <thead>
-                  <tr>                 
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
-                      Nome Commessa
-                      {sortColumn === 'name' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <input
-                        type="text"
-                        value={searchQueries.name}
-                        onChange={handleSearchInputChange('name')}
-                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                        placeholder="Cerca per n° richiesta"
-                      />
-                    </th>
-                    <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Company')}>
-                      Azienda
-                      {sortColumn === 'Company' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <br></br>
-                      <input
-                        type="text"
-                        value={searchQueries.Company}
-                        onChange={handleSearchInputChange('Company')}
-                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                        placeholder="Cerca per azienda"
-                      />
-                    </th>
-                    <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('SaleOrder')}>
-                      Ordine di Vendita
-                      {sortColumn === 'SaleOrder' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <input
-                        type="text"
-                        value={searchQueries.SaleOrder}
-                        onChange={handleSearchInputChange('SaleOrder')}
-                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                        placeholder="Cerca per valore "
-                      />
-                    </th>  
-                    <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('offertotal')}>
-                      Valore Contrattuale
-                      {sortColumn === 'offertotal' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <input
-                        type="text"
-                        value={searchQueries.offertotal}
-                        onChange={handleSearchInputChange('offertotal')}
-                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                        placeholder="Cerca per valore "
-                      />
-                    </th>  
-                    <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('offerhour')}>
-                      Ore Stimate
-                      {sortColumn === 'offerhour' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <input
-                        type="text"
-                        value={searchQueries.offerhour}
-                        onChange={handleSearchInputChange('offerhour')}
-                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                        placeholder="Cerca per ore"
-                      />
-                    </th>  
-                    <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('total')}>
-                      Valore Reale
-                      {sortColumn === 'total' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <input
-                        type="text"
-                        value={searchQueries.total}
-                        onChange={handleSearchInputChange('total')}
-                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                        placeholder="Cerca per valore reale"
-                      />
-                    </th>  
-                    <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('reportedhour')}>
-                      Ore Lavorate
-                      {sortColumn === 'reportedhour' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <input
-                        type="text"
-                        value={searchQueries.reportedhour}
-                        onChange={handleSearchInputChange('reportedhour')}
-                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                        placeholder="Cerca per ore"
-                      />
-                    </th>  
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('status')}>
-                      Stato
-                      {sortColumn === 'status' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <input
-                        type="text"
-                        value={searchQueries.status}
-                        onChange={handleSearchInputChange('status')}
-                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                        placeholder="Cerca per stato"
-                      />
-                    
-                    </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('createdByUser')}>
-                      Creata da
-                      {sortColumn === 'createdByUser' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <input
-                        type="text"
-                        value={searchQueries.createdByUser}
-                        onChange={handleSearchInputChange('createdByUser')}
-                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                        placeholder="Cerca per creatore"
-                      />
-                    </th>
-                    
-                  </tr>
-                </thead>
+              <thead>
+                <tr>
+                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
+                    Commessa
+                    {sortColumn === 'name' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <br />
+                    <input
+                      value={searchQueries.name}
+                      onChange={handleSearchInputChange('name')}
+                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      placeholder=""
+                      rows={1}
+                    />
+                  </th>
+                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Company')}>
+                    Azienda
+                    {sortColumn === 'Company' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <br />
+                    <input
+                      value={searchQueries.Company}
+                      onChange={handleSearchInputChange('Company')}
+                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      placeholder=""
+                      rows={1}
+                    />
+                  </th>
+                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('SaleOrder')}>
+                    Ordine di Vendita
+                    {sortColumn === 'SaleOrder' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <br />
+                    <input
+                      value={searchQueries.SaleOrder}
+                      onChange={handleSearchInputChange('SaleOrder')}
+                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      placeholder=""
+                      rows={1}
+                    />
+                  </th>
+                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('offertotal')}>
+                    Valore Contrattuale
+                    {sortColumn === 'offertotal' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <br />
+                    <input
+                      value={searchQueries.offertotal}
+                      onChange={handleSearchInputChange('offertotal')}
+                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      placeholder=""
+                      rows={1}
+                    />
+                  </th>
+                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('offerhour')}>
+                    Ore Stimate
+                    {sortColumn === 'offerhour' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <br />
+                    <input
+                      value={searchQueries.offerhour}
+                      onChange={handleSearchInputChange('offerhour')}
+                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      placeholder=""
+                      rows={1}
+                    />
+                  </th>
+                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('total')}>
+                    Valore Reale
+                    {sortColumn === 'total' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <br />
+                    <input
+                      value={searchQueries.total}
+                      onChange={handleSearchInputChange('total')}
+                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      placeholder=""
+                      rows={1}
+                    />
+                  </th>
+                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('reportedhour')}>
+                    Ore Lavorate
+                    {sortColumn === 'reportedhour' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <br />
+                    <input
+                      value={searchQueries.reportedhour}
+                      onChange={handleSearchInputChange('reportedhour')}
+                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      placeholder=""
+                      rows={1}
+                    />
+                  </th>
+                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('status')}>
+                    Stato
+                    {sortColumn === 'status' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <br />
+                    <input
+                      value={searchQueries.status}
+                      onChange={handleSearchInputChange('status')}
+                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      placeholder=""
+                      rows={1}
+                    />
+                  </th>
+                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('createdByUser')}>
+                    Creata da
+                    {sortColumn === 'createdByUser' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <br />
+                    <input
+                      value={searchQueries.createdByUser}
+                      onChange={handleSearchInputChange('createdByUser')}
+                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      placeholder=""
+                      rows={1}
+                    />
+                  </th>
+                </tr>
+              </thead>
+
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {Array.isArray(sortedJob) && sortedJob.length > 0  ? (
                     sortedJob.map((job) => (
-                      <tr key={job.id_user} onClick={() => handleJobClick(job)}
+                      <tr key={job.id_user}
                       className={selectedJobs.includes(job) ? 'bg-gray-50' : undefined}>
                         <td
                           className={classNames(
                             'whitespace-nowrap px-3 py-4 pr-3 text-sm font-medium',
-                            selectedJobs.includes(job) ? 'text-red-600' : 'text-gray-900'
-                          )}
+                            selectedJobs.includes(job) ? 'text-[#7fb7d4]' : 'text-gray-700'
+                          )}onClick={() => handleJobClick(job)}
                         >
+                           
                           {job.name}
                         </td>
                         <td className={classNames(
-                            'whitespace-nowrap px-3 py-4 pr-3 text-sm font-medium',
-                            selectedJobs.includes(job) ? 'text-red-600' : 'text-gray-900'
+                            'whitespace-nowrap px-3 py-4 pr-3 text-sm ',
+                            selectedJobs.includes(job) ? 'text-[#7fb7d4]' : 'text-gray-700'
                           )}>
                           {
                             job.SalesOrders.length > 1 ? job.SalesOrders[0].Offer.QuotationRequest.Company.name + '...' + " (" + job.SalesOrders.length + ")" : job.SalesOrders[0]?.Offer.QuotationRequest.Company.name
                           }
                         </td>
-                        <td className="px-3 py-4 text-sm text-gray-500">
+                        <td className="px-3 py-4 text-sm text-gray-700">
                           {
                             job.SalesOrders.length > 1 ? job.SalesOrders[0].name + '...' + " (" + job.SalesOrders.length + ")" : job.SalesOrders[0]?.name
                           }
                         </td>
-                        <td className="px-3 py-4 text-sm text-gray-500">
+                        <td className="px-3 py-4 text-sm text-gray-700">
                           {
                             job.SalesOrders.reduce((total, order) => total + parseFloat(order.Offer.amount), 0).toFixed(2) + ' €'
                           }
                         </td>
-                        <td className="px-3 py-4 text-sm text-gray-500">
+                        <td className="px-3 py-4 text-sm text-gray-700">
                           {
                             job.SalesOrders.reduce((total, order) => total + parseFloat(order.Offer.hour), 0) + ' h'
                           }
                         </td>
-                        <td className="px-3 py-4 text-sm text-gray-500">
+                        <td className="px-3 py-4 text-sm text-gray-700">
                           {
                             (job.Reportings.reduce((total, reported) => total + reported.hour, 0) * (job.SalesOrders.reduce((total, order) => total + parseFloat(order.Offer.amount), 0).toFixed(2) / job.SalesOrders.reduce((total, order) => total + parseFloat(order.Offer.hour), 0).toFixed(2))).toFixed(2) + '€'
                           }
                         </td>
-                        <td className="px-3 py-4 text-sm text-gray-500">
+                        <td className="px-3 py-4 text-sm text-gray-700">
                           {
                             job.Reportings.reduce((total, reported) => total + reported.hour, 0) + ' h'
                           }
                         </td> 
-                        <td className="px-3 py-4 text-sm text-gray-500">
+                        <td className="px-3 py-4 text-sm text-gray-700">
                         {
                             // Use a ternary operator to determine the status class
                             job.status === 'Aperta' ? (
-                              <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                              <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-green-800">
                                 Aperta
                               </span>
                             ) : job.status === 'Chiusa' ? (
-                              <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                              <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-red-800">
                                 Chiusa
                               </span>
                             ) : job.status === 'Scaduta' ? (
-                              <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
+                              <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-red-800">
                                 Scaduta
                               </span>
                             ) : (
@@ -489,14 +498,14 @@ export default function Example({ permissions, user }) {
                             )
                           }                 
                         </td>
-                        <td className="px-3 py-4 text-sm text-gray-500">
+                        <td className="px-3 py-4 text-sm text-gray-700">
                           {job.createdByUser?.name.slice(0, 2).toUpperCase() + job.createdByUser?.surname.slice(0, 2).toUpperCase()}
                         </td>
                       </tr>
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="12" className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                      <td colSpan="12" className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 text-center">
                         Non ci sono commesse
                       </td>
                     </tr>

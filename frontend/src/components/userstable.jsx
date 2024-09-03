@@ -2,6 +2,8 @@ import { Fragment, useState, useRef, useEffect } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon, PencilSquareIcon, ArrowRightStartOnRectangleIcon } from '@heroicons/react/20/solid'
 import axios from 'axios';
+
+import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/20/solid';
 import Cookies from 'js-cookie';
 
 import UserCreateForm from './userscreate';
@@ -96,6 +98,8 @@ const filteredUsers = people.filter((item) => {
 
   );
 });
+
+
 const sortedUsers = filteredUsers.sort((a, b) => {
   if (sortDirection === 'asc') {
     return compareValues(a[sortColumn], b[sortColumn]);
@@ -244,7 +248,7 @@ const handleSearchInputChange = (column) => (event) => {
                           <div className="ml-3 flex h-7 items-center">
                             <button
                               type="button"
-                              className="relative rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                              className="relative rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#7fb7d4] focus:ring-offset-2"
                               onClick={() => setOpen(false)}
                             >
                               <span className="absolute -inset-2.5" />
@@ -266,31 +270,27 @@ const handleSearchInputChange = (column) => (event) => {
 
 
 
-      <div className="sm:flex-auto">
-        <h1 className="text-base font-semibold leading-6 text-gray-900">Utenti</h1>
-        <p className="mt-2 text-sm text-gray-700">Lista utenti presenti nel sistema</p>
-      </div>
-      {/* Search box and Year filter */}
+      <div className="flex items-center justify-between mt-4 mb-4">
+        {/* Titolo e descrizione */}
+        <div className="sm:flex-auto">
+          <h1 className="text-base font-semibold leading-6 text-gray-900">Utenti</h1>
+          <p className="mt-2 text-sm text-gray-700">Lista utenti presenti nel sistema</p>
+        </div>
         
-        
-      <div className="flex flex-wrap items-center justify-between mt-4 mb-4">
-        
+        {/* Bottoni Export e Create */}
         <div className="flex items-center space-x-4 ml-auto">
           <button
             onClick={exportUsers}
-            className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
-          >
-            Export
+            className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"          >
+            Esporta
           </button>
           <button
             onClick={() => setIsModalOpen(true)}
-            className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
-          >
-            Create
+            className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"          >
+            Crea
           </button>
         </div>
       </div>
-
 
       <div className="mt-8 flow-root">
         <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">          
@@ -298,149 +298,156 @@ const handleSearchInputChange = (column) => (event) => {
             <div className="relative">
               {selectedPeople.length > 0 && (
                 <>
-                  <div className="absolute left-14 top-0 flex h-12 items-center space-x-3 bg-white sm:left-12">
+                  <div className="absolute left-0 top-0 flex h-12 items-center space-x-3 bg-white sm:left-12">
                     <button
                       type="button"
                       className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
                       onClick={deleteAll}
                     >
-                      Delete all
+                      Elimina tutto
                     </button>
                   </div>
                 </>
               )}
               <table className="min-w-full table-fixed divide-y divide-gray-300">
-                <thead>
-                  <tr>    
-                    <th scope="col" className="relative px-7 sm:w-12 sm:px-6">
-                      <input
-                        type="checkbox"
-                        className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-red-600"
-                        ref={checkbox}
-                        checked={checked}
-                        onChange={toggleAll}
-                      />
-                    </th>                    
-                    <th scope="col" className="py-3.5 text-left text-sm font-semibold text-gray-900">
-                      
-                    </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('email')}>
-                      Email
-                      {sortColumn === 'email' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <input
-                        type="text"
-                        value={searchQueries.email}
-                        onChange={handleSearchInputChange('email')}
-                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                        placeholder="Cerca per email"
-                      />
-                    </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
-                      Name
-                      {sortColumn === 'name' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <input
-                        type="text"
-                        value={searchQueries.name}
-                        onChange={handleSearchInputChange('name')}
-                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                        placeholder="Cerca per nome"
-                      />
-                    </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('surname')}>
-                      Surname
-                      {sortColumn === 'surname' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <input
-                        type="text"
-                        value={searchQueries.surname}
-                        onChange={handleSearchInputChange('surname')}
-                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                        placeholder="Cerca per cognome"
-                      />
-                    </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('username')}>
-                      Username
-                      {sortColumn === 'username' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <input
-                        type="text"
-                        value={searchQueries.username}
-                        onChange={handleSearchInputChange('username')}
-                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                        placeholder="Cerca per username"
-                      />
-                    </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('updatedAt')}>
-                      Updated At
-                      {sortColumn === 'updatedAt' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <input
-                        type="text"
-                        value={searchQueries.updatedAt}
-                        onChange={handleSearchInputChange('updatedAt')}
-                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                        placeholder="Cerca"
-                      />
-                    </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('ncreatedAtame')}>
-                      Created At
-                      {sortColumn === 'createdAt' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <input
-                        type="text"
-                        value={searchQueries.createdAt}
-                        onChange={handleSearchInputChange('createdAt')}
-                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                        placeholder="Cerca"
-                      />
-                    </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('lastLoginAt')}>
-                      Last Login
-                      {sortColumn === 'lastLoginAt' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <input
-                        type="text"
-                        value={searchQueries.lastLoginAt}
-                        onChange={handleSearchInputChange('lastLoginAt')}
-                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                        placeholder="Cerca "
-                      />
-                    </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('lastLoginIp')}>
-                      Last Login IP
-                      {sortColumn === 'lastLoginIp' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <input
-                        type="text"
-                        value={searchQueries.lastLoginIp}
-                        onChange={handleSearchInputChange('lastLoginIp')}
-                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                        placeholder="Cerca "
-                      />
-                    </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('role')}>
-                      Role
-                      {sortColumn === 'role' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <input
-                        type="text"
-                        value={searchQueries.role}
-                        onChange={handleSearchInputChange('role')}
-                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                        placeholder="Cerca per ruolo"
-                      />
-                    </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                      Stato
-                    </th>
-                    <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-3">
-                      <span className="sr-only">Edit</span>
-                    </th>
-                  </tr>
-                </thead>
+              <thead>
+                <tr>    
+                  <th scope="col" className="relative px-7 sm:w-12 sm:px-6">
+                    <input
+                      type="checkbox"
+                      className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-[#7fb7d4] focus:ring-[#7fb7d4]"
+                      ref={checkbox}
+                      checked={checked}
+                      onChange={toggleAll}
+                    />
+                  </th>                    
+                  
+                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('email')}>
+                    Email
+                    {sortColumn === 'email' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <br />
+                    <input
+                      value={searchQueries.email}
+                      onChange={handleSearchInputChange('email')}
+                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      placeholder=""
+                      rows={1}
+                    />
+                  </th>
+                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
+                    Name
+                    {sortColumn === 'name' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <br />
+                    <input
+                      value={searchQueries.name}
+                      onChange={handleSearchInputChange('name')}
+                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      placeholder=""
+                      rows={1}
+                    />
+                  </th>
+                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('surname')}>
+                    Surname
+                    {sortColumn === 'surname' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <br />
+                    <input
+                      value={searchQueries.surname}
+                      onChange={handleSearchInputChange('surname')}
+                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      placeholder=""
+                      rows={1}
+                    />
+                  </th>
+                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('username')}>
+                    Username
+                    {sortColumn === 'username' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <br />
+                    <input
+                      value={searchQueries.username}
+                      onChange={handleSearchInputChange('username')}
+                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      placeholder=""
+                      rows={1}
+                    />
+                  </th>
+                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('updatedAt')}>
+                    Updated At
+                    {sortColumn === 'updatedAt' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <br />
+                    <input
+                      value={searchQueries.updatedAt}
+                      onChange={handleSearchInputChange('updatedAt')}
+                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      placeholder=""
+                      rows={1}
+                    />
+                  </th>
+                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('createdAt')}>
+                    Created At
+                    {sortColumn === 'createdAt' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <br />
+                    <input
+                      value={searchQueries.createdAt}
+                      onChange={handleSearchInputChange('createdAt')}
+                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      placeholder=""
+                      rows={1}
+                    />
+                  </th>
+                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('lastLoginAt')}>
+                    Last Login
+                    {sortColumn === 'lastLoginAt' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <br />
+                    <input
+                      value={searchQueries.lastLoginAt}
+                      onChange={handleSearchInputChange('lastLoginAt')}
+                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      placeholder=""
+                      rows={1}
+                    />
+                  </th>
+                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('role')}>
+                    Role
+                    {sortColumn === 'role' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <br />
+                    <input
+                      value={searchQueries.role}
+                      onChange={handleSearchInputChange('role')}
+                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      placeholder=""
+                      rows={1}
+                    />
+                  </th>
+                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('status')}>
+                    Stato
+                    {sortColumn === 'status' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <br />
+                    <input
+                      value={searchQueries.status}
+                      onChange={handleSearchInputChange('status')}
+                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      placeholder=""
+                      rows={1}
+                    />
+                  </th>
+                  <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-3">
+                    <span className="sr-only">Edit</span>
+                    {/* No search input for this column */}
+                  </th>
+                </tr>
+              </thead>
+
                 <tbody className="divide-y divide-gray-200 bg-white">
-                  {people.map((person) => (
+                  {Array.isArray(sortedUsers) && sortedUsers.length > 0  ? (
+                    sortedUsers.map((person) => (
                     <tr key={person.id_user} className={selectedPeople.includes(person) ? 'bg-gray-50' : undefined}>
                       <td className="relative px-7 sm:w-12 sm:px-6">
                         {selectedPeople.includes(person) && (
-                          <div className="absolute inset-y-0 left-0 w-0.5 bg-red-600" />
+                          <div className="absolute inset-y-0 left-0 w-0.5 bg-[#7fb7d4]" />
                         )}
                         <input
                           type="checkbox"
-                          className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-red-600"
+                          className="absolute left-4 top-1/2 -mt-2 h-4 w-4 rounded border-gray-300 text-[#7fb7d4] focus:ring-[#7fb7d4]"
                           value={person.email}
                           checked={selectedPeople.includes(person)}
                           onChange={(e) =>
@@ -452,14 +459,14 @@ const handleSearchInputChange = (column) => (event) => {
                           }
                         />
                       </td>
-                      <td
+                      {/* <td
                         className={classNames(
                           'whitespace-nowrap px-3 py-4 pr-3 text-sm font-medium',
-                          selectedPeople.includes(person) ? 'text-red-600' : 'text-gray-900'
+                          selectedPeople.includes(person) ? 'text-[#A7D0EB]' : 'text-gray-900'
                         )}
                       >
                         <img src={'https://api.dicebear.com/7.x/notionists/svg?seed=' + person.id_user + '&background=%23fff&radius=50'} className="h-8 w-8 rounded-full" alt="" />
-                      </td>
+                      </td> */}
                       <td className="whitespace-nowrap py-4 text-sm text-gray-500">{person.email}</td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.name}</td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.surname}</td>
@@ -467,19 +474,19 @@ const handleSearchInputChange = (column) => (event) => {
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.updatedAt ? new Date(person.updatedAt).toLocaleString() : ''}</td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.createdAt ? new Date(person.createdAt).toLocaleString() : ''}</td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.lastLoginAt ? new Date(person.lastLoginAt).toLocaleString() : ''}</td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.lastLoginIp}</td>
+
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.Role.name}</td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                         {person.isActive ? (
-                          <span className="inline-flex items-center gap-x-1.5 rounded-md bg-green-100 px-1.5 py-0.5 text-xs font-medium text-green-700">
-                            <svg className="h-1.5 w-1.5 fill-green-500" viewBox="0 0 6 6" aria-hidden="true">
+                          <span className="inline-flex items-center gap-x-1.5 rounded-md bg-gray-300 px-1.5 py-0.5 text-xs font-medium text-gray-700">
+                            <svg className="h-1.5 w-1.5 fill-green-600" viewBox="0 0 6 6" aria-hidden="true">
                               <circle cx={3} cy={3} r={3} />
                             </svg>
                             Online
                           </span>
                         ) : (
-                        <span className="inline-flex items-center gap-x-1.5 rounded-md bg-red-100 px-1.5 py-0.5 text-xs font-medium text-red-700">
-                          <svg className="h-1.5 w-1.5 fill-red-500" viewBox="0 0 6 6" aria-hidden="true">
+                        <span className="inline-flex items-center gap-x-1.5 rounded-md bg-gray-300 px-1.5 py-0.5 text-xs font-medium text-gray-700">
+                          <svg className="h-1.5 w-1.5 fill-red-700" viewBox="0 0 6 6" aria-hidden="true">
                             <circle cx={3} cy={3} r={3} />
                           </svg>
                           Offline
@@ -503,8 +510,54 @@ const handleSearchInputChange = (column) => (event) => {
                           </button>
                         </div>
                       </td>
+                      <td className="whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
+                        <div className="flex items-center space-x-2">
+                          
+                          <button 
+                            type="button" 
+                            className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
+                            >
+                            <PencilSquareIcon className="h-5 w-4 text-gray-500" />
+                          </button>
+                          
+                         
+                        </div>
+                      </td>
+                      <td className="whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
+                        <div className="flex items-center space-x-2">
+                          
+                          <button 
+                            type="button" 
+                            className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
+                           >
+                            <PencilSquareIcon className="h-5 w-4 text-gray-500" />
+                          </button>
+                          
+                          
+                        </div>
+                      </td>
+                      <td className="whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
+                        <div className="flex items-center space-x-2">
+                         
+                          <button 
+                            type="button" 
+                            className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
+                            >
+                            <PencilSquareIcon className="h-5 w-4 text-gray-500" />
+                          </button>
+                          
+                          
+                        </div>
+                      </td>
                     </tr>
-                  ))}
+                   ))
+                  ) : (
+                    <tr>
+                      <td colSpan="12" className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                        Non ci sono commesse
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>

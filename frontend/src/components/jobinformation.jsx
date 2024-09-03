@@ -116,8 +116,8 @@ export default function Example({ job }) {
       <div className="px-4 sm:px-0">
         <h3 className="text-base font-semibold leading-7 text-gray-900">{job.name}
           <span className={`ml-2 px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${{
-              'Aperta': 'bg-green-100 text-green-800',
-              'Chiusa': 'bg-red-100 text-red-800',
+              'Aperta': 'bg-gray-100 text-green-800',
+              'Chiusa': 'bg-gray-100 text-red-800',
             }[job?.status] || 'bg-gray-100 text-gray-800'}`}>
               {job?.status || 'Nessuno'}
             </span>

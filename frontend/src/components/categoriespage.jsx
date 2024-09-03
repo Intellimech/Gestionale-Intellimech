@@ -140,29 +140,30 @@ export default function CategoryTable() {
   return (
     <>
       <div className="px-4 sm:px-6 lg:px-8">
-        <div className="sm:flex-auto">
-          <h1 className="text-base font-semibold leading-6 text-gray-900">Categorie</h1>
-          <p className="mt-2 text-sm text-gray-700">Lista delle categorie</p>
-        </div>
+        <div className="flex items-center justify-between">
+          {/* Titolo e descrizione */}
+          <div className="sm:flex-auto">
+            <h1 className="text-base font-semibold leading-6 text-gray-900">Categorie</h1>
+            <p className="mt-2 text-sm text-gray-700">Lista delle categorie</p>
+          </div>
 
-
-        <div className="flex flex-wrap items-center justify-between mt-4 mb-4">
-          
-          <div className="flex items-center space-x-4 ml-auto">
+          {/* Bottoni Export e Create */}
+          <div className="flex items-center space-x-4">
             <button
               onClick={exportCategories}
-              className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+              className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
             >
-              Export
+              Esporta
             </button>
             <button
               onClick={() => setIsModalOpen(true)}
-              className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-600"
-            >
-              Create
+             className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+             >
+              Crea
             </button>
           </div>
         </div>
+
 
 
         <div className="mt-8 flow-root">
@@ -170,35 +171,36 @@ export default function CategoryTable() {
             <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
               <div className="relative">
                 <table className="min-w-full table-fixed divide-y divide-gray-300">
-                  <thead>
-                    <tr>       
-                  
-                    <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('id_category')}>
+                <thead>
+                  <tr>
+                    <th scope="col" className="px-0 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('id_category')}>
                       ID
                       {sortColumn === 'id_category' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <br></br>
+                      <br />
                       <input
-                        type="text"
                         value={searchQueries.id_category}
                         onChange={handleSearchInputChange('id_category')}
-                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                        placeholder="Cerca per ID"
+                        className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                        placeholder=""
+                        rows={1}
                       />
                     </th>
-                    <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
+
+                    <th scope="col" className="px-1.5 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
                       Name
                       {sortColumn === 'name' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <br></br>
+                      <br />
                       <input
-                        type="text"
                         value={searchQueries.name}
                         onChange={handleSearchInputChange('name')}
-                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                        placeholder="Cerca per nome "
+                        className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                        placeholder=""
+                        rows={1}
                       />
                     </th>
-                    </tr>
-                  </thead>
+                  </tr>
+                </thead>
+
                   <tbody className="divide-y divide-gray-200 bg-white">
                     {sortedCategories.map((category) => (
                       <tr key={category.id_category}>
@@ -215,74 +217,75 @@ export default function CategoryTable() {
     </div>
     
       {/* Modal for Creating a New Category */}
-      <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>
-        <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
-        <div id="category-modal" className="fixed inset-0 flex items-center justify-center p-4"  style={{ transform: 'translateX(10%)' }}>
-          <div className="flex flex-col items-center">
-            <Dialog.Panel className="max-w-sm p-6 bg-white rounded shadow-md">
-              <Dialog.Title className="text-lg font-semibold">Create New Category</Dialog.Title>
-              <form onSubmit={(e) => {
-                e.preventDefault();
-                handleCreateCategory();
-              }}>
-                <div className="mt-4">
-                  <label htmlFor="category-name" className="block text-sm font-medium text-gray-700">Category Name</label>
-                  <input
-                    id="category-name"
-                    type="text"
-                    value={newCategoryName}
-                    onChange={(e) => setNewCategoryName(e.target.value)}
-                    required
-                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                  />
-                </div>
-                <div className="mt-4 flex gap-4">
-                  <button
-                    type="button"
-                    onClick={() => setIsModalOpen(false)}
-                    className="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="inline-flex justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm ring-1 ring-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-                  >
-                    Create
-                  </button>
-                </div>
-              </form>
-            </Dialog.Panel>
-          </div>
-        </div>
-      </Dialog>
-
-      {/* Confirmation Modal */}
-      <Dialog open={isConfirmModalOpen} onClose={() => setIsConfirmModalOpen(false)}>
+      <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)} className="relative z-50">
         <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
         <div className="fixed inset-0 flex items-center justify-center p-4">
-          <div className="flex flex-col items-center">
-            <Dialog.Panel className="max-w-sm p-6 bg-white rounded shadow-md">
-              <Dialog.Title className="text-lg font-semibold">Confirm Action</Dialog.Title>
-              <p className="mt-2 text-sm text-gray-500">Are you sure you want to create this category?</p>
-              <div className="mt-4 flex gap-4">
-                <button
-                  type="button"
-                  onClick={cancelCreateCategory}
-                  className="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  onClick={confirmCreateCategory}
-                  className="inline-flex justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-sm font-medium text-white shadow-sm ring-1 ring-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-                >
-                  Confirm
-                </button>
-              </div>
-            </Dialog.Panel>
-          </div>
+          <Dialog.Panel className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
+            <Dialog.Title className="text-lg font-semibold text-gray-900">Crea una nuova Categoria</Dialog.Title>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleCreateCategory();
+            }}
+            className="mt-4 space-y-4"
+          >
+            <div>
+              <label htmlFor="category-name" className="block text-sm font-medium text-gray-700">
+                Categoria
+              </label>
+              <input
+                id="category-name"
+                type="text"
+                value={newCategoryName}
+                onChange={(e) => setNewCategoryName(e.target.value)}
+                required
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-sm"
+              />
+            </div>
+            <div className="flex gap-4">
+              <button
+                type="button"
+                onClick={() => setIsModalOpen(false)}
+                className="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#7fb7d4] focus:ring-offset-2"
+              >
+                Cancella
+              </button>
+              <button
+                type="submit"
+                className="inline-flex justify-center rounded-md border border-transparent bg-[#7fb7d4] px-4 py-2 text-sm font-medium text-white shadow-sm ring-1 ring-[#7fb7d4] hover:bg-[#6aaedb] focus:outline-none focus:ring-2 focus:ring-[#7fb7d4] focus:ring-offset-2"
+              >
+                Crea
+              </button>
+            </div>
+          </form>
+        </Dialog.Panel>
+      </div>
+    </Dialog>
+
+      {/* Confirmation Modal */}
+      <Dialog open={isConfirmModalOpen} onClose={() => setIsConfirmModalOpen(false)} className="relative z-50">
+        <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+        <div className="fixed inset-0 flex items-center justify-center p-4">
+          <Dialog.Panel className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
+            <Dialog.Title className="text-lg font-semibold text-gray-900">Conferma di creazione</Dialog.Title>
+            <div className="mt-4">
+              <p className="text-sm text-gray-700">Sicuro di voler creare questa nuova categoria?</p>
+            </div>
+            <div className="mt-6 flex justify-end space-x-3">
+              <button
+                onClick={cancelCreateCategory}
+                className="rounded-md bg-[#A7D0EB] px-3 py-2 text-sm font-bold text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+              >
+                Cancella
+              </button>
+              <button
+                onClick={confirmCreateCategory}
+                className="rounded-md bg-[#A7D0EB] px-3 py-2 text-sm font-bold text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+              >
+                Conferma
+              </button>
+            </div>
+          </Dialog.Panel>
         </div>
       </Dialog>
     </>

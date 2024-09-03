@@ -32,7 +32,8 @@ import UsersTable from './components/userstable';
 import EmployeesConsultant from './components/peopletable';
 import CategoriesPage from './components/categoriespage';
 import SubcategoriesPage from './components/subcategoriespage';
-import TechnicalAreaPage from './components/technicalareapage'
+import TechnicalAreaPage from './components/technicalareapage';
+import SettingsPage from './components/settings.jsx'
 
 const Logo = './assets/intellimech.svg'
 
@@ -78,6 +79,7 @@ const App = () => {
             <Route path="category" element={<PrivateRoute element={<CategoriesPage />} />} />
             <Route path="subcategory" element={<PrivateRoute element={<SubcategoriesPage />} />} />
             <Route path="technicalarea" element={<PrivateRoute element={<TechnicalAreaPage />} />} />
+            <Route path="settings" element={<PrivateRoute element={<SettingsPage />} />} />
           </Route>
           <Route path="*" element={<Lost />} />
           <Route path="/unauthorized" element={<Unauthorized />} />

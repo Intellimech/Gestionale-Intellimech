@@ -119,87 +119,91 @@ export default function Company({ companytype }) {
 
   return (
     
-      <div className="px-4 sm:px-6 lg:px-8">
-        <div className="sm:flex-auto">
-          <h1 className="text-base font-semibold leading-6 text-gray-900">
-            {companytype === 'Suppliers' ? 'Fornitori' : 'Clienti'}
-          </h1>
-          <p className="mt-2 text-sm text-gray-700">
-            Lista dei {companytype === 'Suppliers' ? 'fornitori' : 'clienti'}
-          </p>
-        </div>
-
-        <div className="flex flex-wrap justify-between mt-4 mb-4">
-          <div className="flex items-center space-x-4 ml-auto">
-            {/* Bottoni Export */}
+    <div className="px-4 sm:px-6 lg:px-8">
+    <div className="flex items-center justify-between py-4">
+      {/* Titolo e descrizione */}
+      <div className="flex-grow">
+        <h1 className="text-base font-semibold leading-6 text-gray-900">
+          {companytype === 'Suppliers' ? 'Fornitori' : 'Clienti'}
+        </h1>
+        <p className="mt-2 text-sm text-gray-700">
+          Lista dei {companytype === 'Suppliers' ? 'fornitori' : 'clienti'}
+        </p>
+      </div>
+  
+      {/* Bottoni Export */}
+      <div className="flex items-center space-x-4">
             <button
               onClick={exportInvoices}
-              className="block rounded-md bg-red-600 px-3 py-1.5 text-center text-sm font-semibold leading-6 text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+              className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
             >
-              Export
+              Esporta
             </button>
-            
-          </div>
-        </div>
+      </div>
+    </div>
+  
 
         <div className="mt-8 flow-root">
           <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">          
             <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
               <div className="relative">
                 <table className="min-w-full table-fixed divide-y divide-gray-300">
-                  <thead>
-                    <tr>       
-                    <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Code')}>
-                      Company Code
+                <thead>
+                  <tr>
+                    <th scope="col" className="px-0 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Code')}>
+                      Codice
                       {sortColumn === 'Code' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <br></br>
+                      <br />
                       <input
-                        type="text"
                         value={searchQueries.Code}
                         onChange={handleSearchInputChange('Code')}
-                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                        placeholder="Cerca per azienda"
+                        className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                        placeholder=""
+                        rows={1}
                       />
                     </th>
-                    <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Name')}>
-                      Company Name
+
+                    <th scope="col" className="px-1.5 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Name')}>
+                      Nome
                       {sortColumn === 'Name' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <br></br>
+                      <br />
                       <input
-                        type="text"
                         value={searchQueries.Name}
                         onChange={handleSearchInputChange('Name')}
-                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                        placeholder="Cerca per nome azienda"
+                        className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                        placeholder=""
+                        rows={1}
                       />
                     </th>
-                    <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('VAT')}>
+
+                    <th scope="col" className="px-1.5 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('VAT')}>
                       VAT
                       {sortColumn === 'VAT' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <br></br>
-
+                      <br />
                       <input
-                        type="text"
                         value={searchQueries.VAT}
                         onChange={handleSearchInputChange('VAT')}
-                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                        placeholder="Cerca per VAT"
+                        className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                        placeholder=""
+                        rows={1}
                       />
                     </th>
-                    <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Fiscal_Code')}>
-                      VAT
+
+                    <th scope="col" className="px-1.5 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Fiscal_Code')}>
+                      Codice Fiscale
                       {sortColumn === 'Fiscal_Code' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <br></br>
+                      <br />
                       <input
-                        type="text"
                         value={searchQueries.Fiscal_Code}
                         onChange={handleSearchInputChange('Fiscal_Code')}
-                        className="mt-2 px-2 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-sm"
-                        placeholder="Cerca per codice fiscale"
+                        className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                        placeholder=""
+                        rows={1}
                       />
                     </th>
                   </tr>
                 </thead>
+
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {filteredCompanies.map((company) => (
                     <tr key={company.id_invoices}>

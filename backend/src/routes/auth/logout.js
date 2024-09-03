@@ -21,8 +21,6 @@ const __dirname = path.resolve();
 router.use(bodyParser.json());
 router.use(cors());
 router.use(cookieparser());
-
-
 router.post("/logout", async (req, res) => {
     try {
         const token = req.headers["authorization"]?.split(" ")[1] || "";
@@ -31,7 +29,6 @@ router.post("/logout", async (req, res) => {
                 message: "Unauthorized",
             });
         }
-
         const publicKey = fs.readFileSync(
             path.resolve(__dirname, "./src/keys/public.key")
         );
@@ -42,11 +39,13 @@ router.post("/logout", async (req, res) => {
 
         const User = sequelize.models.User;
 
-        User.update(
-            { isActive: false },
+        // Invalida la sessione dell'utente nel database
+        await User.update(
+            { isActive: false, sessionId: null }, // Cancella l'ID della sessione
             {
                 where: {
                     id_user: decoded.id,
+                    sessionId: decoded.sessionId, // Confronta l'ID sessione
                 },
             }
         );
@@ -61,5 +60,7 @@ router.post("/logout", async (req, res) => {
         res.status(500).json({ message: "Internal server error" });
     }
 });
+
+
 
 export default router;

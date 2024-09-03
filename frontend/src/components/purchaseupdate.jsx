@@ -100,6 +100,7 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
     const token = Cookies.get('token');
     
     const jsonObject = {
+      id_purchase: purchase.id_purchase, // Assicurati che id_purchase sia presente e corretto
       id_company: selectedCompany?.value,
       payment: selectedPaymentMethod,
       date: selectedDate,
@@ -112,16 +113,17 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
         quantity: parseInt(product.quantity, 10),
       }))
     };
-    
     try {
-      await axios.post(`${process.env.REACT_APP_API_URL}/purchase/update`, jsonObject, { headers: { authorization: `Bearer ${token}` } });
+      await axios.put(`${process.env.REACT_APP_API_URL}/purchase/update`, jsonObject, { headers: { authorization: `Bearer ${token}` } });
       setCreateSuccess(true);
     } catch (error) {
+      console.error('Error details:', error.response ? error.response.data : error.message);
       setErrorMessages(error.response?.data?.message || 'An error occurred');
       setCreateSuccess(false);
     }
+    
   };
-
+  
   return (
     <form name="updatepurchaseorder" onSubmit={updatePurchaseOrder}>
       <div className="space-y-12">
@@ -135,7 +137,7 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
                 <Select
                   id="azienda"
                   name="azienda"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
                   value={selectedCompany} // Assicurati che selectedCompany sia { value: ..., label: ... }
                   onChange={(value) => {
                     setSelectedCompany(value);
@@ -143,7 +145,7 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
                   }}
                   placeholder="Seleziona Azienda"
                   options={companies} // Assicurati che companies sia formattato come [{ value: ..., label: ... }]
-                  primaryColor='red'
+                  primaryColor='[#7fb7d4] '
                   isSearchable
                 />
 
@@ -156,7 +158,7 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
                   id="dateorder"
                   name="dateorder"
                   type="date"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:max-w-xs sm:text-sm"
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:max-w-xs sm:text-sm"
                   min={new Date().toISOString().split('T')[0]}
                   value={selectedDate}
                   onChange={(e) => {
@@ -172,14 +174,14 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
                <Select
                   id="paymentmethod"
                   name="paymentmethod"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
                   value={{value: selectedPaymentMethod, label : selectedPaymentMethod}} 
                   onChange={(selectedOption) => {
                     setSelectedPaymentMethod(selectedOption.value);
                     setPurchase({ ...purchase, selectedPaymentMethod: selectedOption.value });
                   }}
                   options={paymentMethods.map(method => ({ value: method, label: method }))} // Format correct
-                  primaryColor='red'
+                  primaryColor='[#7fb7d4] '
                   isSearchable
                 />
 
@@ -191,14 +193,14 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
                 <Select
                   id="currency"
                   name="currency"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
                   value={{ value: currency, label: currency }}
                   onChange={(selectedOption) => {
                     setCurrency(selectedOption.value);
                     setPurchase({ ...purchase, currency: selectedOption.value });
                   }}
                   options={currencies.map(curr => ({ value: curr, label: curr }))}
-                  primaryColor='red'
+                  primaryColor='[#7fb7d4] '
                   isSearchable
                 />
               </div>
@@ -226,8 +228,7 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
               ))}
               <button
                 type="button"
-                className="mt-6 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                onClick={addProduct}
+                 className="block ml-4 rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"onClick={addProduct}
               >
                 Aggiungi Prodotto
               </button>
@@ -266,7 +267,7 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
         <div className="mt-6 flex items-center justify-end gap-x-6">
           <button
             type="submit"
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+             className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
           >
             Aggiorna Ordine di Acquisto
           </button>

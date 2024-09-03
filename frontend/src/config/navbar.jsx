@@ -28,8 +28,8 @@ const logout = () => {
 
 
       const userNavigation = [
-        { name: 'Your profile', href: '/profile' },
-        { name: 'Sign out', onClick: () => logout()},
+        { name: 'Il mio profilo', href: '/profile' },
+        { name: 'Esci', onClick: () => logout()},
       ]
     
       const fullnavigation = [

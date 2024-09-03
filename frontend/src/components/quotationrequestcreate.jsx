@@ -101,7 +101,7 @@ export default function UserCreateForm() {
                   id="company"
                   name="company"
                   autoComplete="company-name"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:text-sm sm:leading-6"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4]  sm:text-sm sm:leading-6"
                 >
                   {company.map((item) => (
                     <option key={item.id_company} value={item.id_company}>{item.name}</option>
@@ -120,7 +120,7 @@ export default function UserCreateForm() {
                   name="category"
                   onChange={handleCategoryChange}
                   autoComplete="category-name"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:max-w-xs sm:text-sm sm:leading-6"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4]  sm:max-w-xs sm:text-sm sm:leading-6"
                 >
                   {category.map((item) => (
                     <option key={item.id_category} value={item.id_category}>{item.name}</option>
@@ -138,7 +138,7 @@ export default function UserCreateForm() {
                   id="subcategory"
                   name="subcategory"
                   autoComplete="subcategory-name"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:max-w-xs sm:text-sm sm:leading-6"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4]  sm:max-w-xs sm:text-sm sm:leading-6"
                   disabled={subcategory.length === 0}
                 >
                   {subcategory.map((item) => (
@@ -157,7 +157,7 @@ export default function UserCreateForm() {
                   id="technicalarea"
                   name="technicalarea"
                   autoComplete="technicalarea-name"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:max-w-xs sm:text-sm sm:leading-6"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4]  sm:max-w-xs sm:text-sm sm:leading-6"
                 >
                   {technicalArea.map((item) => (
                     <option key={item.id_technicalarea} value={item.id_technicalarea}>{item.name}</option>
@@ -176,7 +176,7 @@ export default function UserCreateForm() {
                   maxLength={150}
                   name="description"
                   id="description"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:text-sm sm:leading-6"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4]  sm:text-sm sm:leading-6"
                   defaultValue={''}
                 />
                 <p className="mt-1 text-xs text-gray-500">Massimo 150 caratteri</p>
@@ -210,7 +210,7 @@ export default function UserCreateForm() {
         <button
           onClick={createQuotationRequest}
           type="submit"
-          className="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-600"
+          className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
         >
           Crea
         </button>

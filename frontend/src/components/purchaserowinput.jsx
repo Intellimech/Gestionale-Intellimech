@@ -74,7 +74,7 @@ export default function PurchaseRowInput({
           value={product.description}
           onChange={(e) => onChange({ ...product, description: e.target.value })}
           rows={1}
-          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"
+          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
         />
         <p className="mt-1 text-xs text-gray-500">Massimo 150 caratteri</p>
       </td>
@@ -90,7 +90,7 @@ export default function PurchaseRowInput({
           name={`unit_price-${index}`}
           value={product.unit_price}
           onChange={(e) => onChange({ ...product, unit_price: e.target.value })}
-          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"
+          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
         />
       </td>
 
@@ -104,7 +104,7 @@ export default function PurchaseRowInput({
           name={`quantity-${index}`}
           value={product.quantity}
           onChange={(e) => onChange({ ...product, quantity: e.target.value })}
-          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-red-500 focus:ring-red-500 sm:text-sm"
+          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
         />
       </td>
 
@@ -114,7 +114,7 @@ export default function PurchaseRowInput({
           <button
             type="button"
             onClick={handleDeleteClick}
-            className="text-red-600 hover:text-red-900 mt-1 flex items-center"
+            className="text-blue-500 hover:text-blue-900 mt-1 flex items-center"
           >
             <TrashIcon className="h-5 w-5" aria-hidden="true" />
           </button>

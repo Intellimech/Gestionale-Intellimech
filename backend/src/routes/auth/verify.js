@@ -8,6 +8,7 @@ import fs from "fs";
 import path from "path";
 import bcrypt from "bcrypt";
 import sequelize from "../../utils/db.js";
+import { Op } from "sequelize";
 import Logger from "../../utils/logger.js";
 import cookieparser from "cookie-parser";
 import cookie from "cookie";
@@ -47,6 +48,14 @@ router.get("/verify", async (req, res) => {
             });
         }
 
+        const todayStart = new Date();
+        todayStart.setHours(0, 0, 0, 0); // Start of today (00:00:00)
+        const todayEnd = new Date();
+        todayEnd.setHours(23, 59, 59, 999); // End of today (23:59:59)
+        
+        const period = new Date().getHours() < 12 ? "morning" : "afternoon";
+
+        console.log(`Current period: ${period}`);
         const user = await User.findOne({
             where: { id_user: decoded.id, sessionId: decoded.sessionId },
             attributes: ["id_user", "name", "surname", "birthdate", "username", "email", "isDeleted", "isActive", "createdAt", "updatedAt", "sessionId", "subgroup", "changepass"],
@@ -65,12 +74,23 @@ router.get("/verify", async (req, res) => {
                 },
                 {
                     model: sequelize.models.Notification,
-                    as: 'receiverUser', // Make sure this matches the alias
-                    attributes: ['id_notify', 'title', 'message', 'type']
+                    as: 'receiverUser', // Ensure this alias matches your Sequelize model definition
+                    attributes: ['id_notify', 'title', 'message', 'type'],
+                },
+                {
+                    model: sequelize.models.Calendar,
+                    as: 'ownedCalendars', // Ensure this alias matches your Sequelize model definition
+                    where: {
+                        date: {
+                            [Op.between]: [todayStart, todayEnd], // Filter by the start and end of today
+                        },
+                        period: period, // Ensure the 'period' column exists and matches the format
+                    },
+                    required: false, // Include users even if there are no matching calendar entries
                 }
             ],
         });
-
+      
         if (!user || !user.isActive) {
             return res.status(401).json({
                 message: "Unauthorized",
@@ -96,6 +116,7 @@ router.get("/verify", async (req, res) => {
             subgroup: user.Subgroup.name,
             notification: user.receiverUser,
             changepass: user.changepass,
+            location: user.ownedCalendars[0] ? user.ownedCalendars[0].location : "Non dichiarata",
         };
 
         return res.status(200).json({

@@ -48,11 +48,7 @@ export default function Homepage() {
                 Adesso sei in:
               </p>
               <p className="text-xl font-bold text-gray-900 sm:text-2xl">
-                {
-                  new Date().getHours() < 12 ? 'Smartworking' :
-                  new Date().getHours() < 19 ? 'Presenza' :
-                  'Fuori sede'
-                }
+                {user?.location}
               </p>
               <p className="text-sm font-medium text-gray-600">{new Date().toLocaleDateString()}</p>
             </div>

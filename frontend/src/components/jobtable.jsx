@@ -25,7 +25,7 @@ export default function Example({ permissions, user }) {
   const [showInfo, setShowInfo] = useState(false);
   const [selectedJob, setSelectedJob] = useState({});
 
-  const [sortColumn, setSortColumn] = useState('');
+  const [sortColumn, setSortColumn] = useState('name');
   const [sortDirection, setSortDirection] = useState('asc');
   const [filterType, setFilterType] = useState('name');
   const [searchQuery, setSearchQuery] = useState('');
@@ -80,20 +80,17 @@ export default function Example({ permissions, user }) {
   };
 
   const compareValues = (a, b) => {
-    if (a === undefined || b === undefined) return 0;
+    if (a === null || a === undefined) return 1;
+    if (b === null || b === undefined) return -1;
+    
     if (typeof a === 'string' && typeof b === 'string') {
       return a.localeCompare(b, undefined, { numeric: true });
     } else if (typeof a === 'number' && typeof b === 'number') {
       return a - b;
-    } else if (Array.isArray(a) && Array.isArray(b)) {
-      return a.length - b.length;
-    } else if (typeof a === 'object' && typeof b === 'object') {
-      // Example for sorting by nested object properties
-      return compareValues(a.value, b.value);
+    } else {
+      return a < b ? -1 : a > b ? 1 : 0;
     }
-    return a < b ? -1 : a > b ? 1 : 0;
   };
-  
 
   const [searchQueries, setSearchQueries] = useState({
     name: '',
@@ -118,46 +115,68 @@ export default function Example({ permissions, user }) {
       (searchQueries.status === '' || (item.status.toLowerCase().includes(searchQueries.status.toLowerCase()))) &&
       (searchQueries.reportedhour === '' || (item.Reportings && item.Reportings.some(report => report.hour.toString().includes(searchQueries.reportedhour.toString())))) &&
       (searchQueries.offerhour === '' || (item.SalesOrders[0] && item.SalesOrders[0].Offer && item.SalesOrders[0].Offer.hour && item.SalesOrders[0].Offer.hour.toString().includes(searchQueries.offerhour.toString()))) &&
-      (searchQueries.total === '' || (item.Reportings && item.Reportings.total.toString().includes(searchQueries.total.toString()))) &&
+      (searchQueries.total === '' || (item.Reportings && item.Reportings.some(report => report.total.toString().includes(searchQueries.total.toString())))) &&
       (searchQueries.offertotal === '' || (item.SalesOrders[0] && item.SalesOrders[0].Offer && item.SalesOrders[0].Offer.amount && item.SalesOrders[0].Offer.amount.toString().includes(searchQueries.offertotal.toString()))) &&
       (searchQueries.createdByUser === '' || (item.createdByUser && (item.createdByUser.name + ' ' + item.createdByUser.surname).toLowerCase().includes(searchQueries.createdByUser.toLowerCase())))
     );
   });
   
   
-  const sortedJob = filteredJob.sort((a, b) =>  {
-    const getValue = (item, column) => {
-      switch (column) {
-        case 'Company':
-          return item.SalesOrders[0]?.Offer.QuotationRequest.Company.name || '';
-        case 'Saleorder':
-          return item.SalesOrders[0]?.name || '';
-        case 'offertotal':
-          return item.SalesOrders[0]?.Offer.amount || '';
-        case 'offerhour':
-          return item.SalesOrders[0]?.Offer.hour || '';
-        case 'reportedhour':
-          return item.Reportings.hour|| '';
-        case 'total':
-          return item.Reportings.hour || ''; //non corretto
-        case 'createdByUser':
-          return item.createdByUser ? `${item.createdByUser.name} ${item.createdByUser.surname}` : '';
-        case 'status':
-          return item.status || '';
-        default:
-          return item[column] || '';
-      }
-    };
-  
-    const valueA = getValue(a, sortColumn);
-    const valueB = getValue(b, sortColumn);
-  
-    if (sortDirection === 'asc') {
-      return compareValues(valueA, valueB);
-    } else {
-      return compareValues(valueB, valueA);
+
+  const sortedJob = filteredJob.sort((a, b) => {
+    // Se sortColumn è vuota, ordina per id per impostazione predefinita
+    if (!sortColumn) {
+      setSortColumn('name');
     }
+  
+    // Altrimenti, ordina per la colonna specificata
+    const valueA = sortColumn === 'Company' ? a.SalesOrders[0].Offer.QuotationRequest.Company.name :
+                    sortColumn === 'reportedhour' ? a.SalesOrders[0].name :
+                    sortColumn === 'offerhour' ? a.SalesOrders[0].name :
+                    sortColumn === 'total' ? a.SalesOrders[0].name :
+                    sortColumn === 'offertotal' ? a.SalesOrders[0].name :
+                   
+                    sortColumn === 'offer' ? a.SalesOrders[0].name :
+                    sortColumn === 'createdByUser' ? (a.createdByUser?.name + ' ' + a.createdByUser?.surname) :
+                    a[sortColumn];
+    const valueB = sortColumn === 'Company' ? b.SalesOrders[0].Offer.QuotationRequest.Company.name :
+                    sortColumn === 'reportedhour' ? b.SalesOrders[0].name :
+                    sortColumn === 'offerhour' ? b.SalesOrders[0].name :
+                    sortColumn === 'total' ? b.SalesOrders[0].name :
+                    sortColumn === 'offertotal' ? b.SalesOrders[0].name :
+                   
+                    sortColumn === 'offer' ? b.SalesOrders[0].name :
+                    sortColumn === 'createdByUser' ? (b.createdByUser?.name + ' ' + b.createdByUser?.surname) :
+                    b[sortColumn];
+      if (sortColumn) {
+        if (sortDirection === 'asc') {
+          return compareValues(valueA, valueB);
+        } else {
+          return compareValues(valueB, valueA);
+        }
+      }
+      // Default sorting by id_category
+      return a.name - b.name;
   });
+    
+  const handleSort = (columnName) => {
+    if (sortColumn === columnName) {
+      if (sortDirection === 'asc') {
+        setSortDirection('desc');
+      } else if (sortDirection === 'desc') {
+        // Reset to default
+        setSortColumn('name');
+        setSortDirection('asc');
+      } else {
+        setSortDirection('asc');
+      }
+    } else {
+      setSortColumn(columnName);
+      setSortDirection('asc');
+    }
+  };
+
+    
 
   function exportUsers() {
     //export user in the csv file
@@ -173,15 +192,7 @@ export default function Example({ permissions, user }) {
     link.click();
   }
   
-  const handleSort = (columnName) => {
-    if (sortColumn === columnName) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortColumn(columnName);
-      setSortDirection('asc');
-    }
-  };
-    
+  
 
   function handleJobClick(job) {
     setSelectedJob(job);
@@ -320,10 +331,11 @@ export default function Example({ permissions, user }) {
                 <tr>
                   <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
                     Commessa
-                    {sortColumn === 'name' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'name' && sortDirection !== '' ? (sortDirection === 'asc' ?  <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
                     <input
                       value={searchQueries.name}
+                      onClick={(e) => e.stopPropagation()} 
                       onChange={handleSearchInputChange('name')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
@@ -332,10 +344,11 @@ export default function Example({ permissions, user }) {
                   </th>
                   <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Company')}>
                     Azienda
-                    {sortColumn === 'Company' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'Company' && sortDirection !== '' ? (sortDirection === 'asc' ?  <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
                     <input
                       value={searchQueries.Company}
+                      onClick={(e) => e.stopPropagation()} 
                       onChange={handleSearchInputChange('Company')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
@@ -344,10 +357,11 @@ export default function Example({ permissions, user }) {
                   </th>
                   <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('SaleOrder')}>
                     Ordine di Vendita
-                    {sortColumn === 'SaleOrder' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'SaleOrder' && sortDirection !== '' ? (sortDirection === 'asc' ?  <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
                     <input
                       value={searchQueries.SaleOrder}
+                      onClick={(e) => e.stopPropagation()} 
                       onChange={handleSearchInputChange('SaleOrder')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
@@ -356,10 +370,11 @@ export default function Example({ permissions, user }) {
                   </th>
                   <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('offertotal')}>
                     Valore Contrattuale
-                    {sortColumn === 'offertotal' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'offertotal' && sortDirection !== '' ? (sortDirection === 'asc' ?  <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
                     <input
                       value={searchQueries.offertotal}
+                      onClick={(e) => e.stopPropagation()} 
                       onChange={handleSearchInputChange('offertotal')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
@@ -368,10 +383,11 @@ export default function Example({ permissions, user }) {
                   </th>
                   <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('offerhour')}>
                     Ore Stimate
-                    {sortColumn === 'offerhour' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'offerhour' && sortDirection !== '' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
                     <input
                       value={searchQueries.offerhour}
+                      onClick={(e) => e.stopPropagation()} 
                       onChange={handleSearchInputChange('offerhour')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
@@ -380,10 +396,11 @@ export default function Example({ permissions, user }) {
                   </th>
                   <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('total')}>
                     Valore Reale
-                    {sortColumn === 'total' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'total'&& sortDirection !== '' ? (sortDirection === 'asc' ?  <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
                     <input
                       value={searchQueries.total}
+                      onClick={(e) => e.stopPropagation()} 
                       onChange={handleSearchInputChange('total')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
@@ -392,10 +409,11 @@ export default function Example({ permissions, user }) {
                   </th>
                   <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('reportedhour')}>
                     Ore Lavorate
-                    {sortColumn === 'reportedhour' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'reportedhour' && sortDirection !== '' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
                     <input
                       value={searchQueries.reportedhour}
+                      onClick={(e) => e.stopPropagation()} 
                       onChange={handleSearchInputChange('reportedhour')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
@@ -404,10 +422,11 @@ export default function Example({ permissions, user }) {
                   </th>
                   <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('status')}>
                     Stato
-                    {sortColumn === 'status' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'status' && sortDirection !== '' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
                     <input
                       value={searchQueries.status}
+                      onClick={(e) => e.stopPropagation()} 
                       onChange={handleSearchInputChange('status')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
@@ -416,10 +435,11 @@ export default function Example({ permissions, user }) {
                   </th>
                   <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('createdByUser')}>
                     Creata da
-                    {sortColumn === 'createdByUser' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'createdByUser' && sortDirection !== '' ? (sortDirection === 'asc' ?  <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
                     <input
                       value={searchQueries.createdByUser}
+                      onClick={(e) => e.stopPropagation()} 
                       onChange={handleSearchInputChange('createdByUser')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""

@@ -63,16 +63,8 @@ export default function TechnicalAreaTable() {
     );
   });
 
-  const handleSort = (columnName) => {
-    if (sortColumn === columnName) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortColumn(columnName);
-      setSortDirection('asc');
-    }
-  };
 
-  const compareValues = (a, b) => {
+ const compareValues = (a, b) => {
     if (typeof a === 'string' && typeof b === 'string') {
       return a.localeCompare(b, undefined, { numeric: true });
     } else if (typeof a === 'number' && typeof b === 'number') {
@@ -82,13 +74,34 @@ export default function TechnicalAreaTable() {
     }
   };
 
+
+  const handleSort = (columnName) => {
+    if (sortColumn === columnName) {
+      if (sortDirection === 'asc') {
+        setSortDirection('desc');
+      } else if (sortDirection === 'desc') {
+        setSortColumn('');
+        setSortDirection('asc');
+      }
+    } else {
+      setSortColumn(columnName);
+      setSortDirection('asc');
+    }
+  };
+
   const sortedTechnicalAreas = filteredTechnicalAreas.sort((a, b) => {
+    if (!sortColumn) {
+      
+      return a.id_technicalarea - b.id_technicalarea;
+    }
+
     if (sortDirection === 'asc') {
       return compareValues(a[sortColumn], b[sortColumn]);
     } else {
       return compareValues(b[sortColumn], a[sortColumn]);
     }
   });
+
 
   const exportTechnicalAreas = () => {
     const csvContent =
@@ -164,9 +177,15 @@ export default function TechnicalAreaTable() {
                 <table className="min-w-full table-fixed divide-y divide-gray-300">
                   <thead>
                     <tr>
-                      <th scope="col" className="px-0 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('id_technicalarea')}>
+                      <th
+                        scope="col"
+                        className="px-0 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
+                        onClick={(e) => {
+                          if (e.target.tagName !== 'INPUT') handleSort('id_technicalarea');
+                        }}
+                      >
                         ID
-                        {sortColumn === 'id_technicalarea' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                        {sortColumn === 'id_technicalarea' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : sortDirection === 'desc' ? <ArrowDownIcon className="h-5 w-5 inline ml-2" /> : null) : null}
                         <br />
                         <input
                           value={searchQueries.id_technicalarea}
@@ -176,9 +195,15 @@ export default function TechnicalAreaTable() {
                           rows={1}
                         />
                       </th>
-                      <th scope="col" className="px-1.5 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
+                      <th
+                        scope="col"
+                        className="px-1.5 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
+                        onClick={(e) => {
+                          if (e.target.tagName !== 'INPUT') handleSort('name');
+                        }}
+                      >
                         Nome
-                        {sortColumn === 'name' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                        {sortColumn === 'name' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : sortDirection === 'desc' ? <ArrowDownIcon className="h-5 w-5 inline ml-2" /> : null) : null}
                         <br />
                         <input
                           value={searchQueries.name}
@@ -188,9 +213,15 @@ export default function TechnicalAreaTable() {
                           rows={1}
                         />
                       </th>
-                      <th scope="col" className="px-1.5 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('code')}>
+                      <th
+                        scope="col"
+                        className="px-1.5 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
+                        onClick={(e) => {
+                          if (e.target.tagName !== 'INPUT') handleSort('code');
+                        }}
+                      >
                         Codice
-                        {sortColumn === 'code' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                        {sortColumn === 'code' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : sortDirection === 'desc' ? <ArrowDownIcon className="h-5 w-5 inline ml-2" /> : null) : null}
                         <br />
                         <input
                           value={searchQueries.code}
@@ -200,6 +231,7 @@ export default function TechnicalAreaTable() {
                           rows={1}
                         />
                       </th>
+
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200 bg-white">

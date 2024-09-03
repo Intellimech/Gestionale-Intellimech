@@ -17,10 +17,11 @@ export default function SubcategoryTable() {
   const [filterType, setFilterType] = useState('name');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false); // Added state
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [newSubcategory, setNewSubcategory] = useState({ name: '', category: '' });
+  const [searchQueries, setSearchQueries] = useState({ name: '', id_subcategory: '', category: '' });
 
-  const tableRef = useRef(null); // Reference for the table div
+  const tableRef = useRef(null);
 
   useEffect(() => {
     // Fetch all subcategories
@@ -63,10 +64,17 @@ export default function SubcategoryTable() {
     }
   }, [isModalOpen]);
 
-
   const handleSort = (columnName) => {
     if (sortColumn === columnName) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+      // Toggle sorting direction or reset if already descending
+      if (sortDirection === 'asc') {
+        setSortDirection('desc');
+      } else if (sortDirection === 'desc') {
+        setSortColumn('');
+        setSortDirection('');
+      } else {
+        setSortDirection('asc');
+      }
     } else {
       setSortColumn(columnName);
       setSortDirection('asc');
@@ -82,25 +90,15 @@ export default function SubcategoryTable() {
       return a < b ? -1 : a > b ? 1 : 0;
     }
   };
-  const [searchQueries, setSearchQueries] = useState({
-    name: '',
-    id_subcategory: '',
-    category: ''
-  });
-  
-  // Filter and sort invoices based on search query, selected year, and sorting
+
   const filteredSubcategories = subcategories.filter((item) => {
     return (
-    (searchQueries.id_subcategory === '' || item.id_subcategory.toString().includes(searchQueries.id_subcategory.toString())) &&
-    (searchQueries.category === '' || item.category.toString().includes(searchQueries.category.toString())) &&
-    
-    (searchQueries.name === '' || item.name.toLowerCase().includes(searchQueries.name.toLowerCase()))
-  );
-});
+      (searchQueries.id_subcategory === '' || item.id_subcategory.toString().includes(searchQueries.id_subcategory.toString())) &&
+      (searchQueries.category === '' || item.category.toString().includes(searchQueries.category.toString())) &&
+      (searchQueries.name === '' || item.name.toLowerCase().includes(searchQueries.name.toLowerCase()))
+    );
+  });
 
-
-
-  
   const handleSearchInputChange = (column) => (event) => {
     setSearchQueries({ ...searchQueries, [column]: event.target.value });
   };
@@ -164,8 +162,8 @@ export default function SubcategoryTable() {
 
   return (
     <>
-     <div className="px-4 sm:px-6 lg:px-8">
-     <div className="flex items-center justify-between">
+      <div className="px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between">
           {/* Titolo e descrizione */}
           <div className="sm:flex-auto">
             <h1 className="text-base font-semibold leading-6 text-gray-900">Sotto categorie</h1>
@@ -189,152 +187,123 @@ export default function SubcategoryTable() {
           </div>
         </div>
 
-
         <div className="mt-8 flow-root">
-          <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">          
+          <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
               <div className="relative">
                 <table className="min-w-full table-fixed divide-y divide-gray-300">
-                <thead>
-                  <tr>
-                    <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('id_subcategory')}>
-                      ID
-                      {sortColumn === 'id_subcategory' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                  <thead>
+                    <tr>
+                      <th scope="col" className="px-0 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('id_subcategory')}>
+                        ID
+                        {sortColumn === 'id_subcategory' && sortDirection !== '' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                       <br />
-                      < input
-                        value={searchQueries.id_subcategory}
-                        onChange={handleSearchInputChange('id_subcategory')}
-                        className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                        placeholder=""
-                        rows={1}
-                      />
-                    </th>
-
-                    <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
-                      Nome
-                      {sortColumn === 'name' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <br />
-                      < input
-                        value={searchQueries.name}
-                        onChange={handleSearchInputChange('name')}
-                        className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                        placeholder=""
-                        rows={1}
-                      />
-                    </th>
-
-                    <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('category')}>
-                      Categoria
-                      {sortColumn === 'category' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <br />
-                      < input
-                        value={searchQueries.category}
-                        onChange={handleSearchInputChange('category')}
-                        className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                        placeholder=""
-                        rows={1}
-                      />
-                    </th>
-                  </tr>
-                </thead>
-
-                <tbody className="divide-y divide-gray-200 bg-white">
-                  {sortedSubcategories.map((subcategory) => (
-                    <tr key={subcategory.id_subcategory}>
-                      <td className="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-500 sm:pl-0 w-20">{subcategory.id_subcategory}</td>
-                      <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500 w-64">{subcategory.name}</td>
-                      <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500 w-64">{subcategory.category}</td>
+                      <input
+                          className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"                          type="text"
+                          value={searchQueries.id_subcategory}
+                          onChange={handleSearchInputChange('id_subcategory')}
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                      </th>
+                      <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
+                        Nome
+                        {sortColumn === 'name' && sortDirection !== '' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                        <br />
+                        <input
+                          className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                          type="text"
+                          value={searchQueries.name}
+                          onChange={handleSearchInputChange('name')}
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                      </th>
+                      <th scope="col" className="px-20 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('category')}>
+                        Categoria
+                        {sortColumn === 'category' && sortDirection !== '' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                        <br />
+                        <input
+                          className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                          type="text"
+                          value={searchQueries.category}
+                          onChange={handleSearchInputChange('category')}
+                          onClick={(e) => e.stopPropagation()}
+                        />
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                    
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {sortedSubcategories.map((subcategory) => (
+                      <tr key={subcategory.id_subcategory}>
+                        <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{subcategory.id_subcategory}</td>
+                        <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{subcategory.name}</td>
+                        <td className="whitespace-nowrap px-20 py-2 text-sm text-gray-500">{subcategory.category}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
+
+        {/* Modal per creare sotto categoria */}
+        {isModalOpen && (
+          <Dialog as="div" className="relative z-10" open={isModalOpen} onClose={() => setIsModalOpen(false)}>
+            <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+            <div id="subcategory-modal" className="fixed inset-0 flex items-center justify-center p-4">
+              <Dialog.Panel className="mx-auto max-w-sm rounded bg-white p-4">
+                <Dialog.Title>Crea Nuova Sotto Categoria</Dialog.Title>
+                <form onSubmit={handleSubmitNewSubcategory}>
+                  <input
+                    type="text"
+                    placeholder="Nome Sotto Categoria"
+                    value={newSubcategory.name}
+                    onChange={(e) => setNewSubcategory({ ...newSubcategory, name: e.target.value })}
+                    className="block w-full mt-2 border-gray-300 rounded-md shadow-sm focus:border-[#A7D0EB] focus:ring-[#A7D0EB] sm:text-sm"
+                  />
+                  <select
+                    value={newSubcategory.category}
+                    onChange={(e) => setNewSubcategory({ ...newSubcategory, category: e.target.value })}
+                    className="block w-full mt-2 border-gray-300 rounded-md shadow-sm focus:border-[#A7D0EB] focus:ring-[#A7D0EB] sm:text-sm"
+                  >
+                    <option value="">Select Category</option>
+                    {categories.map((category) => (
+                      <option key={category.id_category} value={category.name}>
+                        {category.name}
+                      </option>
+                    ))}
+                  </select>
+                  <button type="submit" className="block w-full mt-4 rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4]">
+                    Conferma
+                  </button>
+                </form>
+              </Dialog.Panel>
+            </div>
+          </Dialog>
+        )}
+
+        {/* Modal di conferma */}
+        {isConfirmModalOpen && (
+          <Dialog as="div" className="relative z-10" open={isConfirmModalOpen} onClose={() => setIsConfirmModalOpen(false)}>
+            <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+            <div className="fixed inset-0 flex items-center justify-center p-4">
+              <Dialog.Panel className="mx-auto max-w-sm rounded bg-white p-4">
+                <Dialog.Title>Conferma Creazione</Dialog.Title>
+                <p>Sei sicuro di voler creare questa sotto categoria?</p>
+                <div className="flex justify-end mt-4">
+                  <button onClick={submitNewSubcategory} className="mr-2 rounded-md bg-[#A7D0EB] px-2 py-1 text-xs font-bold text-black hover:bg-[#7fb7d4]">
+                    Conferma
+                  </button>
+                  <button onClick={() => setIsConfirmModalOpen(false)} className="rounded-md bg-red-500 px-2 py-1 text-xs font-bold text-white hover:bg-red-700">
+                    Annulla
+                  </button>
+                </div>
+              </Dialog.Panel>
+            </div>
+          </Dialog>
+        )}
       </div>
-    </div>
-      {/* Modal for Creating a New Subcategory */}
-      <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)} className="relative z-50">
-        <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
-        <div className="fixed inset-0 flex items-center justify-center p-4">
-          <Dialog.Panel className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
-            <Dialog.Title className="text-lg font-semibold text-gray-900">Crea una nuova Sotto categoria</Dialog.Title>
-            <form onSubmit={handleSubmitNewSubcategory} className="mt-4">
-              <div>
-                <label htmlFor="subcategory-category" className="block text-sm font-medium text-gray-700">Categoria</label>
-                <select
-                  id="subcategory-category"
-                  value={newSubcategory.category}
-                  onChange={(e) => setNewSubcategory({ ...newSubcategory, category: e.target.value })}
-                  required
-                  className="mt-2 w-full p-2 border border-gray-300 rounded-md focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
-                >
-                  <option value="">Seleziona una categoria</option>
-                  {categories.map((category) => (
-                    <option key={category.id_category} value={category.id_category}>
-                      {category.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="mt-4">
-                <label htmlFor="subcategory-name" className="block text-sm font-medium text-gray-700">Nome della sottocategoria</label>
-                <input
-                  id="subcategory-name"
-                  type="text"
-                  value={newSubcategory.name}
-                  onChange={(e) => setNewSubcategory({ ...newSubcategory, name: e.target.value })}
-                  required
-                  className="mt-2 w-full p-2 border border-gray-300 rounded-md focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
-                />
-              </div>
-              <div className="mt-6 flex justify-end space-x-3">
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="rounded-md bg-[#A7D0EB] px-3 py-2 text-sm font-bold text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
-              >
-                Cancella
-              </button>
-              <button
-                
-                className="rounded-md bg-[#A7D0EB] px-3 py-2 text-sm font-bold text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
-              >
-                Crea
-              </button>
-            </div>
-            </form>
-          </Dialog.Panel>
-        </div>
-      </Dialog>
-
-
-      {/* Confirmation Modal */}
-      <Dialog open={isConfirmModalOpen} onClose={() => setIsConfirmModalOpen(false)} className="relative z-50">
-        <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
-        <div className="fixed inset-0 flex items-center justify-center p-4">
-          <Dialog.Panel className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
-            <Dialog.Title className="text-lg font-semibold text-gray-900">Conferma della creazione</Dialog.Title>
-            <div className="mt-4">
-              <p className="text-sm text-gray-700">Sicuro di voler creare questa nuova sotto categoria</p>
-            </div>
-            <div className="mt-6 flex justify-end space-x-3">
-            <button
-              onClick={() => setIsConfirmModalOpen(false)}  // Fixed here
-              className="rounded-md bg-[#A7D0EB] px-3 py-2 text-sm font-bold text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
-            >
-              Cancella
-            </button>
-
-              <button
-                onClick={submitNewSubcategory}
-                className="rounded-md bg-[#A7D0EB] px-3 py-2 text-sm font-bold text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
-              >
-                Conferma
-              </button>
-            </div>
-          </Dialog.Panel>
-        </div>
-      </Dialog>
     </>
   );
 }

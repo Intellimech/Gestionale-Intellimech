@@ -365,8 +365,8 @@ export default function Example({ purchase: initialPurchase }) {
             Dettagli sull'ordine di Acquisto
             <span className={`ml-2 px-2 inline-flex text-xs leading-5 rounded-full ${{
               'In Approvazione': 'bg-gray-300 text-gray-500',
-              'Approvata': 'bg-gray-100 text-green-800',
-              'Rifiutata': 'bg-gray-100 text-red-800',
+              'Approvato': 'bg-gray-100 text-green-800',
+              'Rifiutato': 'bg-gray-100 text-red-800',
             }[purchase?.status] || 'bg-gray-100 text-gray-800'}`}>
               {purchase?.status || 'Nessuno'}
             </span>
@@ -404,7 +404,7 @@ export default function Example({ purchase: initialPurchase }) {
       <div className="mt-6">
         <dl className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6">
                     <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
-                        <dt className="text-sm font-medium leading-6 text-gray-900">Codice Ordine</dt>
+                        <dt className="text-sm font-medium leading-6 text-gray-900">Ordine</dt>
                         <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{purchase?.name}</dd>
                     </div>
                     <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">

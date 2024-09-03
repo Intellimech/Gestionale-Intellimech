@@ -41,6 +41,25 @@ export default function invoicetable({ invoicetype }) {
         console.log('error', error);
       });
   }, []);
+ 
+  // Filter and sort invoices based on search query, selected year, and sorting
+  const filteredInvoices = invoices.filter((item) => {
+    return (
+    (searchQueries.Number === '' || item.name.toLowerCase().includes(searchQueries.Number.toLowerCase())) &&
+    
+    (searchQueries.Company === '' || item.Company?.name.toLowerCase().includes(searchQueries.Company.toLowerCase())) &&
+  
+    (searchQueries.DocumentType === '' || item.DocumentType.toLowerCase().includes(searchQueries.DocumentType.toLowerCase())) &&
+    (searchQueries.InvoiceType === '' || item.InvoiceType.toLowerCase().includes(searchQueries.InvoiceType.toLowerCase())) &&
+    
+    (searchQueries.Lines === '' || item.InvoiceLines.length.toString().includes(searchQueries.Lines.toString())) &&
+    
+    (searchQueries.Date=== '' || item.Date.includes(searchQueries.Date)) &&
+    (searchQueries.status === '' || item.status.toLowerCase().includes(searchQueries.status.toLowerCase())) &&
+    (searchQueries.Amount=== '' || item.Amount.toString().includes(searchQueries.Amount.toString())) 
+  
+  );
+});
 
   // Function to handle year select change
   const handleYearSelectChange = (event) => {
@@ -85,37 +104,35 @@ export default function invoicetable({ invoicetype }) {
   });
 
   
-  
-  // Filter and sort invoices based on search query, selected year, and sorting
-  const filteredInvoices = invoices.filter((item) => {
-    return (
-    (searchQueries.Number === '' || item.name.toLowerCase().includes(searchQueries.Number.toLowerCase())) &&
-    
-    (searchQueries.Company === '' || item.Company?.name.toLowerCase().includes(searchQueries.Company.toLowerCase())) &&
-  
-    (searchQueries.DocumentType === '' || item.DocumentType.toLowerCase().includes(searchQueries.DocumentType.toLowerCase())) &&
-    (searchQueries.InvoiceType === '' || item.InvoiceType.toLowerCase().includes(searchQueries.InvoiceType.toLowerCase())) &&
-    
-    (searchQueries.Lines === '' || item.InvoiceLines.length.toString().includes(searchQueries.Lines.toString())) &&
-    
-    (searchQueries.Date=== '' || item.Date.includes(searchQueries.Date)) &&
-    (searchQueries.status === '' || item.status.toLowerCase().includes(searchQueries.status.toLowerCase())) &&
-    (searchQueries.Amount=== '' || item.Amount.toString().includes(searchQueries.Amount.toString())) 
-  
-  );
-});
 
-
-
-  // Function to sort invoices by column
-  const handleSort = (columnName) => {
-    if (sortColumn === columnName) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortColumn(columnName);
+const handleSort = (columnName) => {
+  if (sortColumn === columnName) {
+    if (sortDirection === 'asc') {
+      setSortDirection('desc');
+    } else if (sortDirection === 'desc') {
+      setSortColumn('');
       setSortDirection('asc');
     }
-  };
+  } else {
+    setSortColumn(columnName);
+    setSortDirection('asc');
+  }
+};
+
+const sortedInvoices = filteredInvoices.sort((a, b) => {
+  if (!sortColumn) {
+    
+    return a.Number - b.Number;
+  }
+
+  if (sortDirection === 'asc') {
+    return compareValues(a[sortColumn], b[sortColumn]);
+  } else {
+    return compareValues(b[sortColumn], a[sortColumn]);
+  }
+});
+
+ 
 
   // Function to compare values of different types
   const compareValues = (a, b) => {
@@ -189,26 +206,26 @@ export default function invoicetable({ invoicetype }) {
                 <tr>
                   <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Number')}>
                     N° Fattura
-                    {sortColumn === 'Number' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'Number'   && sortDirection !== '' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
                      <input
-                      type="text"
+                        onClick={(e) => e.stopPropagation()} // Stop click propagation
                       value={searchQueries.Number}
                       onChange={handleSearchInputChange('Number')}
-                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
                      rows= {1} />
                   </th>
 
                   <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Company')}>
                     Azienda
-                    {sortColumn === 'Company' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'Company'  && sortDirection !== '' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
                      <input
-                      type="text"
+                        onClick={(e) => e.stopPropagation()} // Stop click propagation
                       value={searchQueries.Company}
                       onChange={handleSearchInputChange('Company')}
-                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
                      rows= {1} />
                   </th>
@@ -219,9 +236,10 @@ export default function invoicetable({ invoicetype }) {
                     <br />
                      <input
                       type="text"
+                      onClick={(e) => e.stopPropagation()} // Stop click propagation
                       value={searchQueries.DocumentType}
                       onChange={handleSearchInputChange('DocumentType')}
-                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
                      rows= {1} />
                   </th>
@@ -233,8 +251,9 @@ export default function invoicetable({ invoicetype }) {
                      <input
                       type="text"
                       value={searchQueries.Date}
+                      onClick={(e) => e.stopPropagation()} // Stop click propagation
                       onChange={handleSearchInputChange('Date')}
-                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
                      rows= {1} />
                   </th>
@@ -246,8 +265,9 @@ export default function invoicetable({ invoicetype }) {
                      <input
                       type="text"
                       value={searchQueries.InvoiceType}
+                      onClick={(e) => e.stopPropagation()} // Stop click propagation
                       onChange={handleSearchInputChange('InvoiceType')}
-                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
                      rows= {1} />
                   </th>
@@ -258,9 +278,10 @@ export default function invoicetable({ invoicetype }) {
                     <br />
                      <input
                       type="text"
+                      onClick={(e) => e.stopPropagation()} // Stop click propagation
                       value={searchQueries.Lines}
                       onChange={handleSearchInputChange('Lines')}
-                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
                      rows= {1} />
                   </th>
@@ -271,9 +292,10 @@ export default function invoicetable({ invoicetype }) {
                     <br />
                      <input
                       type="text"
+                      onClick={(e) => e.stopPropagation()} // Stop click propagation
                       value={searchQueries.Amount}
                       onChange={handleSearchInputChange('Amount')}
-                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 sm:text-xs"
+                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
                      rows= {1}/>
                   </th>
@@ -281,7 +303,7 @@ export default function invoicetable({ invoicetype }) {
               </thead>
 
               <tbody className="divide-y divide-gray-200 bg-white">
-                {filteredInvoices.map((invoice) => (
+                {sortedInvoices.map((invoice) => (
                   <tr key={invoice.id_invoices}>
                     <td className="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-500 sm:pl-0">{invoice.name}</td>
                     <td className="whitespace-nowrap px-2 py-2 text-sm font-medium text-gray-900">{invoice.Company.name}</td>

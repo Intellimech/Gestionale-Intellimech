@@ -6,9 +6,9 @@ const Locations = [
     { value: 'Ferie', label: 'Ferie' },
     { value: 'Permesso', label: 'Permesso' },
     { value: 'Malattia', label: 'Malattia' },
-    { value: 'Presenza', label: 'Presenza' },
+    { value: 'Ufficio', label: 'Ufficio' },
     { value: 'Trasferta', label: 'Trasferta' },
-    { value: 'Smartworking', label: 'Smartworking' },
+    { value: 'SmartWorking', label: 'SmartWorking' },
     { value: 'Fuori Ufficio', label: 'Fuori Ufficio' },
 ];
 
@@ -17,7 +17,7 @@ const Parts = [
     { value: 'afternoon', label: 'Pomeriggio' },
 ];
 
-export default function Example({ date }) {
+export default function Example({ date, onUpdate }) { // Ensure to pass an onUpdate callback from parent
     const [location, setLocation] = useState(null);
     const [part, setPart] = useState(null);
 
@@ -30,20 +30,23 @@ export default function Example({ date }) {
     };
 
     const createCalendar = () => {
-        console.log('Data:', date);
-        console.log('Periodo:', part.value);
-        console.log('Luogo:', location.value);
+        if (!location || !part) {
+            alert('Please select both location and period!');
+            return;
+        }
+
         axios.post('http://localhost:3000/calendar/create', {
             date: date,
             part: part.value,
             location: location.value,
         })
-            .then((response) => {
-                console.log(response);
-            })
-            .catch((error) => {
-                console.error(error);
-            });
+        .then((response) => {
+            console.log(response);
+            if (onUpdate) onUpdate(); // Trigger parent's state update if provided
+        })
+        .catch((error) => {
+            console.error(error);
+        });
     };
 
     return (
@@ -63,10 +66,10 @@ export default function Example({ date }) {
                             <div className="mt-2">
                                 <input
                                     type="date"
-                                    value={new Date(date)?.toISOString().split('T')[0]}
+                                    value={date ? new Date(date)?.toISOString().split('T')[0] : ''}
                                     id="selectedDate"
                                     name="selectedDate"
-                                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:text-sm sm:leading-6"
+                                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4] sm:text-sm sm:leading-6"
                                     disabled
                                 />
                             </div>
@@ -74,29 +77,29 @@ export default function Example({ date }) {
 
                         <div className="sm:col-span-4">
                             <label htmlFor="part" className="block text-sm font-medium leading-6 text-gray-900">
-                                Seleziona un periodo della giornata
+                            Orario
                             </label>
                             <div className="mt-2">
                                 <Select
                                     value={part}
                                     onChange={handlePartChange}
                                     options={Parts}
-                                    primaryColor={"red"}
-                                    isMultiple={false}
+                                    primaryColor={"[#7fb7d4]"}
+                                    isMultiple={false} // Corrected to false for single selection
                                 />
                             </div>
                         </div>
 
                         <div className="sm:col-span-4">
                             <label htmlFor="location" className="block text-sm font-medium leading-6 text-gray-900">
-                                Seleziona un luogo
+                                Stato
                             </label>
                             <div className="mt-2">
                                 <Select
                                     value={location}
                                     onChange={handleLocationChange}
                                     options={Locations}
-                                    primaryColor={"red"}
+                                    primaryColor={"[#7fb7d4]"}
                                 />
                             </div>
                         </div>
@@ -105,14 +108,13 @@ export default function Example({ date }) {
             </div>
 
             <div className="mt-6 flex items-center justify-end gap-x-6">
-                <button type="button" className="text-sm font-semibold leading-6 text-gray-900">
+                <button type="button" className="block rounded-md px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-gray-200 focus:outline-gray focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]">
                     Cancel
                 </button>
                 <button
                     type="button"
                     onClick={createCalendar}
-                    className="rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
-                >
+                    className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]">
                     Save
                 </button>
             </div>

@@ -44,12 +44,21 @@ export default function Example({ permissions }) {
 
   const handleSort = (columnName) => {
     if (sortColumn === columnName) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+      // Se la colonna è già ordinata in modo ascendente, passa a discendente
+      // Se è discendente, torna all'ordinamento predefinito (non ordinato)
+      if (sortDirection === 'asc') {
+        setSortDirection('desc');
+      } else if (sortDirection === 'desc') {
+        setSortColumn(''); // Resetta la colonna di ordinamento per tornare all'ordinamento predefinito
+        setSortDirection('asc');
+      }
     } else {
+      // Se la colonna non è quella corrente, imposta l'ordinamento ascendente
       setSortColumn(columnName);
       setSortDirection('asc');
     }
   };
+  
     
 
   const compareValues = (a, b) => {
@@ -89,32 +98,35 @@ export default function Example({ permissions }) {
     
   
   
-  const sortedSaleOrder = filteredSaleOrder.sort((a, b) => {
-    const getValue = (item, column) => {
-      switch (column) {
-        case 'Company':
-          return item.Offer.QuotationRequest.Company.name || '';
-        case 'description':
-          return item.Offer.QuotationRequest.description || '';
-        case 'offer':
-          return item.Offer.name || '';
-        case 'createdByUser':
-          return item.createdByUser ? `${item.createdByUser.name} ${item.createdByUser.surname}` : '';
-        default:
-          return item[column] || '';
-      }
-    };
-    
-  
-    const valueA = getValue(a, sortColumn);
-    const valueB = getValue(b, sortColumn);
-  
-    if (sortDirection === 'asc') {
-      return compareValues(valueA, valueB);
-    } else {
-      return compareValues(valueB, valueA);
+const sortedSaleOrder = filteredSaleOrder.sort((a, b) => {
+  if (!sortColumn) {
+    return 0; // Nessun ordinamento
+  }
+  const getValue = (item, column) => {
+    switch (column) {
+      case 'Company':
+        return item.Offer.QuotationRequest.Company.name || '';
+      case 'description':
+        return item.Offer.QuotationRequest.description || '';
+      case 'offer':
+        return item.Offer.name || '';
+      case 'createdByUser':
+        return item.createdByUser ? `${item.createdByUser.name} ${item.createdByUser.surname}` : '';
+      default:
+        return item[column] || '';
     }
-  });
+  };
+
+  const valueA = getValue(a, sortColumn);
+  const valueB = getValue(b, sortColumn);
+
+  if (sortDirection === 'asc') {
+    return compareValues(valueA, valueB);
+  } else {
+    return compareValues(valueB, valueA);
+  }
+});
+
 
   const handleStatusSelectChange = (event) => {
     setSelectedStatus(event.target.value);
@@ -274,6 +286,7 @@ export default function Example({ permissions }) {
                       <input
                         type="text"
                         value={searchQueries.name}
+                        onClick={(e) => e.stopPropagation()}
                         onChange={handleSearchInputChange('name')}
                        className="mt-1 px-2 py-1       w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                         placeholder=""
@@ -287,6 +300,7 @@ export default function Example({ permissions }) {
                       <input
                         type="input"
                         value={searchQueries.Company}
+                        onClick={(e) => e.stopPropagation()}
                         onChange={handleSearchInputChange('Company')}
                         className="mt-1       w-20 px-2 py-1 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                         placeholder=""
@@ -301,6 +315,7 @@ export default function Example({ permissions }) {
                       <input
                         type="text"
                         value={searchQueries.offer}
+                        onClick={(e) => e.stopPropagation()}
                         onChange={handleSearchInputChange('offer')}
                         className="mt-1 px-2 py-1       w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                         placeholder=""
@@ -314,6 +329,7 @@ export default function Example({ permissions }) {
                       <input
                         type="text"
                         value={searchQueries.description}
+                        onClick={(e) => e.stopPropagation()}
                         onChange={handleSearchInputChange('description')}
                        className="mt-1 px-2 py-1       w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                         placeholder=""
@@ -327,6 +343,7 @@ export default function Example({ permissions }) {
                       <input
                         type="text"
                         value={searchQueries.status}
+                        onClick={(e) => e.stopPropagation()}
                         onChange={handleSearchInputChange('status')}
                        className="mt-1 px-2 py-1       w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                         placeholder=""
@@ -340,6 +357,7 @@ export default function Example({ permissions }) {
                       <input
                         type="text"
                         value={searchQueries.createdByUser}
+                        onClick={(e) => e.stopPropagation()}
                         onChange={handleSearchInputChange('createdByUser')}
                        className="mt-1 px-2 py-1       w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                         placeholder=""

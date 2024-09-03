@@ -13,11 +13,15 @@ export default function CategoryTable() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortColumn, setSortColumn] = useState('');
   const [sortDirection, setSortDirection] = useState('asc');
-  const [filterType, setFilterType] = useState('name');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState('');
-  const tableRef = useRef(null); // Reference for the table div
+  const tableRef = useRef(null);
+
+  const [searchQueries, setSearchQueries] = useState({
+    name: '',
+    id_category: ''
+  });
 
   useEffect(() => {
     axios
@@ -46,11 +50,17 @@ export default function CategoryTable() {
     }
   }, [isModalOpen]);
 
-  
-
   const handleSort = (columnName) => {
     if (sortColumn === columnName) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+      if (sortDirection === 'asc') {
+        setSortDirection('desc');
+      } else if (sortDirection === 'desc') {
+        // Reset to default
+        setSortColumn('');
+        setSortDirection('asc');
+      } else {
+        setSortDirection('asc');
+      }
     } else {
       setSortColumn(columnName);
       setSortDirection('asc');
@@ -67,33 +77,29 @@ export default function CategoryTable() {
     }
   };
 
-  const [searchQueries, setSearchQueries] = useState({
-    name: '',
-   id_category: ''
-  });
-
   const handleSearchInputChange = (column) => (event) => {
+    event.stopPropagation(); // Prevent click propagation to handleSort
     setSearchQueries({ ...searchQueries, [column]: event.target.value });
   };
-  
-  // Filter and sort invoices based on search query, selected year, and sorting
+
   const filteredCategories = categories.filter((item) => {
     return (
-    (searchQueries.id_category === '' || item.id_category.toString().includes(searchQueries.id_category.toString())) &&
-    
-    (searchQueries.name === '' || item.name.toLowerCase().includes(searchQueries.name.toLowerCase()))
-  );
-});
+      (searchQueries.id_category === '' || item.id_category.toString().includes(searchQueries.id_category.toString())) &&
+      (searchQueries.name === '' || item.name.toLowerCase().includes(searchQueries.name.toLowerCase()))
+    );
+  });
 
   const sortedCategories = filteredCategories.sort((a, b) => {
-    if (sortDirection === 'asc') {
-      return compareValues(a[sortColumn], b[sortColumn]);
-    } else {
-      return compareValues(b[sortColumn], a[sortColumn]);
+    if (sortColumn) {
+      if (sortDirection === 'asc') {
+        return compareValues(a[sortColumn], b[sortColumn]);
+      } else {
+        return compareValues(b[sortColumn], a[sortColumn]);
+      }
     }
+    // Default sorting by id_category
+    return a.id_category - b.id_category;
   });
-  
-  
 
   const exportCategories = () => {
     const csvContent =
@@ -114,19 +120,19 @@ export default function CategoryTable() {
   };
 
   const handleCreateCategory = () => {
-    setIsConfirmModalOpen(true); // Show the confirmation modal
+    setIsConfirmModalOpen(true);
   };
 
   const confirmCreateCategory = () => {
     axios
-      .post(`${process.env.REACT_APP_API_URL}/category/create`, 
-      { name: newCategoryName }, 
-      { headers: { authorization: `Bearer ${Cookies.get('token')}` } })
+      .post(`${process.env.REACT_APP_API_URL}/category/create`,
+        { name: newCategoryName },
+        { headers: { authorization: `Bearer ${Cookies.get('token')}` } })
       .then((response) => {
         setCategories([...categories, response.data.category]);
         setNewCategoryName('');
         setIsModalOpen(false);
-        setIsConfirmModalOpen(false); // Close the confirmation modal
+        setIsConfirmModalOpen(false);
       })
       .catch((error) => {
         console.error('Error creating category:', error);
@@ -134,20 +140,17 @@ export default function CategoryTable() {
   };
 
   const cancelCreateCategory = () => {
-    setIsConfirmModalOpen(false); // Close the confirmation modal
+    setIsConfirmModalOpen(false);
   };
 
   return (
     <>
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
-          {/* Titolo e descrizione */}
           <div className="sm:flex-auto">
             <h1 className="text-base font-semibold leading-6 text-gray-900">Categorie</h1>
             <p className="mt-2 text-sm text-gray-700">Lista delle categorie</p>
           </div>
-
-          {/* Bottoni Export e Create */}
           <div className="flex items-center space-x-4">
             <button
               onClick={exportCategories}
@@ -157,137 +160,102 @@ export default function CategoryTable() {
             </button>
             <button
               onClick={() => setIsModalOpen(true)}
-             className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
-             >
+              className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+            >
               Crea
             </button>
           </div>
         </div>
 
-
-
         <div className="mt-8 flow-root">
-          <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">          
+          <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
             <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
               <div className="relative">
                 <table className="min-w-full table-fixed divide-y divide-gray-300">
-                <thead>
-                  <tr>
-                    <th scope="col" className="px-0 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('id_category')}>
-                      ID
-                      {sortColumn === 'id_category' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <br />
-                      <input
-                        value={searchQueries.id_category}
-                        onChange={handleSearchInputChange('id_category')}
-                        className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                        placeholder=""
-                        rows={1}
-                      />
-                    </th>
+                  <thead>
+                    <tr>
+                      <th scope="col" className="px-0 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('id_category')}>
+                        ID
+                        {sortColumn === 'id_category' && sortDirection !== '' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                        <br />
+                        <input
+                          value={searchQueries.id_category}
+                          onClick={(e) => e.stopPropagation()} // Stop click propagation
+                          onChange={handleSearchInputChange('id_category')}
+                          className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                          placeholder=""
+                          rows={1}
+                        />
+                      </th>
 
-                    <th scope="col" className="px-1.5 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
-                      Name
-                      {sortColumn === 'name' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <br />
-                      <input
-                        value={searchQueries.name}
-                        onChange={handleSearchInputChange('name')}
-                        className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                        placeholder=""
-                        rows={1}
-                      />
-                    </th>
-                  </tr>
-                </thead>
+                      <th scope="col" className="px-1.5 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
+                        Nome
+                        {sortColumn === 'name' && sortDirection !== '' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                        <br />
+                        <input
+                          value={searchQueries.name}
+                          onClick={(e) => e.stopPropagation()} // Stop click propagation
+                          onChange={handleSearchInputChange('name')}
+                          className="mt-1 px-2 py-1 w-28 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                          placeholder=""
+                          rows={1}
+                        />
+                      </th>
 
-                  <tbody className="divide-y divide-gray-200 bg-white">
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
                     {sortedCategories.map((category) => (
                       <tr key={category.id_category}>
-                        <td className="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-500 sm:pl-0 w-20">{category.id_category}</td>
-                        <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500 w-64">{category.name}</td>
+                        <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{category.id_category}</td>
+                        <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{category.name}</td>
                       </tr>
                     ))}
-                 </tbody>
-              </table>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    
-      {/* Modal for Creating a New Category */}
-      <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)} className="relative z-50">
-        <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
-        <div className="fixed inset-0 flex items-center justify-center p-4">
-          <Dialog.Panel className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
-            <Dialog.Title className="text-lg font-semibold text-gray-900">Crea una nuova Categoria</Dialog.Title>
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleCreateCategory();
-            }}
-            className="mt-4 space-y-4"
-          >
-            <div>
-              <label htmlFor="category-name" className="block text-sm font-medium text-gray-700">
-                Categoria
-              </label>
+
+      {isModalOpen && (
+        <Dialog id="category-modal" as="div" open={isModalOpen} onClose={() => setIsModalOpen(false)} className="relative z-50">
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <Dialog.Panel className="max-w-sm mx-auto bg-white rounded shadow-lg p-6">
+              <Dialog.Title className="text-lg font-semibold mb-4">Crea Categoria</Dialog.Title>
               <input
-                id="category-name"
                 type="text"
                 value={newCategoryName}
                 onChange={(e) => setNewCategoryName(e.target.value)}
-                required
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-sm"
+                placeholder="Nome Categoria"
+                className="w-full px-3 py-2 border rounded mb-4"
               />
-            </div>
-            <div className="flex gap-4">
-              <button
-                type="button"
-                onClick={() => setIsModalOpen(false)}
-                className="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm ring-1 ring-gray-300 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#7fb7d4] focus:ring-offset-2"
-              >
-                Cancella
-              </button>
-              <button
-                type="submit"
-                className="inline-flex justify-center rounded-md border border-transparent bg-[#7fb7d4] px-4 py-2 text-sm font-medium text-white shadow-sm ring-1 ring-[#7fb7d4] hover:bg-[#6aaedb] focus:outline-none focus:ring-2 focus:ring-[#7fb7d4] focus:ring-offset-2"
-              >
-                Crea
-              </button>
-            </div>
-          </form>
-        </Dialog.Panel>
-      </div>
-    </Dialog>
+              <div className="flex justify-end">
+                <button onClick={handleCreateCategory} className="bg-blue-500 text-white px-4 py-2 rounded mr-2">Crea</button>
+                <button onClick={() => setIsModalOpen(false)} className="bg-gray-300 text-gray-700 px-4 py-2 rounded">Annulla</button>
+              </div>
+            </Dialog.Panel>
+          </div>
+        </Dialog>
+      )}
 
-      {/* Confirmation Modal */}
-      <Dialog open={isConfirmModalOpen} onClose={() => setIsConfirmModalOpen(false)} className="relative z-50">
-        <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
-        <div className="fixed inset-0 flex items-center justify-center p-4">
-          <Dialog.Panel className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
-            <Dialog.Title className="text-lg font-semibold text-gray-900">Conferma di creazione</Dialog.Title>
-            <div className="mt-4">
-              <p className="text-sm text-gray-700">Sicuro di voler creare questa nuova categoria?</p>
-            </div>
-            <div className="mt-6 flex justify-end space-x-3">
-              <button
-                onClick={cancelCreateCategory}
-                className="rounded-md bg-[#A7D0EB] px-3 py-2 text-sm font-bold text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
-              >
-                Cancella
-              </button>
-              <button
-                onClick={confirmCreateCategory}
-                className="rounded-md bg-[#A7D0EB] px-3 py-2 text-sm font-bold text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
-              >
-                Conferma
-              </button>
-            </div>
-          </Dialog.Panel>
-        </div>
-      </Dialog>
+      {isConfirmModalOpen && (
+        <Dialog as="div" open={isConfirmModalOpen} onClose={() => setIsConfirmModalOpen(false)} className="relative z-50">
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <Dialog.Panel className="max-w-sm mx-auto bg-white rounded shadow-lg p-6">
+              <Dialog.Title className="text-lg font-semibold mb-4">Conferma Creazione</Dialog.Title>
+              <p>Sei sicuro di voler creare questa categoria?</p>
+              <div className="flex justify-end mt-4">
+                <button onClick={confirmCreateCategory} className="bg-green-500 text-white px-4 py-2 rounded mr-2">Conferma</button>
+                <button onClick={cancelCreateCategory} className="bg-gray-300 text-gray-700 px-4 py-2 rounded">Annulla</button>
+              </div>
+            </Dialog.Panel>
+          </div>
+        </Dialog>
+      )}
     </>
   );
 }

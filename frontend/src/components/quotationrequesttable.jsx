@@ -89,9 +89,18 @@ export default function Example({ permissions }) {
   });
 
   
+
   const handleSort = (columnName) => {
     if (sortColumn === columnName) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+      if (sortDirection === 'asc') {
+        setSortDirection('desc');
+      } else if (sortDirection === 'desc') {
+        // Reset to default
+        setSortColumn('');
+        setSortDirection('asc');
+      } else {
+        setSortDirection('asc');
+      }
     } else {
       setSortColumn(columnName);
       setSortDirection('asc');
@@ -115,7 +124,7 @@ export default function Example({ permissions }) {
           return item[column] || '';
       }
     };
-  
+   
     const valueA = getValue(a, sortColumn);
     const valueB = getValue(b, sortColumn);
   
@@ -378,6 +387,7 @@ export default function Example({ permissions }) {
                     <br />
                     <input
                       value={searchQueries.name}
+                      onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('name')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
@@ -390,6 +400,7 @@ export default function Example({ permissions }) {
                     <br />
                     <input
                       value={searchQueries.description}
+                      onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('description')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
@@ -402,6 +413,7 @@ export default function Example({ permissions }) {
                     <br />
                     <input
                       value={searchQueries.Company}
+                      onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('Company')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
@@ -414,6 +426,7 @@ export default function Example({ permissions }) {
                     <br />
                     <input
                       value={searchQueries.category}
+                      onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('category')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
@@ -426,6 +439,7 @@ export default function Example({ permissions }) {
                     <br />
                     <input
                       value={searchQueries.technicalarea}
+                      onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('technicalarea')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
@@ -438,6 +452,7 @@ export default function Example({ permissions }) {
                     <br />
                     <input
                       value={searchQueries.data}
+                      onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('data')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
@@ -450,6 +465,7 @@ export default function Example({ permissions }) {
                     <br />
                     <input
                       value={searchQueries.status}
+                      onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('status')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
@@ -462,6 +478,7 @@ export default function Example({ permissions }) {
                     <br />
                     <input
                       value={searchQueries.createdByUser}
+                      onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('createdByUser')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
@@ -504,20 +521,20 @@ export default function Example({ permissions }) {
                           {quotationrequest.createdAt ? new Date(quotationrequest.createdAt).toLocaleDateString() : ''}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {quotationrequest.status === 'In Attesa' ? (
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-yellow-800">
-                              In Attesa
+                          {quotationrequest.status === 'In Approvazione' ? (
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-yellow-500">
+                              In Approvazione
                             </span>
                           ) : quotationrequest.status === 'Approvata' ? (
                             <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-green-600">
                               Approvata
                             </span>
                           ) : quotationrequest.status === 'Rifiutata' ? (
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-red-800">
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-red-00">
                               Rifiutata
                             </span>
                           ) : quotationrequest.status === 'Scaduta' ? (
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-red-800">
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-red-600">
                               Scaduta
                             </span>
                           ) : (

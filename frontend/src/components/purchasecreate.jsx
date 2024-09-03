@@ -133,7 +133,7 @@ export default function PurchaseCreateForm() {
                   value={selectedCompany}
                   onChange={handleCompanyChange}
                   options={(companies || []).map(({ value, label }) => ({ value, label }))}
-                  primaryColor='red'
+                  primaryColor='[#7fb7d4]'
                   isSearchable
                 />
               </div>
@@ -168,7 +168,7 @@ export default function PurchaseCreateForm() {
                   value={selectedPaymentMethod}
                   onChange={handlePaymentMethodChange}
                   options={paymentMethods.map((method) => ({ value: method, label: method }))}
-                  primaryColor='red'
+                  primaryColor='[#7fb7d4]'
                   isSearchable
                 />
               </div>
@@ -185,7 +185,7 @@ export default function PurchaseCreateForm() {
                   value={currency}
                   onChange={handleCurrencyChange}
                   options={currencies.map((currency) => ({ value: currency, label: currency }))}
-                  primaryColor='red'
+                  primaryColor='[#7fb7d4]'
                   isSearchable
                 />
               </div>

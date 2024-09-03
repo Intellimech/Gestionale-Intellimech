@@ -34,7 +34,7 @@ export default function Example({ permissions }) {
   const [selectedSubcategory, setSelectedSubcategory] = useState('');
   const [selectedArea, setSelectedArea] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
-  const [sortColumn, setSortColumn] = useState('');
+  const [sortColumn, setSortColumn] = useState('name');
   const [sortDirection, setSortDirection] = useState('asc');
   const [filterType, setFilterType] = useState('name');
   const [showInfo, setShowInfo] = useState(false);
@@ -58,8 +58,16 @@ export default function Example({ permissions }) {
 
   const handleSort = (columnName) => {
     if (sortColumn === columnName) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+      // Se la colonna è già ordinata in modo ascendente, passa a discendente
+      // Se è discendente, torna all'ordinamento predefinito (non ordinato)
+      if (sortDirection === 'asc') {
+        setSortDirection('desc');
+      } else if (sortDirection === 'desc') {
+        setSortColumn('name'); // Resetta la colonna di ordinamento per tornare all'ordinamento predefinito
+        setSortDirection('asc');
+      }
     } else {
+      // Se la colonna non è quella corrente, imposta l'ordinamento ascendente
       setSortColumn(columnName);
       setSortDirection('asc');
     }
@@ -141,15 +149,16 @@ export default function Example({ permissions }) {
       }
     };
   
-    const valueA = getValue(a, sortColumn);
-    const valueB = getValue(b, sortColumn);
+   
+  const valueA = getValue(a, sortColumn);
+  const valueB = getValue(b, sortColumn);
 
-     if (sortDirection === 'asc') {
-      return compareValues(valueA, valueB);
-    } else {
-      return compareValues(valueB, valueA);
-    }
-  });
+  if (sortDirection === 'asc') {
+    return compareValues(valueA, valueB);
+  } else {
+    return compareValues(valueB, valueA);
+  }
+});
 
   function exportData() {
     const csvContent =
@@ -437,104 +446,126 @@ export default function Example({ permissions }) {
       </div>
 
 
-        
       <div className="mt-8 flow-root">
-        <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">          
-          <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-            <div className="relative">
-              <table className="min-w-full table-fixed divide-y divide-gray-300">
+      {/* Adjusted outer div for the horizontal scrollbar */}
+      <div className="-mx-4 -my-2 overflow-x-scroll sm:-mx-6 lg:-mx-8"> 
+        <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div className="relative">
+            {/* Updated table style */}
+            <table className="min-w-full table-fixed divide-y divide-gray-300" style={{ tableLayout: 'auto' }}>
               <thead>
                 <tr>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
+                  {/* Example for setting column width; add this to each <th> as needed */}
+                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')} style={{ width: '150px' }}>
                     Ordine
                     {sortColumn === 'name' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
                     <input
                       value={searchQueries.name}
+                      onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('name')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('description')}>
+                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('description')} style={{ width: '150px' }}>
                     Descrizione
                     {sortColumn === 'description' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
                     <input
                       value={searchQueries.description}
+                      onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('description')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Company')}>
+                  <th scope="col" className="px-2 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Company')}>
                     Azienda
                     {sortColumn === 'Company' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
                     <input
                       value={searchQueries.Company}
+                      onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('Company')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('revision')}>
+                  <th scope="col" className="px-2 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('revision')}>
                     Revisione
                     {sortColumn === 'revision' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
                     <input
                       value={searchQueries.revision}
+                      onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('revision')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      className="mt-1 px-2 py-1 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('hour')}>
+                  <th scope="col" className="px-2 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('hour')}>
                     Ore
                     {sortColumn === 'hour' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
                     <input
                       value={searchQueries.hour}
+                      onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('hour')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      className="mt-1 px-2 py-1 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('amount')}>
+                  <th scope="col" className="px-2  py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('amount')}>
                     Valore
                     {sortColumn === 'amount' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
                     <input
                       value={searchQueries.amount}
+                      onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('amount')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      className="mt-1 px-0 py-1 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('category')}>
+                  <th
+                    scope="col"
+                    className="px-1 py-2 text-left text-sm font-semibold text-gray-900 cursor-pointer w-16"
+                    onClick={() => handleSort('category')}
+                    style={{ width: '60px', minWidth: '60px' }}
+                  >
                     Categoria
-                    {sortColumn === 'category' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'category' ? (
+                      sortDirection === 'asc' ? (
+                        <ArrowUpIcon className="h-4 w-4 inline ml-1" /> 
+                      ) : (
+                        <ArrowDownIcon className="h-4 w-4 inline ml-1" />
+                      )
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.category}
+                      onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('category')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      className="mt-1 px-1 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
                       rows={1}
                     />
                   </th>
+
                   <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('technicalarea')}>
                     Area Tecnica
                     {sortColumn === 'technicalarea' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
                     <input
                       value={searchQueries.technicalarea}
+                      onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('technicalarea')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
@@ -547,6 +578,7 @@ export default function Example({ permissions }) {
                     <br />
                     <input
                       value={searchQueries.estimatedstart}
+                      onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('estimatedstart')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
@@ -559,6 +591,7 @@ export default function Example({ permissions }) {
                     <br />
                     <input
                       value={searchQueries.estimatedend}
+                      onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('estimatedend')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
@@ -571,6 +604,7 @@ export default function Example({ permissions }) {
                     <br />
                     <input
                       value={searchQueries.deadline}
+                      onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('deadline')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
@@ -583,8 +617,9 @@ export default function Example({ permissions }) {
                     <br />
                     <input
                       value={searchQueries.status}
+                      onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('status')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      className="mt-1 px-2 py-1 w-12 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
                       rows={1}
                     />
@@ -595,14 +630,15 @@ export default function Example({ permissions }) {
                     <br />
                     <input
                       value={searchQueries.createdByUser}
+                      onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('createdByUser')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      className="mt-1 px-2 py-1 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
                       rows={1}
                     />
                   </th>
                 </tr>
-</thead>
+                </thead>
 
                 <tbody className="divide-y divide-gray-200 bg-white">
                 {Array.isArray(sortedSaleOrder) && sortedSaleOrder.length > 0 ? (
@@ -659,16 +695,16 @@ export default function Example({ permissions }) {
                             : new Date(offer.deadlineDate).toLocaleDateString()}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {offer.status === 'Inviata al cliente' ? (
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-yellow-800">
+                          {offer.status === 'Inviata' ? (
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-yellow-500">
                               Inviata
                             </span>
                           ) : offer.status === 'Approvata' ? (
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-green-800">
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-green-600">
                               Approvata
                             </span>
                           ) : offer.status === 'Rifiutata' ? (
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-red-800">
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-red-600">
                               Rifiutata
                             </span>
                           ) : offer.status === 'Scaduta' ? (
@@ -676,11 +712,11 @@ export default function Example({ permissions }) {
                               Scaduta
                             </span>
                           ) : offer.status === 'Nuova' ? (
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-blue-800">
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-blue-400">
                               Nuova
                             </span>
                           ) : offer.status === 'Revisionata' ? (
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-purple-800">
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-purple-600">
                               Revisionata
                             </span>
                           ) : (

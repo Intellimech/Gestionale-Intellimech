@@ -66,8 +66,8 @@ const App = () => {
 
             <Route path="job" element={<PrivateRoute element={<Job />} />} />
             <Route path="invoices">
-              <Route path="passive" element={<PrivateRoute element={<Invoicetable invoicetype={"Passiva"}/>} />} />
-              <Route path="active" element={<PrivateRoute element={<Invoicetable invoicetype={"Attiva"}/>} />} />
+              <Route path="passive" element={<PrivateRoute element={<Invoicetable invoicetype={"PassivaSdI"}/>} />} />
+              <Route path="active" element={<PrivateRoute element={<Invoicetable invoicetype={"AttivaSdI"}/>} />} />
             </Route>
             <Route path="company">
               <Route path="customers" element={<PrivateRoute element={<Company companytype={"Customers"}/>} />} />

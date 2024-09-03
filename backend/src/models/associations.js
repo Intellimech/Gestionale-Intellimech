@@ -190,6 +190,12 @@ Calendar.belongsTo(User, { foreignKey: 'createdBy', as: 'createdByUser' });
 Calendar.belongsTo(User, { foreignKey: 'updatedBy', as: 'updatedByUser' });
 Calendar.belongsTo(User, { foreignKey: 'deletedBy', as: 'deletedByUser' });
 
+User.hasMany(Calendar, { foreignKey: 'owner', as: 'ownedCalendars' });
+User.hasMany(Calendar, { foreignKey: 'createdBy', as: 'createdCalendars' });
+User.hasMany(Calendar, { foreignKey: 'updatedBy', as: 'updatedCalendars' });
+User.hasMany(Calendar, { foreignKey: 'deletedBy', as: 'deletedCalendars' });
+
+
 export default {
     User,
     Role,

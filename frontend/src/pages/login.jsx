@@ -68,7 +68,9 @@ const Login = () => {
         <h2 className="text-center text-xl font-bold leading-9 text-gray-900 mb-2">
           Accedi al tuo account
         </h2>
-        
+        <p className="text-center text-sm leading-5 text-gray-600 pb-5">
+          Inserisci le tue credenziali per accedere al tuo account
+        </p>
 
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div>

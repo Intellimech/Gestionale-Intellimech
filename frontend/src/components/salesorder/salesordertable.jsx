@@ -5,9 +5,6 @@ import { XMarkIcon, CheckIcon, PaperAirplaneIcon, EyeIcon, ArrowPathIcon } from 
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
-
-import OfferCreate from './offercreate';
-
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }

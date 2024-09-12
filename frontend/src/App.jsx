@@ -10,30 +10,31 @@ import Layout from './pages/layout';
 import Login from './pages/login';
 import Lost from './pages/lost';
 import Unauthorized from './pages/unauthorized';
-import Homepage from './components/homepage';
+import Homepage from './components/dashboard/homepage.jsx';
 
-import Reporting from './components/reporting';
+import Reporting from './components/reporting/reporting.jsx';
 import Calendar from './components/calendar/calendar';
 
-import Quotationrequesttable from './components/quotationrequesttable';
-import Offer from './components/offertable';
-import Salesorder from './components/salesordertable';
-import Job from './components/jobtable';
+import Quotationrequesttable from './components/quotationrequest/quotationrequesttable';
+import Offer from './components/offer/offertable';
+import Salesorder from './components/salesorder/salesordertable.jsx';
+import Job from './components/job/jobtable';
 
-import Invoicetable from './components/invoicetable';
-import Company from './components/company/companytable';
+import Invoicetable from './components/invoices/invoicetable.jsx';
+import Company from './components/registry/companytable';
 
-import Profile from './components/userinfo';
+import Profile from './components/registry/userinfo.jsx';
 
-import Purchase from  './components/purchase';
-import PurchaseInfo from './components/purchaseinfo';
+import Purchase from  './components/purchaseorder/purchase.jsx';
+import PurchaseInfo from './components/purchaseorder/purchaseinfo.jsx';
 
-import UsersTable from './components/userstable';
-import EmployeesConsultant from './components/peopletable';
-import CategoriesPage from './components/categoriespage';
-import SubcategoriesPage from './components/subcategoriespage';
-import TechnicalAreaPage from './components/technicalareapage';
-import SettingsPage from './components/settings.jsx'
+import UsersTable from './components/registry/userstable';
+import EmployeesConsultant from './components/registry/peopletable';
+import CategoriesPage from './components/registry/categoriespage';
+import SubcategoriesPage from './components/registry/subcategoriespage';
+import TechnicalAreaPage from './components/registry/technicalareapage';
+
+import SettingsPage from './components/system/settings.jsx'
 
 const Logo = './assets/intellimech.svg'
 

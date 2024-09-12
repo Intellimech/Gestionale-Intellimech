@@ -22,20 +22,17 @@ import {
   XMarkIcon,
 } from '@heroicons/react/24/outline'
 import { ChevronDownIcon, MagnifyingGlassIcon } from '@heroicons/react/20/solid'
-import Notify from '../components/notification'
-import Sidebar from '../components/sidebar'
-import Navbar from '../components/navbar'
-import NotificationList from '../components/notificationlist'
+import Notify from '../components/system/notification'
+import Sidebar from '../components/dashboard/sidebar'
+import Navbar from '../components/dashboard/navbar'
+import NotificationList from '../components/system/notificationlist'
 import Scrollbar from 'tailwind-scrollbar'
 import { UserContext } from '../module/userContext'
 import { Outlet } from 'react-router-dom'
-import UniversalSearch from '../components/universalsearch'
-import ChangePassword from '../components/changepass'
+import UniversalSearch from '../components/dashboard/universalsearch'
+import ChangePassword from '../components/system/changepass'
 
-const userNavigation = [
-  { name: 'Il mio profilo', href: '/app/settings' },
-  { name: 'Esci', href: '../', onClick: () => logout() },
-]
+import { userNavigation } from '../config/navbar'
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
@@ -62,6 +59,11 @@ export default function Layout() {
     setNotifySidebarTitle(title)
     setNotifySidebarChildren(children)
     setShowNotifySidebar(true)
+  }
+
+  const logout = () => {
+    Cookies.remove('token')
+    window.location.href = '/login'
   }
 
   useEffect(() => {

@@ -3,14 +3,14 @@ import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon, CheckIcon, PaperAirplaneIcon, EyeIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import Lost from '../pages/lost';
+import Lost from '../../pages/lost.jsx';
 import { useParams } from 'react-router-dom';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 import { PaperClipIcon } from '@heroicons/react/20/solid';
-import logo from '../images/logo.jpg'
+import logo from '../../images/logo.jpg'
 
-import firma from '../images/firma.png'
+import firma from '../../images/firma.png'
 
 import PurchaseUpdateForm from './purchaseupdate.jsx';
 

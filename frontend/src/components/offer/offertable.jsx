@@ -6,7 +6,7 @@ import { XMarkIcon, CheckIcon, PaperAirplaneIcon, EyeIcon, ArrowPathIcon } from 
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
-import { UserContext } from '../module/userContext'
+import { UserContext } from '../../module/userContext'
 
 import OfferCreate from './offercreate';
 import OfferInformation from './offerinformation';
@@ -452,7 +452,7 @@ export default function Example({ permissions }) {
         <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
           <div className="relative">
             {/* Updated table style */}
-            <table className="min-w-full table-fixed divide-y divide-gray-300" style={{ tableLayout: 'auto' }}>
+            <table className="min-w-full table-fixed divide-y divide-gray-300">
               <thead>
                 <tr>
                   {/* Example for setting column width; add this to each <th> as needed */}
@@ -530,30 +530,6 @@ export default function Example({ permissions }) {
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('amount')}
                       className="mt-1 px-0 py-1 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                      placeholder=""
-                      rows={1}
-                    />
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-1 py-2 text-left text-sm font-semibold text-gray-900 cursor-pointer w-16"
-                    onClick={() => handleSort('category')}
-                    style={{ width: '60px', minWidth: '60px' }}
-                  >
-                    Categoria
-                    {sortColumn === 'category' ? (
-                      sortDirection === 'asc' ? (
-                        <ArrowUpIcon className="h-4 w-4 inline ml-1" /> 
-                      ) : (
-                        <ArrowDownIcon className="h-4 w-4 inline ml-1" />
-                      )
-                    ) : null}
-                    <br />
-                    <input
-                      value={searchQueries.category}
-                      onClick={(e) => e.stopPropagation()}
-                      onChange={handleSearchInputChange('category')}
-                      className="mt-1 px-1 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
                       rows={1}
                     />
@@ -674,11 +650,6 @@ export default function Example({ permissions }) {
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           {`${offer.amount} €`}
-                        </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {offer.QuotationRequest.Category.name}
-                          <br />
-                          {offer.QuotationRequest.Subcategory.name}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           {offer.QuotationRequest.TechnicalArea.code}

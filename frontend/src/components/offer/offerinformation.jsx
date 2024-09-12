@@ -1,7 +1,7 @@
 import { PaperClipIcon } from '@heroicons/react/20/solid'
 import { jsPDF } from 'jspdf';
 
-import logo from '../images/logo.jpg'
+import logo from '../../images/logo.jpg'
 import 'jspdf-autotable';
 
 export default function Example({ offer }) {

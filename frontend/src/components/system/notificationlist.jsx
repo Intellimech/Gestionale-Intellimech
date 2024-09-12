@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState, useContext } from "react";
 import Cookies from "js-cookie";
 import NotifyDetails from "./notifydetails";
-import { UserContext } from "../module/userContext";
+import { UserContext } from "../../module/userContext";
 import { set } from "date-fns";
 
 export default function NotificationList({ notification }) {

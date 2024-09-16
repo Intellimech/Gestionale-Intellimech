@@ -291,7 +291,7 @@ const sortedSaleOrder = filteredSaleOrder.sort((a, b) => {
                       />
                     </th>
                     <th scope="col" className="px-2 py-3 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Company')}>
-                      Azienda
+                      Cliente
                       {sortColumn === 'Company' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                       <br></br>
                       <input

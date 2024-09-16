@@ -114,7 +114,7 @@ export default function Reporting() {
               <div className="space-y-6">
                 <div>
                   <label htmlFor="date" className="block text-sm font-medium text-gray-900">Data</label>
-                  <input type="date" name="date" id="date" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-300 focus:ring focus:ring-red-200 focus:ring-opacity-50" required defaultValue={new Date().toISOString().split('T')[0]} />
+                  <input type="date" name="date" id="date" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4]  focus:ring focus:ring-[#7fb7d4]  focus:ring-opacity-50" required defaultValue={new Date().toISOString().split('T')[0]} />
                 </div>
                 <div>
                   <label htmlFor="job" className="block text-sm font-medium text-gray-900">Commesse e Centri di costo</label>
@@ -123,20 +123,21 @@ export default function Reporting() {
                     id="job"
                     name="job"
                     value={selectedJob}
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4]  sm:text-sm sm:leading-6"
                     onChange={handleJobChange}
+                    isSearchable
                   />
                 </div>
                 <div>
                   <label htmlFor="hours" className="block text-sm font-medium text-gray-900">Ore Lavorate</label>
-                  <input type="number" name="hours" id="hours" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-300 focus:ring focus:ring-red-200 focus:ring-opacity-50" min={1} required defaultValue={1}/>
+                  <input type="number" name="hours" id="hours" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] -300 focus:ring focus:ring-[#7fb7d4] -200 focus:ring-opacity-50" min={1} required defaultValue={1}/>
                 </div>
                     {
                       task.length > 0 && (
                         <>
                           <div>
                             <label htmlFor="task" className="block text-sm font-medium text-gray-900">Task</label>
-                            <select id="task" name="task" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-red-300 focus:ring focus:ring-red-200 focus:ring-opacity-50" required>
+                            <select id="task" name="task" className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4]  focus:ring focus:ring-[#7fb7d4]  focus:ring-opacity-50" required>
                               <option value="">Seleziona la tua task</option>
                               {
                                 task.map((task) => (
@@ -155,7 +156,8 @@ export default function Reporting() {
                       )
                     }
                 <div className="flex justify-end">
-                  <button type="submit" className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                  <button type="submit" className="block ml-4 rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+              >
                     Invia
                   </button>
                 </div>

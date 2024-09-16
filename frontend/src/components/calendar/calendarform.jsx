@@ -1,6 +1,8 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import Select from 'react-tailwindcss-select';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
 const Locations = [
     { value: 'Ferie', label: 'Ferie' },
@@ -17,9 +19,12 @@ const Parts = [
     { value: 'afternoon', label: 'Pomeriggio' },
 ];
 
-export default function Example({ date, onUpdate }) { // Ensure to pass an onUpdate callback from parent
+export default function Example({ date, onUpdate }) {
     const [location, setLocation] = useState(null);
-    const [part, setPart] = useState(null);
+    const [part, setPart] = useState([]); // Modifica il tipo di stato per gestire più selezioni
+    const [startDate, setStartDate] = useState(date ? new Date(date) : null);
+    const [endDate, setEndDate] = useState(null);
+    const [selectingRange, setSelectingRange] = useState(false);
 
     const handleLocationChange = (selected) => {
         setLocation(selected);
@@ -29,15 +34,24 @@ export default function Example({ date, onUpdate }) { // Ensure to pass an onUpd
         setPart(selected);
     };
 
+    const handleDateChange = (dates) => {
+        const [start, end] = dates;
+        setStartDate(start);
+        setEndDate(end);
+    };
+
+    const formatDate = (date) => date ? date.toLocaleDateString('it-IT') : '';
+
     const createCalendar = () => {
-        if (!location || !part) {
-            alert('Please select both location and period!');
+        if (!location || !part.length || !startDate) {
+            alert('Please select all required fields!');
             return;
         }
 
         axios.post('http://localhost:3000/calendar/create', {
-            date: date,
-            part: part.value,
+            startDate: startDate.toISOString().split('T')[0],
+            endDate: endDate ? endDate.toISOString().split('T')[0] : null,
+            parts: part.map(p => p.value), // Mappa i valori selezionati
             location: location.value,
         })
         .then((response) => {
@@ -60,24 +74,26 @@ export default function Example({ date, onUpdate }) { // Ensure to pass an onUpd
 
                     <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                         <div className="sm:col-span-4">
-                            <label htmlFor="selectedDate" className="block text-sm font-medium leading-6 text-gray-900">
-                                Data selezionata
+                            <label htmlFor="dateRange" className="block text-sm font-medium leading-6 text-gray-900">
+                                Data
                             </label>
                             <div className="mt-2">
-                                <input
-                                    type="date"
-                                    value={date ? new Date(date)?.toISOString().split('T')[0] : ''}
-                                    id="selectedDate"
-                                    name="selectedDate"
+                                <DatePicker
+                                    selected={startDate}
+                                    onChange={handleDateChange}
+                                    startDate={startDate}
+                                    endDate={endDate}
+                                    selectsRange
+                                    dateFormat="dd/MM/yyyy"
                                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4] sm:text-sm sm:leading-6"
-                                    disabled
+                                    placeholderText={`Seleziona una data`}
                                 />
                             </div>
                         </div>
 
                         <div className="sm:col-span-4">
                             <label htmlFor="part" className="block text-sm font-medium leading-6 text-gray-900">
-                            Orario
+                                Orario
                             </label>
                             <div className="mt-2">
                                 <Select
@@ -85,7 +101,7 @@ export default function Example({ date, onUpdate }) { // Ensure to pass an onUpd
                                     onChange={handlePartChange}
                                     options={Parts}
                                     primaryColor={"[#7fb7d4]"}
-                                    isMultiple={false} // Corrected to false for single selection
+                                    isMultiple={true} // Permette la selezione multipla
                                 />
                             </div>
                         </div>
@@ -109,13 +125,14 @@ export default function Example({ date, onUpdate }) { // Ensure to pass an onUpd
 
             <div className="mt-6 flex items-center justify-end gap-x-6">
                 <button type="button" className="block rounded-md px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-gray-200 focus:outline-gray focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]">
-                    Cancel
+                    Annulla
                 </button>
                 <button
                     type="button"
                     onClick={createCalendar}
-                    className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]">
-                    Save
+                    className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+                >
+                    Salva
                 </button>
             </div>
         </form>

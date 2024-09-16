@@ -1,125 +1,168 @@
-import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Select from 'react-tailwindcss-select';
+import axios from 'axios';
+export default function CalendarUpdateForm({ open, setOpen, date, initialData, onSubmit }) {
+  const [morningLocation, setMorningLocation] = useState(null);
+  const [afternoonLocation, setAfternoonLocation] = useState(null);
+  const [dataSelezionata, setDataSelezionata] = useState(null);
 
-const Locations = [
-    { value: 'Ferie', label: 'Ferie' },
-    { value: 'Permesso', label: 'Permesso' },
-    { value: 'Malattia', label: 'Malattia' },
+  useEffect(() => {
+    if (initialData) {
+    const dataP = initialData.split(',');
+    setDataSelezionata(dataP[0]); 
+    console.log("la data è" +dataP[0]);
+      const dataParts = dataP[1].split(';');
+      dataParts.forEach(part => {
+        const [period, location] = part.split(':');
+        if (period === 'morning') {
+          setMorningLocation(location ? { value: location, label: location } : null);
+        } else if (period === 'afternoon') {
+          setAfternoonLocation(location ? { value: location, label: location } : null);
+        }
+      });
+    }
+  }, [initialData]);
+
+  const handleMorningLocationChange = (selectedOption) => {
+    setMorningLocation(selectedOption);
+  };
+
+  const handleAfternoonLocationChange = (selectedOption) => {
+    setAfternoonLocation(selectedOption);
+  };
+
+  const handleSubmit = () => {
+    // Invia richiesta per la mattina, se presente
+    if (morningLocation) {
+      axios.post('http://localhost:3000/calendar/update', {
+        //MANCA ID CALENDAR
+        date: dataSelezionata,
+        period: 'morning',
+        location: morningLocation.value,
+        
+      })
+      .then((response) => {
+        console.log('Morning update response:', response);
+      })
+      .catch((error) => {
+        console.error('Error updating morning location:', error);
+      });
+    }
+  
+    // Invia richiesta per il pomeriggio, se presente
+    if (afternoonLocation) {
+      axios.post('http://localhost:3000/calendar/update', {
+        date: dataSelezionata,
+        period: 'afternoon',
+        location: afternoonLocation.value,
+      })
+      .then((response) => {
+        console.log('Afternoon update response:', response);
+      })
+      .catch((error) => {
+        console.error('Error updating afternoon location:', error);
+      });
+    }
+    console.log("guarda qua"+ dataSelezionata, morningLocation.value)
+  
+    // Chiudi il modulo
+    setOpen(false);
+  };
+  
+
+  const Locations = [
     { value: 'Ufficio', label: 'Ufficio' },
     { value: 'Trasferta', label: 'Trasferta' },
+    { value: 'Malattia', label: 'Malattia' },
+    { value: 'Permesso', label: 'Permesso' },
+    { value: 'Ferie', label: 'Ferie' },
     { value: 'SmartWorking', label: 'SmartWorking' },
     { value: 'Fuori Ufficio', label: 'Fuori Ufficio' },
-];
+  ];
 
-export default function CalendarUpdateForm({ open, setOpen, date, initialData, onUpdate }) {
-    const [morningLocation, setMorningLocation] = useState(initialData.period);
-    const [afternoonLocation, setAfternoonLocation] = useState(initialData.location);
-    
-    console.log(initialData);
-    console.log(morningLocation);
-    console.log(afternoonLocation);
-
-    const handleMorningLocationChange = (selected) => {
-        setMorningLocation(selected);
-    };
-
-    const handleAfternoonLocationChange = (selected) => {
-        setAfternoonLocation(selected);
-    };
-
-    const updateCalendar = () => {
-        if (!morningLocation || !afternoonLocation) {
-            alert('Please select locations for both morning and afternoon!');
-            return;
-        }
-
-        axios.post('http://localhost:3000/calendar/update', {
-            date: date,
-            morningLocation: morningLocation.value,
-            afternoonLocation: afternoonLocation.value,
-        })
-        .then((response) => {
-            console.log(response);
-            if (onUpdate) onUpdate(); // Trigger parent's state update if provided
-            setOpen(false);
-        })
-        .catch((error) => {
-            console.error(error);
-        });
-    };
-
-    return (
-        <form>
+  return (
+    open ? (
+      <form>
         <div className="space-y-12">
-            <div className="border-b border-gray-900/10 pb-12">
-                <h2 className="text-base font-semibold leading-7 text-gray-900">Nuova Posizione</h2>
-                <p className="mt-1 text-sm leading-6 text-gray-600">
-                    Aggiungendo una posizione, verrà visualizzata nel calendario.
-                </p>
+          <div className="border-b border-gray-900/10 pb-12">
+            <h2 className="text-base font-semibold leading-7 text-gray-900">Aggiorna Posizione</h2>
+            <p className="mt-1 text-sm leading-6 text-gray-600">
+              Aggiornando la posizione, verrà visualizzata nel calendario.
+            </p>
 
-                <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                    <div className="sm:col-span-4">
-                        <label htmlFor="selectedDate" className="block text-sm font-medium leading-6 text-gray-900">
-                            Data selezionata
-                        </label>
-                        <div className="mt-2">
-                            <input
-                                type="date"
-                                value={date}
-                                id="selectedDate"
-                                name="selectedDate"
-                                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4] sm:text-sm sm:leading-6"
-                                disabled
-                            />
-                        </div>
-                    </div>
-
-                    <div className="sm:col-span-4">
-                        <label htmlFor="part" className="block text-sm font-medium leading-6 text-gray-900">
-                        Mattina
-                        </label>
-                        <div className="mt-2">
-                            <Select
-
-                                value={{value: morningLocation, label : morningLocation}} 
-                                onChange={handleMorningLocationChange}
-                                options={Locations}
-                                placeholder={morningLocation}
-                                primaryColor={"[#7fb7d4]"}
-                                isMultiple={false} // Corrected to false for single selection
-                            />
-                        </div>
-                    </div>
-
-                    <div className="sm:col-span-4">
-                        <label htmlFor="location" className="block text-sm font-medium leading-6 text-gray-900">
-                            Pomeriggio
-                        </label>
-                        <div className="mt-2">
-                            <Select
-                                value={{value: afternoonLocation, label : afternoonLocation}} 
-                                onChange={handleAfternoonLocationChange}
-                                options={Locations}
-                                primaryColor={"[#7fb7d4]"}
-                            />
-                        </div>
-                    </div>
+            <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+              <div className="sm:col-span-4">
+                <label htmlFor="date" className="block text-sm font-medium leading-6 text-gray-900">
+                  Data
+                </label>
+                <div className="mt-2">
+                  <input
+                    id="date"
+                    name="date"
+                    type="text"
+                    readOnly
+                    value={date}
+                    className="block w-full rounded-md border-gray-300 bg-gray-100 text-gray-900 shadow-sm sm:text-sm"
+                  />
                 </div>
+              </div>
+
+              <div className="sm:col-span-4">
+                <label htmlFor="morningLocation" className="block text-sm font-medium leading-6 text-gray-900">
+                  Mattina
+                </label>
+                <div className="mt-2">
+                  <Select
+                    id="morningLocation"
+                    name="morningLocation"
+                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
+                    value={morningLocation}
+                    onChange={handleMorningLocationChange}
+                    options={Locations}
+                    primaryColor='#7fb7d4'
+                    isSearchable
+                  />
+                </div>
+              </div>
+
+              <div className="sm:col-span-4">
+                <label htmlFor="afternoonLocation" className="block text-sm font-medium leading-6 text-gray-900">
+                  Pomeriggio
+                </label>
+                <div className="mt-2">
+                  <Select
+                    id="afternoonLocation"
+                    name="afternoonLocation"
+                    className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
+                    value={afternoonLocation}
+                    onChange={handleAfternoonLocationChange}
+                    options={Locations}
+                    primaryColor='#7fb7d4'
+                    isSearchable
+                  />
+                </div>
+              </div>
             </div>
+          </div>
         </div>
 
         <div className="mt-6 flex items-center justify-end gap-x-6">
-            <button type="button" className="block rounded-md px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-gray-200 focus:outline-gray focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]">
-                Cancel
-            </button>
-            <button
-                type="button"
-                onClick={updateCalendar}
-                className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]">
-                Save
-            </button>
+          <button
+            type="button"
+            onClick={() => setOpen(false)}
+            className="block rounded-md px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-gray-200 focus:outline-gray focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+          >
+            Annulla
+          </button>
+          <button
+            type="button"
+            onClick={handleSubmit}
+            className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+          >
+            Salva
+          </button>
         </div>
-    </form>
-    );
+      </form>
+    ) : null
+  );
 }

@@ -27,7 +27,8 @@ router.post("/create/", async (req, res) => {
     try {
         // Get the token from the header
         const token = req.headers.authorization?.split(" ")[1];
-        const { date, part, location } = req.body;
+        const { startDate, endDate, parts, location } = req.body; // parts è ora un array
+
         if (!token) {
             return res.status(401).json({ message: "Unauthorized" });
         }
@@ -42,18 +43,50 @@ router.post("/create/", async (req, res) => {
                 // Get the Calendar model
                 const Calendar = sequelize.models.Calendar;
 
-                // Create a new calendar
-                const newCalendar = await Calendar.create({
-                    date: date,
-                    period: part,
-                    location: location,
-                    owner: decoded.id,
-                    createdBy: decoded.id,
-                });
+                // Create calendar entries for each selected part of the day
+                const calendarEntries = [];
+
+                if (startDate) {
+                    const start = new Date(startDate);
+                    const end = endDate ? new Date(endDate) : start;
+
+                    // Check if startDate and endDate are the same or if endDate is undefined
+                    if (start.getTime() === end.getTime()) {
+                        // If it's the same day, just insert once for that day
+                        const entries = await Promise.all(
+                            parts.map(async (part) => {
+                                return Calendar.create({
+                                    date: start.toISOString().split('T')[0],
+                                    period: part, // part è ora un valore singolo
+                                    location: location,
+                                    owner: decoded.id,
+                                    createdBy: decoded.id,
+                                });
+                            })
+                        );
+                        calendarEntries.push(...entries);
+                    } else {
+                        // If there is an interval, insert for each day in the range
+                        for (let currentDate = new Date(start); currentDate <= end; currentDate.setDate(currentDate.getDate() + 1)) {
+                            const entries = await Promise.all(
+                                parts.map(async (part) => {
+                                    return Calendar.create({
+                                        date: currentDate.toISOString().split('T')[0],
+                                        period: part,
+                                        location: location,
+                                        owner: decoded.id,
+                                        createdBy: decoded.id,
+                                    });
+                                })
+                            );
+                            calendarEntries.push(...entries);
+                        }
+                    }
+                }
 
                 res.json({
                     message: "Calendars created",
-                    calendar: newCalendar,
+                    calendars: calendarEntries,
                 });
             } catch (dbError) {
                 Logger.error("Database error:", dbError);

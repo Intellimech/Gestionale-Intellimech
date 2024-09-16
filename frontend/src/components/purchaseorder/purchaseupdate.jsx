@@ -132,7 +132,7 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
           <p className="mt-1 text-sm leading-6 text-gray-600">Ricorda, i dati inseriti ora saranno quelli che verranno utilizzati per modificare l'ordine di acquisto</p>
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div className="sm:col-span-2">
-              <label htmlFor="azienda" className="block text-sm font-medium leading-6 text-gray-900">Azienda</label>
+              <label htmlFor="azienda" className="block text-sm font-medium leading-6 text-gray-900">Cliente</label>
               <div className="mt-2">
                 <Select
                   id="azienda"
@@ -143,7 +143,7 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
                     setSelectedCompany(value);
                     setPurchase({ ...purchase, id_company: value?.value });
                   }}
-                  placeholder="Seleziona Azienda"
+                  placeholder="Seleziona Cliente"
                   options={companies} // Assicurati che companies sia formattato come [{ value: ..., label: ... }]
                   primaryColor='[#7fb7d4] '
                   isSearchable

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+
+import Select from 'react-tailwindcss-select';
 import Cookies from 'js-cookie';
 import { CheckBadgeIcon, XCircleIcon } from '@heroicons/react/20/solid';
 
@@ -94,7 +96,7 @@ export default function UserCreateForm() {
 
             <div className="col-span-full">
               <label htmlFor="company" className="block text-sm font-medium leading-6 text-gray-900">
-                Azienda
+                Cliente
               </label>
               <div className="mt-2">
                 <select

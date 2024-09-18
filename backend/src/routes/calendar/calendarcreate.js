@@ -27,7 +27,7 @@ router.post("/create/", async (req, res) => {
     try {
         // Get the token from the header
         const token = req.headers.authorization?.split(" ")[1];
-        const { startDate, endDate, parts, location } = req.body; // parts è ora un array
+        const { startDate, endDate, part, location } = req.body; // part è ora una stringa singola
 
         if (!token) {
             return res.status(401).json({ message: "Unauthorized" });
@@ -43,7 +43,7 @@ router.post("/create/", async (req, res) => {
                 // Get the Calendar model
                 const Calendar = sequelize.models.Calendar;
 
-                // Create calendar entries for each selected part of the day
+                // Create calendar entries
                 const calendarEntries = [];
 
                 if (startDate) {
@@ -52,40 +52,32 @@ router.post("/create/", async (req, res) => {
 
                     // Check if startDate and endDate are the same or if endDate is undefined
                     if (start.getTime() === end.getTime()) {
-                        // If it's the same day, just insert once for that day
-                        const entries = await Promise.all(
-                            parts.map(async (part) => {
-                                return Calendar.create({
-                                    date: start.toISOString().split('T')[0],
-                                    period: part, // part è ora un valore singolo
-                                    location: location,
-                                    owner: decoded.id,
-                                    createdBy: decoded.id,
-                                });
-                            })
-                        );
-                        calendarEntries.push(...entries);
+                        // Insert once for that day and the specific part
+                        const entry = await Calendar.create({
+                            date: start.toISOString().split('T')[0],
+                            period: part,  // now it's a single value, either 'morning' or 'afternoon'
+                            location: location,
+                            owner: decoded.id,
+                            createdBy: decoded.id,
+                        });
+                        calendarEntries.push(entry);
                     } else {
                         // If there is an interval, insert for each day in the range
                         for (let currentDate = new Date(start); currentDate <= end; currentDate.setDate(currentDate.getDate() + 1)) {
-                            const entries = await Promise.all(
-                                parts.map(async (part) => {
-                                    return Calendar.create({
-                                        date: currentDate.toISOString().split('T')[0],
-                                        period: part,
-                                        location: location,
-                                        owner: decoded.id,
-                                        createdBy: decoded.id,
-                                    });
-                                })
-                            );
-                            calendarEntries.push(...entries);
+                            const entry = await Calendar.create({
+                                date: currentDate.toISOString().split('T')[0],
+                                period: part,  // single 'part' per request
+                                location: location,
+                                owner: decoded.id,
+                                createdBy: decoded.id,
+                            });
+                            calendarEntries.push(entry);
                         }
                     }
                 }
 
                 res.json({
-                    message: "Calendars created",
+                    message: "Calendar entries created",
                     calendars: calendarEntries,
                 });
             } catch (dbError) {

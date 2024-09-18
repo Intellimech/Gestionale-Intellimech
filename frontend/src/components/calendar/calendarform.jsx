@@ -14,24 +14,18 @@ const Locations = [
     { value: 'Fuori Ufficio', label: 'Fuori Ufficio' },
 ];
 
-const Parts = [
-    { value: 'morning', label: 'Mattina' },
-    { value: 'afternoon', label: 'Pomeriggio' },
-];
-
 export default function Example({ date, onUpdate }) {
-    const [location, setLocation] = useState(null);
-    const [part, setPart] = useState([]); // Modifica il tipo di stato per gestire più selezioni
+    const [morningLocation, setMorningLocation] = useState(null);
+    const [afternoonLocation, setAfternoonLocation] = useState(null);
     const [startDate, setStartDate] = useState(date ? new Date(date) : null);
     const [endDate, setEndDate] = useState(null);
-    const [selectingRange, setSelectingRange] = useState(false);
 
-    const handleLocationChange = (selected) => {
-        setLocation(selected);
+    const handleMorningLocationChange = (selected) => {
+        setMorningLocation(selected);
     };
 
-    const handlePartChange = (selected) => {
-        setPart(selected);
+    const handleAfternoonLocationChange = (selected) => {
+        setAfternoonLocation(selected);
     };
 
     const handleDateChange = (dates) => {
@@ -43,25 +37,45 @@ export default function Example({ date, onUpdate }) {
     const formatDate = (date) => date ? date.toLocaleDateString('it-IT') : '';
 
     const createCalendar = () => {
-        if (!location || !part.length || !startDate) {
+        // Controllo che sia selezionata sia la mattina che il pomeriggio e la data
+        if (!morningLocation || !afternoonLocation || !startDate) {
             alert('Please select all required fields!');
             return;
         }
-
+    
+        // Invia la richiesta per la mattina
         axios.post('http://localhost:3000/calendar/create', {
             startDate: startDate.toISOString().split('T')[0],
             endDate: endDate ? endDate.toISOString().split('T')[0] : null,
-            parts: part.map(p => p.value), // Mappa i valori selezionati
-            location: location.value,
+            part: 'morning',  // Indica che si tratta della mattina
+            location: morningLocation.value,  // Posizione selezionata per la mattina
         })
         .then((response) => {
-            console.log(response);
-            if (onUpdate) onUpdate(); // Trigger parent's state update if provided
+            console.log('Morning entry created:', response);
+            if (onUpdate) onUpdate(); // Se hai bisogno di aggiornare il frontend dopo il primo invio
         })
         .catch((error) => {
-            console.error(error);
+            console.error('Error creating morning entry:', error);
+        });
+    
+        // Invia la richiesta per il pomeriggio
+        axios.post('http://localhost:3000/calendar/create', {
+            startDate: startDate.toISOString().split('T')[0],
+            endDate: endDate ? endDate.toISOString().split('T')[0] : null,
+            part: 'afternoon',  // Indica che si tratta del pomeriggio
+            location: afternoonLocation.value,  // Posizione selezionata per il pomeriggio
+        })
+        .then((response) => {
+            console.log('Afternoon entry created:', response);
+            if (onUpdate) onUpdate(); // Se hai bisogno di aggiornare il frontend dopo il secondo invio
+        })
+        .catch((error) => {
+            console.error('Error creating afternoon entry:', error);
         });
     };
+    
+
+    const isFormValid = morningLocation && afternoonLocation && startDate;
 
     return (
         <form>
@@ -91,31 +105,34 @@ export default function Example({ date, onUpdate }) {
                             </div>
                         </div>
 
+                        {/* Select per Morning */}
                         <div className="sm:col-span-4">
-                            <label htmlFor="part" className="block text-sm font-medium leading-6 text-gray-900">
-                                Orario
+                            <label htmlFor="morningLocation" className="block text-sm font-medium leading-6 text-gray-900">
+                                Mattina
                             </label>
                             <div className="mt-2">
                                 <Select
-                                    value={part}
-                                    onChange={handlePartChange}
-                                    options={Parts}
+                                    value={morningLocation}
+                                    onChange={handleMorningLocationChange}
+                                    options={Locations}
                                     primaryColor={"[#7fb7d4]"}
-                                    isMultiple={true} // Permette la selezione multipla
+                                    placeholder="Seleziona una posizione"
                                 />
                             </div>
                         </div>
 
+                        {/* Select per Afternoon */}
                         <div className="sm:col-span-4">
-                            <label htmlFor="location" className="block text-sm font-medium leading-6 text-gray-900">
-                                Stato
+                            <label htmlFor="afternoonLocation" className="block text-sm font-medium leading-6 text-gray-900">
+                                Pomeriggio
                             </label>
                             <div className="mt-2">
                                 <Select
-                                    value={location}
-                                    onChange={handleLocationChange}
+                                    value={afternoonLocation}
+                                    onChange={handleAfternoonLocationChange}
                                     options={Locations}
                                     primaryColor={"[#7fb7d4]"}
+                                    placeholder="Seleziona una posizione"
                                 />
                             </div>
                         </div>
@@ -130,7 +147,8 @@ export default function Example({ date, onUpdate }) {
                 <button
                     type="button"
                     onClick={createCalendar}
-                    className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+                    disabled={!isFormValid}
+                    className={`block rounded-md px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4] ${isFormValid ? 'bg-[#A7D0EB] hover:bg-[#7fb7d4]' : 'bg-gray-300 cursor-not-allowed'}`}
                 >
                     Salva
                 </button>

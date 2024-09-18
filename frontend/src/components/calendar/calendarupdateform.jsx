@@ -1,17 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import Select from 'react-tailwindcss-select';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 export default function CalendarUpdateForm({ open, setOpen, date, initialData, onSubmit }) {
   const [morningLocation, setMorningLocation] = useState(null);
   const [afternoonLocation, setAfternoonLocation] = useState(null);
+  const [IdCalendar, setIdCalendar] = useState(null);
   const [dataSelezionata, setDataSelezionata] = useState(null);
-
+  const [pomeriggio, setPomeriggio] = useState(null);
+  const [mattina,  setMattina] = useState(null);
   useEffect(() => {
     if (initialData) {
     const dataP = initialData.split(',');
-    setDataSelezionata(dataP[0]); 
-    console.log("la data è" +dataP[0]);
-      const dataParts = dataP[1].split(';');
+    setIdCalendar(dataP[0]);
+    setDataSelezionata(dataP[1]); 
+    console.log("la data è" +dataP[1]);
+    console.log(mattina)
+      const dataParts = dataP[2].split(';');
       dataParts.forEach(part => {
         const [period, location] = part.split(':');
         if (period === 'morning') {
@@ -25,17 +30,23 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData, o
 
   const handleMorningLocationChange = (selectedOption) => {
     setMorningLocation(selectedOption);
+    setMattina(true);
   };
 
   const handleAfternoonLocationChange = (selectedOption) => {
     setAfternoonLocation(selectedOption);
+    setPomeriggio(true);
   };
 
   const handleSubmit = () => {
     // Invia richiesta per la mattina, se presente
-    if (morningLocation) {
+    if (mattina) {
       axios.post('http://localhost:3000/calendar/update', {
-        //MANCA ID CALENDAR
+        headers: {
+            Authorization: `Bearer ${Cookies.get('token')}`
+          },
+
+        id_calendar: IdCalendar,
         date: dataSelezionata,
         period: 'morning',
         location: morningLocation.value,
@@ -50,8 +61,12 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData, o
     }
   
     // Invia richiesta per il pomeriggio, se presente
-    if (afternoonLocation) {
+    else if (pomeriggio) {
       axios.post('http://localhost:3000/calendar/update', {
+        headers: {
+            Authorization: `Bearer ${Cookies.get('token')}`
+          },
+        id_calendar: IdCalendar, 
         date: dataSelezionata,
         period: 'afternoon',
         location: afternoonLocation.value,
@@ -63,7 +78,7 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData, o
         console.error('Error updating afternoon location:', error);
       });
     }
-    console.log("guarda qua"+ dataSelezionata, morningLocation.value)
+    console.log("guarda qua: "+ IdCalendar, dataSelezionata, morningLocation.value, mattina)
   
     // Chiudi il modulo
     setOpen(false);
@@ -78,6 +93,7 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData, o
     { value: 'Ferie', label: 'Ferie' },
     { value: 'SmartWorking', label: 'SmartWorking' },
     { value: 'Fuori Ufficio', label: 'Fuori Ufficio' },
+    { value: 'Non Lavorativo', label: 'Non Lavorativo' },
   ];
 
   return (

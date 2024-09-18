@@ -12,6 +12,7 @@ const Locations = [
     { value: 'Trasferta', label: 'Trasferta' },
     { value: 'SmartWorking', label: 'SmartWorking' },
     { value: 'Fuori Ufficio', label: 'Fuori Ufficio' },
+    { value: 'Non Lavorativo', label: 'Non Lavorativo' },
 ];
 
 export default function Example({ date, onUpdate }) {
@@ -36,10 +37,23 @@ export default function Example({ date, onUpdate }) {
 
     const formatDate = (date) => date ? date.toLocaleDateString('it-IT') : '';
 
+    const isExtendedDateRangeAllowed = (location) => {
+        return location === 'Ferie' || location === 'Permesso' || location === 'Trasferta';
+    };
+
+    const isFormValid = morningLocation && afternoonLocation && startDate &&
+        (endDate === null || isExtendedDateRangeAllowed(morningLocation.value) || (endDate && (endDate - startDate) <= 7 * 24 * 60 * 60 * 1000));
+
     const createCalendar = () => {
         // Controllo che sia selezionata sia la mattina che il pomeriggio e la data
         if (!morningLocation || !afternoonLocation || !startDate) {
             alert('Please select all required fields!');
+            return;
+        }
+
+        // Verifica intervallo date
+        if (endDate && !isExtendedDateRangeAllowed(morningLocation.value) && (endDate - startDate > 7 * 24 * 60 * 60 * 1000)) {
+            alert('Non puoi selezionare un intervallo di date più lungo di una settimana per questa posizione.');
             return;
         }
     
@@ -73,9 +87,6 @@ export default function Example({ date, onUpdate }) {
             console.error('Error creating afternoon entry:', error);
         });
     };
-    
-
-    const isFormValid = morningLocation && afternoonLocation && startDate;
 
     return (
         <form>
@@ -101,6 +112,7 @@ export default function Example({ date, onUpdate }) {
                                     dateFormat="dd/MM/yyyy"
                                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4] sm:text-sm sm:leading-6"
                                     placeholderText={`Seleziona una data`}
+                                    maxDate={isExtendedDateRangeAllowed(morningLocation?.value) ? null : new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)} // Imposta la data massima basata sulla posizione
                                 />
                             </div>
                         </div>

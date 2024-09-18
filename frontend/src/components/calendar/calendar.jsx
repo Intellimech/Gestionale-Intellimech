@@ -281,7 +281,7 @@ export default function Calendar() {
             <div className="bg-white py-1">Sab</div>
             <div className="bg-white py-1">Dom</div>
           </div>
-          <div className="hidden w-full h-full lg:grid lg:grid-cols-7 lg:grid-rows-6 lg:gap-px">
+          <div className="w-full h-full lg:grid lg:grid-cols-7 lg:grid-rows-6 lg:gap-px">
             {days.map((day) => (
               <div
                 key={day.date}

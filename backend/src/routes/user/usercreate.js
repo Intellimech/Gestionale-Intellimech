@@ -115,15 +115,15 @@ router.post("/create", (req, res) => {
                         // Send the email
                         Logger("debug", `Password: ${password}`);
 
-                        // mail.sendMail({
-                        //     from: process.env.SMTP_USER,
-                        //     to: email,
-                        //     subject: "Account created",
-                        //     text: `Your account has been created, your username is ${username} and your password is ${password}`,
-                        // })
-                        // .then((info) => {
-                        //     Logger("debug", `Email sent: ${info.response}`);
-                        // })
+                        mail.sendMail({
+                            from: process.env.SMTP_USER,
+                            to: email,
+                            subject: "Account created",
+                            text: `Your account has been created, your username is ${username} and your password is ${password}`,
+                        })
+                        .then((info) => {
+                            Logger("debug", `Email sent: ${info.response}`);
+                        })
 
                         res.status(200).json({
                         message: "User created",

@@ -66,10 +66,10 @@ const Login = () => {
       <div className="bg-white p-8 rounded-md w-full max-w-md">
         <img className="mx-auto h-10 w-auto mb-6" src={Logo} alt="Your Company" />
         <h2 className="text-center text-xl font-bold leading-9 text-gray-900 mb-2">
-          Accedi al tuo account
+            Password dimenticata
         </h2>
         <p className="text-center text-sm leading-5 text-gray-600 pb-5">
-          Inserisci le tue credenziali per accedere al tuo account
+            Inserisci la tua email e ti invieremo la tua nuova password, potrai cambiarla in seguito.
         </p>
 
         <form className="space-y-6" onSubmit={handleSubmit}>
@@ -88,45 +88,11 @@ const Login = () => {
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
-              Password
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              autoComplete="current-password"
-              required
-              className="block w-full rounded-md border-gray-300 py-2 px-3 text-gray-900 placeholder-gray-400 focus:ring-2 focus:ring-[#7fb7d4] focus:border-[#7fb7d4] focus:outline-none sm:text-sm"
-            />
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                name="remember-me"
-                type="checkbox"
-                className="h-4 w-4 border-gray-300 text-[#7fb7d4] focus:ring-[#7fb7d4] rounded-md focus:outline-none"
-              />
-              <label htmlFor="remember-me" className="ml-2 block text-sm leading-5 text-gray-900">
-                Ricordami
-              </label>
-            </div>
-
-            <div className="text-sm leading-5">
-              <a href="/forgot-password" className="font-semibold text-[#6397d0] hover:text-[#6397d0]-900">
-                Password dimenticata?
-              </a>
-            </div>
-          </div>
-
-          <div>
             <button
               type="submit"
               className="w-full flex justify-center  bg-[#A7D0EB] py-2 px-4 border border-transparent rounded-md text-sm font-medium text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
             >
-              Accedi
+              Recupera la password
             </button>
           </div>
         </form>

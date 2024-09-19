@@ -192,6 +192,7 @@ export default function Layout() {
                         {({ focus }) => (
                           <a
                             href={item.href}
+                            onClick={item.onClick}
                             className={classNames(
                               focus ? 'bg-gray-50' : '',
                               'block px-3 py-1 text-sm leading-6 text-gray-900',

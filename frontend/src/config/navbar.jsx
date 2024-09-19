@@ -28,7 +28,7 @@ const logout = () => {
 
 
       const userNavigation = [
-        { name: 'Il mio profilo', href: '/profile' },
+        { name: 'Il mio profilo', href: '/app/profile' },
         { name: 'Esci', onClick: () => logout()},
       ]
     

@@ -34,6 +34,8 @@ import CategoriesPage from './components/registry/categoriespage';
 import SubcategoriesPage from './components/registry/subcategoriespage';
 import TechnicalAreaPage from './components/registry/technicalareapage';
 
+import ForgotPasswordPage from './components/system/forgotpassword';
+
 import SettingsPage from './components/system/settings.jsx'
 
 const Logo = './assets/intellimech.svg'
@@ -50,6 +52,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPasswordPage />} />
           <Route path="/app" element={<Layout />}>
             <Route index element={<Navigate to="/app/home" />} />
             <Route path="home" element={<PrivateRoute element={<Homepage />} />} />

@@ -15,14 +15,13 @@ import useraccess from './useraccess.js';
 import forceaction from './forceaction.js';
 
 import Protect from '../../middleware/authmiddleware.js'; 
-router.use(Protect);
 
-router.use('/user', usercreate);
-router.use('/user', userdelete);
-router.use('/user', userupdate);
-router.use('/user', userread);
-router.use('/user', userconfig);
-router.use('/user', useraccess);
-router.use('/user', forceaction);
+router.use('/user', Protect, usercreate);
+router.use('/user', Protect, userdelete);
+router.use('/user', Protect, userupdate);
+router.use('/user', Protect, userread);
+router.use('/user', Protect, userconfig);
+router.use('/user', Protect, useraccess);
+router.use('/user', Protect, forceaction);
 
 export default router;

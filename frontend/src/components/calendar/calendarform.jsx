@@ -15,7 +15,7 @@ const Locations = [
     { value: 'Non Lavorativo', label: 'Non Lavorativo' },
 ];
 
-export default function Example({ date, onUpdate }) {
+export default function Example({ date, onUpdate, onClose }) { // Aggiungi onClose
     const [morningLocation, setMorningLocation] = useState(null);
     const [afternoonLocation, setAfternoonLocation] = useState(null);
     const [startDate, setStartDate] = useState(date ? new Date(date) : null);
@@ -35,53 +35,54 @@ export default function Example({ date, onUpdate }) {
         setEndDate(end);
     };
 
-    const formatDate = (date) => date ? date.toLocaleDateString('it-IT') : '';
+    const isFormValid = () => {
+        if (!morningLocation || !afternoonLocation || !startDate || startDate < new Date()) return false;
 
-    const isExtendedDateRangeAllowed = (location) => {
-        return location === 'Ferie' || location === 'Permesso' || location === 'Trasferta';
+        const isSpecialLocation = ['Ferie', 'Permesso', 'Trasferta'].includes(morningLocation.value) ||
+                                  ['Ferie', 'Permesso', 'Trasferta'].includes(afternoonLocation.value);
+
+        if (isSpecialLocation) {
+            return true; // Nessuna limitazione per le opzioni speciali
+        }
+
+        const today = new Date();
+        const sevenDaysFromNow = new Date(today);
+        sevenDaysFromNow.setDate(today.getDate() + 7);
+        
+        return endDate === null || (startDate < sevenDaysFromNow && (endDate - startDate) <= 7 * 24 * 60 * 60 * 1000);
     };
 
-    const isFormValid = morningLocation && afternoonLocation && startDate &&
-        (endDate === null || isExtendedDateRangeAllowed(morningLocation.value) || (endDate && (endDate - startDate) <= 7 * 24 * 60 * 60 * 1000));
-
     const createCalendar = () => {
-        // Controllo che sia selezionata sia la mattina che il pomeriggio e la data
-        if (!morningLocation || !afternoonLocation || !startDate) {
-            alert('Please select all required fields!');
+        if (!isFormValid()) {
+            alert('Seleziona un intervallo di date valido. Per Ferie, Permesso o Trasferta non ci sono limiti, ma non puoi selezionare date passate.');
             return;
         }
 
-        // Verifica intervallo date
-        if (endDate && !isExtendedDateRangeAllowed(morningLocation.value) && (endDate - startDate > 7 * 24 * 60 * 60 * 1000)) {
-            alert('Non puoi selezionare un intervallo di date più lungo di una settimana per questa posizione.');
-            return;
-        }
-    
         // Invia la richiesta per la mattina
         axios.post('http://localhost:3000/calendar/create', {
             startDate: startDate.toISOString().split('T')[0],
             endDate: endDate ? endDate.toISOString().split('T')[0] : null,
-            part: 'morning',  // Indica che si tratta della mattina
-            location: morningLocation.value,  // Posizione selezionata per la mattina
+            part: 'morning',
+            location: morningLocation.value,
         })
         .then((response) => {
             console.log('Morning entry created:', response);
-            if (onUpdate) onUpdate(); // Se hai bisogno di aggiornare il frontend dopo il primo invio
+            if (onUpdate) onUpdate();
         })
         .catch((error) => {
             console.error('Error creating morning entry:', error);
         });
-    
+
         // Invia la richiesta per il pomeriggio
         axios.post('http://localhost:3000/calendar/create', {
             startDate: startDate.toISOString().split('T')[0],
             endDate: endDate ? endDate.toISOString().split('T')[0] : null,
-            part: 'afternoon',  // Indica che si tratta del pomeriggio
-            location: afternoonLocation.value,  // Posizione selezionata per il pomeriggio
+            part: 'afternoon',
+            location: afternoonLocation.value,
         })
         .then((response) => {
             console.log('Afternoon entry created:', response);
-            if (onUpdate) onUpdate(); // Se hai bisogno di aggiornare il frontend dopo il secondo invio
+            if (onUpdate) onUpdate();
         })
         .catch((error) => {
             console.error('Error creating afternoon entry:', error);
@@ -112,7 +113,7 @@ export default function Example({ date, onUpdate }) {
                                     dateFormat="dd/MM/yyyy"
                                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4] sm:text-sm sm:leading-6"
                                     placeholderText={`Seleziona una data`}
-                                    maxDate={isExtendedDateRangeAllowed(morningLocation?.value) ? null : new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000)} // Imposta la data massima basata sulla posizione
+                                    minDate={new Date()} // Non permette di selezionare date antecedenti a oggi
                                 />
                             </div>
                         </div>
@@ -153,14 +154,18 @@ export default function Example({ date, onUpdate }) {
             </div>
 
             <div className="mt-6 flex items-center justify-end gap-x-6">
-                <button type="button" className="block rounded-md px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-gray-200 focus:outline-gray focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]">
+                <button 
+                    type="button" 
+                    onClick={onClose} // Chiude il form
+                    className="block rounded-md px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-gray-200 focus:outline-gray focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+                >
                     Annulla
                 </button>
                 <button
                     type="button"
                     onClick={createCalendar}
-                    disabled={!isFormValid}
-                    className={`block rounded-md px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4] ${isFormValid ? 'bg-[#A7D0EB] hover:bg-[#7fb7d4]' : 'bg-gray-300 cursor-not-allowed'}`}
+                    disabled={!isFormValid()}
+                    className={`block rounded-md px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4] ${isFormValid() ? 'bg-[#A7D0EB] hover:bg-[#7fb7d4]' : 'bg-gray-300 cursor-not-allowed'}`}
                 >
                     Salva
                 </button>

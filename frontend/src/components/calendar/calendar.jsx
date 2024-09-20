@@ -112,22 +112,24 @@ export default function Calendar() {
     }
   };
 
+ 
+
   const handleTodayClick = () => {
     setCurrentMonth(new Date());
   };
 
   const handleDayClick = (date) => {
-    const today = new Date();
-    const clickedDate = new Date(date);
-  
-    // Normalizza le date per confrontare solo anno, mese e giorno
-    today.setHours(0, 0, 0, 0);
-    clickedDate.setHours(0, 0, 0, 0);
-  
-    // Verifica se la data cliccata è precedente a oggi
-    if (clickedDate < today) {
-      return; // Non fare nulla se il giorno è passato
-    }
+     const today = new Date();
+  const clickedDate = new Date(date);
+
+  // Normalizza le date per confrontare solo anno, mese e giorno
+  today.setHours(0, 0, 0, 0);
+  clickedDate.setHours(0, 0, 0, 0);
+
+  // Verifica se la data cliccata è precedente a oggi
+  if (clickedDate < today) {
+    return; // Non fare nulla se il giorno è passato
+  }
     const selectedDay = days.find(day => day.date === date);
     if (selectedDay.morningLocation || selectedDay.afternoonLocation) {
       if (selectedDay) {
@@ -246,7 +248,8 @@ export default function Calendar() {
         date={selectedDate} 
         onSubmit={handleFormSubmit} 
       />
-      <div className="h-screen flex flex-col">
+      
+      <div className="h-[85vh] flex flex-col">
         <header className="flex items-center justify-between border-b border-gray-200 px-4 py-2 lg:flex-none">
           <h1 className="text-sm font-semibold leading-5 text-gray-900">
           <time dateTime={format(currentMonth, 'yyyy-MM', { locale: it })}>

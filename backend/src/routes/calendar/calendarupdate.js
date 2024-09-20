@@ -27,7 +27,9 @@ router.post('/update/', async (req, res) => {
     try {
         // Get the token from the header
         const token = req.headers.authorization?.split(' ')[1];
-        const { id_calendar, date, period, location } = req.body;
+        const { morning_id, afternoon_id, date, morning_location, afternoon_location } = req.body;
+
+        console.log('Received data:', { morning_id, afternoon_id, date, morning_location, afternoon_location });
 
         if (!token) {
             return res.status(401).json({ message: 'Unauthorized' });
@@ -43,15 +45,31 @@ router.post('/update/', async (req, res) => {
                 // Get the Calendar model
                 const Calendar = sequelize.models.Calendar;
 
-                // Update or create the calendar entry
-                await Calendar.upsert({
-                    id_calendar: id_calendar,
-                    date: date,
-                    period: period,
-                    location: location,
-                    owner: decoded.id, // User ID from the token
-                    updatedBy: decoded.id // User ID from the token
-                });
+                // Update or create the calendar entry for the morning
+                if (morning_location) {
+                    console.log('Updating morning location:', morning_location);
+                    await Calendar.upsert({
+                        id_calendar: morning_id,
+                        date: date,
+                        period: 'morning',
+                        location: morning_location,
+                        owner: decoded.id, // User ID from the token
+                        updatedBy: decoded.id // User ID from the token
+                    });
+                }
+
+                // Update or create the calendar entry for the afternoon
+                if (afternoon_location) {
+                    console.log('Updating afternoon location:', afternoon_location);
+                    await Calendar.upsert({
+                        id_calendar: afternoon_id,
+                        date: date,
+                        period: 'afternoon',
+                        location: afternoon_location,
+                        owner: decoded.id, // User ID from the token
+                        updatedBy: decoded.id // User ID from the token
+                    });
+                }
 
                 res.json({
                     message: 'Calendar entry updated successfully',

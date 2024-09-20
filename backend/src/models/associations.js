@@ -24,6 +24,7 @@ import Notification from './notification.js';
 import Purchase from './purchase.js';
 import PurchaseRow from './purchaserow.js';
 import Calendar from './calendar.js';
+import Locations from './locations.js';
 
 // Define associations
 User.belongsTo(Role, { foreignKey: 'role' });
@@ -35,6 +36,7 @@ Permissions.belongsToMany(Role, { through: RolePermissions, foreignKey: 'id_perm
 //User is associated with Group
 User.belongsTo(Group, { foreignKey: 'group' });
 Group.hasMany(User, { foreignKey: 'group' });
+
 
 //User is associated with Subgroup
 User.belongsTo(Subgroup, { foreignKey: 'subgroup' });
@@ -202,6 +204,7 @@ export default {
     Permissions,
     RolePermissions,
     ContractType,
+    Locations,
     Group,
     Subgroup,
     Invoice,

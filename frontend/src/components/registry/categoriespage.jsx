@@ -220,26 +220,35 @@ export default function CategoryTable() {
       </div>
 
       {isModalOpen && (
-        <Dialog id="category-modal" as="div" open={isModalOpen} onClose={() => setIsModalOpen(false)} className="relative z-50">
-          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <Dialog.Panel className="max-w-sm mx-auto bg-white rounded shadow-lg p-6">
-              <Dialog.Title className="text-lg font-semibold mb-4">Crea Categoria</Dialog.Title>
-              <input
-                type="text"
-                value={newCategoryName}
-                onChange={(e) => setNewCategoryName(e.target.value)}
-                placeholder="Nome Categoria"
-                className="w-full px-3 py-2 border rounded mb-4"
-              />
-              <div className="flex justify-end">
-                <button onClick={handleCreateCategory} className="bg-blue-500 text-white px-4 py-2 rounded mr-2">Crea</button>
-                <button onClick={() => setIsModalOpen(false)} className="bg-gray-300 text-gray-700 px-4 py-2 rounded">Annulla</button>
-              </div>
-            </Dialog.Panel>
-          </div>
-        </Dialog>
-      )}
+  <Dialog id="category-modal" as="div" open={isModalOpen} onClose={() => setIsModalOpen(false)} className="relative z-50">
+    <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <Dialog.Panel className="max-w-md bg-white rounded shadow-lg p-6" style={{ width: '600px', height: '240px' }}>
+        <Dialog.Title className="text-lg font-bold mb-4">Crea Categoria</Dialog.Title>
+        <input
+          type="text"
+          value={newCategoryName}
+          onChange={(e) => setNewCategoryName(e.target.value)}
+          placeholder="Nome Categoria"
+          className="w-full px-3 py-2 border border-gray-300 rounded mb-4 focus:border-[#A7D0EB] focus:ring-[#A7D0EB] sm:text-sm"
+        />
+          <button
+            onClick={handleCreateCategory}
+            className="block w-full mt-4 rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4]"
+            >
+            Crea
+          </button>
+          <button
+              type="submit"
+              onClick={() => setIsModalOpen(false)}
+              className="block w-full mt-4 rounded-md bg-white px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-white"
+            >
+              Annulla
+            </button>
+      </Dialog.Panel>
+    </div>
+  </Dialog>
+)}
 
       {isConfirmModalOpen && (
         <Dialog as="div" open={isConfirmModalOpen} onClose={() => setIsConfirmModalOpen(false)} className="relative z-50">

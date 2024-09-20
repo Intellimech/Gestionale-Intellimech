@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-
 import Select from 'react-tailwindcss-select';
 import Cookies from 'js-cookie';
 import { CheckBadgeIcon, XCircleIcon } from '@heroicons/react/20/solid';
@@ -11,55 +10,89 @@ export default function UserCreateForm() {
   const [company, setCompany] = useState([]);
   const [category, setCategory] = useState([]);
   const [subcategory, setSubcategory] = useState([]);
-  
-  const [purchaseOrder, setPurchaseOrder] = useState([])
   const [technicalArea, setTechnicalArea] = useState([]);
+
+  const [selectedCompany, setSelectedCompany] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedSubcategory, setSelectedSubcategory] = useState(null);
+  const [selectedTechnicalArea, setSelectedTechnicalArea] = useState(null);
 
   useEffect(() => {
     const token = Cookies.get('token');
+
     // Fetching company data
-    axios.get(`${process.env.REACT_APP_API_URL}/company/read`, { 
-      headers: { authorization: `Bearer ${token}` },
-      params: { filter: "client" }
-    })
-    .then((response) => {
-      setCompany(response.data.value);
-    })
-    .catch((error) => {
-      console.error('Error fetching company data:', error);
-    });
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/company/read`, {
+        headers: { authorization: `Bearer ${token}` },
+        params: { filter: 'client' },
+      })
+      .then((response) => {
+        setCompany(
+          response.data.value.map((item) => ({
+            value: item.id_company,
+            label: item.name,
+          }))
+        );
+      })
+      .catch((error) => {
+        console.error('Error fetching company data:', error);
+      });
 
     // Fetching category data
-    axios.get(`${process.env.REACT_APP_API_URL}/category/read`, { headers: { authorization: `Bearer ${token}` } })
-    .then((response) => {
-      setCategory(response.data.categories);
-    })
-    .catch((error) => {
-      console.error('Error fetching category data:', error);
-    });
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/category/read`, {
+        headers: { authorization: `Bearer ${token}` },
+      })
+      .then((response) => {
+        setCategory(
+          response.data.categories.map((item) => ({
+            value: item.id_category,
+            label: item.name,
+          }))
+        );
+      })
+      .catch((error) => {
+        console.error('Error fetching category data:', error);
+      });
 
     // Fetching technical area data
-    axios.get(`${process.env.REACT_APP_API_URL}/technicalarea/read`, { headers: { authorization: `Bearer ${token}` } })
-    .then((response) => {
-      setTechnicalArea(response.data.technicalareas);
-    })
-    .catch((error) => {
-      console.error('Error fetching technical area data:', error);
-    });
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/technicalarea/read`, {
+        headers: { authorization: `Bearer ${token}` },
+      })
+      .then((response) => {
+        setTechnicalArea(
+          response.data.technicalareas.map((item) => ({
+            value: item.id_technicalarea,
+            label: item.name,
+          }))
+        );
+      })
+      .catch((error) => {
+        console.error('Error fetching technical area data:', error);
+      });
   }, []);
 
-  const handleCategoryChange = (event) => {
+  const handleCategoryChange = (value) => {
+    setSelectedCategory(value);
     const token = Cookies.get('token');
+
     // Fetching subcategories with the selected category
-    axios.get(`${process.env.REACT_APP_API_URL}/subcategory/read/${event.target.value}`, { headers: { authorization: `Bearer ${token}` } })
-    .then((response) => {
-      setSubcategory(response.data.subcategories);
-      console.log(response.data.subcategories)
-      console.log(event.target.value)
-    })
-    .catch((error) => {
-      console.error('Error fetching subcategory data:', error);
-    });
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/subcategory/read/${value.value}`, {
+        headers: { authorization: `Bearer ${token}` },
+      })
+      .then((response) => {
+        setSubcategory(
+          response.data.subcategories.map((item) => ({
+            value: item.id_subcategory,
+            label: item.name,
+          }))
+        );
+      })
+      .catch((error) => {
+        console.error('Error fetching subcategory data:', error);
+      });
   };
 
   const createQuotationRequest = (event) => {
@@ -67,48 +100,58 @@ export default function UserCreateForm() {
     const token = Cookies.get('token');
     const form = document.forms.createquotationrequest;
     const formData = new FormData(form);
+
+    // Append selected values to formData
+    formData.append('company', selectedCompany?.value || '');
+    formData.append('category', selectedCategory?.value || '');
+    formData.append('subcategory', selectedSubcategory?.value || '');
+    formData.append('technicalarea', selectedTechnicalArea?.value || '');
+
     // Converting formData to JSON
     let jsonObject = {};
     formData.forEach((value, key) => {
       jsonObject[key] = value;
     });
+
     // Posting data to create quotation request
-    axios.post(`${process.env.REACT_APP_API_URL}/quotationrequest/create`, jsonObject, { headers: { authorization: `Bearer ${token}` } })
-    .then((response) => {
-      
-      setCreateSuccess(true);
-    })
-    .catch((error) => {
-      setCreateSuccess(false);
-      setErrorMessages(error.response.data.message);
-    });
+    axios
+      .post(`${process.env.REACT_APP_API_URL}/quotationrequest/create`, jsonObject, {
+        headers: { authorization: `Bearer ${token}` },
+      })
+      .then((response) => {
+        setCreateSuccess(true);
+      })
+      .catch((error) => {
+        setCreateSuccess(false);
+        setErrorMessages(error.response.data.message);
+      });
   };
 
   return (
-    <form name='createquotationrequest'>
+    <form name="createquotationrequest">
       {/* Account Information */}
       <div className="space-y-12">
         <div className="border-b border-gray-900/10 pb-12">
           <h2 className="text-base font-semibold leading-7 text-gray-900">Informazioni</h2>
-          <p className="mt-1 text-sm leading-6 text-gray-600">Ricorda, i dati inseriti ora saranno quelli che verranno utilizzati per creare poi l'offerta</p>
+          <p className="mt-1 text-sm leading-6 text-gray-600">
+            Ricorda, i dati inseriti ora saranno quelli che verranno utilizzati per creare poi l'offerta
+          </p>
 
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-
             <div className="col-span-full">
               <label htmlFor="company" className="block text-sm font-medium leading-6 text-gray-900">
                 Cliente
               </label>
               <div className="mt-2">
-                <select
+                <Select
                   id="company"
                   name="company"
-                  autoComplete="company-name"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4]  sm:text-sm sm:leading-6"
-                >
-                  {company.map((item) => (
-                    <option key={item.id_company} value={item.id_company}>{item.name}</option>
-                  ))}
-                </select>
+                  options={company}
+                  value={selectedCompany}
+                  onChange={setSelectedCompany}
+                  placeholder="Seleziona un cliente"
+                  isSearchable
+                />
               </div>
             </div>
 
@@ -117,17 +160,15 @@ export default function UserCreateForm() {
                 Categoria
               </label>
               <div className="mt-2">
-                <select
+                <Select
                   id="category"
                   name="category"
+                  options={category}
+                  value={selectedCategory}
                   onChange={handleCategoryChange}
-                  autoComplete="category-name"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4]  sm:max-w-xs sm:text-sm sm:leading-6"
-                >
-                  {category.map((item) => (
-                    <option key={item.id_category} value={item.id_category}>{item.name}</option>
-                  ))}
-                </select>
+                  placeholder="Seleziona una categoria"
+                  isSearchable
+                />
               </div>
             </div>
 
@@ -136,17 +177,16 @@ export default function UserCreateForm() {
                 Sotto Categoria
               </label>
               <div className="mt-2">
-                <select
+                <Select
                   id="subcategory"
                   name="subcategory"
-                  autoComplete="subcategory-name"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4]  sm:max-w-xs sm:text-sm sm:leading-6"
-                  disabled={subcategory.length === 0}
-                >
-                  {subcategory.map((item) => (
-                    <option key={item.id_subcategory} value={item.id_subcategory}>{item.name}</option>
-                  ))}
-                </select>
+                  options={subcategory}
+                  value={selectedSubcategory}
+                  onChange={setSelectedSubcategory}
+                  placeholder="Seleziona una sotto categoria"
+                  isSearchable
+                  isDisabled={subcategory.length === 0}
+                />
               </div>
             </div>
 
@@ -155,16 +195,15 @@ export default function UserCreateForm() {
                 Area Tecnica
               </label>
               <div className="mt-2">
-                <select
+                <Select
                   id="technicalarea"
                   name="technicalarea"
-                  autoComplete="technicalarea-name"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4]  sm:max-w-xs sm:text-sm sm:leading-6"
-                >
-                  {technicalArea.map((item) => (
-                    <option key={item.id_technicalarea} value={item.id_technicalarea}>{item.name}</option>
-                  ))}
-                </select>
+                  options={technicalArea}
+                  value={selectedTechnicalArea}
+                  onChange={setSelectedTechnicalArea}
+                  placeholder="Seleziona un'area tecnica"
+                  isSearchable
+                />
               </div>
             </div>
 
@@ -179,12 +218,11 @@ export default function UserCreateForm() {
                   name="description"
                   id="description"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4]  sm:text-sm sm:leading-6"
-                  defaultValue={''}
+                  defaultValue=""
                 />
                 <p className="mt-1 text-xs text-gray-500">Massimo 150 caratteri</p>
               </div>
             </div>
-
           </div>
         </div>
       </div>

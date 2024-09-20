@@ -38,8 +38,8 @@ export default function PurchaseRowInput({
             onChange({ ...product, category: option.value });
           }}
           options={categories.map(c => ({ value: c.id_category, label: c.name }))}
-          className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:max-w-xs sm:text-sm sm:leading-6"
-          primaryColor='red'
+          className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4] sm:max-w-xs sm:text-sm sm:leading-6"
+          primaryColor='[#7fb7d4]'
         />
       </td>
 
@@ -58,9 +58,9 @@ export default function PurchaseRowInput({
           onChange={(option) => onChange({ ...product, subcategory: option.value })}
           options={subcategories.map(s => ({ value: s.id_subcategory, label: s.name }))}
           placeholder="Seleziona una sottocategoria"
-          className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-red-600 sm:max-w-xs sm:text-sm sm:leading-6"
+          className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4] sm:max-w-xs sm:text-sm sm:leading-6"
           isDisabled={subcategories.length === 0}
-          primaryColor='red'
+          primaryColor='[#7fb7d4]'
         />
       </td>
 

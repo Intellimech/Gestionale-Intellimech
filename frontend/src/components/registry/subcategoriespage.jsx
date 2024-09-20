@@ -2,6 +2,7 @@ import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/20/solid';
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import Select from "react-tailwindcss-select";
 import { Dialog } from '@headlessui/react';
 
 function classNames(...classes) {
@@ -246,42 +247,50 @@ export default function SubcategoryTable() {
             </div>
           </div>
         </div>
-
-        {/* Modal per creare sotto categoria */}
         {isModalOpen && (
-          <Dialog as="div" className="relative z-10" open={isModalOpen} onClose={() => setIsModalOpen(false)}>
-            <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
-            <div id="subcategory-modal" className="fixed inset-0 flex items-center justify-center p-4">
-              <Dialog.Panel className="mx-auto max-w-sm rounded bg-white p-4">
-                <Dialog.Title>Crea Nuova Sotto Categoria</Dialog.Title>
-                <form onSubmit={handleSubmitNewSubcategory}>
-                  <input
-                    type="text"
-                    placeholder="Nome Sotto Categoria"
-                    value={newSubcategory.name}
-                    onChange={(e) => setNewSubcategory({ ...newSubcategory, name: e.target.value })}
-                    className="block w-full mt-2 border-gray-300 rounded-md shadow-sm focus:border-[#A7D0EB] focus:ring-[#A7D0EB] sm:text-sm"
-                  />
-                  <select
-                    value={newSubcategory.category}
-                    onChange={(e) => setNewSubcategory({ ...newSubcategory, category: e.target.value })}
-                    className="block w-full mt-2 border-gray-300 rounded-md shadow-sm focus:border-[#A7D0EB] focus:ring-[#A7D0EB] sm:text-sm"
-                  >
-                    <option value="">Select Category</option>
-                    {categories.map((category) => (
-                      <option key={category.id_category} value={category.name}>
-                        {category.name}
-                      </option>
-                    ))}
-                  </select>
-                  <button type="submit" className="block w-full mt-4 rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4]">
-                    Conferma
-                  </button>
-                </form>
-              </Dialog.Panel>
-            </div>
-          </Dialog>
-        )}
+  <Dialog as="div" className="relative z-10" open={isModalOpen} onClose={() => setIsModalOpen(false)}>
+    <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+    <div className="fixed inset-0 flex items-center justify-center" style={{ marginLeft: '15%' }}>
+      <div className="flex justify-center">
+        <Dialog.Panel className="mx-auto bg-white p-4 mt-3" style={{ width: '600px', maxWidth: '90%', height: '260px'}}> {/* Set custom width */}
+          <Dialog.Title className="text-lg mt-2 font-bold">Crea Nuova Sotto Categoria</Dialog.Title>
+          <form  className="mt-4"onSubmit={handleSubmitNewSubcategory}>
+            
+            <Select
+              isSearchable
+              placeholder="Select Category"
+              options={categories.map(category => ({ label: category.name, value: category.name }))}
+              onChange={(value) => setNewSubcategory({ ...newSubcategory, category: value.value })}
+              className="mt-2"
+            />
+            <input
+              type="text"
+              placeholder="Nome Sotto Categoria"
+              value={newSubcategory.name}
+              onChange={(e) => setNewSubcategory({ ...newSubcategory, name: e.target.value })}
+              className="block w-full mt-3 border border-gray-300 rounded-md shadow-sm focus:border-[#A7D0EB] focus:ring-[#A7D0EB] sm:text-sm"
+            />
+            <button
+              type="submit"
+              className="block w-full mt-4 rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4]"
+            >
+              Crea
+            </button>
+            <button
+              type="submit"
+              onClick={() => setIsModalOpen(false)}
+              className="block w-full mt-4 rounded-md bg-white px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-white"
+            >
+              Annulla
+            </button>
+            
+          </form>
+        </Dialog.Panel>
+      </div>
+    </div>
+  </Dialog>
+)}
+
 
         {/* Modal di conferma */}
         {isConfirmModalOpen && (

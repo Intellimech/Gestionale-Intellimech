@@ -238,7 +238,7 @@ export default function PurchaseCreateForm() {
         )}
 
         {createSuccess === false && (
-          <div className="mt-4 rounded-md bg-red-50 p-4">
+          <div className="mt-4 rounded-md bg-[#7fb7d4] p-4">
             <div className="flex">
               <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
               <h3 className="ml-3 text-sm font-medium text-red-800">{errorMessages}</h3>

@@ -250,7 +250,7 @@ export default function Calendar() {
       />
       
       <div className="h-[85vh] flex flex-col">
-        <header className="flex items-center justify-between border-b border-gray-200 px-4 py-2 lg:flex-none">
+        <header className="flex items-center justify-between border-b border-gray-200 px-0 py-2 lg:flex-none">
           <h1 className="text-sm font-semibold leading-5 text-gray-900">
           <time dateTime={format(currentMonth, 'yyyy-MM', { locale: it })}>
             {format(currentMonth, 'MMMM yyyy', { locale: it }).charAt(0).toUpperCase() + format(currentMonth, 'MMMM yyyy', { locale: it }).slice(1)}

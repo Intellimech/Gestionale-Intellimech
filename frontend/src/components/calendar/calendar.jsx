@@ -117,6 +117,17 @@ export default function Calendar() {
   };
 
   const handleDayClick = (date) => {
+    const today = new Date();
+    const clickedDate = new Date(date);
+  
+    // Normalizza le date per confrontare solo anno, mese e giorno
+    today.setHours(0, 0, 0, 0);
+    clickedDate.setHours(0, 0, 0, 0);
+  
+    // Verifica se la data cliccata è precedente a oggi
+    if (clickedDate < today) {
+      return; // Non fare nulla se il giorno è passato
+    }
     const selectedDay = days.find(day => day.date === date);
     if (selectedDay.morningLocation || selectedDay.afternoonLocation) {
       if (selectedDay) {

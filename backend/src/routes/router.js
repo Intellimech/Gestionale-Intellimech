@@ -29,6 +29,7 @@ import permission from './permission/permissionrouter.js';
 import offer from './offer/offerrouter.js';
 import purchase from './purchase/purchaserouter.js';
 import subcategory from './subcategory/subcategoryrouter.js';
+import location from './locations/locationsrouter.js';
 import category from './category/categoryrouter.js';
 import technicalarea from './technicalarea/technicalarearouter.js';
 import salesorder from './salesorder/salesorderrouter.js';
@@ -45,6 +46,7 @@ router.use((req, res, next) => {
 });
 
 router.use('/', auth);
+router.use('/', location);
 router.use('/', user);
 router.use('/', company);
 router.use('/', invoices);

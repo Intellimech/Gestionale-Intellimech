@@ -1,29 +1,61 @@
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Select from 'react-tailwindcss-select';
 import DatePicker from 'react-datepicker';
+
+import Cookies from 'js-cookie';
 import 'react-datepicker/dist/react-datepicker.css';
 
-const Locations = [
-    { value: 'Ferie', label: 'Ferie' },
-    { value: 'Permesso', label: 'Permesso' },
-    { value: 'Malattia', label: 'Malattia' },
-    { value: 'Ufficio', label: 'Ufficio' },
-    { value: 'Trasferta', label: 'Trasferta' },
-    { value: 'SmartWorking', label: 'SmartWorking' },
-    { value: 'Fuori Ufficio', label: 'Fuori Ufficio' },
-    { value: 'Non Lavorativo', label: 'Non Lavorativo' },
-];
+ const Locations = [
+     { value: 'Ferie', label: 'Ferie' },
+     { value: 'Permesso', label: 'Permesso' },
+     { value: 'Malattia', label: 'Malattia' },
+     { value: 'Ufficio', label: 'Ufficio' },
+     { value: 'Trasferta', label: 'Trasferta' },
+     { value: 'SmartWorking', label: 'SmartWorking' },
+     { value: 'Fuori Ufficio', label: 'Fuori Ufficio' },
+     { value: 'Non Lavorativo', label: 'Non Lavorativo' },
+ ];
 
-export default function Example({ date, onUpdate, onClose }) { // Aggiungi onClose
+export default function Example({ date,  setOpen}) {
     const [morningLocation, setMorningLocation] = useState(null);
     const [afternoonLocation, setAfternoonLocation] = useState(null);
     const [startDate, setStartDate] = useState(date ? new Date(date) : null);
     const [endDate, setEndDate] = useState(null);
+    const [locations, setLocations] = useState([]);
+
 
     const handleMorningLocationChange = (selected) => {
         setMorningLocation(selected);
     };
+
+    useEffect(() => {
+        const token = Cookies.get('token');
+    if (!token) {
+      console.error('No authorization token found');
+      return;
+    }
+
+        const fetchData = async () => {
+          try {
+            const [
+              { data: { locations } },
+            
+            ] = await Promise.all([
+              axios.get(`${process.env.REACT_APP_API_URL}/locations/read`, { headers: { authorization: `Bearer ${token}` } }),
+             ]);
+    
+            setLocations(response.data);
+            console.log("Queste sono le locations"+locations);
+          
+          } catch (error) {
+            console.error('Error fetching data:', error);
+          }
+        };
+    
+        fetchData();
+      }, []);
+    
 
     const handleAfternoonLocationChange = (selected) => {
         setAfternoonLocation(selected);
@@ -36,7 +68,9 @@ export default function Example({ date, onUpdate, onClose }) { // Aggiungi onClo
     };
 
     const isFormValid = () => {
-        if (!morningLocation || !afternoonLocation || !startDate || startDate < new Date()) return false;
+        const clickedDate = new Date();
+        clickedDate.setHours(0, 0, 0, 0);
+        if (!morningLocation || !afternoonLocation || !startDate || startDate < clickedDate) return false;
 
         const isSpecialLocation = ['Ferie', 'Permesso', 'Trasferta'].includes(morningLocation.value) ||
                                   ['Ferie', 'Permesso', 'Trasferta'].includes(afternoonLocation.value);
@@ -46,13 +80,13 @@ export default function Example({ date, onUpdate, onClose }) { // Aggiungi onClo
         }
 
         const today = new Date();
-        const sevenDaysFromNow = new Date(today);
-        sevenDaysFromNow.setDate(today.getDate() + 7);
-        
-        return endDate === null || (startDate < sevenDaysFromNow && (endDate - startDate) <= 7 * 24 * 60 * 60 * 1000);
+        const endOfNextWeek = new Date(today);
+        endOfNextWeek.setDate(today.getDate() + (7 - today.getDay()) + 7); // Calcola la fine della settimana successiva
+
+        return endDate === null || (endDate <= endOfNextWeek);
     };
 
-    const createCalendar = () => {
+    const handleFormSubmit = () => {
         if (!isFormValid()) {
             alert('Seleziona un intervallo di date valido. Per Ferie, Permesso o Trasferta non ci sono limiti, ma non puoi selezionare date passate.');
             return;
@@ -68,6 +102,7 @@ export default function Example({ date, onUpdate, onClose }) { // Aggiungi onClo
         .then((response) => {
             console.log('Morning entry created:', response);
             if (onUpdate) onUpdate();
+            onClose(); // Chiude il form dopo il successo
         })
         .catch((error) => {
             console.error('Error creating morning entry:', error);
@@ -83,6 +118,7 @@ export default function Example({ date, onUpdate, onClose }) { // Aggiungi onClo
         .then((response) => {
             console.log('Afternoon entry created:', response);
             if (onUpdate) onUpdate();
+            onClose(); // Chiude il form dopo il successo
         })
         .catch((error) => {
             console.error('Error creating afternoon entry:', error);
@@ -156,14 +192,14 @@ export default function Example({ date, onUpdate, onClose }) { // Aggiungi onClo
             <div className="mt-6 flex items-center justify-end gap-x-6">
                 <button 
                     type="button" 
-                    onClick={onClose} // Chiude il form
+                    onClick={() => setOpen(false)}
                     className="block rounded-md px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-gray-200 focus:outline-gray focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
                 >
                     Annulla
                 </button>
                 <button
-                    type="button"
-                    onClick={createCalendar}
+                    type="submit"
+                    onClick={handleFormSubmit}
                     disabled={!isFormValid()}
                     className={`block rounded-md px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4] ${isFormValid() ? 'bg-[#A7D0EB] hover:bg-[#7fb7d4]' : 'bg-gray-300 cursor-not-allowed'}`}
                 >

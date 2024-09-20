@@ -68,7 +68,7 @@ export default function ChangePassword({ openChangePass, setOpenChangePass }) {
             <div className="mt-4">
               <div className="flex items-center justify-center">
                 <input type="password" 
-                       className="w-full border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-red-500 focus:border-red-500" 
+                       className="w-full border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]" 
                        placeholder="Nuova Password"
                        onChange={(e) => setPassword(e.target.value)}
                 />              
@@ -77,14 +77,14 @@ export default function ChangePassword({ openChangePass, setOpenChangePass }) {
             <div className="mt-4">
               <div className="flex items-center justify-center">
                 <input type="password" 
-                       className="w-full border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-red-500 focus:border-red-500" 
+                       className="w-full border-gray-300 rounded-md shadow-sm sm:text-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]" 
                        placeholder="Conferma Password"
                        onChange={(e) => setConfirmPassword(e.target.value)}
                 />
               </div>
             </div>
             {errorMessage && (
-              <div className="mt-4 text-center text-red-500">
+              <div className="mt-4 text-center text-[#7fb7d4]">
                 {errorMessage}
               </div>
             )}
@@ -92,7 +92,7 @@ export default function ChangePassword({ openChangePass, setOpenChangePass }) {
               <button
                 type="button"
                 onClick={handleChangePassword}
-                className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+                className="inline-flex w-full justify-center rounded-md bg-[#7fb7d4] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#7fb7d4] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7fb7d4]"
               >
                 Cambia Password
               </button>

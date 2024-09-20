@@ -38,7 +38,7 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
     console.log('Afternoon location changed:', selectedOption);
   };
 
-  const handleSubmit = () => {
+  const handleFormSubmit = () => {
     const morningLocationValue = morningLocation ? morningLocation.value : initialData.morningLocation;
     const afternoonLocationValue = afternoonLocation ? afternoonLocation.value : initialData.afternoonLocation;
 
@@ -63,6 +63,7 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
       })
       .then((response) => {
         console.log('Update response:', response);
+        if (onUpdate) onUpdate();
       })
       .catch((error) => {
         console.error('Error updating locations:', error);
@@ -173,7 +174,7 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
             </button>
             <button
               type="button"
-              onClick={handleSubmit}
+              onClick={handleFormSubmit}
               className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
             >
               Salva

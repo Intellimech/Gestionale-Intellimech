@@ -181,7 +181,7 @@ export default function Example({ open, setOpen }) {
                           as="li"
                           key={page.name}
                           value={page}
-                          className="flex cursor-default select-none items-center px-4 py-2 data-[focus]:bg-red-600 data-[focus]:text-white"
+                          className="flex cursor-default select-none items-center px-4 py-2 data-[focus]:bg-[#7fb7d4] data-[focus]:text-white"
                         >
                           <span className="ml-3 flex-auto truncate">{page.name}</span>
                         </ComboboxOption>
@@ -198,7 +198,7 @@ export default function Example({ open, setOpen }) {
                           as="li"
                           key={project.id}
                           value={project}
-                          className="group flex cursor-default select-none items-center px-4 py-2 data-[focus]:bg-red-600 data-[focus]:text-white"
+                          className="group flex cursor-default select-none items-center px-4 py-2 data-[focus]:bg-[#7fb7d4] data-[focus]:text-white"
                         >
                           <FolderIcon
                             className="h-6 w-6 flex-none text-gray-400 group-data-[focus]:text-white"
@@ -219,7 +219,7 @@ export default function Example({ open, setOpen }) {
                           as="li"
                           key={user.id}
                           value={user}
-                          className="group flex cursor-default select-none items-center px-4 py-2 data-[focus]:bg-red-600 data-[focus]:text-white"
+                          className="group flex cursor-default select-none items-center px-4 py-2 data-[focus]:bg-[#7fb7d4] data-[focus]:text-white"
                         >
                           <img
                             src={user.imageUrl}
@@ -277,7 +277,7 @@ export default function Example({ open, setOpen }) {
               <kbd
                 className={classNames(
                   'mx-1 flex h-5 w-5 items-center justify-center rounded border bg-white font-semibold sm:mx-2',
-                  rawQuery.startsWith('#') ? 'border-red-600 text-red-600' : 'border-gray-400 text-gray-900',
+                  rawQuery.startsWith('#') ? 'border-[#7fb7d4] text-[#7fb7d4]' : 'border-gray-400 text-gray-900',
                 )}
               >
                 #
@@ -287,7 +287,7 @@ export default function Example({ open, setOpen }) {
               <kbd
                 className={classNames(
                   'mx-1 flex h-5 w-5 items-center justify-center rounded border bg-white font-semibold sm:mx-2',
-                  rawQuery.startsWith('>') ? 'border-red-600 text-red-600' : 'border-gray-400 text-gray-900',
+                  rawQuery.startsWith('>') ? 'border-[#7fb7d4] text-[#7fb7d4]' : 'border-gray-400 text-gray-900',
                 )}
               >
                 &gt;
@@ -296,7 +296,7 @@ export default function Example({ open, setOpen }) {
               <kbd
                 className={classNames(
                   'mx-1 flex h-5 w-5 items-center justify-center rounded border bg-white font-semibold sm:mx-2',
-                  rawQuery === '?' ? 'border-red-600 text-red-600' : 'border-gray-400 text-gray-900',
+                  rawQuery === '?' ? 'border-[#7fb7d4] text-[#7fb7d4]' : 'border-gray-400 text-gray-900',
                 )}
               >
                 ?
@@ -305,7 +305,7 @@ export default function Example({ open, setOpen }) {
               <kbd
                 className={classNames(
                   'mx-1 flex h-5 w-5 items-center justify-center rounded border bg-white font-semibold sm:mx-2',
-                  rawQuery.startsWith('/') ? 'border-red-600 text-red-600' : 'border-gray-400 text-gray-900',
+                  rawQuery.startsWith('/') ? 'border-[#7fb7d4] text-[#7fb7d4]' : 'border-gray-400 text-gray-900',
                 )}
               >
                 /

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Select from 'react-tailwindcss-select';
 import axios from 'axios';
 import Cookies from 'js-cookie';
@@ -9,6 +9,10 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
   const [morningId, setMorningId] = useState(null);
   const [afternoonId, setAfternoonId] = useState(null);
   const [dataSelezionata, setDataSelezionata] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [calendarData, setCalendarData] = useState([]);
+  
+  const formRef = useRef(null); // Riferimento al form
 
   useEffect(() => {
     if (initialData) {
@@ -28,29 +32,48 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
     }
   }, [initialData]);
 
+  useEffect(() => {
+    const token = Cookies.get('token');
+    if (!token) {
+      console.error('No authorization token found');
+      return;
+    }
+
+    const fetchUsers = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/user/read`);
+        setUsers(response.data.users);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
+
+    fetchCalendarData();
+    fetchUsers();
+  }, []);
+
+  const fetchCalendarData = async () => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/calendar/read`);
+      setCalendarData(Array.isArray(response.data.calendars) ? response.data.calendars : []);
+      console.log('Fetched Calendar Data:', response.data.calendars);
+    } catch (error) {
+      console.error('Error fetching calendar data:', error);
+    }
+  };
+
   const handleMorningLocationChange = (selectedOption) => {
     setMorningLocation(selectedOption);
-    console.log('Morning location changed:', selectedOption);
   };
 
   const handleAfternoonLocationChange = (selectedOption) => {
     setAfternoonLocation(selectedOption);
-    console.log('Afternoon location changed:', selectedOption);
   };
 
   const handleFormSubmit = () => {
     const morningLocationValue = morningLocation ? morningLocation.value : initialData.morningLocation;
     const afternoonLocationValue = afternoonLocation ? afternoonLocation.value : initialData.afternoonLocation;
 
-    console.log('Submitting data:', {
-      morning_id: morningId,
-      afternoon_id: afternoonId,
-      date: dataSelezionata,
-      morning_location: morningLocationValue,
-      afternoon_location: afternoonLocationValue,
-    });
-
-    // Verifica se almeno uno dei valori è cambiato
     if (morningLocationValue !== initialData.morningLocation || afternoonLocationValue !== initialData.afternoonLocation) {
       axios.post('http://localhost:3000/calendar/update', {
           morning_id: morningId,
@@ -62,8 +85,7 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
           headers: { Authorization: `Bearer ${Cookies.get('token')}` },
       })
       .then((response) => {
-        console.log('Update response:', response);
-        if (onUpdate) onUpdate();
+        // Gestisci la risposta se necessario
       })
       .catch((error) => {
         console.error('Error updating locations:', error);
@@ -87,19 +109,37 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
   const formContainerStyle = {
     position: 'fixed',
     right: open ? '0' : '-100%',
-    top: '6',
+    top: '0',
     height: '100vh',
     width: '550px',
     transform: 'translateY(0)',
     transition: 'right 0.3s ease-in-out',
-    zIndex: 10,
+    zIndex: 1000,
     backgroundColor: 'white',
     boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
   };
 
+  const handleClickOutside = (event) => {
+    if (formRef.current && !formRef.current.contains(event.target)) {
+      setOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    if (open) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [open]);
+
   return (
     open ? (
-      <div style={formContainerStyle}>
+      <div style={formContainerStyle} ref={formRef}>
         <form>
           <div className="space-y-12 p-4">
             <div className="border-b border-gray-900/10 pb-12">
@@ -164,7 +204,7 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
             </div>
           </div>
 
-          <div className="mt-6 flex items-center justify-end gap-x-6">
+          <div className="mt-5 flex items-center justify-end gap-x-6">
             <button
               type="button"
               onClick={() => setOpen(false)}
@@ -175,12 +215,63 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
             <button
               type="button"
               onClick={handleFormSubmit}
-              className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+              className="block rounded-md bg-[#A7D0EB] px-2 mr-6 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
             >
               Salva
             </button>
           </div>
         </form>
+        <div className="mt-8 px-4">
+          <h3 className="text-lg font-semibold">Utenti e Disponibilità</h3>
+          <table className="min-w-full divide-y mt-4 divide-gray-200">
+            <thead>
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">Nome</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">Mattina</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">Pomeriggio</th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {Array.isArray(users) && users.length > 0 ? (
+                users.map((user) => {
+                  const userEntries = calendarData.filter((entry) => entry.owner === user.id_user);
+                  
+                  let morningLocation = 'Non disponibile';
+                  let afternoonLocation = 'Non disponibile';
+
+                  userEntries.forEach((entry) => {
+                    console.log(`Entry found for ${user.name}:`, entry);
+                    if (entry.period === 'morning') {
+                      morningLocation = 
+                        ['Ufficio', 'Fuori Ufficio', 'SmartWorking'].includes(entry.location) 
+                          ? entry.location 
+                          : 'Non disponibile';
+                    } else if (entry.period === 'afternoon') {
+                      afternoonLocation = 
+                        ['Ufficio', 'Fuori Ufficio', 'SmartWorking'].includes(entry.location) 
+                          ? entry.location 
+                          : 'Non disponibile';
+                    }
+                  });
+
+                  return (
+                    <tr key={user.id_user}>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.name}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{morningLocation}</td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{afternoonLocation}</td>
+                    </tr>
+                  );
+                })
+              ) : (
+                <tr>
+                  <td colSpan="3" className="px-6 py-4 text-center text-sm text-gray-500">
+                    Nessun utente trovato.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     ) : null
   );

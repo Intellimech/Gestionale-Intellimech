@@ -4,12 +4,12 @@ import express from 'express';
 const router = express.Router();
 
 // Routes
-import locationread from './locationsread.js';
+import locationsread from './locationsread.js';
 
 import Protect from '../../middleware/authmiddleware.js'; 
 router.use(Protect);
 
-router.use('/locations', locationread);
+router.use('/locations', locationsread);
 
 
 export default router;

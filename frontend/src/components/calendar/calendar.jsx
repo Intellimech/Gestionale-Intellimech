@@ -79,7 +79,6 @@ export default function Calendar() {
   const [addLocationPopupOpen, setAddLocationPopupOpen] = useState(false);
   const [updateLocationPopupOpen, setUpdateLocationPopupOpen] = useState(false); // Stato per il popup di aggiornamento
   const [selectedDate, setSelectedDate] = useState(null);
-  const [confirmPopupOpen, setConfirmPopupOpen] = useState(false);
   const [initialDataString, setInitialData] = useState({}); // Store initial data for update form
 
   useEffect(() => {
@@ -149,7 +148,7 @@ export default function Calendar() {
         console.log("dati: " + initialDataString);
         setInitialData(initialDataString);
         setSelectedDate(date);
-        setConfirmPopupOpen(true);
+        setUpdateLocationPopupOpen(true);
       } else {
         setSelectedDate(date);
         setAddLocationPopupOpen(true);
@@ -179,59 +178,59 @@ export default function Calendar() {
     return classes.filter(Boolean).join(' ');
   }
 
-  function ConfirmPopup({ open, setOpen, onConfirm }) {
-    return (
-      <div className={`fixed z-10 inset-0 overflow-y-auto ${open ? '' : 'hidden'}`}>
-        <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-          <div className="fixed inset-0 transition-opacity" aria-hidden="true">
-            <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
-          </div>
-          <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">​</span>
-          <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-            <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-              <div className="sm:flex sm:items-start">
-                <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                  <h3 className="text-lg leading-6 font-medium text-gray-900">Modifica luogo</h3>
-                  <div className="mt-2">
-                    <p className="text-sm text-gray-500">Questo giorno ha già un luogo inserito. Vuoi modificarlo?</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-              <button
-                type="button"
-                className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
-                onClick={() => {
-                  onConfirm();
-                  setOpen(false);
-                }}
-              >
-                Conferma
-              </button>
-              <button
-                type="button"
-                className="block rounded-md bg-white px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]" onClick={() => setOpen(false)}
-              >
-                Annulla
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // function ConfirmPopup({ open, setOpen, onConfirm }) {
+  //   return (
+  //     <div className={`fixed z-10 inset-0 overflow-y-auto ${open ? '' : 'hidden'}`}>
+  //       <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center  sm:block sm:p-0">
+  //         <div className="fixed inset-0 transition-opacity" aria-hidden="true">
+  //           <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+  //         </div>
+  //         <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">​</span>
+  //         <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+  //           <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+  //             <div className="sm:flex sm:items-start">
+  //               <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+  //                 <h3 className="text-lg leading-6 font-medium text-gray-900">Modifica luogo</h3>
+  //                 <div className="mt-2">
+  //                   <p className="text-sm text-gray-500">Questo giorno ha già un luogo inserito. Vuoi modificarlo?</p>
+  //                 </div>
+  //               </div>
+  //             </div>
+  //           </div>
+  //           <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+  //             <button
+  //               type="button"
+  //               className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+  //               onClick={() => {
+  //                 onConfirm();
+  //                 setOpen(false);
+  //               }}
+  //             >
+  //               Conferma
+  //             </button>
+  //             <button
+  //               type="button"
+  //               className="block rounded-md bg-white px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]" onClick={() => setOpen(false)}
+  //             >
+  //               Annulla
+  //             </button>
+  //           </div>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <>
-      <ConfirmPopup 
+      {/* <ConfirmPopup 
         open={confirmPopupOpen} 
         setOpen={setConfirmPopupOpen} 
         onConfirm={() => {
           setConfirmPopupOpen(false); // Chiudi il popup di conferma
           setUpdateLocationPopupOpen(true); // Apri il popup di modifica
         }} 
-      />
+      /> */}
       {updateLocationPopupOpen && (
         <CalendarUpdateForm 
           open={updateLocationPopupOpen} 

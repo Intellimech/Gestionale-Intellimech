@@ -2,23 +2,23 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { CheckBadgeIcon, XCircleIcon } from '@heroicons/react/20/solid';
-import Select from "react-tailwindcss-select";
+import Select from 'react-tailwindcss-select';
 import TaskForm from './taskinput';
 
 export default function UserCreateForm() {
   const [createSuccess, setCreateSuccess] = useState(null);
   const [errorMessages, setErrorMessages] = useState('');
   const [quotationRequest, setQuotationRequest] = useState([]);
-  const [category, setCategory] = useState([]);
-  const [subcategory, setSubcategory] = useState([]);
-  const [users, setUsers] = useState([]);
   const [technicalArea, setTechnicalArea] = useState([]);
+  const [users, setUsers] = useState([]);
   const [selectedTeam, setSelectedTeam] = useState(null);
-  const [chips, setChips] = useState([]);
+  const [selectedQuotationRequest, setSelectedQuotationRequest] = useState(null);
   const [tasks, setTasks] = useState([{ name: '', duration: '', assignedTo: '', children: [] }]);
 
-  const handleChange = (newChips) => setChips(newChips);
+  // Handle changes for the quotation request selection
+  const handleQuotationRequestChange = (value) => setSelectedQuotationRequest(value);
 
+  // Handle changes for the team selection
   const handleTeamChange = (value) => setSelectedTeam(value);
 
   useEffect(() => {
@@ -27,18 +27,15 @@ export default function UserCreateForm() {
       try {
         const [
           quotationRequestRes,
-          categoryRes,
           technicalAreaRes,
           usersRes,
         ] = await Promise.all([
           axios.get(`${process.env.REACT_APP_API_URL}/quotationrequest/read/free`, { headers: { authorization: `Bearer ${token}` } }),
-          axios.get(`${process.env.REACT_APP_API_URL}/category/read`, { headers: { authorization: `Bearer ${token}` } }),
           axios.get(`${process.env.REACT_APP_API_URL}/technicalarea/read`, { headers: { authorization: `Bearer ${token}` } }),
           axios.get(`${process.env.REACT_APP_API_URL}/user/read`, { headers: { authorization: `Bearer ${token}` } }),
         ]);
 
         setQuotationRequest(quotationRequestRes.data.quotationrequest);
-        setCategory(categoryRes.data.categories);
         setTechnicalArea(technicalAreaRes.data.technicalareas);
         setUsers(usersRes.data.users.map((user) => ({
           value: user.id_user,
@@ -52,18 +49,7 @@ export default function UserCreateForm() {
     fetchData();
   }, []);
 
-  const handleCategoryChange = async (event) => {
-    const token = Cookies.get('token');
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/subcategory/read/${event.target.value}`, {
-        headers: { authorization: `Bearer ${token}` },
-      });
-      setSubcategory(response.data.subcategories);
-    } catch (error) {
-      console.error('Error fetching subcategory data:', error);
-    }
-  };
-
+  // Handles offer creation
   const createOffer = async (event) => {
     event.preventDefault();
     const token = Cookies.get('token');
@@ -71,7 +57,8 @@ export default function UserCreateForm() {
     const formData = new FormData(form);
     const jsonObject = Object.fromEntries(formData.entries());
     jsonObject.team = selectedTeam?.map((team) => team.value);
-    jsonObject.tasks = tasks; // Add tasks to the payload
+    jsonObject.quotationrequest = selectedQuotationRequest?.value; // Set the selected quotation request
+    jsonObject.tasks = tasks;
 
     console.log('Create offer payload:', jsonObject);
     try {
@@ -85,11 +72,12 @@ export default function UserCreateForm() {
 
   return (
     <form name="createoffer">
-      {/* Account Information */}
       <div className="space-y-12">
         <div className="border-b border-gray-900/10 pb-12">
           <h2 className="text-base font-semibold leading-7 text-gray-900">Informazioni</h2>
-          <p className="mt-1 text-sm leading-6 text-gray-600">Ricorda, i dati inseriti ora saranno quelli che verranno utilizzati per creare poi l'offerta</p>
+          <p className="mt-1 text-sm leading-6 text-gray-600">
+            Ricorda, i dati inseriti ora saranno quelli che verranno utilizzati per creare poi l'offerta
+          </p>
 
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div className="col-span-full">
@@ -97,20 +85,21 @@ export default function UserCreateForm() {
                 Richiesta di offerta
               </label>
               <div className="mt-2">
-                <select
+                <Select
                   id="quotationrequest"
                   name="quotationrequest"
-                  autoComplete="company-name"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4]  focus:ring-[#7fb7d4]  sm:text-sm"
-                >
-                  {quotationRequest.map((item) =>
-                    item.status === "Approvata" && (
-                      <option key={item.id_quotationrequest} value={item.id_quotationrequest}>
-                        {`${item.name} - ${item.Company.name}`}
-                      </option>
-                    )
-                  )}
-                </select>
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
+                  value={selectedQuotationRequest}
+                  onChange={handleQuotationRequestChange}
+                  options={quotationRequest
+                    .filter((item) => item.status === "Approvata")
+                    .map((item) => ({
+                      value: item.id_quotationrequest,
+                      label: `${item.name} - ${item.Company.name}`,
+                    }))}
+                  placeholder="Select..."
+                  isClearable
+                />
               </div>
             </div>
 
@@ -123,7 +112,7 @@ export default function UserCreateForm() {
                   id="hour"
                   name="hour"
                   type="number"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4]  focus:ring-[#7fb7d4]  sm:max-w-xs sm:text-sm"
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:max-w-xs sm:text-sm"
                 />
               </div>
             </div>
@@ -140,7 +129,7 @@ export default function UserCreateForm() {
                   type="text"
                   name="amount"
                   id="amount"
-                  className="block w-full rounded-md border-gray-300 pl-7 pr-12 shadow-sm focus:border-[#7fb7d4]  focus:ring-[#7fb7d4]  sm:text-sm"
+                  className="block w-full rounded-md border-gray-300 pl-7 pr-12 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
                   placeholder="0.00"
                   aria-describedby="price-currency"
                 />
@@ -160,7 +149,7 @@ export default function UserCreateForm() {
                 <Select
                   id="team"
                   name="team"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4]  focus:ring-[#7fb7d4]  sm:text-sm"
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
                   value={selectedTeam}
                   onChange={handleTeamChange}
                   isMultiple={true}
@@ -168,6 +157,7 @@ export default function UserCreateForm() {
                 />
               </div>
             </div>
+
             <div className="sm:col-span-3">
               <label htmlFor="estimatedstart" className="block text-sm font-medium leading-6 text-gray-900">
                 Data di inizio stimata
@@ -177,7 +167,7 @@ export default function UserCreateForm() {
                   id="estimatedstart"
                   name="estimatedstart"
                   type="date"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4]  focus:ring-[#7fb7d4]  sm:max-w-xs sm:text-sm"
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:max-w-xs sm:text-sm"
                   min={new Date().toISOString().split('T')[0]}
                   defaultValue={new Date().toISOString().split('T')[0]}
                   onChange={(e) => {
@@ -200,97 +190,54 @@ export default function UserCreateForm() {
                   id="estimatedend"
                   name="estimatedend"
                   type="date"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4]  focus:ring-[#7fb7d4]  sm:max-w-xs sm:text-sm"
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:max-w-xs sm:text-sm"
                   min={new Date().toISOString().split('T')[0]}
                   defaultValue={new Date().toISOString().split('T')[0]}
                 />
               </div>
             </div>
+
             <div className="col-span-full">
               <label htmlFor="description" className="block text-sm font-medium leading-6 text-gray-900">
                 Descrizione
               </label>
               <div className="mt-2">
                 <textarea
-                  rows={4}
-                  maxLength={150}
-                  name="description"
                   id="description"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4]  focus:ring-[#7fb7d4]  sm:text-sm"
+                  name="description"
+                  rows={3}
+                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
                 />
-                <p className="mt-1 text-xs text-gray-500">Massimo 150 caratteri</p>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
 
-      {/* Task Information */}
-      <div className="space-y-12 py-8">
-        <div className="border-b border-gray-900/10 pb-12">
-          <h2 className="text-base font-semibold leading-7 text-gray-900">Task</h2>
-          <p className="mt-1 text-sm leading-6 text-gray-600">Ricorda, i dati inseriti ora saranno quelli che verranno utilizzati per creare poi l'offerta</p>
-
-          <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div className="col-span-full">
-              {tasks.map((task, index) => (
-                <TaskForm
-                  users={users}
-                  key={index}
-                  task={task}
-                  onChange={(newTask) => {
-                    const newTasks = [...tasks];
-                    newTasks[index] = newTask;
-                    setTasks(newTasks);
-                  }}
-                  onAddChild={() => {
-                    const newTasks = [...tasks];
-                    newTasks[index].children.push({ name: '', duration: '', assignedTo: '', children: [] });
-                    setTasks(newTasks);
-                  }}
-                  onRemove={() => {
-                    setTasks(tasks.filter((_, i) => i !== index));
-                  }}
-                />
-              ))}
-              <button
-                type="button"
-                onClick={() => setTasks([...tasks, { name: '', duration: '', assignedTo: '', children: [] }])}
-                className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
-              >
-                Aggiungi Task
-              </button>
+              <TaskForm tasks={tasks} setTasks={setTasks} users={users} />
             </div>
           </div>
         </div>
       </div>
-      
-      {/* Create Quotation Request Button */}
+
+      {/* Submit button */}
       <div className="mt-6 flex items-center justify-end gap-x-6">
-        {createSuccess === true && (
-          <div className="mt-4 rounded-md bg-green-50 p-4">
-            <div className="flex">
-              <CheckBadgeIcon className="h-5 w-5 text-green-400" aria-hidden="true" />
-              <h3 className="ml-3 text-sm font-medium text-green-800">Richiesta di offerta creata con successo</h3>
-            </div>
-          </div>
-        )}
-
         {createSuccess === false && (
-          <div className="mt-4 rounded-md bg-red-50 p-4">
-            <div className="flex">
-              <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
-              <h3 className="ml-3 text-sm font-medium text-red-800">{errorMessages}</h3>
-            </div>
-          </div>
+          <span className="flex items-center text-red-600">
+            <XCircleIcon className="h-6 w-6" aria-hidden="true" />
+            <span className="ml-2 text-sm">{errorMessages}</span>
+          </span>
         )}
-
+        {createSuccess === true && (
+          <span className="flex items-center text-green-600">
+            <CheckBadgeIcon className="h-6 w-6" aria-hidden="true" />
+            <span className="ml-2 text-sm">Offer created successfully!</span>
+          </span>
+        )}
         <button
-          onClick={createOffer}
           type="submit"
-          className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+          className="rounded-md bg-[#70b4e0] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#3b82aa] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#66a2bc]"
+          onClick={createOffer}
         >
-          Crea
+          Crea Offerta
         </button>
       </div>
     </form>

@@ -128,4 +128,15 @@ router.get("/read-by-date", async (req, res) => {
     }
 });
 
+router.get("/read/all", async (req, res) => {
+    try {
+        const Calendar = sequelize.models.Calendar;
+        const calendars = await Calendar.findAll();
+        res.json(calendars);
+    } catch (error) {
+        Logger.error("Server error:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
 export default router;

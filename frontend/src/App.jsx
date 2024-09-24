@@ -15,6 +15,8 @@ import Homepage from './components/dashboard/homepage.jsx';
 import Reporting from './components/reporting/reporting.jsx';
 import Calendar from './components/calendar/calendar';
 
+import GeneralCalendar from './components/calendar/generalcalendar.jsx';
+
 import Quotationrequesttable from './components/quotationrequest/quotationrequesttable';
 import Offer from './components/offer/offertable';
 import Salesorder from './components/salesorder/salesordertable.jsx';
@@ -59,6 +61,7 @@ const App = () => {
             <Route path="reporting" element={<PrivateRoute element={<Reporting />} />} />
             
             <Route path="calendar" element={<PrivateRoute element={<Calendar />} />} />
+            <Route path="generalcalendar" element={<PrivateRoute element={<GeneralCalendar />} />} />
             <Route path="quotation-request" element={<PrivateRoute element={<Quotationrequesttable />} />} />
             <Route path="offer" element={<PrivateRoute element={<Offer />} />} />
             <Route path="sales-order" element={<PrivateRoute element={<Salesorder />} />} />

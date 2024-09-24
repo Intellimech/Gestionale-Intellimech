@@ -56,6 +56,7 @@ export default function Example({ date, setOpen }) {
         console.error('Error fetching locations:', error);
       }
     };
+    
 
 
     const fetchUsers = async () => {
@@ -79,6 +80,7 @@ export default function Example({ date, setOpen }) {
           });
           setCalendarData(Array.isArray(response.data.calendars) ? response.data.calendars: []);
           console.log('Fetched Calendar Data:', response.data.calendars);
+          //come mai prende solo i valori con il mio id?
         } catch (error) {
           console.error('Error fetching calendar data:', error);
         }
@@ -226,7 +228,7 @@ export default function Example({ date, setOpen }) {
           Salva
         </button>
       </div>
-      <div className="mt-8 px-4 ">
+      <div className="mt-8 px-4">
   <h3 className="text-lg font-semibold">Utenti e Disponibilità</h3>
   <table className="min-w-full divide-y mt-4 divide-gray-200">
     <thead>
@@ -239,13 +241,20 @@ export default function Example({ date, setOpen }) {
     <tbody className="bg-white divide-y divide-gray-200">
       {Array.isArray(users) && users.length > 0 ? (
         users.map((user) => {
-          const userEntries = calendarData.filter((entry) => entry.owner === user.id_user);
+          // Filtra tutte le entries per la data specificata
+          const userEntries = calendarData.filter((entry) => {
+            const entryDate = new Date(entry.date).toISOString().split('T')[0];
+            const startDateFormatted = new Date(startDate).toISOString().split('T')[0];
+            return entryDate === startDateFormatted; // Solo entries per la data specificata
+          });
 
           let morningLocation = 'Non disponibile';
           let afternoonLocation = 'Non disponibile';
 
-          userEntries.forEach((entry) => {
-            console.log(`Entry found for ${user.name}:`, entry);
+          // Controlla se ci sono entries per l'utente
+          const relevantEntries = userEntries.filter(entry => entry.owner === user.id_user);
+
+          relevantEntries.forEach((entry) => {
             if (entry.period === 'morning') {
               morningLocation = 
                 ['Ufficio', 'Fuori Ufficio', 'SmartWorking'].includes(entry.location) 
@@ -277,6 +286,9 @@ export default function Example({ date, setOpen }) {
     </tbody>
   </table>
 </div>
+
+
+
 
     </form>
   );

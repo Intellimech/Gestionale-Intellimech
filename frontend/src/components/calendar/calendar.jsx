@@ -158,19 +158,25 @@ export default function Calendar() {
       setAddLocationPopupOpen(true);
     }
   };
+// Inside Calendar.js
+const handleFormSubmit = async (newLocation) => {
+  try {
+    await axios.post('http://localhost:3000/calendar/create-or-update', newLocation, {
+      headers: {
+        Authorization: `Bearer ${Cookies.get('token')}`,
+      },
+    });
 
-  const handleFormSubmit = async (newLocation) => {
-    try {
-      await axios.post('http://localhost:3000/calendar/create-or-update', newLocation, {
-        headers: {
-          Authorization: `Bearer ${Cookies.get('token')}`
-        }
-      });
-      fetchLocations();
-    } catch (error) {
-      console.error('Error adding/updating location:', error);
-    }
-  };
+    // Close the popup
+    setAddLocationPopupOpen(false);
+
+    // Refresh the locations
+    fetchLocations();
+  } catch (error) {
+    console.error('Error adding/updating location:', error);
+  }
+};
+
 
   const days = generateCalendarArrayWithLocations(currentMonth, locations);
 
@@ -299,7 +305,7 @@ export default function Calendar() {
               <div
                 key={day.date}
                 className={classNames(
-                  day.isToday ? 'bg-blue-100' : '', // Colore per il giorno corrente
+                  day.isToday ? 'bg-blue-200' : '', // Colore per il giorno corrente
                   !day.isWorkingDay && 'bg-[#808080]',
                   day.isCurrentMonth ? 'bg-white' : 'bg-gray-100 text-gray-300',
                   'relative px-2 py-1 items-center justify-center text-center text-gray-900 border-b border-r border-gray-300' // Aggiungi bordo destro e inferiore

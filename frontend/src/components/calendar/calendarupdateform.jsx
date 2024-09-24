@@ -11,8 +11,8 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
   const [dataSelezionata, setDataSelezionata] = useState(null);
   const [users, setUsers] = useState([]);
   const [calendarData, setCalendarData] = useState([]);
-  
-  const formRef = useRef(null); // Riferimento al form
+
+  const formRef = useRef(null);
 
   useEffect(() => {
     if (initialData) {
@@ -117,6 +117,8 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
     zIndex: 1000,
     backgroundColor: 'white',
     boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+    overflowY: 'auto', // Add this line to enable scrolling
+    maxHeight: '100vh', // Restrict the height to the viewport height
   };
 
   const handleClickOutside = (event) => {
@@ -235,21 +237,21 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
               {Array.isArray(users) && users.length > 0 ? (
                 users.map((user) => {
                   const userEntries = calendarData.filter((entry) => entry.owner === user.id_user);
-                  
+
                   let morningLocation = 'Non disponibile';
                   let afternoonLocation = 'Non disponibile';
 
                   userEntries.forEach((entry) => {
                     console.log(`Entry found for ${user.name}:`, entry);
                     if (entry.period === 'morning') {
-                      morningLocation = 
-                        ['Ufficio', 'Fuori Ufficio', 'SmartWorking'].includes(entry.location) 
-                          ? entry.location 
+                      morningLocation =
+                        ['Ufficio', 'Fuori Ufficio', 'SmartWorking'].includes(entry.location)
+                          ? entry.location
                           : 'Non disponibile';
                     } else if (entry.period === 'afternoon') {
-                      afternoonLocation = 
-                        ['Ufficio', 'Fuori Ufficio', 'SmartWorking'].includes(entry.location) 
-                          ? entry.location 
+                      afternoonLocation =
+                        ['Ufficio', 'Fuori Ufficio', 'SmartWorking'].includes(entry.location)
+                          ? entry.location
                           : 'Non disponibile';
                     }
                   });

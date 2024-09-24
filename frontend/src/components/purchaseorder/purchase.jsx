@@ -82,15 +82,17 @@ export default function Example({ permissions }) {
   const compareValues = (a, b) => {
     if (a === null || a === undefined) return 1;
     if (b === null || b === undefined) return -1;
-    
+  
     if (typeof a === 'string' && typeof b === 'string') {
-      return a.localeCompare(b, undefined, { numeric: true });
+      // Sensitivity 'base' ignora le differenze tra maiuscole e minuscole
+      return a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
     } else if (typeof a === 'number' && typeof b === 'number') {
       return a - b;
     } else {
       return a < b ? -1 : a > b ? 1 : 0;
     }
   };
+  
   
   const filteredPurchase = purchaseOrder.filter((item) => {
     return (
@@ -309,14 +311,14 @@ export default function Example({ permissions }) {
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Company')}>
+                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('id_company')}>
                     Cliente
-                    {sortColumn === 'Company'  && sortDirection !== '' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'id_company'  && sortDirection !== '' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
                     <input
-                      value={searchQueries.Company}
+                      value={searchQueries.id_company}
                       onClick={(e) => e.stopPropagation()}
-                      onChange={handleSearchInputChange('Company')}
+                      onChange={handleSearchInputChange('id_company')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
                       rows={1}

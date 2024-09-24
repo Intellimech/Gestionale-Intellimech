@@ -24,6 +24,7 @@ export default function Example({ date, setOpen }) {
   const [locations, setLocations] = useState([]);
   const [users, setUsers] = useState([]);
   const [calendarData, setCalendarData] = useState([]);
+  const [allCalendarData, setAllCalendarData] = useState([]);
 
   const handleMorningLocationChange = (selected) => {
     setMorningLocation(selected);
@@ -56,95 +57,97 @@ export default function Example({ date, setOpen }) {
         console.error('Error fetching locations:', error);
       }
     };
-    
-
 
     const fetchUsers = async () => {
-        try {
-          const response = await axios.get(`${process.env.REACT_APP_API_URL}/user/read`, {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          setUsers(response.data.users);
-        } catch (error) {
-          console.error('Error fetching users:', error);
-        }
-      };
-  
-      const fetchCalendarData = async () => {
-        try {
-          const response = await axios.get(`${process.env.REACT_APP_API_URL}/calendar/read`, {
-            headers: { authorization: `Bearer ${token}` },
-          });
-          setCalendarData(Array.isArray(response.data.calendars) ? response.data.calendars: []);
-          console.log('Fetched Calendar Data:', response.data.calendars);
-          //come mai prende solo i valori con il mio id?
-        } catch (error) {
-          console.error('Error fetching calendar data:', error);
-        }
-      };
-  
-  
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/user/read`, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setUsers(response.data.users);
+        console.log('Fetched Users:', response.data.users); // Log users fetched
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      }
+    };
+
+    const fetchAllCalendarData = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/calendar/read/all`, {
+          headers: { authorization: `Bearer ${token}` },
+        });
+        setAllCalendarData(Array.isArray(response.data.calendars) ? response.data.calendars : []);
+        console.log('Fetched All Calendar Data:', response.data.calendars); // Log all calendar data fetched
+      } catch (error) {
+        console.error('Error fetching all calendar data:', error);
+      }
+    };
+
     fetchLocations();
     fetchUsers();
-    fetchCalendarData();
+    fetchAllCalendarData();
   }, []);
 
   const isFormValid = () => {
-    const clickedDate = new Date();
-    clickedDate.setHours(0, 0, 0, 0);
-    if (!morningLocation || !afternoonLocation || !startDate || startDate < clickedDate) return false;
-
-    const isSpecialLocation =
-      ['Ferie', 'Permesso', 'Trasferta'].includes(morningLocation.value) ||
-      ['Ferie', 'Permesso', 'Trasferta'].includes(afternoonLocation.value);
-
-    if (isSpecialLocation) {
-      return true; // Nessuna limitazione per le opzioni speciali
-    }
-
     const today = new Date();
+    today.setHours(0, 0, 0, 0);
     const endOfNextWeek = new Date(today);
-    endOfNextWeek.setDate(today.getDate() + (7 - today.getDay()) + 7);
-
-    return endDate === null || endDate <= endOfNextWeek;
+    endOfNextWeek.setDate(today.getDate() + (7 - today.getDay()) + 7); // Fine della prossima settimana
+  
+    // Controllo per posizioni speciali
+    const isSpecialLocation = (location) => ['Ferie', 'Permesso', 'Trasferta'].includes(location?.value);
+  
+    // Se la data di inizio è dopo la fine della prossima settimana
+    if (startDate && startDate > endOfNextWeek) {
+      // Permetti solo se una delle posizioni è speciale
+      return isSpecialLocation(morningLocation) || isSpecialLocation(afternoonLocation);
+    }
+  
+    // Seleziona solo date valide e non nel passato
+    if (!startDate || startDate < today) {
+      return false;
+    }
+  
+    // Permetti le posizioni speciali senza altre restrizioni
+    if (isSpecialLocation(morningLocation) || isSpecialLocation(afternoonLocation)) {
+      return true;
+    }
+  
+    // Verifica che la data di fine, se presente, sia entro la fine della prossima settimana
+    return (morningLocation && afternoonLocation) && (endDate === null || endDate <= endOfNextWeek);
   };
+  
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
     if (!isFormValid()) {
-      alert('Seleziona un intervallo di date valido. Per Ferie, Permesso o Trasferta non ci sono limiti, ma non puoi selezionare date passate.');
+      alert(
+        'Seleziona un intervallo di date valido. Per Ferie, Permesso o Trasferta non ci sono limiti, ma non puoi selezionare date singole oltre la fine della prossima settimana per le altre posizioni.'
+      );
       return;
     }
 
-    axios
-      .post('http://localhost:3000/calendar/create', {
+    const createEntry = (part, location) => {
+      return axios.post('http://localhost:3000/calendar/create', {
         startDate: startDate.toISOString().split('T')[0],
         endDate: endDate ? endDate.toISOString().split('T')[0] : null,
-        part: 'morning',
-        location: morningLocation.value,
-      })
-      .then((response) => {
-        console.log('Morning entry created:', response);
-      })
-      .catch((error) => {
-        console.error('Error creating morning entry:', error);
+        part: part,
+        location: location.value,
       });
+    };
 
-    axios
-      .post('http://localhost:3000/calendar/create', {
-        startDate: startDate.toISOString().split('T')[0],
-        endDate: endDate ? endDate.toISOString().split('T')[0] : null,
-        part: 'afternoon',
-        location: afternoonLocation.value,
-      })
-      .then((response) => {
-        console.log('Afternoon entry created:', response);
+    const morningPromise = createEntry('morning', morningLocation);
+    const afternoonPromise = createEntry('afternoon', afternoonLocation);
+
+    Promise.all([morningPromise, afternoonPromise])
+      .then((responses) => {
+        console.log('Entries created:', responses);
+        // Mostra una notifica toast di conferma qui
       })
       .catch((error) => {
-        console.error('Error creating afternoon entry:', error);
+        console.error('Error creating entries:', error);
       });
   };
 
@@ -228,68 +231,63 @@ export default function Example({ date, setOpen }) {
           Salva
         </button>
       </div>
+
       <div className="mt-8 px-4">
-  <h3 className="text-lg font-semibold">Utenti e Disponibilità</h3>
-  <table className="min-w-full divide-y mt-4 divide-gray-200">
-    <thead>
-      <tr>
-        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome</th>
-        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mattina</th>
-        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pomeriggio</th>
-      </tr>
-    </thead>
-    <tbody className="bg-white divide-y divide-gray-200">
-      {Array.isArray(users) && users.length > 0 ? (
-        users.map((user) => {
-          // Filtra tutte le entries per la data specificata
-          const userEntries = calendarData.filter((entry) => {
-            const entryDate = new Date(entry.date).toISOString().split('T')[0];
-            const startDateFormatted = new Date(startDate).toISOString().split('T')[0];
-            return entryDate === startDateFormatted; // Solo entries per la data specificata
-          });
-
-          let morningLocation = 'Non disponibile';
-          let afternoonLocation = 'Non disponibile';
-
-          // Controlla se ci sono entries per l'utente
-          const relevantEntries = userEntries.filter(entry => entry.owner === user.id_user);
-
-          relevantEntries.forEach((entry) => {
-            if (entry.period === 'morning') {
-              morningLocation = 
-                ['Ufficio', 'Fuori Ufficio', 'SmartWorking'].includes(entry.location) 
-                  ? entry.location 
-                  : 'Non disponibile';
-            } else if (entry.period === 'afternoon') {
-              afternoonLocation = 
-                ['Ufficio', 'Fuori Ufficio', 'SmartWorking'].includes(entry.location) 
-                  ? entry.location 
-                  : 'Non disponibile';
-            }
-          });
-
-          return (
-            <tr key={user.id_user}>
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.name}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{morningLocation}</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{afternoonLocation}</td>
+        <h3 className="text-lg font-semibold">Utenti e Disponibilità</h3>
+        <table className="min-w-full divide-y mt-4 divide-gray-200">
+          <thead>
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mattina</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pomeriggio</th>
             </tr>
-          );
-        })
-      ) : (
-        <tr>
-          <td colSpan="3" className="px-6 py-4 text-center text-sm text-gray-500">
-            Nessun utente trovato.
-          </td>
-        </tr>
-      )}
-    </tbody>
-  </table>
-</div>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {Array.isArray(users) && users.length > 0 ? (
+              users.map((user) => {
+                console.log('Processing User:', user.name);
 
+                const userEntries = allCalendarData.filter((entry) => {
+                  const entryDate = new Date(entry.date).toISOString().split('T')[0];
+                  const startDateFormatted = new Date(startDate).toISOString().split('T')[0];
+                  return entryDate === startDateFormatted;
+                });
 
+                console.log(`User: ${user.name} - Entries Found:`, userEntries);
 
+                let morningLocation = 'Non disponibile';
+                let afternoonLocation = 'Non disponibile';
 
+                userEntries.forEach((entry) => {
+                  if (entry.period === 'morning') {
+                    morningLocation = ['Ufficio', 'SmartWorking'].includes(entry.location)
+                      ? entry.location
+                      : 'Non disponibile';
+                  } else if (entry.period === 'afternoon') {
+                    afternoonLocation = ['Ufficio', 'Fuori Ufficio', 'SmartWorking'].includes(entry.location)
+                      ? entry.location
+                      : 'Non disponibile';
+                  }
+                });
+
+                return (
+                  <tr key={user.id_user}>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.name}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{morningLocation}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{afternoonLocation}</td>
+                  </tr>
+                );
+              })
+            ) : (
+              <tr>
+                <td colSpan="3" className="px-6 py-4 text-center text-sm text-gray-500">
+                  Nessun utente trovato.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
     </form>
   );
 }

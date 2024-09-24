@@ -111,14 +111,14 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
     right: open ? '0' : '-100%',
     top: '0',
     height: '100vh',
-    width: '550px',
+    width: '500px', // Ridotto per essere più compatto
     transform: 'translateY(0)',
     transition: 'right 0.3s ease-in-out',
     zIndex: 1000,
     backgroundColor: 'white',
     boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-    overflowY: 'auto', // Add this line to enable scrolling
-    maxHeight: '100vh', // Restrict the height to the viewport height
+    overflowY: 'auto',
+    maxHeight: '100vh',
   };
 
   const handleClickOutside = (event) => {
@@ -143,19 +143,19 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
     open ? (
       <div style={formContainerStyle} ref={formRef}>
         <form>
-          <div className="space-y-12 p-4">
-            <div className="border-b border-gray-900/10 pb-12">
-              <h2 className="text-base font-semibold leading-7 text-gray-900">Aggiorna Posizione</h2>
-              <p className="mt-1 text-sm leading-6 text-gray-600">
+          <div className="space-y-8 p-2"> {/* Ridotto padding */}
+            <div className="border-b border-gray-900/10 pb-8">
+              <h2 className="text-sm font-semibold leading-6 text-gray-900">Aggiorna Posizione</h2>
+              <p className="mt-1 text-xs leading-5 text-gray-600">
                 Aggiornando la posizione, verrà visualizzata nel calendario.
               </p>
 
-              <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+              <div className="mt-4 grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-6"> {/* Ridotto gap */}
                 <div className="sm:col-span-4">
                   <label htmlFor="date" className="block text-sm font-medium leading-6 text-gray-900">
                     Data
                   </label>
-                  <div className="mt-2">
+                  <div className="mt-1">
                     <input
                       id="date"
                       name="date"
@@ -171,7 +171,7 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
                   <label htmlFor="morningLocation" className="block text-sm font-medium leading-6 text-gray-900">
                     Mattina
                   </label>
-                  <div className="mt-2">
+                  <div className="mt-1">
                     <Select
                       id="morningLocation"
                       name="morningLocation"
@@ -189,7 +189,7 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
                   <label htmlFor="afternoonLocation" className="block text-sm font-medium leading-6 text-gray-900">
                     Pomeriggio
                   </label>
-                  <div className="mt-2">
+                  <div className="mt-1">
                     <Select
                       id="afternoonLocation"
                       name="afternoonLocation"
@@ -206,31 +206,31 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
             </div>
           </div>
 
-          <div className="mt-5 flex items-center justify-end gap-x-6">
+          <div className="mt-4 flex items-center justify-end gap-x-4"> {/* Ridotto gap */}
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="block rounded-md px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-gray-200 focus:outline-gray focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+              className="block rounded-md px-1 py-0.5 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-gray-200 focus:outline-gray focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
             >
               Annulla
             </button>
             <button
               type="button"
               onClick={handleFormSubmit}
-              className="block rounded-md bg-[#A7D0EB] px-2 mr-6 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+              className="block rounded-md bg-[#A7D0EB] px-1 py-0.5 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
             >
               Salva
             </button>
           </div>
         </form>
-        <div className="mt-8 px-4">
-          <h3 className="text-lg font-semibold">Utenti e Disponibilità</h3>
-          <table className="min-w-full divide-y mt-4 divide-gray-200">
+        <div className="mt-4 px-2"> {/* Ridotto padding */}
+          <h3 className="text-sm font-semibold">Utenti e Disponibilità</h3>
+          <table className="min-w-full divide-y mt-2 divide-gray-200">
             <thead>
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">Nome</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">Mattina</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 tracking-wider">Pomeriggio</th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 tracking-wider">Nome</th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 tracking-wider">Mattina</th>
+                <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 tracking-wider">Pomeriggio</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
@@ -245,12 +245,12 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
                     console.log(`Entry found for ${user.name}:`, entry);
                     if (entry.period === 'morning') {
                       morningLocation =
-                        ['Ufficio', 'Fuori Ufficio', 'SmartWorking'].includes(entry.location)
+                        ['Ufficio', 'SmartWorking'].includes(entry.location)
                           ? entry.location
                           : 'Non disponibile';
                     } else if (entry.period === 'afternoon') {
                       afternoonLocation =
-                        ['Ufficio', 'Fuori Ufficio', 'SmartWorking'].includes(entry.location)
+                        ['Ufficio', 'SmartWorking'].includes(entry.location)
                           ? entry.location
                           : 'Non disponibile';
                     }
@@ -258,15 +258,15 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
 
                   return (
                     <tr key={user.id_user}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.name}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{morningLocation}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{afternoonLocation}</td>
+                      <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">{user.name}</td>
+                      <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{morningLocation}</td>
+                      <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{afternoonLocation}</td>
                     </tr>
                   );
                 })
               ) : (
                 <tr>
-                  <td colSpan="3" className="px-6 py-4 text-center text-sm text-gray-500">
+                  <td colSpan="3" className="px-4 py-2 text-center text-sm text-gray-500">
                     Nessun utente trovato.
                   </td>
                 </tr>

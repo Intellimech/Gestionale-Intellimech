@@ -3,7 +3,7 @@ import { Dialog, DialogPanel, DialogTitle } from '@headlessui/react'
 import { XMarkIcon } from '@heroicons/react/24/outline'
 import CalendarForm from './calendarform'
 
-export default function AddLocationPopup({ open, setOpen, date }) {
+export default function AddLocationPopup({ open, setOpen, date, action }) {
 
   return (
     <Dialog className="relative z-50" open={open} onClose={setOpen}>
@@ -33,7 +33,7 @@ export default function AddLocationPopup({ open, setOpen, date }) {
                     </div>
                   </div>
                 </div>
-                <div className="relative mt-6 flex-1 px-4 sm:px-6"><CalendarForm date={date}/></div>
+                <div className="relative mt-6 flex-1 px-4 sm:px-6"><CalendarForm date={date}/></div> {"if add allora senno edit blah "} 
               </div>
             </DialogPanel>
           </div>

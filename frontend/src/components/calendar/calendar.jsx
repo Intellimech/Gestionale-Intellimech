@@ -229,150 +229,145 @@ const handleFormSubmit = async (newLocation) => {
 
   return (
     <>
-      {/* <ConfirmPopup 
-        open={confirmPopupOpen} 
-        setOpen={setConfirmPopupOpen} 
-        onConfirm={() => {
-          setConfirmPopupOpen(false); // Chiudi il popup di conferma
-          setUpdateLocationPopupOpen(true); // Apri il popup di modifica
-        }} 
-      /> */}
-      {updateLocationPopupOpen && (
-        <CalendarUpdateForm 
-          open={updateLocationPopupOpen} 
-          setOpen={setUpdateLocationPopupOpen} 
-          date={selectedDate} 
-          initialData={initialDataString} // Passa i dati iniziali per la modifica
-          onSubmit={handleFormSubmit} // Funzione per l'invio dei dati modificati
-        />
-      )}
-
-      <CalendarPopup 
-        open={addLocationPopupOpen} 
-        setOpen={setAddLocationPopupOpen} 
-        date={selectedDate} 
-        onSubmit={handleFormSubmit} 
+    {updateLocationPopupOpen && (
+      <CalendarUpdateForm
+        open={updateLocationPopupOpen}
+        setOpen={setUpdateLocationPopupOpen}
+        date={selectedDate}
+        initialData={initialDataString}
+        onSubmit={handleFormSubmit}
       />
-      
-      <div className="h-[85vh] flex flex-col">
-        <header className="flex items-center justify-between border-b border-gray-200 px-0 py-2 lg:flex-none">
-          <h1 className="text-sm font-semibold leading-5 text-gray-900">
+    )}
+
+    <CalendarPopup
+      open={addLocationPopupOpen}
+      setOpen={setAddLocationPopupOpen}
+      date={selectedDate}
+      onSubmit={handleFormSubmit}
+    />
+
+    <div className="h-[80vh] flex flex-col"> {/* Adjusted height */}
+      <header className="flex items-center justify-between border-b border-gray-200 px-0 lg:flex-none">
+        <h1 className="text-sm font-semibold leading-5 text-gray-900">
           <time dateTime={format(currentMonth, 'yyyy-MM', { locale: it })}>
             {format(currentMonth, 'MMMM yyyy', { locale: it }).charAt(0).toUpperCase() + format(currentMonth, 'MMMM yyyy', { locale: it }).slice(1)}
           </time>
-          </h1>
-          <div className="flex items-center">
-            <div className="relative flex items-center rounded-md bg-white shadow-sm  md:items-stretch">
-              <button
-                type="button"
-                className="flex h-8 w-10 items-center justify-center rounded-l-md border-y border-l border-gray-300 text-gray-400 hover:text-gray-500 focus:relative md:w-8"
-                onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1))}
-              >
-                <span className="sr-only">Mese precedente</span>
-                <ChevronLeftIcon className="h-4 w-4" aria-hidden="true" />
-              </button>
-              <button
-                type="button"
-                className="hidden border-y border-gray-300 px-2.5 text-xs font-semibold text-gray-900 hover:bg-gray-50 focus:relative md:block"
-                onClick={handleTodayClick}
-              >
-                Oggi
-              </button>
-              <span className="relative -mx-px h-5 w-px bg-gray-300 md:hidden" />
-              <button
-                type="button"
-                className="flex h-8 w-10 items-center justify-center rounded-r-md border-y border-r border-gray-300 text-gray-400 hover:text-gray-500 focus:relative md:w-8"
-                onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1))}
-              >
-                <span className="sr-only">Mese successivo</span>
-                <ChevronRightIcon className="h-4 w-4" aria-hidden="true" />
-              </button>
-            </div>
-          </div>
-        </header>
-        <div className="shadow ring-1 ring-black ring-opacity-5 lg:flex lg:flex-auto lg:flex-col">
-          <div className="grid grid-cols-7 gap-px border-b border-gray-300 bg-gray-200 text-center text-xs font-semibold leading-5 text-gray-700 lg:flex-none">
-            <div className="bg-white py-1">Lun</div>
-            <div className="bg-white py-1">Mar</div>
-            <div className="bg-white py-1">Mer</div>
-            <div className="bg-white py-1">Gio</div>
-            <div className="bg-white py-1">Ven</div>
-            <div className="bg-white py-1">Sab</div>
-            <div className="bg-white py-1">Dom</div>
-          </div>
-          <div className="w-full h-full lg:grid lg:grid-cols-7 lg:grid-rows-6 lg:gap-px">
-            {days.map((day) => (
-              <div
-                key={day.date}
-                className={classNames(
-                  day.isToday ? 'bg-blue-200' : '', // Colore per il giorno corrente
-                  !day.isWorkingDay && 'bg-[#808080]',
-                  day.isCurrentMonth ? 'bg-white' : 'bg-gray-100 text-gray-300',
-                  'relative px-2 py-1 items-center justify-center text-center text-gray-900 border-b border-r border-gray-300' // Aggiungi bordo destro e inferiore
-                )}
-                onClick={() => handleDayClick(day.date)}
-              >
-                <div className="text-xs px-1 py-1">
-                  {day.date.split('-').pop().replace(/^0/, '')}
-                </div>
-
-                {/* Linea di separazione che copre tutta la cella */}
-                <div className="border-t border-gray-300 w-full"></div>
-
-                {/* Contenitore con sezioni separate */}
-                <div className="flex flex-col h-full mt-2">
-                  {/* Div mattina */}
-                  <div className="flex-shrink-0 flex items-center justify-center min-h-[20px] mb-0">
-                    {day.morningLocation ? (
-                      <div className={classNames(
-                        'rounded-md flex items-center justify-center px-2 py-1 text-xs inline-block',
-                        day.morningLocation === 'Ufficio' ? 'bg-[#CC99FF] text-gray-900'
-                          : day.morningLocation === 'Trasferta' ? 'bg-[#FFFF00] text-gray-900'
-                            : day.morningLocation === 'Malattia' ? 'bg-[#FF9966] text-gray-900'
-                              : day.morningLocation === 'Permesso' ? 'bg-[#8ED973] text-gray-900'
-                                : day.morningLocation === 'Ferie' ? 'bg-[#8ED973] text-gray-900'
-                                  : day.morningLocation === 'SmartWorking' ? 'bg-[#FFCCFF] text-gray-900'
-                                    : day.morningLocation === 'Fuori Ufficio' ? 'bg-[#00D5D0] text-gray-900'
-                                      : day.morningLocation === 'Non Lavorativo' ? 'bg-[#00D5D0] text-gray-900'
-                                        : 'bg-gray-200 text-gray-800'
-                      )}>
-                        {day.morningLocation}
-                      </div>
-                    ) : (
-                      <span className="text-gray-400 text-xs">Mattina</span> // Placeholder quando vuoto
-                    )}
-                  </div>
-
-                  {/* Linea di separazione centrata con larghezza w-10 */}
-                  <div className="border-t mt-2 border-gray-300 w-10 mx-auto"></div>
-
-                  {/* Div pomeriggio */}
-                  <div className="flex-shrink-0 flex items-center justify-center mt-2 min-h-[20px] mt-0">
-                    {day.afternoonLocation ? (
-                      <div className={classNames(
-                        'rounded-md flex items-center justify-center px-2 py-1 text-xs inline-block',
-                        day.afternoonLocation === 'Ufficio' ? 'bg-[#CC99FF] text-gray-900'
-                          : day.afternoonLocation === 'Trasferta' ? 'bg-[#FFFF00] text-gray-900'
-                            : day.afternoonLocation === 'Malattia' ? 'bg-[#FF9966] text-gray-900'
-                              : day.afternoonLocation === 'Permesso' ? 'bg-[#8ED973] text-gray-900'
-                                : day.afternoonLocation === 'Ferie' ? 'bg-[#8ED973] text-gray-900'
-                                  : day.afternoonLocation === 'SmartWorking' ? 'bg-[#FFCCFF] text-gray-900'
-                                    : day.afternoonLocation === 'Fuori Ufficio' ? 'bg-[#00D5D0] text-gray-900'
-                                      : day.afternoonLocation === 'Non Lavorativo' ? 'bg-[#00D5D0] text-gray-900'
-                                        : 'bg-gray-200 text-gray-800'
-                      )}>
-                        {day.afternoonLocation}
-                      </div>
-                    ) : (
-                      <span className="text-gray-400 text-xs">Pomeriggio</span> // Placeholder quando vuoto
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
+        </h1>
+        <div className="flex items-center ">
+          <div className="relative flex items-center rounded-md bg-white shadow-sm md:items-stretch">
+            <button
+              type="button"
+              className="flex h-8 w-10 items-center justify-center rounded-l-md border-y border-l border-gray-300 text-gray-400 hover:text-gray-500 focus:relative md:w-8"
+              onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1))}
+            >
+              <span className="sr-only">Mese precedente</span>
+              <ChevronLeftIcon className="h-4 w-4" aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              className="hidden border-y border-gray-300 px-2.5 text-xs font-semibold text-gray-900 hover:bg-gray-50 focus:relative md:block"
+              onClick={handleTodayClick}
+            >
+              Oggi
+            </button>
+            <span className="relative h-5 w-px bg-gray-300 md:hidden" />
+            <button
+              type="button"
+              className="flex h-8 w-10 items-center justify-center rounded-r-md border-y border-r border-gray-300 text-gray-400 hover:text-gray-500 focus:relative md:w-8"
+              onClick={() => setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1))}
+            >
+              <span className="sr-only">Mese successivo</span>
+              <ChevronRightIcon className="h-4 w-4" aria-hidden="true" />
+            </button>
           </div>
         </div>
+      </header>
+      <div className="shadow ring-1 ring-black ring-opacity-5 lg:flex lg:flex-auto lg:flex-col">
+        <div className="grid grid-cols-7 gap-px border-b border-gray-300 bg-gray-200 text-center text-xs font-semibold leading-5 text-gray-700 lg:flex-none">
+          <div className="bg-white py-1">Lun</div>
+          <div className="bg-white py-1">Mar</div>
+          <div className="bg-white py-1">Mer</div>
+          <div className="bg-white py-1">Gio</div>
+          <div className="bg-white py-1">Ven</div>
+          <div className="bg-white py-1">Sab</div>
+          <div className="bg-white py-1">Dom</div>
+        </div>
+        <div className="w-full h-full lg:grid lg:grid-cols-7 lg:grid-rows-6 lg:gap-px">
+          {days.map((day) => (
+            <div
+              key={day.date}
+              className={classNames(
+                day.isToday ? 'bg-blue-00' : '',
+                !day.isWorkingDay && 'bg-[#808080]',
+                day.isCurrentMonth ? 'bg-white' : 'bg-gray-100 text-gray-300',
+                'relative px-2 py-1 items-center justify-center text-center text-gray-900 border-b border-r border-gray-300'
+              )}
+              onClick={() => handleDayClick(day.date)}
+            >
+              <div className="text-xs px-1 py-1">
+  {/* Added gray outline for current day */}
+  <span className={day.isToday ? 'border border-gray-400 bg-gray-100 rounded-full px-16 py-1.' : ''}>
+    {day.date.split('-').pop().replace(/^0/, '')}
+  </span>
+</div>
+
+              {/* Linea di separazione che copre tutta la cella */}
+              <div className="border-t border-gray-300 w-full"></div>
+
+              {/* Contenitore con sezioni separate */}
+              <div className="flex flex-col h-full mt-1">
+                {/* Div mattina */}
+                <div className="flex-shrink-0 flex items-center justify-center min-h-[20px] mb-0">
+                  {day.morningLocation ? (
+                    <div className={classNames(
+                      'rounded-md flex items-center justify-center px-2 py-1 text-xs inline-block',
+                      day.morningLocation === 'Ufficio' ? 'bg-[#CC99FF] text-gray-900'
+                        : day.morningLocation === 'Trasferta' ? 'bg-[#FFFF00] text-gray-900'
+                          : day.morningLocation === 'Malattia' ? 'bg-[#FF9966] text-gray-900'
+                            : day.morningLocation === 'Permesso' ? 'bg-[#8ED973] text-gray-900'
+                              : day.morningLocation === 'Ferie' ? 'bg-[#8ED973] text-gray-900'
+                                : day.morningLocation === 'SmartWorking' ? 'bg-[#FFCCFF] text-gray-900'
+                                  : day.morningLocation === 'Fuori Ufficio' ? 'bg-[#00D5D0] text-gray-900'
+                                    : day.morningLocation === 'Non Lavorativo' ? 'bg-[#00D5D0] text-gray-900'
+                                      : 'bg-gray-200 text-gray-800'
+                    )}>
+                      {day.morningLocation}
+                    </div>
+                  ) : (
+                    <span className="text-gray-400 text-xs">Mattina</span>
+                  )}
+                </div>
+
+                {/* Linea di separazione centrata con larghezza w-10 */}
+                <div className="border-t mt-1 border-gray-300 w-10 mx-auto"></div>
+
+                {/* Div pomeriggio */}
+                <div className="flex-shrink-0 flex items-center justify-center min-h-[20px] mt-0">
+                  {day.afternoonLocation ? (
+                    <div className={classNames(
+                      'rounded-md flex items-center justify-center px-2 py-1 text-xs inline-block',
+                      day.afternoonLocation === 'Ufficio' ? 'bg-[#CC99FF] text-gray-900'
+                        : day.afternoonLocation === 'Trasferta' ? 'bg-[#FFFF00] text-gray-900'
+                          : day.afternoonLocation === 'Malattia' ? 'bg-[#FF9966] text-gray-900'
+                            : day.afternoonLocation === 'Permesso' ? 'bg-[#8ED973] text-gray-900'
+                              : day.afternoonLocation === 'Ferie' ? 'bg-[#8ED973] text-gray-900'
+                                : day.afternoonLocation === 'SmartWorking' ? 'bg-[#FFCCFF] text-gray-900'
+                                  : day.afternoonLocation === 'Fuori Ufficio' ? 'bg-[#00D5D0] text-gray-900'
+                                    : day.afternoonLocation === 'Non Lavorativo' ? 'bg-[#00D5D0] text-gray-900'
+                                      : 'bg-gray-200 text-gray-800'
+                    )}>
+                      {day.afternoonLocation}
+                    </div>
+                  ) : (
+                    <span className="text-gray-400 text-xs">Pomeriggio</span>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
-    </>
-  );
+    </div>
+  </>
+);
 }

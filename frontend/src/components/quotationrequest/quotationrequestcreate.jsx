@@ -3,10 +3,9 @@ import axios from 'axios';
 import Select from 'react-tailwindcss-select';
 import Cookies from 'js-cookie';
 import { CheckBadgeIcon, XCircleIcon } from '@heroicons/react/20/solid';
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function UserCreateForm() {
-  const [createSuccess, setCreateSuccess] = useState(null);
-  const [errorMessages, setErrorMessages] = useState('');
   const [company, setCompany] = useState([]);
   const [category, setCategory] = useState([]);
   const [subcategory, setSubcategory] = useState([]);
@@ -100,32 +99,38 @@ export default function UserCreateForm() {
     const token = Cookies.get('token');
     const form = document.forms.createquotationrequest;
     const formData = new FormData(form);
-
+  
     // Append selected values to formData
     formData.append('company', selectedCompany?.value || '');
     formData.append('category', selectedCategory?.value || '');
     formData.append('subcategory', selectedSubcategory?.value || '');
     formData.append('technicalarea', selectedTechnicalArea?.value || '');
-
+  
     // Converting formData to JSON
     let jsonObject = {};
     formData.forEach((value, key) => {
       jsonObject[key] = value;
     });
-
-    // Posting data to create quotation request
-    axios
-      .post(`${process.env.REACT_APP_API_URL}/quotationrequest/create`, jsonObject, {
+  
+    // Toast promise to handle loading, success, and error states
+    toast.promise(
+      axios.post(`${process.env.REACT_APP_API_URL}/quotationrequest/create`, jsonObject, {
         headers: { authorization: `Bearer ${token}` },
-      })
-      .then((response) => {
-        setCreateSuccess(true);
-      })
-      .catch((error) => {
-        setCreateSuccess(false);
-        setErrorMessages(error.response.data.message);
-      });
+      }),
+      {
+        loading: 'Invio in corso...',
+        success: 'Richiesta di offerta creata con successo!',
+        error: 'Errore durante la creazione della richiesta di offerta',
+      }
+    )
+    .then((response) => {
+    })
+    .catch((error) => {
+      console.error('Error creating quotation request:', error);
+      throw new Error('Errore durante la creazione della richiesta di offerta');
+    });
   };
+  
 
   return (
     <form name="createquotationrequest">
@@ -229,24 +234,6 @@ export default function UserCreateForm() {
 
       {/* Create Quotation Request Button */}
       <div className="mt-6 flex items-center justify-end gap-x-6">
-        {createSuccess === true && (
-          <div className="mt-4 rounded-md bg-green-50 p-4">
-            <div className="flex">
-              <CheckBadgeIcon className="h-5 w-5 text-green-400" aria-hidden="true" />
-              <h3 className="ml-3 text-sm font-medium text-green-800">Richiesta di offerta creata con successo</h3>
-            </div>
-          </div>
-        )}
-
-        {createSuccess === false && (
-          <div className="mt-4 rounded-md bg-red-50 p-4">
-            <div className="flex">
-              <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
-              <h3 className="ml-3 text-sm font-medium text-red-800">{errorMessages}</h3>
-            </div>
-          </div>
-        )}
-
         <button
           onClick={createQuotationRequest}
           type="submit"

@@ -3,6 +3,7 @@ import { Dialog, Transition } from '@headlessui/react'
 import { XMarkIcon, CheckIcon, ArrowRightStartOnRectangleIcon, UsersIcon, EnvelopeOpenIcon, CursorArrowRaysIcon, ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/20/solid'
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import toast, { Toaster } from 'react-hot-toast';
 
 import QuotationRequestCreate from './quotationrequestcreate';
 
@@ -47,8 +48,7 @@ export default function Example({ permissions }) {
     data: '',
     createdByUser: ''
   });
-
-
+  
   useEffect(() => {
     const isIndeterminate = selectedQuotationRequest.length > 0 && selectedQuotationRequest.length < quotationrequests.length;
     setChecked(selectedQuotationRequest.length === quotationrequests.length);
@@ -167,61 +167,53 @@ export default function Example({ permissions }) {
   }  
 
   const Accept = (quotationrequest) => {
-    axios
-    .post(`${process.env.REACT_APP_API_URL}/quotationrequest/accept/${quotationrequest}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + Cookies.get('token'),
-      },
-    })
-    .then((response) => {
-      console.log(response.data.quotationrequest);
-      axios
-      .get(`${process.env.REACT_APP_API_URL}/quotationrequest/read`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + Cookies.get('token'),
-        },
-      })
-      .then((response) => {
-        setQuotationRequest(response.data.quotationrequest);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-  }
+    toast.promise(
+        axios
+          .post(`${process.env.REACT_APP_API_URL}/quotationrequest/accept/${quotationrequest}`, {
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: 'Bearer ' + Cookies.get('token'),
+            },
+          })
+          .then((response) => {
+            console.log(response.data.quotationrequest);
+            handleReloadQuotationRequests();
+          })
+          .catch((error) => {
+            console.log(error);
+            throw new Error('Errore durante l\'accettazione della richiesta di offerta');
+          }),
+        {
+          loading: 'Loading...',
+          success: 'Richiesta di offerta accettata',
+          error: 'Errore durante l\'accettazione della richiesta di offerta',
+        }
+      )
+  };
 
   const Refuse = (quotationrequest) => {
-    axios
-    .post(`${process.env.REACT_APP_API_URL}/quotationrequest/refuse/${quotationrequest}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + Cookies.get('token'),
-      },
-    })
-    .then((response) => {
-      console.log(response.data.quotationrequest);
+    toast.promise(
       axios
-      .get(`${process.env.REACT_APP_API_URL}/quotationrequest/read`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + Cookies.get('token'),
-        },
-      })
-      .then((response) => {
-        setQuotationRequest(response.data.quotationrequest);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+        .post(`${process.env.REACT_APP_API_URL}/quotationrequest/refuse/${quotationrequest}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + Cookies.get('token'),
+          },
+        })
+        .then((response) => {
+          console.log(response.data.quotationrequest);
+          handleReloadQuotationRequests();
+        })
+        .catch((error) => {
+          console.log(error);
+          throw new Error('Errore durante il rifiuto della richiesta di offerta');
+        }),
+      {
+        loading: 'Loading...',
+        success: 'Richiesta di offerta è stata rifiutata',
+        error: 'Errore durante il rifiuto della richiesta di offerta',
+      }
+    )
   }
 
   useEffect(() => {
@@ -300,6 +292,11 @@ export default function Example({ permissions }) {
 
   return (
     <div className="px-4 sm:px-6 lg:px-8">
+      <Toaster
+        position="bottom-right"
+        reverseOrder={false}
+        
+      />
       <Transition.Root show={open} as={Fragment}>
        <Dialog as="div" className="relative z-50" onClose={setOpen}>
         <div className="fixed inset-0" />

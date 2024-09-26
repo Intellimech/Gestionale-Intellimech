@@ -14,7 +14,7 @@ Location.init(
     name: {
         type: DataTypes.STRING(255),
       },
-    hours: {
+    needApproval: {
         type: DataTypes.FLOAT,
       },
   },

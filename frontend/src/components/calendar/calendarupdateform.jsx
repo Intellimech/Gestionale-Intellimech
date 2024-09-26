@@ -13,8 +13,6 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
   const [calendarData, setCalendarData] = useState([]);
   const [Locations, setLocations]=useState([]);
 
-  const formRef = useRef(null);
-
   useEffect(() => {
     const token = Cookies.get('token');
     if (!token) {
@@ -137,42 +135,41 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
 
  
 
-  const formContainerStyle = {
-    position: 'fixed',
-    right: open ? '0' : '-100%',
-    top: '0',
-    height: '100vh',
-    width: '500px',
-    transform: 'translateY(0)',
-    transition: 'right 0.3s ease-in-out',
-    zIndex: 1000,
-    backgroundColor: 'white',
-    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-    overflowY: 'auto',
-    maxHeight: '100vh',
-  };
+  // const formContainerStyle = {
+  //   position: 'fixed',
+  //   right: open ? '0' : '-100%',
+  //   top: '0',
+  //   height: '100vh',
+  //   width: '500px',
+  //   transform: 'translateY(0)',
+  //   transition: 'right 0.3s ease-in-out',
+  //   zIndex: 1000,
+  //   backgroundColor: 'white',
+  //   boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+  //   overflowY: 'auto',
+  //   maxHeight: '100vh',
+  // };
 
-  const handleClickOutside = (event) => {
-    if (formRef.current && !formRef.current.contains(event.target)) {
-      setOpen(false);
-    }
-  };
+  // const handleClickOutside = (event) => {
+  //   if (formRef.current && !formRef.current.contains(event.target)) {
+  //     setOpen(false);
+  //   }
+  // };
 
-  useEffect(() => {
-    if (open) {
-      document.addEventListener('mousedown', handleClickOutside);
-    } else {
-      document.removeEventListener('mousedown', handleClickOutside);
-    }
+  // useEffect(() => {
+  //   if (open) {
+  //     document.addEventListener('mousedown', handleClickOutside);
+  //   } else {
+  //     document.removeEventListener('mousedown', handleClickOutside);
+  //   }
 
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [open]);
+  //   return () => {
+  //     document.removeEventListener('mousedown', handleClickOutside);
+  //   };
+  // }, [open]);
 
   return (
-    open ? (
-      <div style={formContainerStyle} ref={formRef}>
+      <div>
         <form>
           <div className="space-y-8 p-2">
             <div className="border-b border-gray-900/10 pb-8">
@@ -297,7 +294,6 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
             )}
           </tbody>
         </table>
-      </div>
-    ) : null
+        </div>
   );
 }

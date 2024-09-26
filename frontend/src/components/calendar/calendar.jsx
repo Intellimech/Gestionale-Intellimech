@@ -3,7 +3,6 @@ import { it } from 'date-fns/locale';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
 import { startOfMonth, endOfMonth, eachDayOfInterval, isToday, format, addDays, subDays } from 'date-fns';
 import CalendarPopup from './calendarpopup';
-import CalendarUpdateForm from './calendarupdateform'; // Importa il nuovo componente
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
@@ -79,7 +78,8 @@ export default function Calendar() {
   const [addLocationPopupOpen, setAddLocationPopupOpen] = useState(false);
   const [updateLocationPopupOpen, setUpdateLocationPopupOpen] = useState(false); // Stato per il popup di aggiornamento
   const [selectedDate, setSelectedDate] = useState(null);
-  const [initialDataString, setInitialData] = useState({}); // Store initial data for update form
+  const [initialDataString, setInitialData] = useState({}); // Store initial data for update formù
+  const [action, setAction]= useState({});
 
   useEffect(() => {
     async function fetchLocations() {
@@ -148,14 +148,20 @@ export default function Calendar() {
         console.log("dati: " + initialDataString);
         setInitialData(initialDataString);
         setSelectedDate(date);
-        setUpdateLocationPopupOpen(true);
+        //setUpdateLocationPopupOpen(true);
+        setAction("update");
+        setAddLocationPopupOpen(true);
       } else {
         setSelectedDate(date);
+        setAction("create");
         setAddLocationPopupOpen(true);
+        
       }
     } else {
       setSelectedDate(date);
+      setAction("create");
       setAddLocationPopupOpen(true);
+      
     }
   };
 // Inside Calendar.js
@@ -229,7 +235,7 @@ const handleFormSubmit = async (newLocation) => {
 
   return (
     <>
-    {updateLocationPopupOpen && (
+    {/* {updateLocationPopupOpen && (
       <CalendarUpdateForm
         open={updateLocationPopupOpen}
         setOpen={setUpdateLocationPopupOpen}
@@ -237,12 +243,15 @@ const handleFormSubmit = async (newLocation) => {
         initialData={initialDataString}
         onSubmit={handleFormSubmit}
       />
-    )}
+    )} */}
 
     <CalendarPopup
       open={addLocationPopupOpen}
       setOpen={setAddLocationPopupOpen}
       date={selectedDate}
+      
+        initialData={initialDataString}
+      action= {action}
       onSubmit={handleFormSubmit}
     />
 

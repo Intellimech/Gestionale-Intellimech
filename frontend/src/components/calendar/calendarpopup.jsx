@@ -33,7 +33,7 @@ export default function AddLocationPopup({ open, setOpen, date, action }) {
                     </div>
                   </div>
                 </div>
-                <div className="relative mt-6 flex-1 px-4 sm:px-6"><CalendarForm date={date}/></div> {"if add allora senno edit blah "} 
+                <div className="relative mt-6 flex-1 px-4 sm:px-6"><CalendarForm date={date}/></div>  
               </div>
             </DialogPanel>
           </div>

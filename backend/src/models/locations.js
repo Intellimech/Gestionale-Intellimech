@@ -12,11 +12,14 @@ Location.init(
         autoIncrement: true
       },
     name: {
-        type: DataTypes.STRING(255),
+      type: DataTypes.STRING(255),
       },
+    hours: {
+      type: DataTypes.FLOAT,
+    },
     needApproval: {
-        type: DataTypes.FLOAT,
-      },
+      type: DataTypes.TINYINT,
+    }
   },
   {
     sequelize: db,

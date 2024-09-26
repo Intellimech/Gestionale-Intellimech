@@ -45,19 +45,31 @@ router.post('/update/', async (req, res) => {
                 // Get the Calendar model
                 const Calendar = sequelize.models.Calendar;
 
-                // Update the calendar entry for the morning
-                console.log('Updating morning location:', morning_location);
-                await Calendar.update(
-                    { location: morning_location, owner: decoded.id, updatedBy: decoded.id },
-                    { where: { id_calendar: id_calendar, date: date, period: 'morning' } }
-                );
+                // Update or create the calendar entry for the morning
+                
+                    console.log('Updating morning location:', morning_location);
+                    await Calendar.upsert({
+                        id_calendar: id_calendar,
+                        date: date,
+                        period: 'morning',
+                        location: morning_location,
+                        owner: decoded.id, // User ID from the token
+                        updatedBy: decoded.id // User ID from the token
+                    });
+                
 
-                // Update the calendar entry for the afternoon
-                console.log('Updating afternoon location:', afternoon_location);
-                await Calendar.update(
-                    { location: afternoon_location, owner: decoded.id, updatedBy: decoded.id },
-                    { where: { id_calendar: id_calendar, date: date, period: 'afternoon' } }
-                );
+                // Update or create the calendar entry for the afternoon
+                
+                    console.log('Updating afternoon location:', afternoon_location);
+                    await Calendar.upsert({
+                        id_calendar: id_calendar,
+                        date: date,
+                        period: 'afternoon',
+                        location: afternoon_location,
+                        owner: decoded.id, // User ID from the token
+                        updatedBy: decoded.id // User ID from the token
+                    });
+                
 
                 res.json({
                     message: 'Calendar entry updated successfully',

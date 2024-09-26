@@ -5,23 +5,23 @@ import DatePicker from 'react-datepicker';
 import Cookies from 'js-cookie';
 import 'react-datepicker/dist/react-datepicker.css';
 
-const Locations = [
-  { value: 'Ferie', label: 'Ferie' },
-  { value: 'Permesso', label: 'Permesso' },
-  { value: 'Malattia', label: 'Malattia' },
-  { value: 'Ufficio', label: 'Ufficio' },
-  { value: 'Trasferta', label: 'Trasferta' },
-  { value: 'SmartWorking', label: 'SmartWorking' },
-  { value: 'Fuori Ufficio', label: 'Fuori Ufficio' },
-  { value: 'Non Lavorativo', label: 'Non Lavorativo' },
-];
+// const Locations = [
+//   { value: 'Ferie', label: 'Ferie' },
+//   { value: 'Permesso', label: 'Permesso' },
+//   { value: 'Malattia', label: 'Malattia' },
+//   { value: 'Ufficio', label: 'Ufficio' },
+//   { value: 'Trasferta', label: 'Trasferta' },
+//   { value: 'SmartWorking', label: 'SmartWorking' },
+//   { value: 'Fuori Ufficio', label: 'Fuori Ufficio' },
+//   { value: 'Non Lavorativo', label: 'Non Lavorativo' },
+// ];
 
 export default function Example({ date, setOpen }) {
   const [morningLocation, setMorningLocation] = useState(null);
   const [afternoonLocation, setAfternoonLocation] = useState(null);
   const [startDate, setStartDate] = useState(date ? new Date(date) : null);
   const [endDate, setEndDate] = useState(null);
-  const [locations, setLocations] = useState([]);
+  const [Locations, setLocations] = useState([]);
   const [users, setUsers] = useState([]);
   const [calendarData, setCalendarData] = useState([]);
   const [allCalendarData, setAllCalendarData] = useState([]);
@@ -48,16 +48,27 @@ export default function Example({ date, setOpen }) {
     }
 
     const fetchLocations = async () => {
-      try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/locations/read`, {
-          headers: { authorization: `Bearer ${token}` },
-        });
-        setLocations(response.data.locations);
-      } catch (error) {
-        console.error('Error fetching locations:', error);
-      }
-    };
-
+        try {
+          const response = await axios.get(`${process.env.REACT_APP_API_URL}/locations/read`, {
+            headers: { authorization: `Bearer ${token}` },
+          });
+          console.log("Risposta API:", JSON.stringify(response.data, null, 2));
+          if (Array.isArray(response.data.locations)) {
+            const formattedLocations = response.data.locations.map(location => ({
+              value: location.name,
+              label: location.name
+            }));
+            setLocations(formattedLocations);
+            console.log("Queste sono le locations formattate: ", JSON.stringify(formattedLocations, null, 2));
+          } else {
+            console.error('Invalid locations data:', response.data.locations);
+          }
+        } catch (error) {
+          console.error('Error fetching locations:', error);
+        }
+      };
+      
+      
     const fetchUsers = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/user/read`, {

@@ -224,7 +224,7 @@ const handleSearchInputChange = (column) => (event) => {
   return (
     <div className="px-4 sm:px-6 lg:px-8">
       <Transition.Root show={open} as={Fragment}>
-       <Dialog as="div" className="relative z-20" onClose={setOpen}>
+       <Dialog as="div" className="relative z-50" onClose={setOpen}>
         <div className="fixed inset-0" />
           <div className="fixed inset-0 overflow-hidden">
             <div className="absolute inset-0 overflow-hidden">
@@ -285,7 +285,7 @@ const handleSearchInputChange = (column) => (event) => {
             Esporta
           </button>
           <button
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => setOpen(true)}
             className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"          >
             Crea
           </button>

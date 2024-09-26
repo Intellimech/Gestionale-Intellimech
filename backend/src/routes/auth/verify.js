@@ -55,7 +55,6 @@ router.get("/verify", async (req, res) => {
         
         const period = new Date().getHours() < 12 ? "morning" : "afternoon";
 
-        console.log(`Current period: ${period}`);
         const user = await User.findOne({
             where: { id_user: decoded.id, sessionId: decoded.sessionId },
             attributes: ["id_user", "name", "surname", "birthdate", "username", "email", "isDeleted", "isActive", "createdAt", "updatedAt", "sessionId", "subgroup", "changepass"],

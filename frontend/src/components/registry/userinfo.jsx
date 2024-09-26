@@ -66,7 +66,7 @@ const SettingsPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
+    <div className="min-h-screen p-8">
       <h1 className="text-2xl font-semibold text-gray-900 mb-6">Settings</h1>
       <form onSubmit={handleSubmit} className="space-y-8">
 

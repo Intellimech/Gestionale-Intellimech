@@ -122,7 +122,8 @@ export default function Example({ date, setOpen }) {
               onClick={() => {
                 
                 onConfirm();
-                closeToast();  // Chiude il toast dopo conferma 
+                closeToast();  // Chiude il toast dopo conferma
+              }}
               className="bg-[#A7D0EB] hover:bg-[#7fb7d4] text-white rounded px-2 py-1 text-xs"
             >
               Conferma

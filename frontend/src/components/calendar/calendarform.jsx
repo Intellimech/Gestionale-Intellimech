@@ -4,6 +4,9 @@ import Select from 'react-tailwindcss-select';
 import DatePicker from 'react-datepicker';
 import Cookies from 'js-cookie';
 import 'react-datepicker/dist/react-datepicker.css';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 // const Locations = [
 //   { value: 'Ferie', label: 'Ferie' },
@@ -11,7 +14,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 //   { value: 'Malattia', label: 'Malattia' },
 //   { value: 'Ufficio', label: 'Ufficio' },
 //   { value: 'Trasferta', label: 'Trasferta' },
-//   { value: 'SmartWorking', label: 'SmartWorking' },
+//   { value: 'Smartworking', label: 'Smartworking' },
 //   { value: 'Fuori Ufficio', label: 'Fuori Ufficio' },
 //   { value: 'Non Lavorativo', label: 'Non Lavorativo' },
 // ];
@@ -25,6 +28,8 @@ export default function Example({ date, setOpen }) {
   const [users, setUsers] = useState([]);
   const [calendarData, setCalendarData] = useState([]);
   const [allCalendarData, setAllCalendarData] = useState([]);
+
+ 
 
   const handleMorningLocationChange = (selected) => {
     setMorningLocation(selected);
@@ -101,6 +106,86 @@ export default function Example({ date, setOpen }) {
     fetchAllCalendarData();
   }, []);
 
+
+  // Funzione per mostrare il toast di conferma
+  const notifyConfirmation = (onConfirm) => {
+    toast(
+      ({ closeToast }) => (
+        <div>
+          <p>Stai inserendo Ferie o Permesso, confermi l'inserimento?</p>
+          <div className="flex justify-end gap-2 mt-2">
+            <button
+              onClick={() => {
+                onConfirm();
+                closeToast();  // Chiude il toast dopo conferma
+              }}
+              className="bg-[#A7D0EB] hover:bg-[#7fb7d4] text-white rounded px-2 py-1 text-xs"
+            >
+              Conferma
+            </button>
+            <button
+              onClick={closeToast}
+              className="bg-gray-300 hover:bg-gray-400 text-black rounded px-2 py-1 text-xs"
+            >
+              Annulla
+            </button>
+          </div>
+        </div>
+      ),
+      { autoClose: false, closeOnClick: false }  // Disabilita la chiusura automatica
+    );
+  };
+
+  // Funzione per mostrare notifiche di successo o errore
+  const notifySuccess = () => toast.success('Inserimento avvenuto con successo!');
+  const notifyError = () => toast.error('Errore nell\'inserimento!');
+  
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+    
+    if (!isFormValid()) {
+      alert(
+        'Seleziona un intervallo di date valido. Per Ferie, Permesso o Trasferta non ci sono limiti, ma non puoi selezionare date singole oltre la fine della prossima settimana per le altre posizioni.'
+      );
+      return;
+    }
+
+    const createEntry = (part, location) => {
+      return axios.post('http://localhost:3000/calendar/create', {
+        startDate: startDate.toISOString().split('T')[0],
+        endDate: endDate ? endDate.toISOString().split('T')[0] : null,
+        part: part,
+        location: location.value,
+      });
+    };
+
+    const submitEntries = () => {
+      const morningPromise = createEntry('morning', morningLocation);
+      const afternoonPromise = createEntry('afternoon', afternoonLocation);
+
+      Promise.all([morningPromise, afternoonPromise])
+        .then((responses) => {
+          console.log('Entries created:', responses);
+          notifySuccess();  // Notifica di successo
+        })
+        .catch((error) => {
+          console.error('Error creating entries:', error);
+          notifyError();  // Notifica di errore
+        });
+    };
+
+    const isSpecialLocation = (location) => ['Ferie', 'Permesso'].includes(location?.value);
+
+    // Se è una posizione speciale (Ferie o Permesso), richiedi conferma tramite toast
+    if (isSpecialLocation(morningLocation) || isSpecialLocation(afternoonLocation)) {
+      notifyConfirmation(() => {
+        submitEntries(); // Esegui l'inserimento solo dopo la conferma
+      });
+    } else {
+      submitEntries(); // Nessuna conferma necessaria, esegui direttamente l'inserimento
+    }
+  };
+
   const isFormValid = () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -131,36 +216,7 @@ export default function Example({ date, setOpen }) {
   };
   
 
-  const handleFormSubmit = (e) => {
-    e.preventDefault();
-    if (!isFormValid()) {
-      alert(
-        'Seleziona un intervallo di date valido. Per Ferie, Permesso o Trasferta non ci sono limiti, ma non puoi selezionare date singole oltre la fine della prossima settimana per le altre posizioni.'
-      );
-      return;
-    }
-
-    const createEntry = (part, location) => {
-      return axios.post('http://localhost:3000/calendar/create', {
-        startDate: startDate.toISOString().split('T')[0],
-        endDate: endDate ? endDate.toISOString().split('T')[0] : null,
-        part: part,
-        location: location.value,
-      });
-    };
-
-    const morningPromise = createEntry('morning', morningLocation);
-    const afternoonPromise = createEntry('afternoon', afternoonLocation);
-
-    Promise.all([morningPromise, afternoonPromise])
-      .then((responses) => {
-        console.log('Entries created:', responses);
-        // Mostra una notifica toast di conferma qui
-      })
-      .catch((error) => {
-        console.error('Error creating entries:', error);
-      });
-  };
+  
 
   return (
     <form onSubmit={handleFormSubmit}>
@@ -243,14 +299,14 @@ export default function Example({ date, setOpen }) {
         </button>
       </div>
 
-      <div className="mt-8 px-4">
-        <h3 className="text-lg font-semibold">Utenti e Disponibilità</h3>
-        <table className="min-w-full divide-y mt-4 divide-gray-200">
+      
+       
+        <table className="min-w-full mt-4">
           <thead>
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mattina</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pomeriggio</th>
+              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Utente</th>
+              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Mattina</th>
+              <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Pomeriggio</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
@@ -271,11 +327,11 @@ export default function Example({ date, setOpen }) {
 
                 userEntries.forEach((entry) => {
                   if (entry.period === 'morning') {
-                    morningLocation = ['Ufficio', 'SmartWorking'].includes(entry.location)
+                    morningLocation = ['Ufficio', 'Smartworking'].includes(entry.location)
                       ? entry.location
                       : 'Non disponibile';
                   } else if (entry.period === 'afternoon') {
-                    afternoonLocation = ['Ufficio', 'Fuori Ufficio', 'SmartWorking'].includes(entry.location)
+                    afternoonLocation = ['Ufficio', 'Fuori Ufficio', 'Smartworking'].includes(entry.location)
                       ? entry.location
                       : 'Non disponibile';
                   }
@@ -283,9 +339,9 @@ export default function Example({ date, setOpen }) {
 
                 return (
                   <tr key={user.id_user}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{user.name}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{morningLocation}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{afternoonLocation}</td>
+                     <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">{user.name}</td>
+                    <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{morningLocation}</td>
+                    <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{afternoonLocation}</td>
                   </tr>
                 );
               })
@@ -298,7 +354,8 @@ export default function Example({ date, setOpen }) {
             )}
           </tbody>
         </table>
-      </div>
+      
+      <ToastContainer />
     </form>
   );
 }

@@ -29,6 +29,7 @@ export default function Example({ date, setOpen }) {
   const [calendarData, setCalendarData] = useState([]);
   const [allCalendarData, setAllCalendarData] = useState([]);
 
+  
  
 
   const handleMorningLocationChange = (selected) => {
@@ -57,14 +58,14 @@ export default function Example({ date, setOpen }) {
           const response = await axios.get(`${process.env.REACT_APP_API_URL}/locations/read`, {
             headers: { authorization: `Bearer ${token}` },
           });
-          console.log("Risposta API:", JSON.stringify(response.data, null, 2));
+         
           if (Array.isArray(response.data.locations)) {
             const formattedLocations = response.data.locations.map(location => ({
               value: location.name,
               label: location.name
             }));
             setLocations(formattedLocations);
-            console.log("Queste sono le locations formattate: ", JSON.stringify(formattedLocations, null, 2));
+            
           } else {
             console.error('Invalid locations data:', response.data.locations);
           }
@@ -89,17 +90,20 @@ export default function Example({ date, setOpen }) {
       }
     };
 
-    const fetchAllCalendarData = async () => {
-      try {
+   // New function to fetch all calendar data
+  const fetchAllCalendarData = async () => {
+    try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/calendar/read/all`, {
-          headers: { authorization: `Bearer ${token}` },
+            headers: { Authorization: `Bearer ${Cookies.get('token')}` },
+            params: { date: startDate },
         });
-        setAllCalendarData(Array.isArray(response.data.calendars) ? response.data.calendars : []);
-        console.log('Fetched All Calendar Data:', response.data.calendars); // Log all calendar data fetched
-      } catch (error) {
+        console.log('All Calendar Data Response:', response.data); // Log the entire response
+        setAllCalendarData(response.data); // Set the state
+    } catch (error) {
         console.error('Error fetching all calendar data:', error);
-      }
-    };
+    }
+};
+
 
     fetchLocations();
     fetchUsers();
@@ -116,9 +120,9 @@ export default function Example({ date, setOpen }) {
           <div className="flex justify-end gap-2 mt-2">
             <button
               onClick={() => {
+                
                 onConfirm();
-                closeToast();  // Chiude il toast dopo conferma
-              }}
+                closeToast();  // Chiude il toast dopo conferma 
               className="bg-[#A7D0EB] hover:bg-[#7fb7d4] text-white rounded px-2 py-1 text-xs"
             >
               Conferma
@@ -158,6 +162,10 @@ export default function Example({ date, setOpen }) {
         location: location.value,
       });
     };
+    
+  if (allCalendarData.length > 0) {
+      console.log("All Calendars", allCalendarData);
+  }
 
     const submitEntries = () => {
       const morningPromise = createEntry('morning', morningLocation);
@@ -310,49 +318,56 @@ export default function Example({ date, setOpen }) {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {Array.isArray(users) && users.length > 0 ? (
-              users.map((user) => {
-                console.log('Processing User:', user.name);
+  {Array.isArray(users) && users.length > 0 ? (
+    users.map((user) => {
+      const userEntries = allCalendarData.filter((entry) => {
+        const entryDate = new Date(entry.startDate || entry.date);
+        if (isNaN(entryDate)) {
+          console.error('Invalid entry date:', entry.startDate || entry.date);
+          return false; // Skip invalid dates
+        }
 
-                const userEntries = allCalendarData.filter((entry) => {
-                  const entryDate = new Date(entry.date).toISOString().split('T')[0];
-                  const startDateFormatted = new Date(startDate).toISOString().split('T')[0];
-                  return entryDate === startDateFormatted;
-                });
+        const startDateFormatted = startDate ? startDate.toISOString().split('T')[0] : null;
+        const entryDateFormatted = entryDate.toISOString().split('T')[0];
 
-                console.log(`User: ${user.name} - Entries Found:`, userEntries);
+        const userId = entry.owner; // Using 'owner' as user ID
+        console.log(`Comparing Entry Date: ${entryDateFormatted} with Start Date: ${startDateFormatted} and User ID: ${user.id_user} with Entry Owner ID: ${userId}`);
+        
+        return entryDateFormatted === startDateFormatted && userId === user.id_user; // Updated condition
+      });
 
-                let morningLocation = 'Non disponibile';
-                let afternoonLocation = 'Non disponibile';
+      // Log the resulting user entries
+      console.log(`User ID: ${user.id_user}, User Entries:`, userEntries);
 
-                userEntries.forEach((entry) => {
-                  if (entry.period === 'morning') {
-                    morningLocation = ['Ufficio', 'Smartworking'].includes(entry.location)
-                      ? entry.location
-                      : 'Non disponibile';
-                  } else if (entry.period === 'afternoon') {
-                    afternoonLocation = ['Ufficio', 'Fuori Ufficio', 'Smartworking'].includes(entry.location)
-                      ? entry.location
-                      : 'Non disponibile';
-                  }
-                });
+      let morningLocation = 'Non disponibile';
+      let afternoonLocation = 'Non disponibile';
 
-                return (
-                  <tr key={user.id_user}>
-                     <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">{user.name}</td>
-                    <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{morningLocation}</td>
-                    <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{afternoonLocation}</td>
-                  </tr>
-                );
-              })
-            ) : (
-              <tr>
-                <td colSpan="3" className="px-6 py-4 text-center text-sm text-gray-500">
-                  Nessun utente trovato.
-                </td>
-              </tr>
-            )}
-          </tbody>
+      userEntries.forEach(entry => {
+        if (entry.period === 'morning') { // Check for the correct field for morning
+          morningLocation = ['Ufficio', 'Smartworking'].includes(entry.location) ? entry.location : 'Non disponibile';
+        } else if (entry.period === 'afternoon') { // Check for the correct field for afternoon
+          afternoonLocation = ['Ufficio', 'Smartworking'].includes(entry.location) ? entry.location : 'Non disponibile';
+        }
+      });
+
+      return (
+        <tr key={user.id_user}>
+          <td className="px-4 py-2 whitespace-nowrap text-sm font-medium text-gray-900">{user.name}</td>
+          <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{morningLocation}</td>
+          <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-500">{afternoonLocation}</td>
+        </tr>
+      );
+    })
+  ) : (
+    <tr>
+      <td colSpan="3" className="px-6 py-4 text-center text-sm text-gray-500">
+        Nessun utente trovato.
+      </td>
+    </tr>
+  )}
+</tbody>
+
+
         </table>
       
       <ToastContainer />

@@ -60,15 +60,13 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/locations/read`, {
           headers: { authorization: `Bearer ${token}` },
         });
-        console.log("Risposta API:", JSON.stringify(response.data, null, 2));
         if (Array.isArray(response.data.locations)) {
           const formattedLocations = response.data.locations.map(location => ({
             value: location.name,
             label: location.name
           }));
           setLocations(formattedLocations);
-          console.log("Queste sono le locations formattate: ", JSON.stringify(formattedLocations, null, 2));
-        } else {
+          } else {
           console.error('Invalid locations data:', response.data.locations);
         }
       } catch (error) {

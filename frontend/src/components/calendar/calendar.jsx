@@ -263,7 +263,7 @@ const handleFormSubmit = async (newLocation) => {
           </time>
         </h1>
         <div className="flex items-center ">
-          <div className="relative flex items-center rounded-md bg-white shadow-sm md:items-stretch">
+          <div className="relative flex items-center mb-1  rounded-md bg-white shadow-sm md:items-stretch">
             <button
               type="button"
               className="flex h-8 w-10 items-center justify-center rounded-l-md border-y border-l border-gray-300 text-gray-400 hover:text-gray-500 focus:relative md:w-8"
@@ -279,7 +279,7 @@ const handleFormSubmit = async (newLocation) => {
             >
               Oggi
             </button>
-            <span className="relative h-5 w-px bg-gray-300 md:hidden" />
+            <span className="relative h-5 w-px bg-gray-300 md:hidden mt-1" />
             <button
               type="button"
               className="flex h-8 w-10 items-center justify-center rounded-r-md border-y border-r border-gray-300 text-gray-400 hover:text-gray-500 focus:relative md:w-8"
@@ -291,7 +291,7 @@ const handleFormSubmit = async (newLocation) => {
           </div>
         </div>
       </header>
-      <div className="shadow ring-1 ring-black ring-opacity-5 lg:flex lg:flex-auto lg:flex-col">
+      <div className="shadow  ring-1 ring-black ring-opacity-5 lg:flex lg:flex-auto lg:flex-col">
         <div className="grid grid-cols-7 gap-px border-b border-gray-300 bg-gray-200 text-center text-xs font-semibold leading-5 text-gray-700 lg:flex-none">
           <div className="bg-white py-1">Lun</div>
           <div className="bg-white py-1">Mar</div>
@@ -314,11 +314,11 @@ const handleFormSubmit = async (newLocation) => {
               onClick={() => handleDayClick(day.date)}
             >
               <div className="text-xs px-1 py-1">
-  {/* Added gray outline for current day */}
-  <span className={day.isToday ? 'border border-gray-400 bg-gray-100 rounded-full px-16 py-1.' : ''}>
-    {day.date.split('-').pop().replace(/^0/, '')}
-  </span>
-</div>
+        {/* Added gray outline for current day */}
+        <span className={day.isToday ? 'border border-gray-400 bg-gray-100 rounded-full px-16 py-1.' : ''}>
+          {day.date.split('-').pop().replace(/^0/, '')}
+        </span>
+      </div>
 
               {/* Linea di separazione che copre tutta la cella */}
               <div className="border-t border-gray-300 w-full"></div>

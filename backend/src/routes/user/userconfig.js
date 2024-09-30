@@ -108,7 +108,8 @@ const userNavigation = [
         { name: 'Personale', href: '/app/employees-consultants', icon: 'DocumentDuplicateIcon', current: false },
         { name: 'Categorie', href: '/app/category', icon: 'TagIcon', current: false},
         { name: 'Sotto categorie', href: '/app/subcategory', icon: 'SwatchIcon', current: false},
-        { name: 'Aree Tecniche', href: '/app/technicalarea', icon: 'WrenchScrewdriverIcon', current: false}
+        { name: 'Aree Tecniche', href: '/app/technicalarea', icon: 'WrenchScrewdriverIcon', current: false},
+        { name: 'Locations', href: '/app/locations', icon: 'HomeIcon', current: false}
       ], 
     },
     { 

@@ -16,6 +16,7 @@ import Reporting from './components/reporting/reporting.jsx';
 import Calendar from './components/calendar/calendar';
 
 import GeneralCalendar from './components/calendar/generalcalendar.jsx';
+import Locations from './components/registry/locationstable.jsx'
 
 import Quotationrequesttable from './components/quotationrequest/quotationrequesttable';
 import Offer from './components/offer/offertable';
@@ -86,6 +87,7 @@ const App = () => {
             <Route path="category" element={<PrivateRoute element={<CategoriesPage />} />} />
             <Route path="subcategory" element={<PrivateRoute element={<SubcategoriesPage />} />} />
             <Route path="technicalarea" element={<PrivateRoute element={<TechnicalAreaPage />} />} />
+            <Route path="locations" element={<PrivateRoute element={<Locations />} />} />
             <Route path="settings" element={<PrivateRoute element={<SettingsPage />} />} />
           </Route>
           <Route path="*" element={<Lost />} />

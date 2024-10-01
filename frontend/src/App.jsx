@@ -23,6 +23,8 @@ import Offer from './components/offer/offertable';
 import Salesorder from './components/salesorder/salesordertable.jsx';
 import Job from './components/job/jobtable';
 
+import HolidaysLeaves from './components/calendar/holidaysleaves.jsx';
+
 import Invoicetable from './components/invoices/invoicetable.jsx';
 import Company from './components/registry/companytable';
 
@@ -70,10 +72,9 @@ const App = () => {
               <Route index element={<PrivateRoute element={<Purchase />} />} />
               <Route path=":id" element={<PrivateRoute element={<PurchaseInfo />} />} />
             </Route>
-            
             <Route path="profile" element={<PrivateRoute element={<Profile />} />} />
-
             <Route path="job" element={<PrivateRoute element={<Job />} />} />
+            <Route path="holidays-leaves" element={<PrivateRoute element={<HolidaysLeaves />} />} />
             <Route path="invoices">
               <Route path="passive" element={<PrivateRoute element={<Invoicetable invoicetype={"PassivaSdI"}/>} />} />
               <Route path="active" element={<PrivateRoute element={<Invoicetable invoicetype={"AttivaSdI"}/>} />} />
@@ -83,6 +84,7 @@ const App = () => {
               <Route path="suppliers" element={<PrivateRoute element={<Company companytype={"Suppliers"}/>} />} />
             </Route>
             <Route path="users" element={<PrivateRoute element={<UsersTable />} />} />
+            <Route path="roles" element={<PrivateRoute element={<UsersTable />} />} />
             <Route path="employees-consultants" element={<PrivateRoute element={<EmployeesConsultant />} />} />
             <Route path="category" element={<PrivateRoute element={<CategoriesPage />} />} />
             <Route path="subcategory" element={<PrivateRoute element={<SubcategoriesPage />} />} />

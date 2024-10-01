@@ -61,10 +61,12 @@ function generateCalendarArrayWithLocations(targetDate, locations) {
       dayLocations.forEach(loc => {
         if (loc.period === 'morning') {
           day.morningLocation = loc.location;
+          day.morningStatus = loc.status; // Aggiungi lo status della mattina
         } else if (loc.period === 'afternoon') {
           day.afternoonLocation = loc.location;
+          day.afternoonStatus = loc.status; // Aggiungi lo status del pomeriggio
         }
-        day.id_calendar = loc.id_calendar; // Aggiungi l'ID del calendario
+        day.id_calendar = loc.id_calendar;
       });
     }
   });
@@ -190,60 +192,10 @@ const handleFormSubmit = async (newLocation) => {
     return classes.filter(Boolean).join(' ');
   }
 
-  // function ConfirmPopup({ open, setOpen, onConfirm }) {
-  //   return (
-  //     <div className={`fixed z-10 inset-0 overflow-y-auto ${open ? '' : 'hidden'}`}>
-  //       <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center  sm:block sm:p-0">
-  //         <div className="fixed inset-0 transition-opacity" aria-hidden="true">
-  //           <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
-  //         </div>
-  //         <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">​</span>
-  //         <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-  //           <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-  //             <div className="sm:flex sm:items-start">
-  //               <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-  //                 <h3 className="text-lg leading-6 font-medium text-gray-900">Modifica luogo</h3>
-  //                 <div className="mt-2">
-  //                   <p className="text-sm text-gray-500">Questo giorno ha già un luogo inserito. Vuoi modificarlo?</p>
-  //                 </div>
-  //               </div>
-  //             </div>
-  //           </div>
-  //           <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-  //             <button
-  //               type="button"
-  //               className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
-  //               onClick={() => {
-  //                 onConfirm();
-  //                 setOpen(false);
-  //               }}
-  //             >
-  //               Conferma
-  //             </button>
-  //             <button
-  //               type="button"
-  //               className="block rounded-md bg-white px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]" onClick={() => setOpen(false)}
-  //             >
-  //               Annulla
-  //             </button>
-  //           </div>
-  //         </div>
-  //       </div>
-  //     </div>
-  //   );
-  // }
 
   return (
     <>
-    {/* {updateLocationPopupOpen && (
-      <CalendarUpdateForm
-        open={updateLocationPopupOpen}
-        setOpen={setUpdateLocationPopupOpen}
-        date={selectedDate}
-        initialData={initialDataString}
-        onSubmit={handleFormSubmit}
-      />
-    )} */}
+   
 
     <CalendarPopup
       open={addLocationPopupOpen}
@@ -326,51 +278,69 @@ const handleFormSubmit = async (newLocation) => {
               {/* Contenitore con sezioni separate */}
               <div className="flex flex-col h-full mt-1">
                 {/* Div mattina */}
-                <div className="flex-shrink-0 flex items-center justify-center min-h-[20px] mb-0">
-                  {day.morningLocation ? (
-                    <div className={classNames(
-                      'rounded-md flex items-center justify-center px-2 py-1 text-xs inline-block',
-                      day.morningLocation === 'Ufficio' ? 'bg-[#CC99FF] text-gray-900'
-                        : day.morningLocation === 'Trasferta' ? 'bg-[#FFFF00] text-gray-900'
-                          : day.morningLocation === 'Malattia' ? 'bg-[#FF9966] text-gray-900'
-                            : day.morningLocation === 'Permesso' ? 'bg-[#8ED973] text-gray-900'
-                              : day.morningLocation === 'Ferie' ? 'bg-[#8ED973] text-gray-900'
-                                : day.morningLocation === 'Smartworking' ? 'bg-[#FFCCFF] text-gray-900'
-                                  : day.morningLocation === 'Fuori Ufficio' ? 'bg-[#00D5D0] text-gray-900'
-                                    : day.morningLocation === 'Non Lavorativo' ? 'bg-[#00D5D0] text-gray-900'
-                                      : 'bg-gray-200 text-gray-800'
-                    )}>
-                      {day.morningLocation}
-                    </div>
-                  ) : (
-                    <span className="text-gray-400 text-xs">Mattina</span>
-                  )}
+              <div className="flex-shrink-0 flex items-center justify-center min-h-[20px] mb-0">
+              {day.morningLocation ? (
+                <div className={classNames(
+                  'rounded-md flex items-center justify-center px-2 py-1 text-xs inline-block',
+                  day.morningStatus === 'Approvato' 
+                    ? day.morningLocation === 'Ufficio' ? 'bg-[#CC99FF] text-gray-900'
+                      : day.morningLocation === 'Trasferta' ? 'bg-[#FFFF00] text-gray-900'
+                      : day.morningLocation === 'Malattia' ? 'bg-[#FF9966] text-gray-900'
+                      : day.morningLocation === 'Permesso' ? 'bg-[#8ED973] text-gray-900'
+                      : day.morningLocation === 'Ferie' ? 'bg-[#8ED973] text-gray-900'
+                      : day.morningLocation === 'Smartworking' ? 'bg-[#FFCCFF] text-gray-900'
+                      : day.morningLocation === 'Fuori Ufficio' ? 'bg-[#00D5D0] text-gray-900'
+                      : day.morningLocation === 'Non Lavorativo' ? 'bg-[#00D5D0] text-gray-900'
+                      : 'bg-gray-200 text-gray-800'
+                    : day.morningLocation === 'Ufficio' ? 'border border-[#CC99FF] text-gray-900'
+                      : day.morningLocation === 'Trasferta' ? 'border border-[#FFFF00] text-gray-900'
+                      : day.morningLocation === 'Malattia' ? 'border border-[#FF9966] text-gray-900'
+                      : day.morningLocation === 'Permesso' ? 'border border-[#8ED973] text-gray-900'
+                      : day.morningLocation === 'Ferie' ? 'border border-[#8ED973] text-gray-900'
+                      : day.morningLocation === 'Smartworking' ? 'border border-[#FFCCFF] text-gray-900'
+                      : day.morningLocation === 'Fuori Ufficio' ? 'border border-[#00D5D0] text-gray-900'
+                      : day.morningLocation === 'Non Lavorativo' ? 'border border-[#00D5D0] text-gray-900'
+                      : 'border border-gray-200 text-gray-800'
+                )}>
+                  {day.morningLocation}
                 </div>
+              ) : (
+                <span className="text-gray-400 text-xs">Mattina</span>
+              )}
+            </div>
 
-                {/* Linea di separazione centrata con larghezza w-10 */}
-                <div className="border-t mt-1 border-gray-300 w-10 mx-auto"></div>
-
-                {/* Div pomeriggio */}
-                <div className="flex-shrink-0 flex items-center justify-center min-h-[20px] mt-0">
-                  {day.afternoonLocation ? (
-                    <div className={classNames(
-                      'rounded-md flex items-center justify-center px-2 py-1 text-xs inline-block',
-                      day.afternoonLocation === 'Ufficio' ? 'bg-[#CC99FF] text-gray-900'
-                        : day.afternoonLocation === 'Trasferta' ? 'bg-[#FFFF00] text-gray-900'
-                          : day.afternoonLocation === 'Malattia' ? 'bg-[#FF9966] text-gray-900'
-                            : day.afternoonLocation === 'Permesso' ? 'bg-[#8ED973] text-gray-900'
-                              : day.afternoonLocation === 'Ferie' ? 'bg-[#8ED973] text-gray-900'
-                                : day.afternoonLocation === 'Smartworking' ? 'bg-[#FFCCFF] text-gray-900'
-                                  : day.afternoonLocation === 'Fuori Ufficio' ? 'bg-[#00D5D0] text-gray-900'
-                                    : day.afternoonLocation === 'Non Lavorativo' ? 'bg-[#00D5D0] text-gray-900'
-                                      : 'bg-gray-200 text-gray-800'
-                    )}>
-                      {day.afternoonLocation}
-                    </div>
-                  ) : (
-                    <span className="text-gray-400 text-xs">Pomeriggio</span>
-                  )}
+            {/* Div pomeriggio */}
+            <div className="flex-shrink-0 flex items-center justify-center mt-1 min-h-[20px] mt-0">
+              {day.afternoonLocation ? (
+                <div className={classNames(
+                  'rounded-md flex items-center justify-center px-2 py-1 text-xs inline-block',
+                  day.afternoonStatus === 'Approvato' 
+                    ? day.afternoonLocation === 'Ufficio' ? 'bg-[#CC99FF] text-gray-900'
+                      : day.afternoonLocation === 'Trasferta' ? 'bg-[#FFFF00] text-gray-900'
+                      : day.afternoonLocation === 'Malattia' ? 'bg-[#FF9966] text-gray-900'
+                      : day.afternoonLocation === 'Permesso' ? 'bg-[#8ED973] text-gray-900'
+                      : day.afternoonLocation === 'Ferie' ? 'bg-[#8ED973] text-gray-900'
+                      : day.afternoonLocation === 'Smartworking' ? 'bg-[#FFCCFF] text-gray-900'
+                      : day.afternoonLocation === 'Fuori Ufficio' ? 'bg-[#00D5D0] text-gray-900'
+                      : day.afternoonLocation === 'Non Lavorativo' ? 'bg-[#00D5D0] text-gray-900'
+                      : 'bg-gray-200 text-gray-800'
+                    : day.afternoonLocation === 'Ufficio' ? 'border border-[#CC99FF] text-gray-900'
+                      : day.afternoonLocation === 'Trasferta' ? 'border border-[#FFFF00] text-gray-900'
+                      : day.afternoonLocation === 'Malattia' ? 'border border-[#FF9966] text-gray-900'
+                      : day.afternoonLocation === 'Permesso' ? 'border border-[#8ED973] text-gray-900'
+                      : day.afternoonLocation === 'Ferie' ? 'border border-[#8ED973] text-gray-900'
+                      : day.afternoonLocation === 'Smartworking' ? 'border border-[#FFCCFF] text-gray-900'
+                      : day.afternoonLocation === 'Fuori Ufficio' ? 'border border-[#00D5D0] text-gray-900'
+                      : day.afternoonLocation === 'Non Lavorativo' ? 'border border-[#00D5D0] text-gray-900'
+                      : 'border border-gray-200 text-gray-800'
+                )}>
+                  {day.afternoonLocation}
                 </div>
+              ) : (
+                <span className="text-gray-400 text-xs">Pomeriggio</span>
+              )}
+            </div>
+
               </div>
             </div>
           ))}

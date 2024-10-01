@@ -154,13 +154,17 @@ export default function Example({ date, setOpen }) {
       );
       return;
     }
-
     const createEntry = (part, location) => {
+      // Imposta lo status in base alla posizione selezionata
+      const status = ['Ferie', 'Permesso'].includes(location.value) ? 'In Attesa di Approvazione' : 'Approvato';
+    
+      // Invia la richiesta al server con lo status
       return axios.post('http://localhost:3000/calendar/create', {
         startDate: startDate.toISOString().split('T')[0],
         endDate: endDate ? endDate.toISOString().split('T')[0] : null,
         part: part,
         location: location.value,
+        status: status, // Aggiungi lo status nel payload
       });
     };
     

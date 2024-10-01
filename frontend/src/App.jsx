@@ -23,13 +23,12 @@ import Offer from './components/offer/offertable';
 import Salesorder from './components/salesorder/salesordertable.jsx';
 import Job from './components/job/jobtable';
 
-import HolidaysLeaves from './components/calendar/holidaysleaves.jsx';
 
 import Invoicetable from './components/invoices/invoicetable.jsx';
 import Company from './components/registry/companytable';
 
 import Profile from './components/registry/userinfo.jsx';
-
+import Permissions from './components/registry/permissionstable.jsx'
 import Purchase from  './components/purchaseorder/purchase.jsx';
 import PurchaseInfo from './components/purchaseorder/purchaseinfo.jsx';
 
@@ -74,7 +73,7 @@ const App = () => {
             </Route>
             <Route path="profile" element={<PrivateRoute element={<Profile />} />} />
             <Route path="job" element={<PrivateRoute element={<Job />} />} />
-            <Route path="holidays-leaves" element={<PrivateRoute element={<HolidaysLeaves />} />} />
+            
             <Route path="invoices">
               <Route path="passive" element={<PrivateRoute element={<Invoicetable invoicetype={"PassivaSdI"}/>} />} />
               <Route path="active" element={<PrivateRoute element={<Invoicetable invoicetype={"AttivaSdI"}/>} />} />
@@ -90,6 +89,7 @@ const App = () => {
             <Route path="subcategory" element={<PrivateRoute element={<SubcategoriesPage />} />} />
             <Route path="technicalarea" element={<PrivateRoute element={<TechnicalAreaPage />} />} />
             <Route path="locations" element={<PrivateRoute element={<Locations />} />} />
+            <Route path="permissions" element={<PrivateRoute element={<Permissions />} />} />
             <Route path="settings" element={<PrivateRoute element={<SettingsPage />} />} />
           </Route>
           <Route path="*" element={<Lost />} />

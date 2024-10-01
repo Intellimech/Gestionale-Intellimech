@@ -91,6 +91,7 @@ const userNavigation = [
       showedname: "Amministrazione", 
       options: [
         { name: 'Annuncia', href: '/app/broadcast', icon: 'MegaphoneIcon', current: false },
+        { name: 'Ferie e Permessi', href: '/app/holidays-leaves', icon: 'GlobeEuropeAfricaIcon', current: false },
       ], 
     },
     {

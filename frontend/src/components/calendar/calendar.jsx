@@ -6,7 +6,7 @@ import CalendarPopup from './calendarpopup';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
-function generateCalendarArrayWithLocations(targetDate, locations) {
+function generateCalendarArrayWithLocations(targetDate, calendars = [], locations = []) {
   const startDate = startOfMonth(targetDate);
   const endDate = endOfMonth(targetDate);
   const firstDayOfMonth = startDate.getDay();
@@ -16,6 +16,8 @@ function generateCalendarArrayWithLocations(targetDate, locations) {
   const days = [];
   const prevMonthEndDate = subDays(startDate, 1);
   const prevMonthDays = [];
+
+  // Creazione dei giorni del mese precedente
   for (let i = 0; i < adjustedFirstDay; i++) {
     const date = subDays(startDate, adjustedFirstDay - i);
     prevMonthDays.push({
@@ -24,10 +26,12 @@ function generateCalendarArrayWithLocations(targetDate, locations) {
       isWorkingDay: date.getDay() !== 0 && date.getDay() !== 6,
       morningLocation: null,
       afternoonLocation: null,
-      id_calendar: null // Aggiungi l'ID del calendario
+      id_calendar: null
     });
   }
   days.push(...prevMonthDays);
+
+  // Creazione dei giorni del mese corrente
   const datesInRange = eachDayOfInterval({ start: startDate, end: endDate });
   const currentMonthDays = datesInRange.map(date => ({
     date: format(date, 'yyyy-MM-dd'),
@@ -36,9 +40,11 @@ function generateCalendarArrayWithLocations(targetDate, locations) {
     isToday: isToday(date),
     morningLocation: null,
     afternoonLocation: null,
-    id_calendar: null // Aggiungi l'ID del calendario
+    id_calendar: null
   }));
   days.push(...currentMonthDays);
+
+  // Aggiunta dei giorni del mese successivo
   const remainingDays = 42 - (prevMonthDays.length + currentMonthDays.length);
   const nextMonthDays = [];
   for (let i = 1; i <= remainingDays; i++) {
@@ -49,33 +55,72 @@ function generateCalendarArrayWithLocations(targetDate, locations) {
       isCurrentMonth: false,
       morningLocation: null,
       afternoonLocation: null,
-      id_calendar: null // Aggiungi l'ID del calendario
+      id_calendar: null
     });
   }
   days.push(...nextMonthDays);
 
-  // Associa i luoghi agli ID del calendario
+ // Funzione per ottenere il nome della location tramite id_location
+const getLocationNameById = (id) => {
+  console.log("Cercando la location con id:", id); // Debugging: verifica l'id cercato
+  console.log("Locations disponibili:", JSON.stringify(locations, null, 2)); // Visualizza tutte le locations
+
+  // Match per id_location
+  const location = locations.find(loc => loc.id_location === id); 
+  console.log("Location trovata:", JSON.stringify(location, null, 2)); // Debugging: verifica la location trovata
+
+  return location ? location.name : null; // Restituisce la proprietà name o null
+};
+
+
+  // Assegna le locations (mattina e pomeriggio)
   days.forEach((day) => {
-    const dayLocations = locations.filter(loc => loc.date === day.date);
+    const dayLocations = calendars?.filter(loc => loc.date === day.date) || [];
+    
+    // Debugging: verifica le locations per il giorno corrente
+    console.log("Locations per il giorno:", day.date, " -> ", dayLocations);
+
     if (dayLocations.length > 0) {
       dayLocations.forEach(loc => {
+        console.log("Location dettagli:", loc); // Debugging: verifica i dettagli della location
+
         if (loc.period === 'morning') {
-          day.morningLocation = loc.location;
-          day.morningStatus = loc.status; // Aggiungi lo status della mattina
+          // Ricerca del nome della location per il mattino
+          const morningLocationName = getLocationNameById(loc.location);
+          console.log("Nome della location mattutina:", morningLocationName); // Debugging: verifica il nome trovato
+          day.morningLocation = morningLocationName || null; // Assegna il nome della location o null
+          day.morningStatus = loc.status; // Mantiene lo stato
         } else if (loc.period === 'afternoon') {
-          day.afternoonLocation = loc.location;
-          day.afternoonStatus = loc.status; // Aggiungi lo status del pomeriggio
+          // Ricerca del nome della location per il pomeriggio
+          const afternoonLocationName = getLocationNameById(loc.location);
+          console.log("Nome della location pomeridiana:", afternoonLocationName); // Debugging: verifica il nome trovato
+          day.afternoonLocation = afternoonLocationName || null; // Assegna il nome della location o null
+          day.afternoonStatus = loc.status; // Mantiene lo stato
         }
-        day.id_calendar = loc.id_calendar;
+        day.id_calendar = loc.id_calendar; // Assegna l'id del calendario
       });
+
+      // Debugging: verifica il giorno aggiornato con le locations
+      console.log("Giorno aggiornato con locations:", day);
+    } else {
+      console.log("Nessuna location trovata per il giorno:", day.date); // Debugging: verifica se non ci sono location
     }
   });
 
   return days;
 }
+const formatLocations = (locations) => {
+  return locations.map(location => ({
+    id_location: location.id_location, // Ensure this matches what you expect
+    name: location.name,
+  }));
+};
+
 
 export default function Calendar() {
   const [currentMonth, setCurrentMonth] = useState(new Date());
+  const [calendars, setCalendars] = useState([]);
+  
   const [locations, setLocations] = useState([]);
   const [addLocationPopupOpen, setAddLocationPopupOpen] = useState(false);
   const [updateLocationPopupOpen, setUpdateLocationPopupOpen] = useState(false); // Stato per il popup di aggiornamento
@@ -84,33 +129,66 @@ export default function Calendar() {
   const [action, setAction]= useState({});
 
   useEffect(() => {
-    async function fetchLocations() {
+    
+      const fetchData = async () => {
+        await fetchLocations(); // Assicurati di chiamare la funzione fetchLocations
+        await fetchCalendar(); // Se hai bisogno di questo
+      };
+      
+      
+
+    async function fetchCalendar() {
       try {
         const response = await axios.get('http://localhost:3000/calendar/read', {
           headers: {
             Authorization: `Bearer ${Cookies.get('token')}`
           }
         });
-        console.log('Locations:', response.data.calendars);
-        setLocations(response.data.calendars);
+        console.log('Calendar:', response.data.calendars);
+        
+        setCalendars(response.data.calendars);
       } catch (error) {
         console.error('Error fetching locations:', error);
       }
     }
+    
+    fetchData();
     fetchLocations();
   }, []);
-
   const fetchLocations = async () => {
+    try {
+      const token = Cookies.get('token'); // Assicurati che 'token' venga estratto correttamente
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/locations/read`, {
+        headers: { authorization: `Bearer ${token}` },
+      });
+  
+      console.log('Risposta delle locations:', response.data); // Debugging: stampa la risposta dell'API
+  
+      if (Array.isArray(response.data.locations)) {
+        const formattedLocations = formatLocations(response.data.locations);
+        setLocations(formattedLocations);
+        console.log("Locations disponibili:", formattedLocations); // Debugging: controlla le locations
+      } else {
+        console.error('Invalid locations data:', response.data.locations);
+      }
+    } catch (error) {
+      console.error('Error fetching locations:', error);
+    }
+  };
+  
+
+  const fetchCalendar = async () => {
     try {
       const response = await axios.get('http://localhost:3000/calendar/read', {
         headers: {
           Authorization: `Bearer ${Cookies.get('token')}`
         }
       });
-      setLocations(response.data.calendars);
+      setCalendars(response.data.calendars);
     } catch (error) {
-      console.error('Error fetching locations:', error);
+      console.error('Error fetching calendars:', error);
     }
+
   };
 
  
@@ -177,8 +255,8 @@ const handleFormSubmit = async (newLocation) => {
 
     // Close the popup
     setAddLocationPopupOpen(false);
-
     // Refresh the locations
+    fetchCalendar();
     fetchLocations();
   } catch (error) {
     console.error('Error adding/updating location:', error);
@@ -186,7 +264,7 @@ const handleFormSubmit = async (newLocation) => {
 };
 
 
-  const days = generateCalendarArrayWithLocations(currentMonth, locations);
+  const days = generateCalendarArrayWithLocations(currentMonth, calendars, locations);
 
   function classNames(...classes) {
     return classes.filter(Boolean).join(' ');
@@ -278,7 +356,7 @@ const handleFormSubmit = async (newLocation) => {
               {/* Contenitore con sezioni separate */}
               <div className="flex flex-col h-full mt-1">
                 {/* Div mattina */}
-              <div className="flex-shrink-0 flex items-center justify-center min-h-[20px] mb-0">
+              <div className="flex-shrink-0 mt-2  flex items-center justify-center min-h-[20px] mb-0">
               {day.morningLocation ? (
                 <div className={classNames(
                   'rounded-md flex items-center justify-center px-2 py-1 text-xs inline-block',
@@ -292,14 +370,14 @@ const handleFormSubmit = async (newLocation) => {
                       : day.morningLocation === 'Fuori Ufficio' ? 'bg-[#00D5D0] text-gray-900'
                       : day.morningLocation === 'Non Lavorativo' ? 'bg-[#00D5D0] text-gray-900'
                       : 'bg-gray-200 text-gray-800'
-                    : day.morningLocation === 'Ufficio' ? 'border border-[#CC99FF] text-gray-900'
-                      : day.morningLocation === 'Trasferta' ? 'border border-[#FFFF00] text-gray-900'
-                      : day.morningLocation === 'Malattia' ? 'border border-[#FF9966] text-gray-900'
-                      : day.morningLocation === 'Permesso' ? 'border border-[#8ED973] text-gray-900'
-                      : day.morningLocation === 'Ferie' ? 'border border-[#8ED973] text-gray-900'
-                      : day.morningLocation === 'Smartworking' ? 'border border-[#FFCCFF] text-gray-900'
-                      : day.morningLocation === 'Fuori Ufficio' ? 'border border-[#00D5D0] text-gray-900'
-                      : day.morningLocation === 'Non Lavorativo' ? 'border border-[#00D5D0] text-gray-900'
+                    : day.morningLocation === 'Ufficio' ? 'border-2 border-[#CC99FF] text-gray-900'
+                      : day.morningLocation === 'Trasferta' ? 'border-2 border-[#FFFF00] text-gray-900'
+                      : day.morningLocation === 'Malattia' ? 'border-2 border-[#FF9966] text-gray-900'
+                      : day.morningLocation === 'Permesso' ? 'border-2 border-[#8ED973] text-gray-900'
+                      : day.morningLocation === 'Ferie' ? 'border-2 border-[#8ED973] text-gray-900'
+                      : day.morningLocation === 'Smartworking' ? 'border-2 border-[#FFCCFF] text-gray-900'
+                      : day.morningLocation === 'Fuori Ufficio' ? 'border-2 border-[#00D5D0] text-gray-900'
+                      : day.morningLocation === 'Non Lavorativo' ? 'border-2  border-[#00D5D0] text-gray-900'
                       : 'border border-gray-200 text-gray-800'
                 )}>
                   {day.morningLocation}
@@ -324,14 +402,14 @@ const handleFormSubmit = async (newLocation) => {
                       : day.afternoonLocation === 'Fuori Ufficio' ? 'bg-[#00D5D0] text-gray-900'
                       : day.afternoonLocation === 'Non Lavorativo' ? 'bg-[#00D5D0] text-gray-900'
                       : 'bg-gray-200 text-gray-800'
-                    : day.afternoonLocation === 'Ufficio' ? 'border border-[#CC99FF] text-gray-900'
-                      : day.afternoonLocation === 'Trasferta' ? 'border border-[#FFFF00] text-gray-900'
-                      : day.afternoonLocation === 'Malattia' ? 'border border-[#FF9966] text-gray-900'
-                      : day.afternoonLocation === 'Permesso' ? 'border border-[#8ED973] text-gray-900'
-                      : day.afternoonLocation === 'Ferie' ? 'border border-[#8ED973] text-gray-900'
-                      : day.afternoonLocation === 'Smartworking' ? 'border border-[#FFCCFF] text-gray-900'
-                      : day.afternoonLocation === 'Fuori Ufficio' ? 'border border-[#00D5D0] text-gray-900'
-                      : day.afternoonLocation === 'Non Lavorativo' ? 'border border-[#00D5D0] text-gray-900'
+                    : day.afternoonLocation === 'Ufficio' ? 'border-2 border-[#CC99FF] text-gray-900'
+                      : day.afternoonLocation === 'Trasferta' ? 'border-2 border-[#FFFF00] text-gray-900'
+                      : day.afternoonLocation === 'Malattia' ? 'border-2 border-[#FF9966] text-gray-900'
+                      : day.afternoonLocation === 'Permesso' ? 'border-2 border-[#8ED973] text-gray-900'
+                      : day.afternoonLocation === 'Ferie' ? 'border-2 border-[#8ED973] text-gray-900'
+                      : day.afternoonLocation === 'Smartworking' ? 'border-2 border-[#FFCCFF] text-gray-900'
+                      : day.afternoonLocation === 'Fuori Ufficio' ? 'border-2 border-[#00D5D0] text-gray-900'
+                      : day.afternoonLocation === 'Non Lavorativo' ? 'border-2 border-[#00D5D0] text-gray-900'
                       : 'border border-gray-200 text-gray-800'
                 )}>
                   {day.afternoonLocation}

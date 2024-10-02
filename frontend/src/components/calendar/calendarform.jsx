@@ -61,7 +61,7 @@ export default function Example({ date, setOpen }) {
          
           if (Array.isArray(response.data.locations)) {
             const formattedLocations = response.data.locations.map(location => ({
-              value: location.name,
+              value: location.id_location,
               label: location.name
             }));
             setLocations(formattedLocations);
@@ -156,7 +156,7 @@ export default function Example({ date, setOpen }) {
     }
     const createEntry = (part, location) => {
       // Imposta lo status in base alla posizione selezionata
-      const status = ['Ferie', 'Permesso'].includes(location.value) ? 'In Attesa di Approvazione' : 'Approvato';
+      const status = ['1', '2'].includes(location.value) ? 'In Attesa di Approvazione' : 'Approvato';
     
       // Invia la richiesta al server con lo status
       return axios.post('http://localhost:3000/calendar/create', {
@@ -206,7 +206,7 @@ export default function Example({ date, setOpen }) {
     endOfNextWeek.setDate(today.getDate() + (7 - today.getDay()) + 7); // Fine della prossima settimana
   
     // Controllo per posizioni speciali
-    const isSpecialLocation = (location) => ['Ferie', 'Permesso', 'Trasferta'].includes(location?.value);
+    const isSpecialLocation = (location) => ['Ferie', 'Permesso', 'Trasferta'].includes(location?.label);
   
     // Se la data di inizio è dopo la fine della prossima settimana
     if (startDate && startDate > endOfNextWeek) {
@@ -349,9 +349,9 @@ export default function Example({ date, setOpen }) {
 
       userEntries.forEach(entry => {
         if (entry.period === 'morning') { // Check for the correct field for morning
-          morningLocation = ['Ufficio', 'Smartworking'].includes(entry.location) ? entry.location : 'Non disponibile';
+          morningLocation = ['4', '6'].includes(entry.location) ? entry.location : 'Non disponibile';
         } else if (entry.period === 'afternoon') { // Check for the correct field for afternoon
-          afternoonLocation = ['Ufficio', 'Smartworking'].includes(entry.location) ? entry.location : 'Non disponibile';
+          afternoonLocation = ['4', '6'].includes(entry.location) ? entry.location : 'Non disponibile';
         }
       });
 

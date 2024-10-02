@@ -59,7 +59,7 @@ router.post("/create/", async (req, res) => {
                             location: location,
                             status: status,
                             owner: decoded.id,
-                            status: location == 'Ferie' || location == 'Permessi' ? "In Attesa di Approvazione" : "Approvato",
+                            status: location == '1' || location == '2' ? "In Attesa di Approvazione" : "Approvato",
                             createdBy: decoded.id,
                         });
                         calendarEntries.push(entry);
@@ -70,7 +70,7 @@ router.post("/create/", async (req, res) => {
                                 date: currentDate.toISOString().split('T')[0],
                                 period: part,  // single 'part' per request
                                 location: location,
-                                status: status,
+                                status: location == '1' || location == '2' ? "In Attesa di Approvazione" : "Approvato",
                                 owner: decoded.id,
                                 createdBy: decoded.id,
                             });

@@ -16,6 +16,7 @@ import Offer from './offer.js';
 import SalesOrder from './salesorder.js';
 import JobSalesOrder from './jobsalesorder.js';
 import Job from './job.js';
+import Location from './locations.js';
 import Reporting from './reporting.js';
 import Tasks from './tasks.js';
 import OfferTeam from './offerteam.js';
@@ -83,6 +84,10 @@ TechnicalArea.hasMany(QuotationRequest, { foreignKey: 'technicalarea' });
 //QuotationRequest is associated with Company
 QuotationRequest.belongsTo(Company, { foreignKey: 'company' });
 Company.hasMany(QuotationRequest, { foreignKey: 'company' });
+
+//Location is associated with Calendar
+Calendar.belongsTo(Location, { foreignKey: 'location' });
+Location.hasMany(Calendar, { foreignKey: 'location' });
 
 //QuotationRequest is associated with User in the createdBy, updatedBy, and deletedBy fields
 QuotationRequest.belongsTo(User, { foreignKey: 'createdBy', as: 'createdByUser' });
@@ -220,6 +225,7 @@ export default {
     Job,
     Reporting,
     Tasks,
+    Location,
     OfferTeam,
     InvoiceLine,
     Notification,

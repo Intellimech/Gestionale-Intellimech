@@ -44,6 +44,13 @@ router.get("/read", async (req, res) => {
 
                 // Get all the calendars where the owner is the user
                 const calendars = await Calendar.findAll({
+                    // include: [
+                    //     {
+                    //     model: Location,
+                    //     attributes: ["id_location", "name"],
+                    //     },
+                        
+                    // ],
                     where: {
                         owner: decoded.id,
                     },

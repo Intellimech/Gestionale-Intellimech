@@ -176,7 +176,7 @@ export default function LocationTable() {
                           placeholder=""
                         />
                       </th>
-                      <th className="px-1.5 py-3.5 text-left text-sm font-semibold text-gray-900">
+                      <th className="px-1.5 py-3.5 text-center  text-sm font-semibold text-gray-900">
                         Need Approval
                       </th>
                     </tr>

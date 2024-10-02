@@ -1,13 +1,13 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import http from 'http';
 import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
 import fs from 'fs';
 import path from 'path';
 import sequelize from '../../utils/db.js';
 import Logger from '../../utils/logger.js';
+import { Op } from 'sequelize';
 
 // Initialize environment variables
 dotenv.config();
@@ -22,57 +22,73 @@ const __dirname = path.resolve();
 const publicKeyPath = path.join(__dirname, 'src/keys/public.key');
 const publicKey = fs.readFileSync(publicKeyPath, 'utf8');
 
-// Update or create calendar entry
 router.post('/update/', async (req, res) => {
     try {
-        // Get the token from the header
         const token = req.headers.authorization?.split(' ')[1];
-        const { id_calendar, date, morning_location, afternoon_location } = req.body;
+        const { morning_id, afternoon_id, date, morning_location_id, afternoon_location_id } = req.body;
 
-        console.log('Received data:', { id_calendar, date, morning_location, afternoon_location });
+        console.log('Dati ricevuti:', { morning_id, afternoon_id, date, morning_location_id, afternoon_location_id });
+        console.log('Token:', token);
 
         if (!token) {
             return res.status(401).json({ message: 'Unauthorized' });
         }
 
-        // Verify the token
         jwt.verify(token, publicKey, async (err, decoded) => {
             if (err) {
+                console.error('Errore nella verifica del token:', err);
                 return res.status(401).json({ message: 'Unauthorized' });
             }
+            console.log('Token decodificato:', decoded);
 
             try {
-                // Get the Calendar model
                 const Calendar = sequelize.models.Calendar;
 
-                // Update or create the calendar entry for the morning
-                
-                    console.log('Updating morning location:', morning_location);
-                    await Calendar.upsert({
-                        id_calendar: id_calendar,
-                        date: date,
-                        period: 'morning',
-                        location: morning_location,
-                        owner: decoded.id, // User ID from the token
-                        updatedBy: decoded.id // User ID from the token
+                if (morning_id && morning_location_id) {
+                    const morningEntry = await Calendar.findOne({
+                        where: {
+                            id_calendar: morning_id,
+                        }
                     });
+                    console.log('Voce mattutina:', morningEntry);
                 
-
-                // Update or create the calendar entry for the afternoon
+                    if (!morningEntry) {
+                        console.error('Voce del calendario mattutina non trovata');
+                        return res.status(404).json({ message: 'Morning calendar entry not found' });
+                    }
                 
-                    console.log('Updating afternoon location:', afternoon_location);
-                    await Calendar.upsert({
-                        id_calendar: id_calendar,
-                        date: date,
-                        period: 'afternoon',
-                        location: afternoon_location,
-                        owner: decoded.id, // User ID from the token
-                        updatedBy: decoded.id // User ID from the token
+                    console.log('Aggiornamento location mattutina:', morning_location_id);
+                    await morningEntry.update({
+                        location: morning_location_id,
+                        updatedBy: decoded.id
                     });
+                    console.log('Location mattutina aggiornata con successo');
+                }
+                
+                if (afternoon_id && afternoon_location_id) {
+                    const afternoonEntry = await Calendar.findOne({
+                        where: {
+                            id_calendar: afternoon_id,
+                        }
+                    });
+                    console.log('Voce pomeridiana:', afternoonEntry);
+                
+                    if (!afternoonEntry) {
+                        console.error('Voce del calendario pomeridiana non trovata');
+                        return res.status(404).json({ message: 'Afternoon calendar entry not found' });
+                    }
+                
+                    console.log('Aggiornamento location pomeridiana:', afternoon_location_id);
+                    await afternoonEntry.update({
+                        location: afternoon_location_id,
+                        updatedBy: decoded.id
+                    });
+                    console.log('Location pomeridiana aggiornata con successo');
+                }
                 
 
                 res.json({
-                    message: 'Calendar entry updated successfully',
+                    message: 'Voce del calendario aggiornata con successo',
                 });
             } catch (dbError) {
                 Logger("error",'Database error:', dbError);

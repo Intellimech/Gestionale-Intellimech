@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Select from 'react-tailwindcss-select';
-import axios, { all } from 'axios';
+import axios from 'axios';
 import Cookies from 'js-cookie';
 
 export default function CalendarUpdateForm({ open, setOpen, date, initialData }) {
@@ -13,7 +13,6 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
   const [calendarData, setCalendarData] = useState([]);
   const [locations, setLocations] = useState([]);
   const [allCalendarData, setAllCalendarData] = useState([]);
-
 
   useEffect(() => {
     const token = Cookies.get('token');
@@ -62,11 +61,11 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
         });
         if (Array.isArray(response.data.locations)) {
           const formattedLocations = response.data.locations.map(location => ({
-            value: location.name,
+            value: location.id_location,
             label: location.name
           }));
           setLocations(formattedLocations);
-          } else {
+        } else {
           console.error('Invalid locations data:', response.data.locations);
         }
       } catch (error) {
@@ -83,7 +82,7 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
     }
 
     // Fetch all calendar data on component mount
-    fetchAllCalendarData(dataSelezionata); // New function call
+    fetchAllCalendarData(); // New function call
 
   }, [dataSelezionata]);
 
@@ -103,22 +102,35 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
   // New function to fetch all calendar data
   const fetchAllCalendarData = async () => {
     try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/calendar/read/all`, {
-            headers: { Authorization: `Bearer ${Cookies.get('token')}` },
-        });
-        console.log('All Calendar Data Response:', response.data); // Log the entire response
-        setAllCalendarData(response.data); // Set the state
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/calendar/read/all`, {
+        headers: { Authorization: `Bearer ${Cookies.get('token')}` },
+      });
+      console.log('All Calendar Data Response:', response.data); // Log the entire response
+      setAllCalendarData(response.data); // Set the state
     } catch (error) {
-        console.error('Error fetching all calendar data:', error);
+      console.error('Error fetching all calendar data:', error);
     }
-};
+  };
 
-useEffect(() => {
-  if (allCalendarData.length > 0) {
+  useEffect(() => {
+    if (allCalendarData.length > 0) {
       console.log("All Calendars", allCalendarData);
-  }
-}, [allCalendarData]);
+    }
+  }, [allCalendarData]);
 
+  useEffect(() => {
+    if (calendarData.length > 0) {
+      const morningEntry = calendarData.find(entry => entry.period === 'morning' && entry.date === dataSelezionata);
+      const afternoonEntry = calendarData.find(entry => entry.period === 'afternoon' && entry.date === dataSelezionata);
+
+      if (morningEntry) {
+        setMorningId(morningEntry.id_calendar);
+      }
+      if (afternoonEntry) {
+        setAfternoonId(afternoonEntry.id_calendar);
+      }
+    }
+  }, [calendarData, dataSelezionata]);
 
   const handleMorningLocationChange = (selectedOption) => {
     setMorningLocation(selectedOption);
@@ -127,32 +139,56 @@ useEffect(() => {
   const handleAfternoonLocationChange = (selectedOption) => {
     setAfternoonLocation(selectedOption);
   };
+  // Funzione per ottenere l'id_location tramite il nome della location
+  const getLocationIdByName = (name) => {
+    console.log("Cercando l'id della location con nome:", name); // Debugging: verifica il nome cercato
+    console.log("Locations disponibili:", JSON.stringify(locations, null, 2)); // Debugging: stampa tutte le locations disponibili
+  
+    // Trim degli spazi bianchi e comparazione case-insensitive sul campo 'label'
+    const location = locations.find(loc => loc.label.trim().toLowerCase() === name.trim().toLowerCase());
+  
+    console.log("Location trovata:", JSON.stringify(location, null, 2)); // Debugging: verifica la location trovata
+  
+    if (!location) {
+      console.error(`Nessuna location trovata per il nome: ${name}`);
+    }
+  
+    return location ? location.value : null; // Restituisce l'id_location tramite 'value'
+  };
+                                                
 
   const handleFormSubmit = () => {
-    const morningLocationValue = morningLocation ? morningLocation.value : initialData.morningLocation;
-    const afternoonLocationValue = afternoonLocation ? afternoonLocation.value : initialData.afternoonLocation;
+    // Trova l'ID corrispondente al nome della location
+    const morningLocationId = morningLocation ? getLocationIdByName(morningLocation.label) : initialData.morningLocation;
+    const afternoonLocationId = afternoonLocation ? getLocationIdByName(afternoonLocation.label) : initialData.afternoonLocation;
     const selectedDate = dataSelezionata || date;
-
-    if (morningLocationValue !== initialData.morningLocation || afternoonLocationValue !== initialData.afternoonLocation) {
-      axios.post('http://localhost:3000/calendar/update', {
-        morning_id: morningId,
-        afternoon_id: afternoonId,
-        date: selectedDate,
-        morning_location: morningLocationValue,
-        afternoon_location: afternoonLocationValue,
-      }, {
+  
+    const requestData = {
+      morning_id: morningId,
+      afternoon_id: afternoonId,
+      date: selectedDate,
+      morning_location_id: morningLocationId,  // Usa l'ID della location mattutina
+      afternoon_location_id: afternoonLocationId, // Usa l'ID della location pomeridiana
+    };
+  
+    console.log('Dati inviati al server:', requestData);
+  
+    if (morningLocationId !== initialData.morningLocation || afternoonLocationId !== initialData.afternoonLocation) {
+      axios.post('http://localhost:3000/calendar/update', requestData, {
         headers: { Authorization: `Bearer ${Cookies.get('token')}` },
       })
       .then((response) => {
-        // Handle response as needed
+        console.log("Risposta dal server:", response.data);
       })
       .catch((error) => {
-        console.error('Error updating locations:', error);
+        console.error('Errore nell\'aggiornamento delle location:', error);
       });
     }
-
-    setOpen(false);
   };
+  
+
+  
+  
 
   return (
     <div>

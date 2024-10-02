@@ -59,6 +59,7 @@ router.post("/create/", async (req, res) => {
                             location: location,
                             status: status,
                             owner: decoded.id,
+                            status: location == 'Ferie' || location == 'Permessi' ? "In Attesa di Approvazione" : "Approvato",
                             createdBy: decoded.id,
                         });
                         calendarEntries.push(entry);

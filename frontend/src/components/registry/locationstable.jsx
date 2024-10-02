@@ -13,8 +13,7 @@ export default function LocationTable() {
   const [searchQueries, setSearchQueries] = useState({
     name: '',
     id_location: '',
-    hours: '',
-    needApproval: ''
+    hours: ''
   });
   const [sortColumn, setSortColumn] = useState('');
   const [sortDirection, setSortDirection] = useState('asc');
@@ -68,8 +67,7 @@ export default function LocationTable() {
     return (
       (searchQueries.id_location === '' || item.id_location.toString().includes(searchQueries.id_location.toString())) &&
       (searchQueries.name === '' || item.name.toLowerCase().includes(searchQueries.name.toLowerCase())) &&
-      (searchQueries.hours === '' || item.hours.toString().includes(searchQueries.hours.toString())) &&
-      (searchQueries.needApproval === '' || item.needApproval.toString().includes(searchQueries.needApproval.toString()))
+      (searchQueries.hours === '' || item.hours.toString().includes(searchQueries.hours.toString()))
     );
   });
 
@@ -97,6 +95,26 @@ export default function LocationTable() {
       setIsConfirmModalOpen(false);
     } catch (error) {
       console.error('Error creating location:', error);
+    }
+  };
+
+  // Funzione per aggiornare il valore "Need Approval"
+  const handleApprovalChange = async (id, currentValue) => {
+    const updatedValue = !currentValue; // Inverte il valore attuale
+    try {
+      // Effettua la richiesta di aggiornamento
+      await axios.put(
+        `${process.env.REACT_APP_API_URL}/locations/update/${id}`,
+        { needApproval: updatedValue },
+        { headers: { authorization: `Bearer ${Cookies.get('token')}` } }
+      );
+
+      // Aggiorna lo stato locale
+      setLocations(locations.map(location => 
+        location.id_location === id ? { ...location, needApproval: updatedValue } : location
+      ));
+    } catch (error) {
+      console.error('Error updating location approval:', error);
     }
   };
 
@@ -133,7 +151,7 @@ export default function LocationTable() {
                           value={searchQueries.id_location}
                           onChange={handleSearchInputChange('id_location')}
                           className="mt-1 px-2 py-1 w-28 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                         placeholder=""
+                          placeholder=""
                         />
                       </th>
                       <th className="px-1.5 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
@@ -144,7 +162,7 @@ export default function LocationTable() {
                           value={searchQueries.name}
                           onChange={handleSearchInputChange('name')}
                           className="mt-1 px-2 py-1 w-28 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                         placeholder=""
+                          placeholder=""
                         />
                       </th>
                       <th className="px-1.5 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('hours')}>
@@ -155,30 +173,27 @@ export default function LocationTable() {
                           value={searchQueries.hours}
                           onChange={handleSearchInputChange('hours')}
                           className="mt-1 px-2 py-1 w-28 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                         placeholder=""
-                        />
-                      </th>
-                      <th className="px-1.5 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('needApproval')}>
-                        Need Approval
-                        {sortColumn === 'needApproval' && (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />)}
-                        <br />
-                        <input
-                          value={searchQueries.needApproval}
-                          onChange={handleSearchInputChange('needApproval')}
-                          className="mt-1 px-2 py-1 w-28 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                         
                           placeholder=""
                         />
+                      </th>
+                      <th className="px-1.5 py-3.5 text-left text-sm font-semibold text-gray-900">
+                        Need Approval
                       </th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
                     {sortedLocations.map((location) => (
                       <tr key={location.id_location}>
-                        <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{location.id_location}</td>
-                        <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{location.name}</td>
-                        <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{location.hours}</td>
-                        <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{location.needApproval ? 'Yes' : 'No'}</td>
+                        <td className="whitespace-nowrap px-0 py-4 text-sm text-gray-900">{location.id_location}</td>
+                        <td className="whitespace-nowrap px-1.5 py-4 text-sm text-gray-900">{location.name}</td>
+                        <td className="whitespace-nowrap px-1.5 py-4 text-sm text-gray-900">{location.hours}</td>
+                        <td className="whitespace-nowrap px-1.5 py-4 text-sm text-gray-900 text-center">
+                          <input
+                            type="checkbox"
+                            checked={location.needApproval}
+                            onChange={() => handleApprovalChange(location.id_location, location.needApproval)}
+                          />
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -189,63 +204,78 @@ export default function LocationTable() {
         </div>
       </div>
 
-      {/* Modal to create a new location */}
-      <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)} className="relative z-10">
-        <div className="fixed inset-0 bg-black bg-opacity-25" />
-        <div className="fixed inset-0 z-10 flex items-center justify-center overflow-y-auto">
-          <Dialog.Panel className="w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
+      {/* Modal for creating a new location */}
+      <Dialog open={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <div className="fixed inset-0 z-10 bg-black opacity-30" aria-hidden="true" />
+        <div className="fixed inset-0 z-20 flex items-center justify-center p-4">
+          <Dialog.Panel className="mx-auto max-w-sm rounded bg-white p-4">
             <Dialog.Title className="text-lg font-medium">Create New Location</Dialog.Title>
-            <form>
-              <div className="mt-4">
-                <label className="block text-sm font-medium">Name</label>
-                <input
-                  type="text"
-                  value={newLocation.name}
-                  onChange={(e) => setNewLocation({ ...newLocation, name: e.target.value })}
-                  className="mt-1 px-3 py-2 block w-full border border-gray-300 rounded-md shadow-sm"
-                />
-              </div>
-              <div className="mt-4">
-                <label className="block text-sm font-medium">Hours</label>
-                <input
-                  type="number"
-                  value={newLocation.hours}
-                  onChange={(e) => setNewLocation({ ...newLocation, hours: e.target.value })}
-                  className="mt-1 px-3 py-2 block w-full border border-gray-300 rounded-md shadow-sm"
-                />
-              </div>
-              <div className="mt-4">
-                <label className="block text-sm font-medium">Need Approval</label>
+            <Dialog.Description className="mt-2 text-sm text-gray-500">
+              Fill in the details for the new location.
+            </Dialog.Description>
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-gray-700">Name</label>
+              <input
+                type="text"
+                value={newLocation.name}
+                onChange={(e) => setNewLocation({ ...newLocation, name: e.target.value })}
+                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+              />
+            </div>
+            <div className="mt-4">
+              <label className="block text-sm font-medium text-gray-700">Hours</label>
+              <input
+                type="number"
+                value={newLocation.hours}
+                onChange={(e) => setNewLocation({ ...newLocation, hours: e.target.value })}
+                className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+              />
+            </div>
+            <div className="mt-4">
+              <label className="flex items-center">
                 <input
                   type="checkbox"
                   checked={newLocation.needApproval}
                   onChange={(e) => setNewLocation({ ...newLocation, needApproval: e.target.checked })}
-                  className="mt-1"
+                  className="h-4 w-4 text-[#7fb7d4] border-gray-300 rounded focus:ring-[#7fb7d4]"
                 />
-              </div>
-              <div className="mt-4 flex justify-end space-x-4">
-                <button type="button" onClick={() => setIsModalOpen(false)} className="block rounded-md bg-white px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
-             >Cancel</button>
-                <button type="button" onClick={handleCreateLocation} className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
-             >Create</button>
-              </div>
-            </form>
+                <span className="ml-2 text-sm">Need Approval</span>
+              </label>
+            </div>
+            <div className="mt-4">
+              <button
+                onClick={handleCreateLocation}
+                className="w-full rounded-md bg-[#7fb7d4] px-4 py-2 text-white font-semibold hover:bg-[#5e9fbd]"
+              >
+                Create
+              </button>
+            </div>
           </Dialog.Panel>
         </div>
       </Dialog>
 
-      {/* Confirmation Modal */}
-      <Dialog open={isConfirmModalOpen} onClose={() => setIsConfirmModalOpen(false)} className="relative z-10">
-        <div className="fixed inset-0 bg-black bg-opacity-25" />
-        <div className="fixed inset-0 z-10 flex items-center justify-center overflow-y-auto">
-          <Dialog.Panel className="w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
-            <Dialog.Title className="text-lg font-medium">Confirm Create Location</Dialog.Title>
-            <div className="mt-4">
-              <p>Are you sure you want to create this location?</p>
-            </div>
-            <div className="mt-4 flex justify-end space-x-4">
-              <button type="button" onClick={() => setIsConfirmModalOpen(false)} className="px-4 py-2 bg-gray-300 rounded-md">Cancel</button>
-              <button type="button" onClick={confirmCreateLocation} className="px-4 py-2 bg-[#7fb7d4] text-white rounded-md">Confirm</button>
+      {/* Confirm modal for creating a new location */}
+      <Dialog open={isConfirmModalOpen} onClose={() => setIsConfirmModalOpen(false)}>
+        <div className="fixed inset-0 z-10 bg-black opacity-30" aria-hidden="true" />
+        <div className="fixed inset-0 z-20 flex items-center justify-center p-4">
+          <Dialog.Panel className="mx-auto max-w-sm rounded bg-white p-4">
+            <Dialog.Title className="text-lg font-medium">Confirm Creation</Dialog.Title>
+            <Dialog.Description className="mt-2 text-sm text-gray-500">
+              Are you sure you want to create this location?
+            </Dialog.Description>
+            <div className="mt-4 flex justify-between">
+              <button
+                onClick={() => setIsConfirmModalOpen(false)}
+                className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmCreateLocation}
+                className="rounded-md bg-[#7fb7d4] px-4 py-2 text-sm font-semibold text-white hover:bg-[#5e9fbd]"
+              >
+                Confirm
+              </button>
             </div>
           </Dialog.Panel>
         </div>

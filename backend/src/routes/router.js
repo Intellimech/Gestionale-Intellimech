@@ -39,6 +39,7 @@ import task from './tasks/taskrouter.js';
 // import product from './product/productrouter.js';
 import notification from './notification/notificationrouter.js';
 import calendar from './calendar/calendarrouter.js';
+import holidaysleaves from './holidays-leaves/holidaysleavesrouter.js';
 
 router.use((req, res, next) => {
     logger('debug', `Request: ${req.method} ${req.originalUrl} | From: ${(req.ip == '::1') ? 'localhost' : req.ip}`, req, 'mainrouter');
@@ -66,5 +67,6 @@ router.use('/', task);
 // router.use('/', product);
 router.use('/', notification);
 router.use('/', calendar);
+router.use('/', holidaysleaves);
 
 export default router;

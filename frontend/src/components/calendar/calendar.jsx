@@ -351,7 +351,7 @@ const handleFormSubmit = async (newLocation) => {
                 <div className="border-t mt-1 border-gray-300 w-10 mx-auto"></div>
 
                 {/* Div pomeriggio */}
-                <div className="flex-shrink-0 flex items-center justify-center min-h-[20px] mt-0">
+                <div className="flex-shrink-0 flex items-center justify-center min-h-[20px] mt-1">
                   {day.afternoonLocation ? (
                     <div className={classNames(
                       'rounded-md flex items-center justify-center px-2 py-1 text-xs inline-block',

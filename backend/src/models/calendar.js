@@ -23,6 +23,9 @@ Calendar.init(
     owner: {
         type: DataTypes.INTEGER,
     },
+    status: {
+        type: DataTypes.BOOLEAN,
+    },
     createdBy: {
         type: DataTypes.INTEGER,
     },

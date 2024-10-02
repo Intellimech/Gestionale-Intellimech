@@ -58,6 +58,7 @@ router.post("/create/", async (req, res) => {
                             period: part,  // now it's a single value, either 'morning' or 'afternoon'
                             location: location,
                             owner: decoded.id,
+                            status: location == 'Ferie' || location == 'Permessi' ? "In Attesa di Approvazione" : "Approvato",
                             createdBy: decoded.id,
                         });
                         calendarEntries.push(entry);

@@ -75,12 +75,12 @@ router.post('/update/', async (req, res) => {
                     message: 'Calendar entry updated successfully',
                 });
             } catch (dbError) {
-                Logger.error('Database error:', dbError);
+                Logger("error",'Database error:', dbError);
                 res.status(500).json({ message: 'Internal server error' });
             }
         });
     } catch (error) {
-        Logger.error('Server error:', error);
+        Logger("error",'Server error:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
 });

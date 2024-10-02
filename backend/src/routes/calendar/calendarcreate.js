@@ -49,17 +49,24 @@ router.post("/create/", async (req, res) => {
                 if (startDate) {
                     const start = new Date(startDate);
                     const end = endDate ? new Date(endDate) : start;
-
+                    
                     // Check if startDate and endDate are the same or if endDate is undefined
                     if (start.getTime() === end.getTime()) {
+                        //Get the location object
+                        const Location = sequelize.models.Location;
+                        const locationObj = await Location.findOne({
+                            where: {
+                                id_location: location,
+                            },
+                        });
+                        
                         // Insert once for that day and the specific part
                         const entry = await Calendar.create({
                             date: start.toISOString().split('T')[0],
-                            period: part,  // now it's a single value, either 'morning' or 'afternoon'
+                            period: part,
                             location: location,
-                            status: status,
+                            status: locationObj.needApproval ? "In Attesa di Approvazione" : "Approvato",
                             owner: decoded.id,
-                            status: location == '1' || location == '2' ? "In Attesa di Approvazione" : "Approvato",
                             createdBy: decoded.id,
                         });
                         calendarEntries.push(entry);
@@ -84,12 +91,12 @@ router.post("/create/", async (req, res) => {
                     calendars: calendarEntries,
                 });
             } catch (dbError) {
-                Logger.error("Database error:", dbError);
+                Logger("error","Database error:", dbError);
                 res.status(500).json({ message: "Internal server error" });
             }
         });
     } catch (error) {
-        Logger.error("Server error:", error);
+        Logger("error","Server error:", error);
         res.status(500).json({ message: "Internal server error" });
     }
 });

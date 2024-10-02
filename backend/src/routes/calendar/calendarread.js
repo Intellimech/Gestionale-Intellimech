@@ -44,13 +44,6 @@ router.get("/read", async (req, res) => {
 
                 // Get all the calendars where the owner is the user
                 const calendars = await Calendar.findAll({
-                    // include: [
-                    //     {
-                    //     model: Location,
-                    //     attributes: ["id_location", "name"],
-                    //     },
-                        
-                    // ],
                     where: {
                         owner: decoded.id,
                     },
@@ -67,12 +60,12 @@ router.get("/read", async (req, res) => {
                     calendars: formattedCalendars,
                 });
             } catch (dbError) {
-                Logger.error("Database error:", dbError);
+                Logger("error","Database error:" + dbError);
                 res.status(500).json({ message: "Internal server error" });
             }
         });
     } catch (error) {
-        Logger.error("Server error:", error);
+        Logger("error","Server error:", error);
         res.status(500).json({ message: "Internal server error" });
     }
 });
@@ -125,12 +118,12 @@ router.get("/read-by-date", async (req, res) => {
                     calendar: formattedCalendar,
                 });
             } catch (dbError) {
-                Logger.error("Database error:", dbError);
+                Logger("error","Database error:", dbError);
                 res.status(500).json({ message: "Internal server error" });
             }
         });
     } catch (error) {
-        Logger.error("Server error:", error);
+        Logger("error","Server error:", error);
         res.status(500).json({ message: "Internal server error" });
     }
 });
@@ -141,7 +134,7 @@ router.get("/read/all", async (req, res) => {
         const calendars = await Calendar.findAll();
         res.json(calendars);
     } catch (error) {
-        Logger.error("Server error:", error);
+        Logger("error","Server error:", error);
         res.status(500).json({ message: "Internal server error" });
     }
 });

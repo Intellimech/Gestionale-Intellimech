@@ -8,7 +8,7 @@ import fs from "fs";
 import path from "path";
 import bcrypt from "bcrypt";
 import sequelize from "../../utils/db.js";
-import { Op } from "sequelize";
+import { fn, Op } from "sequelize";
 import Logger from "../../utils/logger.js";
 import cookieparser from "cookie-parser";
 import cookie from "cookie";
@@ -79,6 +79,13 @@ router.get("/verify", async (req, res) => {
                 {
                     model: sequelize.models.Calendar,
                     as: 'ownedCalendars', // Ensure this alias matches your Sequelize model definition
+                    attributes: ['id_calendar', 'date', 'period', 'status', 'location'],
+                    include: [
+                        {
+                            model: sequelize.models.Location,
+                            attributes: ['id_location', 'name', 'needApproval'],
+                        }
+                    ],
                     where: {
                         date: {
                             [Op.between]: [todayStart, todayEnd], // Filter by the start and end of today
@@ -89,7 +96,7 @@ router.get("/verify", async (req, res) => {
                 }
             ],
         });
-      
+
         if (!user || !user.isActive) {
             return res.status(401).json({
                 message: "Unauthorized",
@@ -115,7 +122,7 @@ router.get("/verify", async (req, res) => {
             subgroup: user.Subgroup.name,
             notification: user.receiverUser,
             changepass: user.changepass,
-            location: user.ownedCalendars[0] ? user.ownedCalendars[0].location : "Non dichiarata",
+            location: user.ownedCalendars[0] ? user.ownedCalendars[0].Location.name : "Non dichiarata",
         };
 
         return res.status(200).json({

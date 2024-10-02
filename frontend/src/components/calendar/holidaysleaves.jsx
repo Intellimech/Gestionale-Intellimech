@@ -199,7 +199,7 @@ export default function HolidaysLeavesManagement({ permissions }) {
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {sortedCalendars.map((calendar) => (
                     <tr key={calendar.id_calendar}>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{calendar.location}</td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{calendar.Location.name}</td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{calendar.date}</td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{calendar.period}</td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">

@@ -77,13 +77,13 @@ const SettingsPage = () => {
     setShowSupportModal(false);
   };
   return (
-    <div className="min-h-screen bg-gray-100 p-8">
+    <div className="min-h-screen p-8">
        <Toaster position="top-right" reverseOrder={false} /> {/* Aggiungi Toaster */}
       <h1 className="text-2xl font-semibold text-gray-900 mb-6">Impostazioni</h1>
       <form onSubmit={(e) => e.preventDefault()} className="space-y-8">
 
         {/* Impostazioni Generali */}
-        <section className="bg-white shadow-md rounded-lg p-6">
+        <section className="bg-white shadow rounded-lg p-6">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">Informazioni Generali</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
@@ -116,7 +116,7 @@ const SettingsPage = () => {
         </section>
 
         {/* Impostazioni di Sicurezza */}
-        <section className="bg-white shadow-md rounded-lg p-6">
+        <section className="bg-white shadow rounded-lg p-6">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">Impostazioni di Sicurezza</h2>
           <div className="space-y-4">
             <div className="relative">
@@ -176,7 +176,7 @@ const SettingsPage = () => {
         </section>
 
         {/* Contatta Supporto */}
-        <section className="bg-white shadow-md rounded-lg p-6">
+        <section className="bg-white shadow rounded-lg p-6">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">Contatta Supporto</h2>
           <textarea
             value={supportMessage}
@@ -247,7 +247,7 @@ const Modal = ({ isOpen, onClose, onConfirm, title, message }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center p-4 bg-black/50">
-      <div className="bg-white rounded-lg shadow-md w-full max-w-sm">
+      <div className="bg-white rounded-lg shadow w-full max-w-sm">
         <div className="p-4 border-b border-gray-200">
           <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
         </div>

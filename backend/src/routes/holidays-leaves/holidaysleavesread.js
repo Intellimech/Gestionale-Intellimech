@@ -45,19 +45,21 @@ router.get("/read", async (req, res) => {
 
                 // Get all the calendars where the location is "Ferie" or "Permessi"
                 const calendars = await Calendar.findAll({
-                    where: {
-                        location: {
-                            [Op.or]: ['Ferie', 'Permessi']
-                        }
-                    },
                     include: [
                         {
                             model: sequelize.models.User,
                             as: "ownerUser",
                             attributes: ["id_user", "name", "surname"],
                         },
+                        {
+                            model: sequelize.models.Location,
+                            attributes: ["id_location", "name", "needApproval"],
+                        }
                     ],
-                });
+                    where: {
+                        '$Location.needApproval$': true
+                    },
+                });                
 
                 // Change the format of the date to "2024-06-27"
                 const formattedCalendars = calendars.map(calendar => ({

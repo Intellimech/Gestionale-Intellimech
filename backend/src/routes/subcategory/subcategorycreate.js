@@ -38,7 +38,7 @@ router.post('/create', async (req, res) => {
       subcategory,
     });
   } catch (error) {
-    Logger.error(error);
+    Logger("error",error);
 
     res.status(500).json({
       message: 'Internal server error',

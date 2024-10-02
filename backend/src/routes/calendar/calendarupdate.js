@@ -93,13 +93,13 @@ router.post('/update/', async (req, res) => {
                     message: 'Voce del calendario aggiornata con successo',
                 });
             } catch (dbError) {
-                console.error('Errore nel database:', dbError);
-                res.status(500).json({ message: 'Errore interno del server' });
+                Logger("error",'Database error:', dbError);
+                res.status(500).json({ message: 'Internal server error' });
             }
         });
     } catch (error) {
-        console.error('Errore del server:', error);
-        res.status(500).json({ message: 'Errore interno del server' });
+        Logger("error",'Server error:', error);
+        res.status(500).json({ message: 'Internal server error' });
     }
 });
 

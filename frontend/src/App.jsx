@@ -37,6 +37,7 @@ import EmployeesConsultant from './components/registry/peopletable';
 import CategoriesPage from './components/registry/categoriespage';
 import SubcategoriesPage from './components/registry/subcategoriespage';
 import TechnicalAreaPage from './components/registry/technicalareapage';
+import HolidaysLeaves from './components/calendar/holidaysleaves.jsx';
 
 import ForgotPasswordPage from './components/system/forgotpassword';
 
@@ -73,7 +74,7 @@ const App = () => {
             </Route>
             <Route path="profile" element={<PrivateRoute element={<Profile />} />} />
             <Route path="job" element={<PrivateRoute element={<Job />} />} />
-            
+            <Route path="holidays-leaves" element={<PrivateRoute element={<HolidaysLeaves />} />} />
             <Route path="invoices">
               <Route path="passive" element={<PrivateRoute element={<Invoicetable invoicetype={"PassivaSdI"}/>} />} />
               <Route path="active" element={<PrivateRoute element={<Invoicetable invoicetype={"AttivaSdI"}/>} />} />

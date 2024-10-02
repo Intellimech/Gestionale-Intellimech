@@ -27,7 +27,7 @@ router.post("/create/", async (req, res) => {
     try {
         // Get the token from the header
         const token = req.headers.authorization?.split(" ")[1];
-        const { startDate, endDate, part, location } = req.body; // part è ora una stringa singola
+        const { startDate, endDate, part, location, status } = req.body; // part è ora una stringa singola
 
         if (!token) {
             return res.status(401).json({ message: "Unauthorized" });
@@ -57,6 +57,7 @@ router.post("/create/", async (req, res) => {
                             date: start.toISOString().split('T')[0],
                             period: part,  // now it's a single value, either 'morning' or 'afternoon'
                             location: location,
+                            status: status,
                             owner: decoded.id,
                             status: location == 'Ferie' || location == 'Permessi' ? "In Attesa di Approvazione" : "Approvato",
                             createdBy: decoded.id,
@@ -69,6 +70,7 @@ router.post("/create/", async (req, res) => {
                                 date: currentDate.toISOString().split('T')[0],
                                 period: part,  // single 'part' per request
                                 location: location,
+                                status: status,
                                 owner: decoded.id,
                                 createdBy: decoded.id,
                             });

@@ -24,7 +24,7 @@ Calendar.init(
         type: DataTypes.INTEGER,
     },
     status: {
-        type: DataTypes.BOOLEAN,
+      type: DataTypes.STRING(255),
     },
     createdBy: {
         type: DataTypes.INTEGER,

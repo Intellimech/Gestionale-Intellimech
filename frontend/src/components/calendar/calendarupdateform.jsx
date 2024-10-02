@@ -13,7 +13,9 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
   const [calendarData, setCalendarData] = useState([]);
   const [locations, setLocations] = useState([]);
   const [allCalendarData, setAllCalendarData] = useState([]);
-
+  const [morningStatus, setMorningStatus] = useState(null);
+  const [afternoonStatus, setAfternoonStatus] = useState(null);
+  
   useEffect(() => {
     const token = Cookies.get('token');
     if (!token) {
@@ -22,20 +24,27 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
     }
 
     if (initialData) {
-      const dataP = initialData.split(',');
-      setDataSelezionata(dataP[1]);
-      const dataParts = dataP[2].split(';');
+      const dataP = initialData.split(','); 
+      setDataSelezionata(dataP[1]); // Data selezionata, esempio "2024-10-03"
+    
+      const dataParts = dataP[2].split(';'); // Esempio: ["morning:Permesso", "afternoon:Malattia", "morningStatus:Approvato", "afternoonStatus:Approvato"]
+    
+      // Analizza ogni parte
       dataParts.forEach((part) => {
-        const [period, location, id] = part.split(':');
-        if (period === 'morning') {
-          setMorningLocation(location ? { value: location, label: location } : null);
-          setMorningId(id);
-        } else if (period === 'afternoon') {
-          setAfternoonLocation(location ? { value: location, label: location } : null);
-          setAfternoonId(id);
+        const [key, value] = part.split(':'); // Dividi in chiave e valore
+    
+        if (key === 'morning') {
+          setMorningLocation(value ? { value: value, label: value } : null);
+        } else if (key === 'afternoon') {
+          setAfternoonLocation(value ? { value: value, label: value } : null);
+        } else if (key === 'morningStatus') {
+          setMorningStatus(value); // Popola lo status mattutino
+        } else if (key === 'afternoonStatus') {
+          setAfternoonStatus(value); // Popola lo status pomeridiano
         }
       });
     }
+    
   }, [initialData]);
 
   useEffect(() => {
@@ -133,12 +142,37 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
   }, [calendarData, dataSelezionata]);
 
   const handleMorningLocationChange = (selectedOption) => {
+    // Controlla se la nuova location è "Ferie" o "Permesso"
+    if (selectedOption && (selectedOption.label === "Ferie" || selectedOption.label === "Permesso")) {
+      setMorningStatus("In Attesa di Approvazione"); // Imposta lo stato
+    } else {
+      // Controlla se la location precedente era "Ferie" o "Permesso"
+      if (morningLocation && (morningLocation.label === "Ferie" || morningLocation.label === "Permesso")) {
+        // Controlla se la nuova location è diversa dalla precedente
+        if (selectedOption && selectedOption.label !== morningLocation.label) {
+          setMorningStatus("In Attesa di Approvazione"); // Imposta lo stato
+        }
+      }
+    }
     setMorningLocation(selectedOption);
   };
-
+  
   const handleAfternoonLocationChange = (selectedOption) => {
+    // Controlla se la nuova location è "Ferie" o "Permesso"
+    if (selectedOption && (selectedOption.label === "Ferie" || selectedOption.label === "Permesso")) {
+      setAfternoonStatus("In Attesa di Approvazione"); // Imposta lo stato
+    } else {
+      // Controlla se la location precedente era "Ferie" o "Permesso"
+      if (afternoonLocation && (afternoonLocation.label === "Ferie" || afternoonLocation.label === "Permesso")) {
+        // Controlla se la nuova location è diversa dalla precedente
+        if (selectedOption && selectedOption.label !== afternoonLocation.label) {
+          setAfternoonStatus("In Attesa di Approvazione"); // Imposta lo stato
+        }
+      }
+    }
     setAfternoonLocation(selectedOption);
   };
+  
   // Funzione per ottenere l'id_location tramite il nome della location
   const getLocationIdByName = (name) => {
     console.log("Cercando l'id della location con nome:", name); // Debugging: verifica il nome cercato
@@ -167,10 +201,11 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
       morning_id: morningId,
       afternoon_id: afternoonId,
       date: selectedDate,
-      morning_location_id: morningLocationId,  // Usa l'ID della location mattutina
-      afternoon_location_id: afternoonLocationId, // Usa l'ID della location pomeridiana
+      morning_location_id: morningLocationId,
+      afternoon_location_id: afternoonLocationId,
+      morning_status: morningStatus, // Aggiungi lo status mattutino
+      afternoon_status: afternoonStatus // Aggiungi lo status pomeridiano
     };
-  
     console.log('Dati inviati al server:', requestData);
   
     if (morningLocationId !== initialData.morningLocation || afternoonLocationId !== initialData.afternoonLocation) {

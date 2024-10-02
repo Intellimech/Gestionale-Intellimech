@@ -223,9 +223,18 @@ export default function Calendar() {
           initialDataString += `afternoon:${selectedDay.afternoonLocation};`;
         }
 
+        // Aggiungi morningStatus e afternoonStatus se disponibili
+        if (selectedDay.morningStatus) {
+          initialDataString += `morningStatus:${selectedDay.morningStatus};`;
+        }
+        if (selectedDay.afternoonStatus) {
+          initialDataString += `afternoonStatus:${selectedDay.afternoonStatus};`;
+        }
+
+
         // Rimuovi l'ultimo punto e virgola se presente
         initialDataString = initialDataString.replace(/;$/, '');
-        console.log("dati: " + initialDataString);
+        console.log("datiDATI: " + initialDataString);
         setInitialData(initialDataString);
         setSelectedDate(date);
         //setUpdateLocationPopupOpen(true);

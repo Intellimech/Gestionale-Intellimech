@@ -25,9 +25,9 @@ const publicKey = fs.readFileSync(publicKeyPath, 'utf8');
 router.post('/update/', async (req, res) => {
     try {
         const token = req.headers.authorization?.split(' ')[1];
-        const { morning_id, afternoon_id, date, morning_location_id, afternoon_location_id } = req.body;
+        const { morning_id, afternoon_id, afternoon_status, date, morning_location_id, afternoon_location_id , morning_status } = req.body;
 
-        console.log('Dati ricevuti:', { morning_id, afternoon_id, date, morning_location_id, afternoon_location_id });
+        console.log('Dati ricevuti:', { morning_id, afternoon_id, afternoon_status, date, morning_location_id, afternoon_location_id , morning_status});
         console.log('Token:', token);
 
         if (!token) {
@@ -60,6 +60,7 @@ router.post('/update/', async (req, res) => {
                     console.log('Aggiornamento location mattutina:', morning_location_id);
                     await morningEntry.update({
                         location: morning_location_id,
+                        status: morning_status,
                         updatedBy: decoded.id
                     });
                     console.log('Location mattutina aggiornata con successo');
@@ -81,6 +82,7 @@ router.post('/update/', async (req, res) => {
                     console.log('Aggiornamento location pomeridiana:', afternoon_location_id);
                     await afternoonEntry.update({
                         location: afternoon_location_id,
+                        status: afternoon_status,
                         updatedBy: decoded.id
                     });
                     console.log('Location pomeridiana aggiornata con successo');

@@ -474,8 +474,8 @@ const handleSearchInputChange = (column) => (event) => {
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.updatedAt ? new Date(person.updatedAt).toLocaleString() : ''}</td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.createdAt ? new Date(person.createdAt).toLocaleString() : ''}</td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.lastLoginAt ? new Date(person.lastLoginAt).toLocaleString() : ''}</td>
-
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.Role.name}</td>
+{/* 
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{person.Role.name}</td> */}
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                         {person.isActive ? (
                           <span className="inline-flex items-center gap-x-1.5 rounded-md bg-gray-300 px-1.5 py-0.5 text-xs font-medium text-gray-700">

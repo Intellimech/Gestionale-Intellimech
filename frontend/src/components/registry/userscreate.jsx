@@ -9,11 +9,16 @@ export default function UserCreateForm() {
   const [errorMessages, setErrorMessages] = useState([]);
   const [roles, setRoles] = useState([]);
   const [groups, setGroups] = useState([]);
+  const [workingsites, setWorkingsite] = useState([]);
+  const [contracttypes, setContracttype] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [subgroups, setSubgroups] = useState([]);
   const [selectedRole, setSelectedRole] = useState('');
   const [selectedCountry, setSelectedCountry] = useState('');
   const [selectedGroup, setSelectedGroup] = useState('');
   const [selectedSubgroup, setSelectedSubgroup] = useState('');
+  const [selectedWorkingsite, setSelectedWorkingsite] = useState('');
+  const [selectedcontracttype, setSelectedContracttype] = useState('');
 
   useEffect(() => {
     const token = Cookies.get('token');
@@ -37,38 +42,68 @@ export default function UserCreateForm() {
 
     axios.get(`${process.env.REACT_APP_API_URL}/subgroup/read`,  { headers: { authorization: `Bearer ${token}` } })
       .then((response) => {
-        console.log('response', response);
+        console.log('response subgroup', response);
         setSubgroups(response.data.subgroups);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+
+      axios.get(`${process.env.REACT_APP_API_URL}/workingsite/read`,  { headers: { authorization: `Bearer ${token}` } })
+      .then((response) => {
+        console.log('response workingsite', response.data.sites);
+        setWorkingsite(response.data.sites);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+      });
+
+      axios.get(`${process.env.REACT_APP_API_URL}/contracttype/read`,  { headers: { authorization: `Bearer ${token}` } })
+      .then((response) => {
+        console.log('response contracttype', response);
+        setContracttype(response.data.contracts);
       })
       .catch((error) => {
         console.error('Error:', error);
       });
   }, []);
 
-  const createUser = (event) => {
+  const createUser = async (event) => {
     event.preventDefault();
     const token = Cookies.get('token');
     const form = document.forms.createuser;
     const formData = new FormData(form);
-
+    
     let jsonObject = {};
     formData.forEach((value, key) => {
       jsonObject[key] = value;
     });
-    console.log('json', jsonObject);
-
-    axios.post(`${process.env.REACT_APP_API_URL}/user/create`, jsonObject, { headers: { authorization: `Bearer ${token}` } })
-     .then((response) => {
-        console.log('response', response);
-        setCreateSuccess(true);
-     })
-      .catch((error) => {
-        console.error('Error:', error);
-        setCreateSuccess(false);
-        setErrorMessages(error.response?.data?.message || ['An unexpected error occurred']);
+  
+    setLoading(true); // Start loading
+    
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/user/create`, jsonObject, {
+        headers: { authorization: `Bearer ${token}` }
       });
+      setCreateSuccess(true);
+    } catch (error) {
+      console.error('Error:', error);
+      setCreateSuccess(false);
+      setErrorMessages(error.response?.data?.message || ['An unexpected error occurred']);
+    } finally {
+      setLoading(false); // End loading
+    }
   };
-
+  
+  // Button with loading state
+  <button
+    onClick={createUser}
+    type="submit"
+    disabled={loading}
+  >
+    {loading ? 'Creating...' : 'Crea'}
+  </button>
+  
   return (
     <form name='createuser'>
       <div className="space-y-12">
@@ -95,7 +130,7 @@ export default function UserCreateForm() {
   
             <div className="sm:col-span-2">
               <label htmlFor="role" className="block text-sm font-medium leading-6 text-gray-900">
-                Ruolo
+                Permesso
               </label>
               <div className="mt-2">
                 <Select
@@ -133,7 +168,58 @@ export default function UserCreateForm() {
                   placeholder="Seleziona un sotto gruppo"
                 />
               </div>
+            </div> 
+
+            {/* <div className="sm:col-span-2">
+              <label htmlFor="workingsite" className="block text-sm font-medium leading-6 text-gray-900">
+                Luogo di Lavoro
+              </label>
+              <div className="mt-2">
+                <Select
+                  value={selectedWorkingsite}
+                  onChange={(value) => setSelectedWorkingsite(value)}
+                  options={workingsites?.map((workingsite) => ({
+                    value: workingsite.id_workingsite,
+                    label: workingsite.GeneralName,
+                  }))}
+                  placeholder="Seleziona un luogo di lavoro"
+                />
+              </div>
+            </div> */}
+
+            <div className="sm:col-span-2">
+              <label htmlFor="contracttype" className="block text-sm font-medium leading-6 text-gray-900">
+                Rapporto
+              </label>
+              <div className="mt-2">
+                <Select
+                  value={selectedcontracttype}
+                  onChange={(value) => setSelectedContracttype(value)}
+                  options={contracttypes?.map((contracttype) => ({
+                    value: contracttype.id_contracttype,
+                    label: contracttype.name,
+                  }))}
+                  placeholder="Seleziona un contratto"
+                />
+              </div>
             </div>
+
+            <div className="sm:col-span-2">
+              <label htmlFor="postal-code" className="block text-sm font-medium leading-6 text-gray-900">
+                Ore settimanali 
+              </label>
+              <div className="mt-2">
+                <input
+                  type="number"
+                  name="zip"
+                  id="postalcode"
+                  autoComplete="postalcode"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4] sm:text-sm sm:leading-6"
+                  placeholder="0"
+                />
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
@@ -148,7 +234,7 @@ export default function UserCreateForm() {
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div className="sm:col-span-3">
               <label htmlFor="name" className="block text-sm font-medium leading-6 text-gray-900">
-                First name
+                Nome
               </label>
               <div className="mt-2">
                 <input
@@ -163,7 +249,7 @@ export default function UserCreateForm() {
   
             <div className="sm:col-span-3">
               <label htmlFor="surname" className="block text-sm font-medium leading-6 text-gray-900">
-                Last name
+                Cognome
               </label>
               <div className="mt-2">
                 <input
@@ -175,11 +261,26 @@ export default function UserCreateForm() {
                 />
               </div>
             </div>
+
+            <div className="sm:col-span-3">
+              <label htmlFor="cf" className="block text-sm font-medium leading-6 text-gray-900">
+                Codice Fiscale
+              </label>
+              <div className="mt-2">
+                <input
+                  type="text"
+                  name="cf"
+                  id="cf"
+                  autoComplete="cf"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4] sm:text-sm sm:leading-6"
+                />
+              </div>
+            </div>
   
             
           <div className="sm:col-span-3">
             <label htmlFor="country" className="block text-sm font-medium leading-6 text-gray-900">
-              Country
+              Nazione
             </label>
             <div className="mt-2">
               <Select
@@ -212,7 +313,7 @@ export default function UserCreateForm() {
   
             <div className="col-span-full">
               <label htmlFor="street-address" className="block text-sm font-medium leading-6 text-gray-900">
-                Street address
+                Inidirizzo
               </label>
               <div className="mt-2">
                 <input
@@ -241,8 +342,23 @@ export default function UserCreateForm() {
             </div>
   
             <div className="sm:col-span-2">
+              <label htmlFor="birthregion" className="block text-sm font-medium leading-6 text-gray-900">
+                Provincia di Nascita
+              </label>
+              <div className="mt-2">
+                <input
+                  type="text"
+                  name="birthprovince"
+                  id="birthprovince"
+                  autoComplete="address-level1"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4] sm:text-sm sm:leading-6"
+                />
+              </div>
+            </div>
+
+            <div className="sm:col-span-2">
               <label htmlFor="region" className="block text-sm font-medium leading-6 text-gray-900">
-                Province
+                Provincia di Residenza
               </label>
               <div className="mt-2">
                 <input
@@ -257,7 +373,7 @@ export default function UserCreateForm() {
   
             <div className="sm:col-span-2">
               <label htmlFor="postal-code" className="block text-sm font-medium leading-6 text-gray-900">
-                ZIP / Postal code
+                CAP
               </label>
               <div className="mt-2">
                 <input
@@ -269,6 +385,94 @@ export default function UserCreateForm() {
                 />
               </div>
             </div>
+
+            <div className="sm:col-span-2">
+              <label htmlFor="phone" className="block text-sm font-medium leading-6 text-gray-900">
+                Telefono
+              </label>
+              <div className="mt-2">
+                <input
+                  type="tel"  // Use 'tel' input type for phone numbers
+                  name="phone"
+                  id="phone" // Changed id for better semantics
+                  autoComplete="tel"  // Use tel for autocomplete
+                  pattern="[0-9]*"  // Optional: restrict to numbers only
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4] sm:text-sm sm:leading-6"
+                  placeholder="Es. +39 332 345 6789"  // Add a placeholder for better UX
+                  required // Optionally make the field required
+                />
+              </div>
+            </div>
+
+            
+            <div className="sm:col-span-2">
+              <label htmlFor="businessphone" className="block text-sm font-medium leading-6 text-gray-900">
+                Telefono Aziendale
+              </label>
+              <div className="mt-2">
+                <input
+                  type="tel"  // Use 'tel' input type for phone numbers
+                  name="businessphone"
+                  id="businessphone" // Changed id for better semantics
+                  autoComplete="tel"  // Use tel for autocomplete
+                  pattern="[0-9]*"  // Optional: restrict to numbers only
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4] sm:text-sm sm:leading-6"
+                  placeholder="Es. +39 332 345 6789"  // Add a placeholder for better UX
+                  required // Optionally make the field required
+                />
+              </div>
+            </div>
+
+
+
+            <div className="sm:col-span-2">
+              <label htmlFor="drivingLicenseExp" className="block text-sm font-medium leading-6 text-gray-900">
+                Scadenza Patente
+                </label>
+              <div className="mt-2">
+                <input
+                  type="date"
+                  name="drivingLicenseExp"
+                  id="drivingLicenseExp"
+                  autoComplete="drivingLicenseExp"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4] sm:text-sm sm:leading-6"
+                />
+              </div>
+            </div>
+
+            <div className="sm:col-span-2">
+              <label htmlFor="qualification" className="block text-sm font-medium leading-6 text-gray-900">
+               Titolo di Studio
+                </label>
+              <div className="mt-2">
+                <input
+                  type="text"
+                  name="qualification"
+                  id="qualification"
+                  autoComplete="qualification"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4] sm:text-sm sm:leading-6"
+                />
+              </div>
+            </div>
+
+            <div className="sm:col-span-2">
+              <label htmlFor="institute" className="block text-sm font-medium leading-6 text-gray-900">
+                Istituto
+                </label>
+              <div className="mt-2">
+                <input
+                  type="text"
+                  name="institute"
+                  id="institute"
+                  autoComplete="institute"
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4] sm:text-sm sm:leading-6"
+                />
+              </div>
+            </div>
+
+
+  
+
           </div>
         </div>
       </div>

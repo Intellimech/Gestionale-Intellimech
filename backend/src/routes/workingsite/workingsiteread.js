@@ -9,6 +9,7 @@ import path from "path";
 import bcrypt from "bcrypt";
 import sequelize from "../../utils/db.js";
 import Logger from "../../utils/logger.js";
+import WorkingSite from "../../models/workingsite.js";
 
 // Setup the express router
 const router = express.Router();
@@ -17,31 +18,33 @@ const router = express.Router();
 const __dirname = path.resolve();
 
 router.get("/read/", (req, res) => {
-    // Get the role from the database
-    const Subgroup = sequelize.models.Subgroup;
+    const WorkingSite = sequelize.models.WorkingSite;
 
-    Subgroup.findAll({
+    WorkingSite.findAll({
         where: {
             isDeleted: false,
         },
     })
-    .then((subgroup) => {
-        if (subgroup) {
+    .then((sites) => {
+        if (sites) { // Modifica qui per controllare se ci sono siti
             res.status(200).json({
-                message: "Subroups found",
-                subgroups: subgroup,
+                message: "Sites found",
+                sites: sites,
             });
         } else {
-            res.status(400).json({
-                message: "groups do not exist",
+            res.status(404).json({
+                message: "No sites found", // Cambiato per 404
+            
             });
         }
     })
     .catch((err) => {
+        console.error('Database Error:', err); // Log dell'errore
         res.status(500).json({
             message: "Internal server error",
         });
     });
 });
+
 
 export default router;

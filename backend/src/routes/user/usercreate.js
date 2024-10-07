@@ -16,136 +16,132 @@ const router = express.Router();
 
 const __dirname = path.resolve();
 
-//public and private keys
+// Public and private keys
 const publicKey = fs.readFileSync(
     path.resolve(__dirname, "./src/keys/public.key")
 );
 
-// write a function to generate the password
+// Function to generate the password
 const generatePassword = () => {
-    const length = 24,
-        charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
-        retVal = [];
-    for (let i = 0; i < length; ++i) {
-        retVal.push(charset.charAt(Math.floor(Math.random() * charset.length)));
+    const length = 24;
+    const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let retVal = '';
+    for (let i = 0; i < length; i++) {
+        retVal += charset.charAt(Math.floor(Math.random() * charset.length));
     }
-    return retVal.join("");
+    return retVal;
 };
+router.post("/create", async (req, res) => {
+    const { 
+        email, 
+        name, 
+        surname, 
+        birthdate, 
+        username, 
+        role, 
+        group, 
+        subGroup,
+        contractType,
+        hWeek,
+        TaxIdCode,
+        Phone,
+        hiringdate,
+        drivingLicenseExp,
+        country,
+        streetaddress,
+        city,
+        province,
+        zip,
+        sessionId,
+        changepass,
+        birthprovince,
+        businessphone,
+        qualification,
+        institute
+    } = req.body;
 
-router.post("/create", (req, res) => {
-    // Get the user from the database
-    const { email, name, surname, birthdate, role, group, city, streetaddress, country, province } = req.body;
-    // get the token from the header
     const token = req.headers["authorization"]?.split(" ")[1] || "";
-    // check if the token is valid
-    if(!token) {
-        res.status(401).json({
-            message: "Unauthorized",
-        });
-        Logger("debug", "Unauthorized");
-        return;
-    }
+  
+    try {
+        Logger("info", `Received request to create user: ${JSON.stringify(req.body)}`);
 
-    jwt.verify(token, publicKey, (err, decoded) => {
-        if (err) {
-            res.status(401).json({
-            message: "Unauthorized",
-            });
-            Logger("debug", "Unauthorized");
-            return;
-        }
-
-        if (!email || !name || !surname || !role || !group) {
-            res.status(400).json({
-            message: "Bad request, view documentation for more information",
-            });
-            //now write a log indicating the missing parameters
-            Logger("debug", "Bad request, missing parameters");
-            return;
-        }
-
+        const decoded = jwt.verify(token, publicKey);
         const username = email.split("@")[0];
+
+     
         const User = sequelize.models.User;
-        User.findOne({ where: { email: email } })
-            .then((user) => {
-            if (user) {
-                res.status(400).json({
-                message: "User already exists",
-                });
-            } else {
-                // Hash the password
-                const password = generatePassword();
-                bcrypt.hash(password, 10, (err, hash) => {
-                if (err) {
-                    res.status(500).json({
-                    message: "Internal server error",
-                    });
-                    Logger("debug", "Error: " + err);
-                } else {
-                    // Create the user
-                    User.create({
-                        name: name,
-                        surname: surname,
-                        birthdate: birthdate,
-                        username: username,
-                        email: email,
-                        password: hash,
-                        role: role,
-                        isdeleted: false,
-                        isActive: false,
-                        lastLoginAt: null,
-                        lastLoginIp: null,
-                        createdAt: new Date(),
-                        updatedAt: new Date(),
-                        deletedBy: null,
-                        addedBy: decoded.id,
-                        updatedBy: decoded.id,
-                        deletedBy: null,
-                        group: group,
-                        subgroup: null,
-                        contracttype: null,
-                        hweek: null,
-                        taxidcode: null,
-                        drivinglicensecode: null,
-                        drivinglicenseexp: null,
-                        workingsite: null,
-                        
-                    })
-                    .then((user) => {
-                        // Send the email
-                        Logger("debug", `Password: ${password}`);
+        const existingUser = await User.findOne({ where: { email } });
 
-                        mail.sendMail({
-                            from: process.env.SMTP_USER,
-                            to: email,
-                            subject: "Account created",
-                            text: `Your account has been created, your username is ${username} and your password is ${password}`,
-                        })
-                        .then((info) => {
-                            Logger("debug", `Email sent: ${info.response}`);
-                        })
+        if (existingUser) {
+            Logger("warn", `User already exists: ${email}`);
+            return res.status(400).json({ message: "User already exists" });
+        }
 
-                        res.status(200).json({
-                        message: "User created",
-                        });
-                    })
-                    .catch((err) => {
-                        res.status(500).json({
-                        message: "Internal server error",
-                        });
-                        Logger("debug", "Error: " + err);
-                    });
-                }
-                });
-            }
-            })
-            .catch((err) => {
-                res.status(500).json({
-                    message: "Internal server error",
-                });
-                Logger("debug", "Error: " + err);
-            });
-    });
+        // Hash the password
+        const password = generatePassword();
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Create the user
+        const newUser = await User.create({
+            name,
+            surname,
+            birthdate,
+            username,
+            email,
+            password: hashedPassword,
+            role,
+            isActive: false,            
+            isDeleted: false,          
+            lastLoginAt: null,
+            lastLoginIp: null,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            deletedAt: null,
+            createdBy: decoded.id,
+            updatedBy: decoded.id,
+            deletedBy: null,
+            group,
+            subGroup,
+            contractType,
+            institute,
+            qualification,
+            hWeek,
+            TaxIdCode,
+            Phone,
+            hiringdate,
+            drivingLicenseExp,
+            country,
+            streetaddress,
+            city,
+            province,
+            zip,
+            sessionId,
+            changepass,
+            birthprovince,
+            businessphone
+        });
+
+        Logger("info", `User created: ${newUser.email}`);
+
+        // Send the email
+        await mail.sendMail({
+            from: process.env.SMTP_USER,
+            to: email,
+            subject: "Account created",
+            text: `Your account has been created. Your username is ${username} and your password is ${password}`,
+        });
+
+        Logger("info", `Email sent to: ${email}`);
+        return res.status(200).json({ message: "User created" });
+
+    } catch (err) {
+        if (err instanceof jwt.JsonWebTokenError) {
+            Logger("error", "Unauthorized: Invalid token");
+            return res.status(401).json({ message: "Unauthorized: Invalid token" });
+        } 
+        Logger("error", `Internal server error: ${err.message}`);
+        return res.status(500).json({ message: "Internal server error" });
+    }
 });
 
 export default router;

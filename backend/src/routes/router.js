@@ -24,6 +24,7 @@ import company from './company/companyrouter.js';
 import invoices from './invoices/invoicerouter.js';
 import roles from './role/rolerouter.js';
 import group from './group/grouprouter.js';
+import subgroup from './subgroup/subgrouprouter.js';
 import quotationrequest from './quotationrequest/quotationrequestrouter.js';
 import permission from './permission/permissionrouter.js';
 import offer from './offer/offerrouter.js';
@@ -34,10 +35,12 @@ import category from './category/categoryrouter.js';
 import technicalarea from './technicalarea/technicalarearouter.js';
 import salesorder from './salesorder/salesorderrouter.js';
 import job from './job/jobrouter.js';
+import workingsite from './workingsite/workingsiterouter.js'
 // import reporting from './reporting/reportingrouter.js';
 import task from './tasks/taskrouter.js';
 // import product from './product/productrouter.js';
 import notification from './notification/notificationrouter.js';
+import contracttype from './contracttype/contracttyperouter.js'
 import calendar from './calendar/calendarrouter.js';
 import holidaysleaves from './holidays-leaves/holidaysleavesrouter.js';
 
@@ -52,6 +55,7 @@ router.use('/', user);
 router.use('/', company);
 router.use('/', invoices);
 router.use('/', roles);
+router.use('/', subgroup);
 router.use('/', group);
 router.use('/', quotationrequest);
 router.use('/', permission);
@@ -61,7 +65,9 @@ router.use('/', subcategory);
 router.use('/', category);
 router.use('/', technicalarea);
 router.use('/', salesorder);
+router.use('/', workingsite);
 router.use('/', job);
+router.use('/', contracttype);
 // router.use('/', reporting);
 router.use('/', task);
 // router.use('/', product);

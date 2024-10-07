@@ -47,22 +47,23 @@ WorkingSite.init(
       type: DataTypes.BOOLEAN,
       defaultValue: false
     },
-    deletedBy: {
-      type: DataTypes.INTEGER
-    },
     createdAt: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW
-    },
-    createdBy: {
-        type: DataTypes.INTEGER
+      type: DataTypes.DATE
     },
     updatedAt: {
-      type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW
+      type: DataTypes.DATE
+    },
+    deletedAt: {
+      type: DataTypes.DATE
+    },
+    createdBy: {
+      type: DataTypes.INTEGER
     },
     updatedBy: {
-        type: DataTypes.INTEGER
+      type: DataTypes.INTEGER
+    },
+    deletedBy: {
+      type: DataTypes.INTEGER
     }
   },
   {

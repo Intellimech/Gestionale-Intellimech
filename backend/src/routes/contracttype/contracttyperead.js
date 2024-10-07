@@ -9,6 +9,7 @@ import path from "path";
 import bcrypt from "bcrypt";
 import sequelize from "../../utils/db.js";
 import Logger from "../../utils/logger.js";
+import ContractType from "../../models/contracttype.js";
 
 // Setup the express router
 const router = express.Router();
@@ -18,22 +19,22 @@ const __dirname = path.resolve();
 
 router.get("/read/", (req, res) => {
     // Get the role from the database
-    const Subgroup = sequelize.models.Subgroup;
+    const ContractType = sequelize.models.ContractType;
 
-    Subgroup.findAll({
+    ContractType.findAll({
         where: {
             isDeleted: false,
         },
     })
-    .then((subgroup) => {
-        if (subgroup) {
+    .then((contracts) => {
+        if (contracts) {
             res.status(200).json({
-                message: "Subroups found",
-                subgroups: subgroup,
+                message: "Contracts  found",
+                contracts: contracts,
             });
         } else {
             res.status(400).json({
-                message: "groups do not exist",
+                message: "Roles do not exist",
             });
         }
     })

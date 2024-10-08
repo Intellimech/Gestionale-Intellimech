@@ -4,6 +4,8 @@ import Cookies from 'js-cookie';
 import { CheckBadgeIcon, XCircleIcon } from '@heroicons/react/20/solid';
 import Select from "react-tailwindcss-select";
 import PurchaseUpdateRow from './purchaseupdaterow.jsx';
+import toast, { Toaster } from 'react-hot-toast';
+
 
 export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange }) {
   const [createSuccess, setCreateSuccess] = useState(null);
@@ -113,19 +115,31 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
         quantity: parseInt(product.quantity, 10),
       }))
     };
-    try {
-      await axios.put(`${process.env.REACT_APP_API_URL}/purchase/update`, jsonObject, { headers: { authorization: `Bearer ${token}` } });
-      setCreateSuccess(true);
-    } catch (error) {
-      console.error('Error details:', error.response ? error.response.data : error.message);
+
+    toast.promise(
+      await axios.put(`${process.env.REACT_APP_API_URL}/purchase/update`, jsonObject, { headers: { authorization: `Bearer ${token}` } }),
+      {
+        loading: 'Invio in corso...',
+        success: 'Richiesta di acquisto creata con successo!',
+        error: 'Errore durante la creazione della richiesta di acquisto',
+      }
+    )
+      .then((response) => {
+        setCreateSuccess(true);
+      })
+      .catch((error) => {
+        console.error('Error details:', error.response ? error.response.data : error.message);
       setErrorMessages(error.response?.data?.message || 'An error occurred');
       setCreateSuccess(false);
-    }
     
+      });
+   
+
   };
   
   return (
     <form name="updatepurchaseorder" onSubmit={updatePurchaseOrder}>
+      <Toaster/>
       <div className="space-y-12">
         <div className="border-b border-gray-900/10 pb-12">
           <h2 className="text-base font-semibold leading-7 text-gray-900">Informazioni Ordine di Acquisto</h2>

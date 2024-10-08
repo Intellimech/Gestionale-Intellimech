@@ -4,6 +4,8 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import Select from "react-tailwindcss-select";
 import { Dialog } from '@headlessui/react';
+import { ToastContainer } from 'react-toastify';
+import toast, { Toaster } from 'react-hot-toast';s
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -140,6 +142,43 @@ export default function SubcategoryTable() {
     setIsConfirmModalOpen(true); // Show the confirmation modal
   };
 
+  // axios
+  // .post(`${process.env.REACT_APP_API_URL}/category/create`, 
+  //   { name: newCategoryName }, 
+  //   { headers: { authorization: `Bearer ${Cookies.get('token')}` } }
+  // )
+  // .then((response) => {
+  //   setCategories([...categories, response.data.category]);
+  //   setNewCategoryName('');
+  //   setIsModalOpen(false);
+  //   setIsConfirmModalOpen(false);
+    
+  //   // Notifica di successo
+  //   toast.success('Categoria creata con successo!', {
+  //     position: "top-right",
+  //     autoClose: 5000,
+  //     hideProgressBar: false,
+  //     closeOnClick: true,
+  //     pauseOnHover: true,
+  //     draggable: true,
+  //     progress: undefined,
+  //   });
+  // })
+  // .catch((error) => {
+  //   console.error('Error creating category:', error);
+    
+  //   // Notifica di errore
+  //   toast.error('Errore durante la creazione della categoria!', {
+  //     position: "top-right",
+  //     autoClose: 5000,
+  //     hideProgressBar: false,
+  //     closeOnClick: true,
+  //     pauseOnHover: true,
+  //     draggable: true,
+  //     progress: undefined,
+  //   });
+  // });
+
   const submitNewSubcategory = () => {
     axios
       .post(`${process.env.REACT_APP_API_URL}/subcategory/create`, newSubcategory, {
@@ -147,23 +186,41 @@ export default function SubcategoryTable() {
       })
       .then((response) => {
         // Check if response is valid
-        if (response.data && response.data.subcategory) {
+       
           setSubcategories([...subcategories, response.data.subcategory]);
           setNewSubcategory({ name: '', category: '' });
           setIsModalOpen(false);
           setIsConfirmModalOpen(false); // Close confirmation modal
-        } else {
-          console.error('Unexpected response format:', response.data);
-        }
+          toast.success('Categoria creata con successo!', {
+                position: "top-right",
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+              });
+            
       })
       .catch((error) => {
         console.error('Error creating subcategory:', error.response ? error.response.data : error.message);
-      });
-  };
+    
+    toast.error('Errore durante la creazione della categoria!', {
+      position: "top-right",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      progress: undefined,
+    });
+  });
+};
 
   return (
     <>
       <div className="px-4 sm:px-6 lg:px-8">
+        <ToastContainer/>
         <div className="flex items-center justify-between">
           {/* Titolo e descrizione */}
           <div className="sm:flex-auto">
@@ -259,7 +316,8 @@ export default function SubcategoryTable() {
             <Select
               isSearchable
               placeholder="Select Category"
-              options={categories.map(category => ({ label: category.name, value: category.name }))}
+              value={selectedCategory.name}
+              options={categories.map(category => ({ label: category.name, value: category.id_category }))}
               onChange={(value) => setNewSubcategory({ ...newSubcategory, category: value.value })}
               className="mt-2"
             />
@@ -304,7 +362,7 @@ export default function SubcategoryTable() {
                   <button onClick={submitNewSubcategory} className="mr-2 rounded-md bg-[#A7D0EB] px-2 py-1 text-xs font-bold text-black hover:bg-[#7fb7d4]">
                     Conferma
                   </button>
-                  <button onClick={() => setIsConfirmModalOpen(false)} className="rounded-md bg-red-500 px-2 py-1 text-xs font-bold text-white hover:bg-red-700">
+                  <button onClick={() => setIsConfirmModalOpen(false)} className="rounded-md bg-white px-2 py-1 text-xs font-bold ">
                     Annulla
                   </button>
                 </div>

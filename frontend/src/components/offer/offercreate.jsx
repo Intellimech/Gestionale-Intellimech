@@ -4,6 +4,8 @@ import Cookies from 'js-cookie';
 import { CheckBadgeIcon, XCircleIcon } from '@heroicons/react/20/solid';
 import Select from 'react-tailwindcss-select';
 import TaskForm from './taskinput';
+import toast, { Toaster } from 'react-hot-toast';
+
 
 export default function UserCreateForm() {
   const [createSuccess, setCreateSuccess] = useState(null);
@@ -61,17 +63,26 @@ export default function UserCreateForm() {
     jsonObject.tasks = tasks;
 
     console.log('Create offer payload:', jsonObject);
-    try {
-      await axios.post(`${process.env.REACT_APP_API_URL}/offer/create`, jsonObject, { headers: { authorization: `Bearer ${token}` } });
-      setCreateSuccess(true);
-    } catch (error) {
-      setErrorMessages(error.response?.data?.message || 'An error occurred');
-      setCreateSuccess(false);
-    }
+    
+    toast.promise(
+      axios.post(`${process.env.REACT_APP_API_URL}/offer/create`, jsonObject, { headers: { authorization: `Bearer ${token}` } }),
+      {
+        loading: 'Creazione in corso...',
+        success: 'Offerta creata con successo!',
+        error: 'Errore durante la creazione dell\'offerta',
+      }
+    )
+    .then((response) => {
+      console.log('Offerta creata:', response);
+    })
+    .catch((error) => {
+      console.error('Errore nella creazione dell\'offerta:', error);
+    });
   };
 
   return (
     <form name="createoffer">
+      <Toaster/>
       <div className="space-y-12">
         <div className="border-b border-gray-900/10 pb-12">
           <h2 className="text-base font-semibold leading-7 text-gray-900">Informazioni</h2>

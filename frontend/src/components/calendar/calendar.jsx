@@ -354,7 +354,7 @@ const handleFormSubmit = async (newLocation) => {
             >
               <div className="text-xs px-1 py-1">
         {/* Added gray outline for current day */}
-        <span className={day.isToday ? 'border border-gray-400 bg-gray-100 rounded-full px-16 py-1.' : ''}>
+        <span className={day.isToday ? 'border border-gray-400 bg-gray-100 rounded-full px-2 py-1.' : ''}>
           {day.date.split('-').pop().replace(/^0/, '')}
         </span>
       </div>

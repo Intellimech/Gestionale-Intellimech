@@ -4,6 +4,7 @@ import Cookies from 'js-cookie';
 import { CheckBadgeIcon, XCircleIcon } from '@heroicons/react/20/solid';
 import Select from "react-tailwindcss-select";
 import PurchaseRowInput from './purchaserowinput.jsx';
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function PurchaseCreateForm() {
   const [createSuccess, setCreateSuccess] = useState(null);
@@ -103,7 +104,16 @@ export default function PurchaseCreateForm() {
     };
 
     console.log(jsonObject);
-    axios.post(`${process.env.REACT_APP_API_URL}/purchase/create`, jsonObject, { headers: { authorization: `Bearer ${token}` } })
+    toast.promise(
+      axios.post(`${process.env.REACT_APP_API_URL}/purchase/create`, jsonObject, {
+        headers: { authorization: `Bearer ${token}` },
+      }),
+      {
+        loading: 'Invio in corso...',
+        success: 'Richiesta di acquisto creata con successo!',
+        error: 'Errore durante la creazione della richiesta di acquisto',
+      }
+    )
       .then((response) => {
         setCreateSuccess(true);
       })
@@ -115,6 +125,7 @@ export default function PurchaseCreateForm() {
 
   return (
     <form name="createpurchaseorder" onSubmit={createPurchaseOrder}>
+      <Toaster/>
       <div className="space-y-12">
         <div className="border-b border-gray-900/10 pb-12">
           <h2 className="text-base font-semibold leading-7 text-gray-900">Informazioni Ordine di Acquisto</h2>

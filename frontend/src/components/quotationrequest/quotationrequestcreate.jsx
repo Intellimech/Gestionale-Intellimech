@@ -124,9 +124,11 @@ export default function UserCreateForm() {
       }
     )
     .then((response) => {
+      
+      // Refresh the data after a successful post
     })
     .catch((error) => {
-      console.error('Error creating quotation request:', error);
+   
       throw new Error('Errore durante la creazione della richiesta di offerta');
     });
   };

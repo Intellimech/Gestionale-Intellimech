@@ -2,6 +2,9 @@ import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/20/solid';
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 import { Dialog } from '@headlessui/react';
 
 function classNames(...classes) {
@@ -125,19 +128,43 @@ export default function CategoryTable() {
 
   const confirmCreateCategory = () => {
     axios
-      .post(`${process.env.REACT_APP_API_URL}/category/create`,
-        { name: newCategoryName },
-        { headers: { authorization: `Bearer ${Cookies.get('token')}` } })
+      .post(`${process.env.REACT_APP_API_URL}/category/create`, 
+        { name: newCategoryName }, 
+        { headers: { authorization: `Bearer ${Cookies.get('token')}` } }
+      )
       .then((response) => {
         setCategories([...categories, response.data.category]);
         setNewCategoryName('');
         setIsModalOpen(false);
         setIsConfirmModalOpen(false);
+        
+        // Notifica di successo
+        toast.success('Categoria creata con successo!', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
       })
       .catch((error) => {
         console.error('Error creating category:', error);
+        
+        // Notifica di errore
+        toast.error('Errore durante la creazione della categoria!', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
       });
   };
+  
 
   const cancelCreateCategory = () => {
     setIsConfirmModalOpen(false);
@@ -146,6 +173,7 @@ export default function CategoryTable() {
   return (
     <>
       <div className="px-4 sm:px-6 lg:px-8">
+      <ToastContainer />
         <div className="flex items-center justify-between">
           <div className="sm:flex-auto">
             <h1 className="text-base font-semibold leading-6 text-gray-900">Categorie</h1>
@@ -258,8 +286,11 @@ export default function CategoryTable() {
               <Dialog.Title className="text-lg font-semibold mb-4">Conferma Creazione</Dialog.Title>
               <p>Sei sicuro di voler creare questa categoria?</p>
               <div className="flex justify-end mt-4">
-                <button onClick={confirmCreateCategory} className="bg-green-500 text-white px-4 py-2 rounded mr-2">Conferma</button>
-                <button onClick={cancelCreateCategory} className="bg-gray-300 text-gray-700 px-4 py-2 rounded">Annulla</button>
+                <button onClick={confirmCreateCategory} className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+        >
+                Conferma</button>
+                <button onClick={cancelCreateCategory} cclassName="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+        >Annulla</button>
               </div>
             </Dialog.Panel>
           </div>

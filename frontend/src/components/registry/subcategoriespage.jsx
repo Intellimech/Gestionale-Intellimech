@@ -5,7 +5,7 @@ import Cookies from 'js-cookie';
 import Select from "react-tailwindcss-select";
 import { Dialog } from '@headlessui/react';
 import { ToastContainer } from 'react-toastify';
-import toast, { Toaster } from 'react-hot-toast';s
+import toast, { Toaster } from 'react-hot-toast';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');

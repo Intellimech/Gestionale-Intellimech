@@ -191,7 +191,7 @@ export default function SubcategoryTable() {
           setNewSubcategory({ name: '', category: '' });
           setIsModalOpen(false);
           setIsConfirmModalOpen(false); // Close confirmation modal
-          toast.success('Categoria creata con successo!', {
+          toast.success('Sottoategoria creata con successo!', {
                 position: "top-right",
                 autoClose: 5000,
                 hideProgressBar: false,
@@ -220,7 +220,7 @@ export default function SubcategoryTable() {
   return (
     <>
       <div className="px-4 sm:px-6 lg:px-8">
-        <ToastContainer/>
+        <Toaster/>
         <div className="flex items-center justify-between">
           {/* Titolo e descrizione */}
           <div className="sm:flex-auto">

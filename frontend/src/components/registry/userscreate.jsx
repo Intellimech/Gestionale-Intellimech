@@ -3,6 +3,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { PhotoIcon, UserCircleIcon, XCircleIcon, CheckBadgeIcon } from '@heroicons/react/24/solid';
 import Select from "react-tailwindcss-select";
+import toast, { Toaster } from 'react-hot-toast';
 
 export default function UserCreateForm() {
   const [CreateSuccess, setCreateSuccess] = useState(null);
@@ -68,30 +69,38 @@ export default function UserCreateForm() {
       });
   }, []);
 
+
   const createUser = async (event) => {
     event.preventDefault();
     const token = Cookies.get('token');
     const form = document.forms.createuser;
     const formData = new FormData(form);
-    
+  
     let jsonObject = {};
     formData.forEach((value, key) => {
       jsonObject[key] = value;
     });
   
-    setLoading(true); // Start loading
-    
+    setLoading(true); // Inizia il caricamento
+  
     try {
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/user/create`, jsonObject, {
         headers: { authorization: `Bearer ${token}` }
       });
+      
       setCreateSuccess(true);
+      
+      // Mostra la notifica di successo
+      toast.success('Utente creato con successo!');
     } catch (error) {
-      console.error('Error:', error);
+      console.error('Errore:', error);
       setCreateSuccess(false);
-      setErrorMessages(error.response?.data?.message || ['An unexpected error occurred']);
+      setErrorMessages(error.response?.data?.message || ['Si è verificato un errore inaspettato']);
+      
+      // Mostra la notifica di errore
+      toast.error('Creazione dell\'utente fallita.');
     } finally {
-      setLoading(false); // End loading
+      setLoading(false); // Termina il caricamento
     }
   };
   
@@ -106,6 +115,7 @@ export default function UserCreateForm() {
   
   return (
     <form name='createuser'>
+      <Toaster/>
       <div className="space-y-12">
         <div className="border-b border-gray-900/10 pb-12">
           <h2 className="text-base font-semibold leading-7 text-gray-900">Informazioni sull'utente</h2>

@@ -3,7 +3,9 @@ import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { Dialog } from '@headlessui/react';
+import toast, { Toaster } from 'react-hot-toast';
 
+import { ToastContainer } from 'react-toastify';
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
@@ -89,16 +91,26 @@ export default function LocationTable() {
         newLocation,
         { headers: { authorization: `Bearer ${Cookies.get('token')}` } }
       );
+      
+      // Aggiunge la nuova location alla lista esistente
       setLocations([...locations, response.data.location]);
+  
+      // Resetta il form e chiude le modali
       setNewLocation({ name: '', hours: 0, needApproval: false });
       setIsModalOpen(false);
       setIsConfirmModalOpen(false);
+  
+      // Mostra la notifica di successo
+      toast.success('Location creata con successo!');
     } catch (error) {
-      console.error('Error creating location:', error);
+      console.error('Errore durante la creazione della location:', error);
+  
+      // Mostra la notifica di errore
+      toast.error('Creazione della location fallita.');
     }
   };
+  
 
-  // Funzione per aggiornare il valore "Need Approval"
   const handleApprovalChange = async (id, currentValue) => {
     const updatedValue = !currentValue; // Inverte il valore attuale
     try {
@@ -108,19 +120,28 @@ export default function LocationTable() {
         { needApproval: updatedValue },
         { headers: { authorization: `Bearer ${Cookies.get('token')}` } }
       );
-
+  
       // Aggiorna lo stato locale
       setLocations(locations.map(location => 
         location.id_location === id ? { ...location, needApproval: updatedValue } : location
       ));
+  
+      // Mostra la notifica di successo
+      toast.success('Location aggiornata con successo!');
     } catch (error) {
-      console.error('Error updating location approval:', error);
+      console.error('Errore durante l\'aggiornamento della location:', error);
+  
+      // Mostra la notifica di errore
+      toast.error('Aggiornamento della location fallito.');
     }
   };
+  
 
   return (
     <>
       <div className="px-4 sm:px-6 lg:px-8">
+        <Toaster/>
+
         <div className="flex items-center justify-between">
           <div className="sm:flex-auto">
             <h1 className="text-base font-semibold leading-6 text-gray-900">Locations</h1>

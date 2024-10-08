@@ -4,6 +4,8 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { Dialog } from '@headlessui/react';
 
+import { ToastContainer } from 'react-toastify';
+import toast, { Toaster } from 'react-hot-toast';
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
@@ -127,20 +129,29 @@ export default function TechnicalAreaTable() {
 
   const confirmCreateTechnicalArea = () => {
     axios
-      .post(`${process.env.REACT_APP_API_URL}/technicalarea/create`, 
-      { name: newTechnicalAreaName, code: newTechnicalAreaCode }, 
-      { headers: { authorization: `Bearer ${Cookies.get('token')}` } })
+      .post(
+        `${process.env.REACT_APP_API_URL}/technicalarea/create`, 
+        { name: newTechnicalAreaName, code: newTechnicalAreaCode }, 
+        { headers: { authorization: `Bearer ${Cookies.get('token')}` } }
+      )
       .then((response) => {
         setTechnicalAreas([...technicalAreas, response.data.technicalarea]);
         setNewTechnicalAreaName('');
         setNewTechnicalAreaCode('');
         setIsModalOpen(false);
-        setIsConfirmModalOpen(false); // Close the confirmation modal
+        setIsConfirmModalOpen(false); // Chiude la modale di conferma
+  
+        // Mostra la notifica di successo
+        toast.success('Area tecnica creata con successo!');
       })
       .catch((error) => {
-        console.error('Error creating technical area:', error);
+        console.error('Errore durante la creazione dell\'area tecnica:', error);
+        
+        // Mostra la notifica di errore
+        toast.error('Creazione dell\'area tecnica fallita.');
       });
   };
+  
 
   const cancelCreateTechnicalArea = () => {
     setIsConfirmModalOpen(false); // Close the confirmation modal
@@ -149,6 +160,7 @@ export default function TechnicalAreaTable() {
   return (
     <>
       <div className="px-4 sm:px-6 lg:px-8">
+        <Toaster/>
         <div className="flex items-center justify-between">
           <div className="sm:flex-auto">
             <h1 className="text-base font-semibold leading-6 text-gray-900">Aree Tecniche</h1>

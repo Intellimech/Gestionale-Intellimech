@@ -48,8 +48,7 @@ export default function Example() {
       axios
         .delete(`${process.env.REACT_APP_API_URL}/user/delete`, {
           headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + Cookies.get('token'),
+            'Content-Type': 'application/json'
           },
           data: {
             user_id: person.id_user,
@@ -62,7 +61,7 @@ export default function Example() {
             .get(`${process.env.REACT_APP_API_URL}/user/read`, {
               headers: {
                 'Content-Type': 'application/json',
-                Authorization: 'Bearer ' + Cookies.get('token'),
+               
               },
             })
             .then((response) => {
@@ -86,7 +85,7 @@ export default function Example() {
       .get(`${process.env.REACT_APP_API_URL}/user/read`, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + Cookies.get('token'),
+         
         },
       })
       .then((response) => {

@@ -29,9 +29,7 @@ export default function SubcategoryTable() {
   useEffect(() => {
     // Fetch all subcategories
     axios
-      .get(`${process.env.REACT_APP_API_URL}/subcategory/read`, {
-        headers: { authorization: `Bearer ${Cookies.get('token')}` },
-      })
+      .get(`${process.env.REACT_APP_API_URL}/subcategory/read`)
       .then((response) => {
         console.log('Fetched subcategories:', response.data.subcategories);
         setSubcategories(response.data.subcategories || []);
@@ -42,9 +40,7 @@ export default function SubcategoryTable() {
 
     // Fetch all categories for dropdown
     axios
-      .get(`${process.env.REACT_APP_API_URL}/category/read`, {
-        headers: { authorization: `Bearer ${Cookies.get('token')}` },
-      })
+      .get(`${process.env.REACT_APP_API_URL}/category/read`)
       .then((response) => {
         console.log('Fetched categories:', response.data.categories);
         setCategories(response.data.categories || []);
@@ -145,7 +141,7 @@ export default function SubcategoryTable() {
   // axios
   // .post(`${process.env.REACT_APP_API_URL}/category/create`, 
   //   { name: newCategoryName }, 
-  //   { headers: { authorization: `Bearer ${Cookies.get('token')}` } }
+  //  
   // )
   // .then((response) => {
   //   setCategories([...categories, response.data.category]);
@@ -181,9 +177,7 @@ export default function SubcategoryTable() {
 
   const submitNewSubcategory = () => {
     axios
-      .post(`${process.env.REACT_APP_API_URL}/subcategory/create`, newSubcategory, {
-        headers: { authorization: `Bearer ${Cookies.get('token')}` },
-      })
+      .post(`${process.env.REACT_APP_API_URL}/subcategory/create`, newSubcategory)
       .then((response) => {
         // Check if response is valid
        

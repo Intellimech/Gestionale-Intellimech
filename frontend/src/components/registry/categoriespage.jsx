@@ -28,9 +28,7 @@ export default function CategoryTable() {
 
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_API_URL}/category/read`, {
-        headers: { authorization: `Bearer ${Cookies.get('token')}` },
-      })
+      .get(`${process.env.REACT_APP_API_URL}/category/read`)
       .then((response) => {
         console.log('Fetched categories:', response.data.categories);
         setCategories(response.data.categories || []);
@@ -130,7 +128,7 @@ export default function CategoryTable() {
     axios
       .post(`${process.env.REACT_APP_API_URL}/category/create`, 
         { name: newCategoryName }, 
-        { headers: { authorization: `Bearer ${Cookies.get('token')}` } }
+      
       )
       .then((response) => {
         setCategories([...categories, response.data.category]);

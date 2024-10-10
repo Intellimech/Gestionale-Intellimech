@@ -178,7 +178,6 @@ export default function Example({ permissions }) {
     .post(`${process.env.REACT_APP_API_URL}/offer/accept/${offer}`, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + Cookies.get('token'),
       },
     })
     .then((response) => {
@@ -187,7 +186,6 @@ export default function Example({ permissions }) {
       .get(`${process.env.REACT_APP_API_URL}/offer/read`, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + Cookies.get('token'),
         },
       })
       .then((response) => {
@@ -208,7 +206,6 @@ export default function Example({ permissions }) {
     .post(`${process.env.REACT_APP_API_URL}/offer/refuse/${offer}`, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + Cookies.get('token'),
       },
     })
     .then((response) => {
@@ -217,7 +214,6 @@ export default function Example({ permissions }) {
       .get(`${process.env.REACT_APP_API_URL}/offer/read`, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + Cookies.get('token'),
         },
       })
       .then((response) => {
@@ -236,8 +232,7 @@ export default function Example({ permissions }) {
     axios
     .post(`${process.env.REACT_APP_API_URL}/offer/sent/${offer}`, {
       headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + Cookies.get('token'),
+        'Content-Type': 'application/json'
       },
     })
     .then((response) => {
@@ -245,8 +240,7 @@ export default function Example({ permissions }) {
       axios
       .get(`${process.env.REACT_APP_API_URL}/offer/read`, {
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + Cookies.get('token'),
+          'Content-Type': 'application/json'
         },
       })
       .then((response) => {
@@ -266,7 +260,6 @@ export default function Example({ permissions }) {
       .get(`${process.env.REACT_APP_API_URL}/offer/read`, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + Cookies.get('token'),
         },
       })
       .then((response) => {
@@ -278,9 +271,7 @@ export default function Example({ permissions }) {
         console.log(error);
       });
 
-    axios.get(`${process.env.REACT_APP_API_URL}/technicalarea/read`, { 
-      headers: { authorization: `Bearer ${Cookies.get('token')}` },
-    })
+    axios.get(`${process.env.REACT_APP_API_URL}/technicalarea/read`, )
       .then((response) => {
         setTechnicalArea(response.data.technicalareas);
       })
@@ -289,9 +280,7 @@ export default function Example({ permissions }) {
       });
     
     axios
-      .get(`${process.env.REACT_APP_API_URL}/subcategory/read`, {
-        headers: { authorization: `Bearer ${Cookies.get('token')}` },
-      })
+      .get(`${process.env.REACT_APP_API_URL}/subcategory/read`)
       .then((response) => {
         console.log('Fetched subcategories:', response.data.subcategories);
         setSubcategories(response.data.subcategories || []);
@@ -301,9 +290,7 @@ export default function Example({ permissions }) {
       });
 
     axios
-      .get(`${process.env.REACT_APP_API_URL}/category/read`, {
-        headers: { authorization: `Bearer ${Cookies.get('token')}` },
-      })
+      .get(`${process.env.REACT_APP_API_URL}/category/read`)
       .then((response) => {
         console.log('Fetched categories:', response.data.categories);
         setCategories(response.data.categories || []);

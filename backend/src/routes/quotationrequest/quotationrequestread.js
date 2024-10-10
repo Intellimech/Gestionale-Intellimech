@@ -2,8 +2,6 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import http from "http";
-import dotenv from "dotenv";
-import jwt from "jsonwebtoken";
 import fs from "fs";
 import path from "path";
 import bcrypt from "bcrypt";
@@ -28,6 +26,9 @@ router.use(cors());
 
 // Routes
 router.get("/read/free", async (req, res) => {
+    
+    const user = req.user;  // Assuming req.user is populated by the authentication middleware
+
     try {
         // Fetch all quotation requests joined with company, category, subcategory, technical area, and user
         let quotationrequest = await QuotationRequest.findAll({

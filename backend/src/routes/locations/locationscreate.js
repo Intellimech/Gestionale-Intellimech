@@ -13,6 +13,7 @@ router.post("/create", async (req, res) => {
     try {
         const { name, hours, needApproval } = req.body;
 
+        const user = req.user;  // Assuming req.user is populated by the authentication middleware
         const Location = sequelize.models.Location;                     
         // Validazione dei dati
         if (!name ) {

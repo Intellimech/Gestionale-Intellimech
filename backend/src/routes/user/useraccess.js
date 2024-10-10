@@ -3,7 +3,6 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import http from "http";
 import dotenv from "dotenv";
-import jwt from "jsonwebtoken";
 import fs from "fs";
 import path from "path";
 import bcrypt from "bcrypt";
@@ -21,23 +20,17 @@ const publicKey = fs.readFileSync(path.join(__dirname, "./src/keys/public.key"))
 
 router.get("/access/", async (req, res) => {
     // Get the user from the database
-    const token = req.headers["authorization"]?.split(" ")[1] || "";
+ 
+    const user = req.user;  // Assuming req.user is populated by the authentication middleware
 
-    if (!token) {
-        return res.status(400).json({
-            message: "Bad request, view documentation for more information",
-        });
-    }
 
+ 
     try {
         const User = sequelize.models.User;
 
-        const decoded = jwt.verify(token, publicKey, {
-            algorithms: ["RS256"],
-        });
         
         const user = await User.findOne({
-            where: { id_user: decoded.id },
+            where: { id_user: user.id_user },
             include: [
                 {
                     model: sequelize.models.Role,

@@ -11,6 +11,9 @@ router.use(bodyParser.json());
 
 // Route to handle subcategory creation
 router.post('/create', async (req, res) => {
+  
+  const user = req.user;  // Assuming req.user is populated by the authentication middleware
+
   try {
     const { name, category } = req.body;
 

@@ -17,6 +17,9 @@ const router = express.Router();
 const __dirname = path.resolve();
 
 router.post("/approve/:id", (req, res) => {
+    
+    const user = req.user;  // Assuming req.user is populated by the authentication middleware
+
     // Get the role from the database
     const Calendar = sequelize.models.Calendar;
 

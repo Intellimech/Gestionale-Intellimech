@@ -19,12 +19,7 @@ export default function Reporting() {
   //get the job list
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_API_URL}/job/read`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + Cookies.get('token'),
-        },
-      })
+      .get(`${process.env.REACT_APP_API_URL}/job/read`,)
       .then((response) => {
         setJob(response.data.jobs);
         console.log(response.data.jobs);
@@ -34,12 +29,7 @@ export default function Reporting() {
       });
 
       axios
-      .get(`${process.env.REACT_APP_API_URL}/reporting/read`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + Cookies.get('token'),
-        },
-      })
+      .get(`${process.env.REACT_APP_API_URL}/reporting/read`)
       .then((response) => {
         setReportedHours(response.data.reporting);
       })
@@ -62,22 +52,12 @@ export default function Reporting() {
         task: formData.get('task'),
       };
     
-      axios.post(`${process.env.REACT_APP_API_URL}/reporting/create`, newReport, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + Cookies.get('token'),
-        },
-      })
+      axios.post(`${process.env.REACT_APP_API_URL}/reporting/create`, newReport, )
       .then((response) => {
         toast.success("Report creato con successo!");
         // Refresh the data after a successful post
         axios
-          .get(`${process.env.REACT_APP_API_URL}/reporting/read`, {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: 'Bearer ' + Cookies.get('token'),
-            },
-          })
+          .get(`${process.env.REACT_APP_API_URL}/reporting/read`, )
           .then((response) => {
             setReportedHours(response.data.reporting);
           });
@@ -92,13 +72,12 @@ export default function Reporting() {
   const handleJobChange = (value) => {
     setSelectedJob(value);
     console.log(value.value);
-    const token = Cookies.get('token');
     if (value.value === '') {
       setTask([]);
       return;
     }
     // Fetching subcategories with the selected category
-    axios.get(`${process.env.REACT_APP_API_URL}/task/read/${value.value}`, { headers: { authorization: `Bearer ${token}` } })
+    axios.get(`${process.env.REACT_APP_API_URL}/task/read/${value.value}`)
       .then((response) => {
         setTask(response.data.tasks);
       })

@@ -123,7 +123,6 @@ const handleSearchInputChange = (column) => (event) => {
         .delete(`${process.env.REACT_APP_API_URL}/user/delete`, {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + Cookies.get('token'),
           },
           data: {
             user_id: person.id_user,
@@ -136,7 +135,6 @@ const handleSearchInputChange = (column) => (event) => {
             .get(`${process.env.REACT_APP_API_URL}/user/read`, {
               headers: {
                 'Content-Type': 'application/json',
-                Authorization: 'Bearer ' + Cookies.get('token'),
               },
             })
             .then((response) => {
@@ -160,7 +158,6 @@ const handleSearchInputChange = (column) => (event) => {
     .post(`${process.env.REACT_APP_API_URL}/user/force/logout/${user}`, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + Cookies.get('token'),
       },
     })
     .then((response) => {
@@ -169,7 +166,6 @@ const handleSearchInputChange = (column) => (event) => {
       .get(`${process.env.REACT_APP_API_URL}/user/read`, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + Cookies.get('token'),
         },
       })
       .then((response) => {
@@ -189,7 +185,6 @@ const handleSearchInputChange = (column) => (event) => {
       .get(`${process.env.REACT_APP_API_URL}/user/read`, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + Cookies.get('token'),
         },
       })
       .then((response) => {

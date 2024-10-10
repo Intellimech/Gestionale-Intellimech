@@ -15,10 +15,8 @@ const router = express.Router();
 
 // Endpoint per aggiornare il campo needApproval
 router.put('/update/:id', async (req, res) => {
-    const token = req.headers.authorization?.split(" ")[1];
-    if (!token) {
-        return res.status(401).json({ message: "Unauthorized" });
-    }
+  
+  const user = req.user;  // Assuming req.user is populated by the authentication middleware
 
   const { id } = req.params;
   const { needApproval } = req.body; // Si aspetta che il corpo della richiesta contenga needApproval

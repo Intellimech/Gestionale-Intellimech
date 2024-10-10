@@ -20,7 +20,7 @@ const Login = () => {
       window.location.href = '/app/home';
     }
     else {
-      // remove token from cookies and clear local storage
+      // qua non so come gestire l'assenza del token
       Cookies.remove('token');
       localStorage.clear();
     }

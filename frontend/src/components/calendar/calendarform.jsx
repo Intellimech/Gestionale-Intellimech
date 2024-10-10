@@ -7,7 +7,6 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-
 // const Locations = [
 //   { value: 'Ferie', label: 'Ferie' },
 //   { value: 'Permesso', label: 'Permesso' },
@@ -29,6 +28,7 @@ export default function Example({ date, setOpen }) {
   const [calendarData, setCalendarData] = useState([]);
   const [allCalendarData, setAllCalendarData] = useState([]);
 
+
   
  
 
@@ -47,17 +47,11 @@ export default function Example({ date, setOpen }) {
   };
 
   useEffect(() => {
-    const token = Cookies.get('token');
-    if (!token) {
-      console.error('No authorization token found');
-      return;
-    }
+    
 
     const fetchLocations = async () => {
         try {
-          const response = await axios.get(`${process.env.REACT_APP_API_URL}/locations/read`, {
-            headers: { authorization: `Bearer ${token}` },
-          });
+          const response = await axios.get(`${process.env.REACT_APP_API_URL}/locations/read`);
          
           if (Array.isArray(response.data.locations)) {
             const formattedLocations = response.data.locations.map(location => ({
@@ -77,12 +71,7 @@ export default function Example({ date, setOpen }) {
       
     const fetchUsers = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/user/read`, {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/user/read`, );
         setUsers(response.data.users);
         console.log('Fetched Users:', response.data.users); // Log users fetched
       } catch (error) {
@@ -94,7 +83,7 @@ export default function Example({ date, setOpen }) {
   const fetchAllCalendarData = async () => {
     try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/calendar/read/all`, {
-            headers: { Authorization: `Bearer ${Cookies.get('token')}` },
+            
             params: { date: startDate },
         });
         console.log('All Calendar Data Response:', response.data); // Log the entire response

@@ -3,7 +3,6 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import http from "http";
 import dotenv from "dotenv";
-import jwt from "jsonwebtoken";
 import fs from "fs";
 import path from "path";
 import bcrypt from "bcrypt";
@@ -20,6 +19,8 @@ const __dirname = path.resolve();
 router.post("/create/", (req, res) => {
     const { hours, date, job, task } = req.body;
     const Reporting = sequelize.models.Reporting;
+
+    const user = req.user;  // Assuming req.user is populated by the authentication middleware
 
     const dateformatted = new Date(date);
 

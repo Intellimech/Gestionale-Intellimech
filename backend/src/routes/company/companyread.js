@@ -18,6 +18,8 @@ const __dirname = path.resolve();
 
 router.get("/read/", (req, res) => {
     //get from the db all the companies
+    const user = req.user;  // Assuming req.user is populated by the authentication middleware
+
     const company = sequelize.models.Company;
     let result = [];
     try {

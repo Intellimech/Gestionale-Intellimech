@@ -62,7 +62,6 @@ export default function Layout() {
   }
 
   const logout = () => {
-    Cookies.remove('token')
     window.location.href = '/login'
   }
 

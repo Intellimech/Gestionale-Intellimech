@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import Select from 'react-tailwindcss-select';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import toast, { Toaster } from 'react-hot-toast';
+
 
 export default function CalendarUpdateForm({ open, setOpen, date, initialData }) {
   const [morningLocation, setMorningLocation] = useState(null);
@@ -17,11 +19,7 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
   const [afternoonStatus, setAfternoonStatus] = useState(null);
   
   useEffect(() => {
-    const token = Cookies.get('token');
-    if (!token) {
-      console.error('No authorization token found');
-      return;
-    }
+   
 
     if (initialData) {
       const dataP = initialData.split(','); 
@@ -48,11 +46,7 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
   }, [initialData]);
 
   useEffect(() => {
-    const token = Cookies.get('token');
-    if (!token) {
-      console.error('No authorization token found');
-      return;
-    }
+  
 
     const fetchUsers = async () => {
       try {
@@ -65,9 +59,7 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
 
     const fetchLocations = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/locations/read`, {
-          headers: { authorization: `Bearer ${token}` },
-        });
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/locations/read`, );
         if (Array.isArray(response.data.locations)) {
           const formattedLocations = response.data.locations.map(location => ({
             value: location.id_location,
@@ -98,7 +90,7 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
   const fetchCalendarData = async (selectedDate) => {
     try {
       const response = await axios.get(`${process.env.REACT_APP_API_URL}/calendar/read`, {
-        headers: { Authorization: `Bearer ${Cookies.get('token')}` },
+       
         params: { date: selectedDate },
       });
       setCalendarData(Array.isArray(response.data.calendars) ? response.data.calendars : []);
@@ -111,9 +103,7 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
   // New function to fetch all calendar data
   const fetchAllCalendarData = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/calendar/read/all`, {
-        headers: { Authorization: `Bearer ${Cookies.get('token')}` },
-      });
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/calendar/read/all`, );
       console.log('All Calendar Data Response:', response.data); // Log the entire response
       setAllCalendarData(response.data); // Set the state
     } catch (error) {
@@ -206,21 +196,27 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
       morning_status: morningStatus, // Aggiungi lo status mattutino
       afternoon_status: afternoonStatus // Aggiungi lo status pomeridiano
     };
+  
     console.log('Dati inviati al server:', requestData);
   
     if (morningLocationId !== initialData.morningLocation || afternoonLocationId !== initialData.afternoonLocation) {
-      axios.post('http://localhost:3000/calendar/update', requestData, {
-        headers: { Authorization: `Bearer ${Cookies.get('token')}` },
-      })
-      .then((response) => {
-        console.log("Risposta dal server:", response.data);
-      })
-      .catch((error) => {
-        console.error('Errore nell\'aggiornamento delle location:', error);
-      });
+      axios.post('http://localhost:3000/calendar/update', requestData)
+        .then((response) => {
+          console.log("Risposta dal server:", response.data);
+          // Mostra un messaggio di successo
+          toast.success('Aggiornamento riuscito!', {
+            position: toast.POSITION.TOP_RIGHT
+          });
+        })
+        .catch((error) => {
+          console.error('Errore nell\'aggiornamento delle location:', error);
+          // Mostra un messaggio di errore
+          toast.error('Errore nell\'aggiornamento delle location.', {
+            position: toast.POSITION.TOP_RIGHT
+          });
+        });
     }
   };
-  
 
   
   
@@ -229,6 +225,7 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
     <div>
       <form>
         <div className="space-y-8 p-2">
+          <Toaster/>
           <div className="border-b border-gray-900/10 pb-8">
             <h2 className="text-sm font-semibold leading-6 text-gray-900">Aggiorna Posizione</h2>
             <p className="mt-1 text-xs leading-5 text-gray-600">

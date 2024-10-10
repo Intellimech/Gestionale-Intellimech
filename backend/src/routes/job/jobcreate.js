@@ -33,14 +33,9 @@ router.post("/create/", async (req, res) => {
     const publickey = fs.readFileSync(__dirname + "/src/keys/public.key", "utf8");
 
     
-    const token = req.headers.authorization.split(" ")[1];
+    const user = req.user;  // Assuming req.user is populated by the authentication middleware
 
-    jwt.verify(token, publickey, async (err, decoded) => {
-        if (!SalesOrders) {
-            return res.status(400).json({
-                message: "Bad request, view documentation for more information",
-            });
-        }
+   
 
         try {
             const countjob = await Job.findAll({
@@ -58,7 +53,7 @@ router.post("/create/", async (req, res) => {
             const job = await Job.create({
                 name: name,
                 status: status,
-                createdBy: decoded.id
+                createdBy: user.id_user,
             });
 
             console.log(job);
@@ -92,12 +87,7 @@ router.post("/create/", async (req, res) => {
                 message: "Internal server error",
             });
         }
-    }).catch((err) => {
-        console.log(err);
-        return res.status(401).json({
-            message: "Unauthorized",
-        });
-    });
+   
 });
 
 export default router;

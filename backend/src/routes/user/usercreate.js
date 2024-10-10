@@ -3,7 +3,6 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import http from "http";
 import dotenv from "dotenv";
-import jwt from "jsonwebtoken";
 import fs from "fs";
 import path from "path";
 import bcrypt from "bcrypt";
@@ -32,6 +31,9 @@ const generatePassword = () => {
     return retVal;
 };
 router.post("/create", async (req, res) => {
+    
+    const user = req.user;  // Assuming req.user is populated by the authentication middleware
+
     const { 
         email, 
         name, 
@@ -60,13 +62,11 @@ router.post("/create", async (req, res) => {
         institute
     } = req.body;
 
-    const token = req.headers["authorization"]?.split(" ")[1] || "";
+    
   
     try {
         Logger("info", `Received request to create user: ${JSON.stringify(req.body)}`);
 
-        const decoded = jwt.verify(token, publicKey);
-        const username = email.split("@")[0];
 
      
         const User = sequelize.models.User;
@@ -97,8 +97,8 @@ router.post("/create", async (req, res) => {
             createdAt: new Date(),
             updatedAt: new Date(),
             deletedAt: null,
-            createdBy: decoded.id,
-            updatedBy: decoded.id,
+            createdBy: user.id_user,
+            updatedBy: user.id_user,
             deletedBy: null,
             group,
             subGroup,
@@ -135,10 +135,7 @@ router.post("/create", async (req, res) => {
         return res.status(200).json({ message: "User created" });
 
     } catch (err) {
-        if (err instanceof jwt.JsonWebTokenError) {
-            Logger("error", "Unauthorized: Invalid token");
-            return res.status(401).json({ message: "Unauthorized: Invalid token" });
-        } 
+        
         Logger("error", `Internal server error: ${err.message}`);
         return res.status(500).json({ message: "Internal server error" });
     }

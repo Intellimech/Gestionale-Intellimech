@@ -28,12 +28,7 @@ export default function HolidaysLeavesManagement({ permissions }) {
 
   const fetchCalendars = () => {
     axios
-      .get(`${process.env.REACT_APP_API_URL}/holidays-leaves/read/`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + Cookies.get('token'),
-        },
-      })
+      .get(`${process.env.REACT_APP_API_URL}/holidays-leaves/read/`, )
       .then((response) => {
         setCalendars(response.data.calendars);
       })
@@ -45,12 +40,7 @@ export default function HolidaysLeavesManagement({ permissions }) {
   const approveCalendar = (id) => {
     toast.promise(
       axios
-        .post(`${process.env.REACT_APP_API_URL}/holidays-leaves/approve/${id}`, {}, {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + Cookies.get('token'),
-          },
-        })
+        .post(`${process.env.REACT_APP_API_URL}/holidays-leaves/approve/${id}`, )
         .then((response) => {
           fetchCalendars();
         })
@@ -69,12 +59,7 @@ export default function HolidaysLeavesManagement({ permissions }) {
   const rejectCalendar = (id) => {
     toast.promise(
       axios
-        .post(`${process.env.REACT_APP_API_URL}/holidays-leaves/reject/${id}`, {}, {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + Cookies.get('token'),
-          },
-        })
+        .post(`${process.env.REACT_APP_API_URL}/holidays-leaves/reject/${id}`)
         .then((response) => {
           fetchCalendars();
         })

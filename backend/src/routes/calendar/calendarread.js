@@ -25,66 +25,41 @@ const publicKey = fs.readFileSync(publicKeyPath, "utf8");
 
 // Original read route to get all calendars for the logged-in user
 router.get("/read", async (req, res) => {
+
+    const user = req.user;  
+
     try {
-        // Get the token from the header
-        const token = req.headers.authorization?.split(" ")[1];
-        if (!token) {
-            return res.status(401).json({ message: "Unauthorized" });
-        }
+        // Get the Calendar model
+        const Calendar = sequelize.models.Calendar;
 
-        // Verify the token
-        jwt.verify(token, publicKey, async (err, decoded) => {
-            if (err) {
-                return res.status(401).json({ message: "Unauthorized" });
-            }
-
-            try {
-                // Get the Calendar model
-                const Calendar = sequelize.models.Calendar;
-
-                // Get all the calendars where the owner is the user
-                const calendars = await Calendar.findAll({
-                    where: {
-                        owner: decoded.id,
-                    },
-                });
-
-                // Change the format of the date to "2024-06-27"
-                const formattedCalendars = calendars.map(calendar => ({
-                    ...calendar.toJSON(),
-                    date: calendar.date.toISOString().split("T")[0],
-                }));
-
-                res.json({
-                    message: "Calendars found",
-                    calendars: formattedCalendars,
-                });
-            } catch (dbError) {
-                Logger("error","Database error:" + dbError);
-                res.status(500).json({ message: "Internal server error" });
-            }
+        // Get all the calendars where the owner is the user
+        const calendars = await Calendar.findAll({
+            where: {
+                owner: user.id_user,
+            },
         });
-    } catch (error) {
-        Logger("error","Server error:", error);
+
+        // Change the format of the date to "2024-06-27"
+        const formattedCalendars = calendars.map(calendar => ({
+            ...calendar.toJSON(),
+            date: calendar.date.toISOString().split("T")[0],
+        }));
+
+        res.json({
+            message: "Calendars found",
+            calendars: formattedCalendars,
+        });
+    } catch (dbError) {
+        Logger("error","Database error:" + dbError);
         res.status(500).json({ message: "Internal server error" });
     }
+      
 });
 
 // New route to read a specific calendar entry by date and period
 router.get("/read-by-date", async (req, res) => {
-    try {
-        // Get the token from the header
-        const token = req.headers.authorization?.split(" ")[1];
-        if (!token) {
-            return res.status(401).json({ message: "Unauthorized" });
-        }
-
-        // Verify the token
-        jwt.verify(token, publicKey, async (err, decoded) => {
-            if (err) {
-                return res.status(401).json({ message: "Unauthorized" });
-            }
-
+    
+    const user = req.user;  
             const { date, period } = req.query; // Get date and period from the query params
             if (!date || !period) {
                 return res.status(400).json({ message: "Date and period are required" });
@@ -121,11 +96,7 @@ router.get("/read-by-date", async (req, res) => {
                 Logger("error","Database error:", dbError);
                 res.status(500).json({ message: "Internal server error" });
             }
-        });
-    } catch (error) {
-        Logger("error","Server error:", error);
-        res.status(500).json({ message: "Internal server error" });
-    }
+        
 });
 
 router.get("/read/all", async (req, res) => {

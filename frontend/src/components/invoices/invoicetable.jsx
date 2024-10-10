@@ -24,9 +24,7 @@ export default function InvoiceTable({ invoicetype }) {
 
   const fetchInvoices = async () => {
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/invoice/read`, {
-        headers: { authorization: `Bearer ${Cookies.get('token')}` }
-      });
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/invoice/read`);
       const filteredInvoices = response.data.value
         .filter((invoice) => invoice.InvoiceType === invoicetype)
         .sort((a, b) => new Date(b.ReceptionDate) - new Date(a.ReceptionDate))

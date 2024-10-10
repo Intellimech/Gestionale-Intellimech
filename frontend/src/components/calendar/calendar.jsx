@@ -5,6 +5,8 @@ import { startOfMonth, endOfMonth, eachDayOfInterval, isToday, format, addDays, 
 import CalendarPopup from './calendarpopup';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import toast, { Toaster } from 'react-hot-toast';
+
 
 function generateCalendarArrayWithLocations(targetDate, calendars = [], locations = []) {
   const startDate = startOfMonth(targetDate);
@@ -139,11 +141,7 @@ export default function Calendar() {
 
     async function fetchCalendar() {
       try {
-        const response = await axios.get('http://localhost:3000/calendar/read', {
-          headers: {
-            Authorization: `Bearer ${Cookies.get('token')}`
-          }
-        });
+        const response = await axios.get('http://localhost:3000/calendar/read', );
         console.log('Calendar:', response.data.calendars);
         
         setCalendars(response.data.calendars);
@@ -156,11 +154,7 @@ export default function Calendar() {
     fetchLocations();
   }, []);
   const fetchLocations = async () => {
-    try {
-      const token = Cookies.get('token'); // Assicurati che 'token' venga estratto correttamente
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/locations/read`, {
-        headers: { authorization: `Bearer ${token}` },
-      });
+    try { const response = await axios.get(`${process.env.REACT_APP_API_URL}/locations/read`, );
   
       console.log('Risposta delle locations:', response.data); // Debugging: stampa la risposta dell'API
   
@@ -179,11 +173,7 @@ export default function Calendar() {
 
   const fetchCalendar = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/calendar/read', {
-        headers: {
-          Authorization: `Bearer ${Cookies.get('token')}`
-        }
-      });
+      const response = await axios.get('http://localhost:3000/calendar/read', );
       setCalendars(response.data.calendars);
     } catch (error) {
       console.error('Error fetching calendars:', error);
@@ -256,11 +246,7 @@ export default function Calendar() {
 // Inside Calendar.js
 const handleFormSubmit = async (newLocation) => {
   try {
-    await axios.post('http://localhost:3000/calendar/create-or-update', newLocation, {
-      headers: {
-        Authorization: `Bearer ${Cookies.get('token')}`,
-      },
-    });
+    await axios.post('http://localhost:3000/calendar/create-or-update', newLocation,);
 
     // Close the popup
     setAddLocationPopupOpen(false);
@@ -295,6 +281,7 @@ const handleFormSubmit = async (newLocation) => {
     />
 
     <div className="h-[80vh] flex flex-col"> {/* Adjusted height */}
+      <Toaster/>
       <header className="flex items-center justify-between border-b border-gray-200 px-0 lg:flex-none">
         <h1 className="text-sm font-semibold leading-5 text-gray-900">
           <time dateTime={format(currentMonth, 'yyyy-MM', { locale: it })}>

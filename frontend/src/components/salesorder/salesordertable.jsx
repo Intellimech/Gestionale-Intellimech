@@ -149,14 +149,12 @@ const sortedSaleOrder = filteredSaleOrder.sort((a, b) => {
     axios.post(`${process.env.REACT_APP_API_URL}/salesorder/accept/${salesorderId}`, {}, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + Cookies.get('token'),
       },
     })
       .then(() => {
         axios.get(`${process.env.REACT_APP_API_URL}/salesorder/read`, {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + Cookies.get('token'),
           },
         })
           .then((response) => {
@@ -179,14 +177,12 @@ const sortedSaleOrder = filteredSaleOrder.sort((a, b) => {
     axios.post(`${process.env.REACT_APP_API_URL}/salesorder/refuse/${salesorderId}`, {}, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + Cookies.get('token'),
       },
     })
       .then(() => {
         axios.get(`${process.env.REACT_APP_API_URL}/salesorder/read`, {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + Cookies.get('token'),
           },
         })
           .then((response) => {
@@ -205,14 +201,12 @@ const sortedSaleOrder = filteredSaleOrder.sort((a, b) => {
     axios.post(`${process.env.REACT_APP_API_URL}/salesorder/sent/${salesorderId}`, {}, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + Cookies.get('token'),
       },
     })
       .then(() => {
         axios.get(`${process.env.REACT_APP_API_URL}/salesorder/read`, {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + Cookies.get('token'),
           },
         })
           .then((response) => {
@@ -231,7 +225,6 @@ const sortedSaleOrder = filteredSaleOrder.sort((a, b) => {
     axios.get(`${process.env.REACT_APP_API_URL}/salesorder/read`, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + Cookies.get('token'),
       },
     })
       .then((response) => {

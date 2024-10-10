@@ -3,7 +3,6 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import http from "http";
 import dotenv from "dotenv";
-import jwt from "jsonwebtoken";
 import fs from "fs";
 import path from "path";
 import bcrypt from "bcrypt";
@@ -18,6 +17,8 @@ const __dirname = path.resolve();
 
 router.get("/read/", (req, res) => {
     // Get the role from the database
+    const user = req.user;  // Assuming req.user is populated by the authentication middleware
+
     const Subcategory = sequelize.models.Subcategory;
 
     Subcategory.findAll()
@@ -37,6 +38,8 @@ router.get("/read/", (req, res) => {
 
 router.get("/read/:category", (req, res) => {
     // Get the subcategory from the database where the category is the same as the one in the request
+    const user = req.user;  // Assuming req.user is populated by the authentication middleware
+
     const category = req.params.category;
     if (!category) {
         res.status(400).json({

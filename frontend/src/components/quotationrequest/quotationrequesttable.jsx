@@ -152,12 +152,7 @@ export default function Example({ permissions }) {
 
   function handleReloadQuotationRequests() {
     axios
-      .get(`${process.env.REACT_APP_API_URL}/quotationrequest/read`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + Cookies.get('token'),
-        },
-      })
+      .get(`${process.env.REACT_APP_API_URL}/quotationrequest/read`)
       .then((response) => {
         setQuotationRequest(response.data.quotationrequest);
       })
@@ -169,12 +164,7 @@ export default function Example({ permissions }) {
   const Accept = (quotationrequest) => {
     toast.promise(
         axios
-          .post(`${process.env.REACT_APP_API_URL}/quotationrequest/accept/${quotationrequest}`, {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: 'Bearer ' + Cookies.get('token'),
-            },
-          })
+          .post(`${process.env.REACT_APP_API_URL}/quotationrequest/accept/${quotationrequest}`)
           .then((response) => {
             console.log(response.data.quotationrequest);
             handleReloadQuotationRequests();
@@ -194,12 +184,7 @@ export default function Example({ permissions }) {
   const Refuse = (quotationrequest) => {
     toast.promise(
       axios
-        .post(`${process.env.REACT_APP_API_URL}/quotationrequest/refuse/${quotationrequest}`, {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + Cookies.get('token'),
-          },
-        })
+        .post(`${process.env.REACT_APP_API_URL}/quotationrequest/refuse/${quotationrequest}`)
         .then((response) => {
           console.log(response.data.quotationrequest);
           handleReloadQuotationRequests();
@@ -218,12 +203,7 @@ export default function Example({ permissions }) {
 
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_API_URL}/quotationrequest/read`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + Cookies.get('token'),
-        },
-      })
+      .get(`${process.env.REACT_APP_API_URL}/quotationrequest/read`)
       .then((response) => {
         setQuotationRequest(response.data.quotationrequest);
         console.log(response.data.quotationrequest);
@@ -231,9 +211,7 @@ export default function Example({ permissions }) {
       .catch((error) => {
         console.log(error);
       });
-      axios.get(`${process.env.REACT_APP_API_URL}/technicalarea/read`, { 
-        headers: { authorization: `Bearer ${Cookies.get('token')}` },
-      })
+      axios.get(`${process.env.REACT_APP_API_URL}/technicalarea/read`)
         .then((response) => {
           setTechnicalArea(response.data.technicalareas);
         })
@@ -242,9 +220,7 @@ export default function Example({ permissions }) {
         });
       
       axios
-        .get(`${process.env.REACT_APP_API_URL}/subcategory/read`, {
-          headers: { authorization: `Bearer ${Cookies.get('token')}` },
-        })
+        .get(`${process.env.REACT_APP_API_URL}/subcategory/read`)
         .then((response) => {
           console.log('Fetched subcategories:', response.data.subcategories);
           setSubcategories(response.data.subcategories || []);
@@ -254,9 +230,7 @@ export default function Example({ permissions }) {
         });
   
       axios
-        .get(`${process.env.REACT_APP_API_URL}/category/read`, {
-          headers: { authorization: `Bearer ${Cookies.get('token')}` },
-        })
+        .get(`${process.env.REACT_APP_API_URL}/category/read`, )
         .then((response) => {
           console.log('Fetched categories:', response.data.categories);
           setCategories(response.data.categories || []);

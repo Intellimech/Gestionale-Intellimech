@@ -31,9 +31,7 @@ export default function LocationTable() {
   useEffect(() => {
     const fetchLocations = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/locations/read`, {
-          headers: { authorization: `Bearer ${Cookies.get('token')}` },
-        });
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/locations/read`);
         setLocations(response.data.locations || []);
       } catch (error) {
         console.error('Error fetching locations:', error);
@@ -89,7 +87,7 @@ export default function LocationTable() {
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL}/locations/create`,
         newLocation,
-        { headers: { authorization: `Bearer ${Cookies.get('token')}` } }
+      
       );
       
       // Aggiunge la nuova location alla lista esistente
@@ -118,7 +116,7 @@ export default function LocationTable() {
       await axios.put(
         `${process.env.REACT_APP_API_URL}/locations/update/${id}`,
         { needApproval: updatedValue },
-        { headers: { authorization: `Bearer ${Cookies.get('token')}` } }
+     
       );
   
       // Aggiorna lo stato locale

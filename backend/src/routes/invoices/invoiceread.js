@@ -19,6 +19,8 @@ const __dirname = path.resolve();
 
 router.get("/read/", (req, res) => {
     //get from the db all the invoices
+    const user = req.user;  // Assuming req.user is populated by the authentication middleware
+
     const invoice = sequelize.models.Invoices;
     let result = [];
     try {
@@ -52,6 +54,9 @@ router.get("/read/", (req, res) => {
 router.get("/read/:id", (req, res) => {
     //get from the db the invoice with the id passed
     const invoice = sequelize.models.Invoices;
+    
+    const user = req.user;  // Assuming req.user is populated by the authentication middleware
+
     let result = [];
     try {
         invoice.findOne({
@@ -80,6 +85,8 @@ router.get("/read/:id", (req, res) => {
 // only the invoice of the specified year splitted by pages of 15 elements
 router.get("/read/date/:year", (req, res) => {
     //get from the db the invoice of the specified year
+    const user = req.user;  // Assuming req.user is populated by the authentication middleware
+
     const invoice = sequelize.models.Invoices;
     let result = [];
     try {

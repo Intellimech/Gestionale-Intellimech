@@ -14,14 +14,9 @@ const Calendario = () => {
   const scrollRef = useRef(null);
 
   const fetchUsers = async () => {
-    const token = Cookies.get('token'); // Ottieni il token
+   
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/user/read`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/user/read`, );
       setUsers(response.data.users);
       console.log('Fetched Users:', response.data.users); // Log degli utenti recuperati
     } catch (error) {
@@ -31,11 +26,9 @@ const Calendario = () => {
 
   // Nuova funzione per recuperare i dati del calendario
   const fetchAllCalendarData = async () => {
-    const token = Cookies.get('token'); // Ottieni il token
+   
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/calendar/read/all`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/calendar/read/all`, );
       console.log('All Calendar Data Response:', response.data); // Log dell'intera risposta
       setCalendarData(response.data); // Imposta lo stato
     } catch (error) {

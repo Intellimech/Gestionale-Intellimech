@@ -55,12 +55,7 @@ export default function Example({ permissions }) {
 
   const fetchOrders = () => {
     axios
-      .get(`${process.env.REACT_APP_API_URL}/purchase/read`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + Cookies.get('token'),
-        },
-      })
+      .get(`${process.env.REACT_APP_API_URL}/purchase/read`, )
       .then((response) => {
         setPurchaseOrder(Array.isArray(response.data.purchases) ? response.data.purchases : []);
         setItems(Array.isArray(response.data.purchases) ? response.data.purchases : []);

@@ -24,7 +24,7 @@ export default function UserCreateForm() {
   const handleTeamChange = (value) => setSelectedTeam(value);
 
   useEffect(() => {
-    const token = Cookies.get('token');
+    
     const fetchData = async () => {
       try {
         const [
@@ -32,9 +32,9 @@ export default function UserCreateForm() {
           technicalAreaRes,
           usersRes,
         ] = await Promise.all([
-          axios.get(`${process.env.REACT_APP_API_URL}/quotationrequest/read/free`, { headers: { authorization: `Bearer ${token}` } }),
-          axios.get(`${process.env.REACT_APP_API_URL}/technicalarea/read`, { headers: { authorization: `Bearer ${token}` } }),
-          axios.get(`${process.env.REACT_APP_API_URL}/user/read`, { headers: { authorization: `Bearer ${token}` } }),
+          axios.get(`${process.env.REACT_APP_API_URL}/quotationrequest/read/free`,),
+          axios.get(`${process.env.REACT_APP_API_URL}/technicalarea/read`, ),
+          axios.get(`${process.env.REACT_APP_API_URL}/user/read`, ),
         ]);
 
         setQuotationRequest(quotationRequestRes.data.quotationrequest);
@@ -54,7 +54,7 @@ export default function UserCreateForm() {
   // Handles offer creation
   const createOffer = async (event) => {
     event.preventDefault();
-    const token = Cookies.get('token');
+    
     const form = document.forms.createoffer;
     const formData = new FormData(form);
     const jsonObject = Object.fromEntries(formData.entries());
@@ -65,7 +65,7 @@ export default function UserCreateForm() {
     console.log('Create offer payload:', jsonObject);
     
     toast.promise(
-      axios.post(`${process.env.REACT_APP_API_URL}/offer/create`, jsonObject, { headers: { authorization: `Bearer ${token}` } }),
+      axios.post(`${process.env.REACT_APP_API_URL}/offer/create`, jsonObject,),
       {
         loading: 'Creazione in corso...',
         success: 'Offerta creata con successo!',

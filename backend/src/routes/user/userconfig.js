@@ -29,13 +29,7 @@ const generatePassword = () => {
 };
 
 const logout = () => {
-  const token = Cookies.get('token');
-  if (!token) {
-    console.log("No token");
-  } else {
-    const headers = {
-      Authorization: `Bearer ${token}`
-    };
+ 
     axios.post(`${process.env.REACT_APP_API_URL}/auth/logout`, {}, { headers: headers })
       .then((response) => {
         Cookies.remove('token');
@@ -47,7 +41,7 @@ const logout = () => {
         localStorage.clear();
         window.location.href = '/';
       });
-  }
+  
 };
 
 

@@ -24,21 +24,12 @@ const publicKeyPath = path.join(__dirname, "src/keys/public.key");
 const publicKey = fs.readFileSync(publicKeyPath, "utf8");
 
 router.post("/create/", async (req, res) => {
-    try {
-        // Get the token from the header
-        const token = req.headers.authorization?.split(" ")[1];
+   
+        const user = req.user;  // Assuming req.user is populated by the authentication middleware
         const { startDate, endDate, part, location, status } = req.body; // part è ora una stringa singola
 
-        if (!token) {
-            return res.status(401).json({ message: "Unauthorized" });
-        }
-
-        // Verify the token
-        jwt.verify(token, publicKey, async (err, decoded) => {
-            if (err) {
-                return res.status(401).json({ message: "Unauthorized" });
-            }
-
+      
+     
             try {
                 // Get the Calendar model
                 const Calendar = sequelize.models.Calendar;
@@ -66,8 +57,8 @@ router.post("/create/", async (req, res) => {
                             period: part,
                             location: location,
                             status: locationObj.needApproval ? "In Attesa di Approvazione" : "Approvato",
-                            owner: decoded.id,
-                            createdBy: decoded.id,
+                            owner: user.id_user,
+                            createdBy:user.id_user,
                         });
                         calendarEntries.push(entry);
                     } else {
@@ -78,8 +69,8 @@ router.post("/create/", async (req, res) => {
                                 period: part,  // single 'part' per request
                                 location: location,
                                 status: location == '1' || location == '2' ? "In Attesa di Approvazione" : "Approvato",
-                                owner: decoded.id,
-                                createdBy: decoded.id,
+                                owner: user.id_user,
+                                createdBy:user.id_user,
                             });
                             calendarEntries.push(entry);
                         }
@@ -94,11 +85,8 @@ router.post("/create/", async (req, res) => {
                 Logger("error","Database error:", dbError);
                 res.status(500).json({ message: "Internal server error" });
             }
-        });
-    } catch (error) {
-        Logger("error","Server error:", error);
-        res.status(500).json({ message: "Internal server error" });
-    }
+            
+      
 });
 
 export default router;

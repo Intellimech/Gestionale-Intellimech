@@ -40,7 +40,7 @@ import TechnicalAreaPage from './components/registry/technicalareapage';
 import HolidaysLeaves from './components/calendar/holidaysleaves.jsx';
 import JobInfo from './components/job/jobdetail.jsx'
 import ForgotPasswordPage from './components/system/forgotpassword';
-
+import OfferInfo from './components/offer/offerinformation.jsx';
 import SettingsPage from './components/system/settings.jsx'
 
 const Logo = './assets/intellimech.svg'
@@ -66,8 +66,11 @@ const App = () => {
             <Route path="calendar" element={<PrivateRoute element={<Calendar />} />} />
             <Route path="generalcalendar" element={<PrivateRoute element={<GeneralCalendar />} />} />
             <Route path="quotation-request" element={<PrivateRoute element={<Quotationrequesttable />} />} />
+            
             <Route path="offer" element={<PrivateRoute element={<Offer />} />} />
+            <Route path="offer/:id_offer" element={<PrivateRoute element={<OfferInfo />} />} />
             <Route path="sales-order" element={<PrivateRoute element={<Salesorder />} />} />
+            {/* <Route path="sales-order/:id_salesorder" element={<PrivateRoute element={<SalesorderInfo />} />} /> */}
             <Route path="purchase">
               <Route index element={<PrivateRoute element={<Purchase />} />} />
               <Route path=":id_purchase" element={<PrivateRoute element={<PurchaseInfo />} />} />

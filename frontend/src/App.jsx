@@ -38,7 +38,7 @@ import CategoriesPage from './components/registry/categoriespage';
 import SubcategoriesPage from './components/registry/subcategoriespage';
 import TechnicalAreaPage from './components/registry/technicalareapage';
 import HolidaysLeaves from './components/calendar/holidaysleaves.jsx';
-
+import JobInfo from './components/job/jobdetail.jsx'
 import ForgotPasswordPage from './components/system/forgotpassword';
 
 import SettingsPage from './components/system/settings.jsx'
@@ -70,10 +70,11 @@ const App = () => {
             <Route path="sales-order" element={<PrivateRoute element={<Salesorder />} />} />
             <Route path="purchase">
               <Route index element={<PrivateRoute element={<Purchase />} />} />
-              <Route path=":id" element={<PrivateRoute element={<PurchaseInfo />} />} />
+              <Route path=":id_purchase" element={<PrivateRoute element={<PurchaseInfo />} />} />
             </Route>
             <Route path="profile" element={<PrivateRoute element={<Profile />} />} />
             <Route path="job" element={<PrivateRoute element={<Job />} />} />
+            <Route path="job/:id_job" element={<PrivateRoute element={<JobInfo />} />} />
             <Route path="holidays-leaves" element={<PrivateRoute element={<HolidaysLeaves />} />} />
             <Route path="invoices">
               <Route path="passive" element={<PrivateRoute element={<Invoicetable invoicetype={"PassivaSdI"}/>} />} />

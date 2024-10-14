@@ -105,6 +105,10 @@ export default function Example({ permissions }) {
 
 
   
+  const handlectrlClick = (offer) => {
+    window.open(`/app/offer/${offer.id_offer}`, '_blank'); // Apre in una nuova scheda
+    return <OfferInformation offer = {offer}/>;
+  };
   
   const filteredSaleOrder = offers.filter((item) => {
     return (
@@ -611,10 +615,15 @@ export default function Example({ permissions }) {
                         className={selectedOffer.includes(offer) ? 'bg-gray-50' : undefined}
                       >
                         <td
-                          onClick={() => {
-                            setShowInfo(true);
-                            setSelectedOfferInfo(offer);
-                            console.log(offer);
+                          onClick={(event) => {
+                            // ctrl + click per aprire un nuovo tab
+                            if (event.ctrlKey) {
+                              handlectrlClick(offer);
+                            } else {
+                              setShowInfo(true);
+                              setSelectedOfferInfo(offer);
+                              console.log(offer);// Mostra il form nella stessa finestra
+                            }
                           }}
                           className={classNames(
                             'whitespace-nowrap px-3 py-4 pr-3 text-sm font-medium',

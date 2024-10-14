@@ -40,6 +40,13 @@ export default function Example({ permissions }) {
     createdByUser: ''
   });
 
+  const handlectrlClick = (purchase) => {
+    window.open(`/app/purchase/${purchase.id_purchase}`, '_blank'); // Apre in una nuova scheda
+    
+    return <PurchaseInfo purchase={purchase} />;
+  };
+
+
   useEffect(() => {
     const isIndeterminate = selectedItems.length > 0 && selectedItems.length < items.length;
     setChecked(selectedItems.length === items.length);
@@ -420,15 +427,15 @@ export default function Example({ permissions }) {
                   {sortedPurchase.map((item) => (
                     <tr key={item.id}>
                       <td
-                        onClick={(event) => {
-                          //ctrl + click per aprire un nuovo tab
-                          if (event.ctrlKey) {
-                            window.open(`/app/purchase/${item.id_purchase}`);
-                          } else {
-                            setShowInfo(true);
-                            setSelectedItemInfo(item);
-                          }
-                        }}
+                     onClick={(event) => {
+                      // ctrl + click per aprire un nuovo tab
+                      if (event.ctrlKey) {
+                        handlectrlClick(item);
+                      } else {
+                        setShowInfo(true);
+                        setSelectedItemInfo(item); // Mostra il form nella stessa finestra
+                      }}  
+                    }
                         className={classNames(
                           'whitespace-nowrap px-3 py-4 pr-3 text-sm font-medium',
                           selectedItems.includes(item) ? 'text-red-600' : 'text-gray-700'

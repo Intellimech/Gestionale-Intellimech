@@ -30,8 +30,7 @@ import Company from './components/registry/companytable';
 import Profile from './components/registry/userinfo.jsx';
 import Permissions from './components/registry/permissionstable.jsx'
 import Purchase from  './components/purchaseorder/purchase.jsx';
-import PurchaseInfo from './components/purchaseorder/purchaseinfo.jsx';
-
+import PurchaseDetail from './components/purchaseorder/purchasedetail.jsx';
 import UsersTable from './components/registry/userstable';
 import EmployeesConsultant from './components/registry/peopletable';
 import CategoriesPage from './components/registry/categoriespage';
@@ -40,8 +39,9 @@ import TechnicalAreaPage from './components/registry/technicalareapage';
 import HolidaysLeaves from './components/calendar/holidaysleaves.jsx';
 import JobInfo from './components/job/jobdetail.jsx'
 import ForgotPasswordPage from './components/system/forgotpassword';
-import OfferInfo from './components/offer/offerinformation.jsx';
-import SettingsPage from './components/system/settings.jsx'
+import OfferInfo from './components/offer/offerdetail.jsx';
+import SettingsPage from './components/system/settings.jsx';
+
 
 const Logo = './assets/intellimech.svg'
 
@@ -71,10 +71,9 @@ const App = () => {
             <Route path="offer/:id_offer" element={<PrivateRoute element={<OfferInfo />} />} />
             <Route path="sales-order" element={<PrivateRoute element={<Salesorder />} />} />
             {/* <Route path="sales-order/:id_salesorder" element={<PrivateRoute element={<SalesorderInfo />} />} /> */}
-            <Route path="purchase">
-              <Route index element={<PrivateRoute element={<Purchase />} />} />
-              <Route path=":id_purchase" element={<PrivateRoute element={<PurchaseInfo />} />} />
-            </Route>
+           
+            <Route path="purchase" element={<PrivateRoute element={<Purchase />} />} />
+            <Route path="purchase/:id_purchase" element={<PrivateRoute element={<PurchaseDetail />} />} />
             <Route path="profile" element={<PrivateRoute element={<Profile />} />} />
             <Route path="job" element={<PrivateRoute element={<Job />} />} />
             <Route path="job/:id_job" element={<PrivateRoute element={<JobInfo />} />} />

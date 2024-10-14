@@ -16,6 +16,7 @@ export default function HolidayCreateForm() {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [isForAllUsers, setIsForAllUsers] = useState(false);
+  const [allCalendarData, setAllCalendarData] = useState([]);
 
   const handleMorningLocationChange = (selected) => {
     setMorningLocation(selected);
@@ -66,9 +67,21 @@ export default function HolidayCreateForm() {
       }
     };
 
+    const fetchAllCalendarData = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/calendar/read/all`, {
+          params: { date: startDate },
+        });
+        setAllCalendarData(response.data);
+      } catch (error) {
+        console.error('Error fetching all calendar data:', error);
+      }
+    };
+
     fetchLocations();
     fetchUsers();
-  }, []);
+    fetchAllCalendarData();
+  }, [startDate]);
 
   const notifySuccess = () => toast.success('Inserimento avvenuto con successo!');
   const notifyError = () => toast.error('Errore nell\'inserimento!');
@@ -76,58 +89,44 @@ export default function HolidayCreateForm() {
   const handleFormSubmit = (e) => {
     e.preventDefault();
 
-    if (!startDate || !selectedUser || !morningLocation || !afternoonLocation) {
-      notifyError('Tutti i campi sono obbligatori!');
-      return;
-    }
-    const handleFormSubmit = (e) => {
-      e.preventDefault();
-    
-      // Controllo dei campi obbligatori
-      if (!startDate || !morningLocation || !afternoonLocation) {
-        notifyError('Tutti i campi sono obbligatori!');
-        return;
-      }
-    
-      // Verifica che l'utente selezionato non sia null
-      if (!selectedUser) {
-        notifyError('Seleziona un utente!');
-        return;
-      }
-    
-      const createEntry = (part, location) => {
-        const payload = {
-          startDate: startDate.toISOString().split('T')[0], // solo la parte della data
-          endDate: endDate ? endDate.toISOString().split('T')[0] : null,
-          period: part,
-          location: location.value,
-          owner: selectedUser.value,  // Assicurati che selectedUser sia corretto
-          status: 'Approvato'
-        };
-    
-        console.log('Request Payload:', payload);
-    
-        return axios.post(`${process.env.REACT_APP_API_URL}/calendar/create`, payload);
-      };
-    
-      const submitEntries = () => {
+    const createEntry = (part, location) => {
+        // Crea una copia della data e imposta l'ora a mezzanotte
+        const start = new Date(startDate);
+        start.setHours(0, 0, 0, 0);
+
+        const end = endDate ? new Date(endDate) : null;
+        if (end) {
+            end.setHours(0, 0, 0, 0); // Imposta anche l'endDate a mezzanotte
+        }
+
+        return axios.post('http://localhost:3000/calendar/generalcreate', {
+            startDate: start.toISOString().split('T')[0],
+            endDate: end ? end.toISOString().split('T')[0] : null,
+            part: part,
+            location: location.value,
+            owner: selectedUser ? selectedUser.value : null,
+            status: "Approvato",
+        });
+    };
+
+    const submitEntries = () => {
         const morningPromise = createEntry('morning', morningLocation);
         const afternoonPromise = createEntry('afternoon', afternoonLocation);
-    
+
         Promise.all([morningPromise, afternoonPromise])
-          .then((responses) => {
-            console.log('Entries created:', responses);
-            notifySuccess();  // Notifica di successo
-          })
-          .catch((error) => {
-            console.error('Error creating entries:', error);
-            notifyError();  // Notifica di errore
-          });
-      };
-    
-      submitEntries();
+            .then((responses) => {
+                notifySuccess();
+            })
+            .catch((error) => {
+                console.error('Error creating entries:', error);
+                notifyError();
+            });
     };
-  }
+
+    submitEntries();
+};
+
+
   return (
     <form onSubmit={handleFormSubmit}>
       <div className="space-y-12">
@@ -136,7 +135,7 @@ export default function HolidayCreateForm() {
           <p className="mt-1 text-sm leading-6 text-gray-600">
             Aggiungendo una posizione, verrà visualizzata nel calendario.
           </p>
-  
+
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div className="sm:col-span-4">
               <label htmlFor="user" className="block text-sm font-medium leading-6 text-gray-900">
@@ -149,11 +148,11 @@ export default function HolidayCreateForm() {
                   options={users}
                   primaryColor={'[#7fb7d4]'}
                   placeholder="Seleziona un utente"
-                  isDisabled={isForAllUsers} // Disable user selection if for all users
+                  isDisabled={isForAllUsers}
                 />
               </div>
             </div>
-  
+
             <div className="sm:col-span-4">
               <label htmlFor="dateRange" className="block text-sm font-medium leading-6 text-gray-900">
                 Data
@@ -172,7 +171,7 @@ export default function HolidayCreateForm() {
                 />
               </div>
             </div>
-  
+
             <div className="sm:col-span-4">
               <label htmlFor="morningLocation" className="block text-sm font-medium leading-6 text-gray-900">
                 Mattina
@@ -187,7 +186,7 @@ export default function HolidayCreateForm() {
                 />
               </div>
             </div>
-  
+
             <div className="sm:col-span-4">
               <label htmlFor="afternoonLocation" className="block text-sm font-medium leading-6 text-gray-900">
                 Pomeriggio
@@ -202,7 +201,7 @@ export default function HolidayCreateForm() {
                 />
               </div>
             </div>
-  
+
             <div className="sm:col-span-4">
               <label htmlFor="isForAllUsers" className="block text-sm font-medium leading-6 text-gray-900">
                 Per tutti gli utenti
@@ -220,7 +219,7 @@ export default function HolidayCreateForm() {
           </div>
         </div>
       </div>
-  
+
       <div className="mt-6 flex items-center justify-end gap-x-6">
         <button
           type="button"
@@ -236,7 +235,7 @@ export default function HolidayCreateForm() {
           Salva
         </button>
       </div>
-  
+
       <ToastContainer />
     </form>
   );

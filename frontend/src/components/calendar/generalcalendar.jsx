@@ -154,8 +154,6 @@ const Calendario = () => {
       };
     }
   }, []);
-  
-
   const tableData = useMemo(() => {
     return users.map(user => {
       const userData = {
@@ -172,34 +170,45 @@ const Calendario = () => {
           return e.owner === user.id_user && entryDate === formattedDate;
         });
   
+        // Default values
         let totalValue = 8.0;
         let morningLocation = '';
         let afternoonLocation = '';
   
+        // If there are entries for that day
         if (entries.length > 0) {
           const locations = entries.map(entry => entry.location);
-          const zeroValueLocations = ["Permesso", "Malattia", "Ferie", "Trasferta", "Non Lavorativo"];
+          const zeroValueLocations = [2, 3, 1, 5, 8];
+  
           const allZeroValueLocations = locations.every(location => zeroValueLocations.includes(location));
           const hasZeroValueLocation = locations.some(location => zeroValueLocations.includes(location));
   
           if (allZeroValueLocations) {
-            totalValue = 0.0;
+            totalValue = 0.0; // All locations are non-work related, set totalValue to 0
           } else if (hasZeroValueLocation) {
-            totalValue = 4.0;
+            totalValue = 4.0; // Some non-work locations exist, set totalValue to 4
+          } else {
+            totalValue = 8.0; // Default work value
           }
   
-          morningLocation = locations[0]; // Assuming the first location is the morning location
-          afternoonLocation = locations[1] || ''; // Assuming the second location is the afternoon location, if it exists
-          console.log("Morning "+ morningLocation);
-          console.log("Afternoon "+ afternoonLocation);
+          morningLocation = locations[0] || ''; // First location for morning
+          afternoonLocation = locations[1] || ''; // Second location for afternoon
+  
+          // Debugging output to ensure logic works as intended
+          console.log(`User: ${user.id_user}, Date: ${formattedDate}`);
+          console.log(`Locations: ${locations}`);
+          console.log(`Total Value: ${totalValue}, Morning: ${morningLocation}, Afternoon: ${afternoonLocation}`);
         }
   
+        // Assign to the current day
         userData[`day${i}`] = { value: totalValue, morningLocation, afternoonLocation };
       }
   
       return userData;
     });
   }, [users, days, calendarData]);
+  
+
   
 
   function exportData() {
@@ -332,55 +341,65 @@ const Calendario = () => {
             </thead>
             <tbody {...getTableBodyProps()} className="bg-white divide-y divide-gray-300">
             {rows.map(row => {
-                prepareRow(row);
-                return (
-                  <tr {...row.getRowProps()} className="hover:bg-gray-100">
-                     {row.cells.map((cell, index) => {
-                      const columnId = cell.column.id;
-                      const dayColumn = columns[index + 2]; // Indice delle colonne giorni (dopo Nome e Cognome)
-                      const isWeekend = dayColumn && dayColumn.isWeekend;
-                      const isHoliday = dayColumn && dayColumn.isHoliday; // Verifica se è una festività
-                      const { value, morningLocation, afternoonLocation } = cell.value || {};
+              prepareRow(row);
+              return (
+                <tr {...row.getRowProps()} className="hover:bg-gray-100">
+                  {row.cells.map((cell, index) => {
+                    const columnId = cell.column.id;
+                    const dayColumn = columns[index + 2]; // Indice delle colonne giorni (dopo Nome e Cognome)
+                    const isWeekend = dayColumn && dayColumn.isWeekend;
+                    const isHoliday = dayColumn && dayColumn.isHoliday;
+                    const { value, morningLocation, afternoonLocation } = cell.value || {};
 
-                      const zeroValueLocations = ["Permesso", "Malattia", "Ferie", "Trasferta", "Non Lavorativo"];
-                      const isZeroValueLocation = zeroValueLocations.includes(morningLocation) || zeroValueLocations.includes(afternoonLocation);
+                    const zeroValueLocations = [2, 3, 1, 5, 8];
+                    const isZeroValueLocation = zeroValueLocations.includes(morningLocation) || zeroValueLocations.includes(afternoonLocation);
 
-                      const cellClass = isZeroValueLocation ? (
-                        morningLocation === 'Ufficio' ? ''
-                        : morningLocation === 'Trasferta' ? 'bg-[#FFFF00] text-gray-900'
-                        : morningLocation === 'Malattia' ? 'bg-[#FF9966] text-gray-900'
-                        : morningLocation === 'Permesso' ? 'bg-[#8ED973] text-gray-900'
-                        : morningLocation === 'Ferie' ? 'bg-[#8ED973] text-gray-900'
-                        : morningLocation === 'Non Lavorativo' ? 'bg-[#00D5D0] text-gray-900'
-                        : afternoonLocation === 'Trasferta' ? 'bg-[#FFFF00] text-gray-900'
-                        : afternoonLocation === 'Malattia' ? 'bg-[#FF9966] text-gray-900'
-                        : afternoonLocation === 'Permesso' ? 'bg-[#8ED973] text-gray-900'
-                        : afternoonLocation === 'Ferie' ? 'bg-[#8ED973] text-gray-900'
-                        : afternoonLocation === 'Non Lavorativo' ? 'bg-[#00D5D0] text-gray-900'
-                        : ''
-                      ) : '';
+                    const cellClass = isZeroValueLocation ? (
+                      morningLocation === 4 ? ''
+                      : morningLocation === 5 ? 'bg-[#FFFF00] text-gray-900'
+                      : morningLocation === 3 ? 'bg-[#FF9966] text-gray-900'
+                      : morningLocation === 2 ? 'bg-[#8ED973] text-gray-900'
+                      : morningLocation === 1 ? 'bg-[#8ED973] text-gray-900'
+                      : morningLocation === 8 ? 'bg-[#00D5D0] text-gray-900'
+                      : afternoonLocation === 5 ? 'bg-[#FFFF00] text-gray-900'
+                      : afternoonLocation === 3 ? 'bg-[#FF9966] text-gray-900'
+                      : afternoonLocation === 2 ? 'bg-[#8ED973] text-gray-900'
+                      : afternoonLocation === 1 ? 'bg-[#8ED973] text-gray-900'
+                      : afternoonLocation === 8 ? 'bg-[#00D5D0] text-gray-900'
+                      : ''
+                    ) : '';
 
-                      return (
-                        <td
-                          {...cell.getCellProps()}
-                          className={`px-2 py-1 border-b text-gray-600 border border-gray-300 ${isWeekend ? 'bg-gray-200' : ''} ${isHoliday ? 'bg-[#FF3399]' : ''} ${cellClass}`} // Aggiungi la classe per le festività
-                          style={{
-                            fontSize: '12px',
-                            padding: '5px',
-                            textAlign: 'right',
-                            backgroundColor: cell.column.sticky ? 'white' : '',
-                            position: cell.column.sticky ? 'sticky' : 'static',
-                            left: cell.column.sticky ? 0 : 'auto',
-                            zIndex: cell.column.sticky ? 1 : 'auto',
-                          }}
-                        >
-                          {columnId === 'Nome' || columnId === 'Cognome' ? cell.value : (isWeekend ? '' : (value !== undefined ? value : '8.0'))}
-                        </td>
-                      );
-                    })}
-                    </tr>
-                  );
-                })}
+                    return (
+                      <td
+                      {...cell.getCellProps()}
+                      className={`px-2 py-1 border-b text-gray-600 border border-gray-300 ${isWeekend ? 'bg-gray-200' : ''} ${isHoliday ? 'bg-[#FF3399]' : ''} ${cellClass}`}
+                      style={{
+                        fontSize: '12px',
+                        padding: '5px',
+                        textAlign: 'right',
+                        backgroundColor: cell.column.sticky ? 'white' : '',
+                        position: cell.column.sticky ? 'sticky' : 'static',
+                        left: cell.column.sticky ? 0 : 'auto',
+                        zIndex: cell.column.sticky ? 1 : 'auto',
+                      }}
+                    >
+                      {columnId === 'Nome' || columnId === 'Cognome' 
+                        ? cell.value 
+                        : (isWeekend 
+                          ? '' 
+                          : (cell.value && cell.value.value !== undefined 
+                            ? cell.value.value // Assicurati che cell.value esista
+                            : ''))} {/* Mostra vuoto se il valore non è definito */}
+                    </td>
+                    
+                    
+                    );
+                  })}
+                  </tr>
+                );
+              })};
+
+                
             </tbody>
           </table>
         </div>

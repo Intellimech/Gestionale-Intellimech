@@ -59,4 +59,51 @@ router.get("/read/", (req, res) => {
         });
 });
 
+// New route to get a specific sales order by ID
+router.get("/read/:id", (req, res) => {
+    const { id } = req.params;  // Extracting ID from the route parameters
+
+    const SalesOrder = sequelize.models.SalesOrder;
+
+    SalesOrder.findOne({
+        where: { id_salesorder: id },  // Searching for the sales order by ID
+        attributes: ["id_salesorder", "name", "status"],
+        include: [
+            {
+                model: sequelize.models.Offer,
+                attributes: ["id_offer", "name", "status", "description"],
+                include: [
+                    {
+                        model: sequelize.models.QuotationRequest,
+                        attributes: ["id_quotationrequest", "name", "status", "description"],
+                        include: [
+                            {
+                                model: sequelize.models.Company,
+                                attributes: ["id_company", "name"],
+                            },
+                        ],
+                    },
+                ],
+            },
+            { model: sequelize.models.User, as: 'createdByUser', attributes: ['id_user', 'name', 'surname'] },
+            { model: sequelize.models.User, as: 'updatedByUser', attributes: ['id_user', 'name', 'surname'] },
+            { model: sequelize.models.User, as: 'deletedByUser', attributes: ['id_user', 'name', 'surname'] }
+        ],
+    })
+        .then((salesorder) => {
+            if (!salesorder) {
+                return res.status(404).json({ message: "Sales order not found" });
+            }
+            res.status(200).json({
+                salesorder: salesorder,
+            });
+        })
+        .catch((err) => {
+            console.log(err);
+            res.status(500).json({
+                message: "Internal server error",
+            });
+        });
+});
+
 export default router;

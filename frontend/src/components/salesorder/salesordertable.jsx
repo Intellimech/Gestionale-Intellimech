@@ -4,6 +4,7 @@ import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/20/solid';
 import { XMarkIcon, CheckIcon, PaperAirplaneIcon, EyeIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import SalesOrderInfo from './salesorderinfo';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -13,9 +14,11 @@ export default function Example({ permissions }) {
   const checkbox = useRef();
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
-  const [selectedOffer, setSelectedOffer] = useState([]);
+  const [selectedOffer, setSelectedOffer] = useState({});
   const [salesorders, setSalesOrder] = useState([]);
+  const [selectedSaleOrder, setSelectedSaleOrder] = useState([]);
   const [open, setOpen] = useState(false);
+  const [id, setId] = useState(false);
   const [user, setUser] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -24,6 +27,7 @@ export default function Example({ permissions }) {
   const [sortDirection, setSortDirection] = useState('asc');
   const [filterType, setFilterType] = useState('name');
 
+  const [showInfo, setShowInfo] = useState(false);
   const statusOptions = ['Da fatturare', 'Fatturata', 'Nessuna'];
 
   useEffect(() => {
@@ -93,6 +97,9 @@ export default function Example({ permissions }) {
 });
 
     
+  const handlectrlClick = (salesorder) => {
+    window.open(`/app/salesorder/${salesorder.id_salesorder}`, '_blank'); // Apre in una nuova scheda
+  };
   
   
 const sortedSaleOrder = filteredSaleOrder.sort((a, b) => {
@@ -235,9 +242,68 @@ const sortedSaleOrder = filteredSaleOrder.sort((a, b) => {
         console.log(error);
       });
   }, []);
+  function handleClick(salesorder) {
+    // Access the ID directly from the salesorder object
+    let id = salesorder.id_salesorder;
+
+    // Log the ID for debugging purposes
+    console.log("ID Sales Order: " + id); // Log the ID
+
+    // Set the ID in state (this will be just the number, e.g., 1)
+    setSelectedSaleOrder(id);
+    setId(id);
+
+    // Show additional information
+    setShowInfo(true);
+}
 
   return (
     <div className="px-4 sm:px-6 lg:px-8">
+       <Transition.Root show={showInfo} as={Fragment}>
+        <Dialog className="relative z-50" onClose={setShowInfo}>
+          <div className="fixed inset-0" />
+
+          <div className="fixed inset-0 overflow-hidden">
+            <div className="absolute inset-0 overflow-hidden">
+              <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-16">
+                <Transition.Child
+                  as={Fragment}
+                  enter="transform transition ease-in-out duration-500 sm:duration-700"
+                  enterFrom="translate-x-full"
+                  enterTo="translate-x-0"
+                  leave="transform transition ease-in-out duration-500 sm:duration-700"
+                  leaveFrom="translate-x-0"
+                  leaveTo="translate-x-full"
+                >
+                  <Dialog.Panel className="pointer-events-auto w-screen max-w-7xl">
+                    <div className="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
+                      <div className="px-4 sm:px-6">
+                        <div className="flex items-start justify-between">
+                          <Dialog.Title className="text-base font-semibold leading-6 text-gray-900">
+                            Informazioni Ordine di Acquisto
+                          </Dialog.Title>
+                          <div className="ml-3 flex h-7 items-center">
+                            <button
+                              type="button"
+                              className="relative rounded-md bg-white text-gray-400 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#7fb7d4] focus:ring-offset-2"
+                              onClick={() => setShowInfo(false)}
+                            >
+                              <span className="absolute -inset-2.5" />
+                              <span className="sr-only">Close panel</span>
+                              <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="relative mt-6 flex-1 px-4 sm:px-6">{ <SalesOrderInfo salesorder={id}/> }</div>
+                    </div>
+                  </Dialog.Panel>
+                </Transition.Child>
+              </div>
+            </div>
+          </div>
+        </Dialog>
+      </Transition.Root>
         <div className="px-4 sm:px-6 lg:px-8 py-4">
           {/* Contenitore principale con Flexbox */}
           <div className="flex items-center justify-between">
@@ -363,7 +429,16 @@ const sortedSaleOrder = filteredSaleOrder.sort((a, b) => {
                     sortedSaleOrder.map((salesorder) => (
                       <tr
                         key={salesorder.id}
-                        className={selectedOffer.includes(salesorder) ? 'bg-gray-50' : undefined}
+                        className={salesorders.includes(salesorder) ? 'bg-gray-50' : undefined}
+                        onClick={(event) => {
+                          // ctrl + click per aprire un nuovo tab
+                          if (event.ctrlKey) {
+                            handlectrlClick(salesorder);
+                          } else {
+                            console.log("Ecco: "+ salesorder)
+                            handleClick(salesorder); // Mostra il form nella stessa finestra
+                          }
+                        }}
                       >
                         <td className="whitespace-nowrap px-2 py-4 text-sm font-medium text-gray-900">
                           {salesorder.name}

@@ -41,6 +41,7 @@ import JobInfo from './components/job/jobdetail.jsx'
 import ForgotPasswordPage from './components/system/forgotpassword';
 import OfferInfo from './components/offer/offerdetail.jsx';
 import SettingsPage from './components/system/settings.jsx';
+import SalesOrderDetail from './components/salesorder/salesorderinfo.jsx';
 
 
 const Logo = './assets/intellimech.svg'
@@ -70,7 +71,7 @@ const App = () => {
             <Route path="offer" element={<PrivateRoute element={<Offer />} />} />
             <Route path="offer/:id_offer" element={<PrivateRoute element={<OfferInfo />} />} />
             <Route path="sales-order" element={<PrivateRoute element={<Salesorder />} />} />
-            {/* <Route path="sales-order/:id_salesorder" element={<PrivateRoute element={<SalesorderInfo />} />} /> */}
+            <Route path="sales-order/:id_salesorder" element={<PrivateRoute element={<SalesOrderDetail/>} />} /> 
            
             <Route path="purchase" element={<PrivateRoute element={<Purchase />} />} />
             <Route path="purchase/:id_purchase" element={<PrivateRoute element={<PurchaseDetail />} />} />

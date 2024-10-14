@@ -63,7 +63,7 @@ const Calendario = () => {
       const date = addDays(new Date('2024-10-01'), i - 1); // Data di partenza
   
       const year = format(date, 'yyyy', { locale: it });
-      const month = format(date, 'MMMM', { locale: it }).charAt(0).toUpperCase() + format(date, 'MMMM', { locale: it }).slice(1);
+      const month = format(date, 'MM', { locale: it });
       const day = format(date, 'dd', { locale: it });
       const weekday = format(date, 'EEE', { locale: it }).charAt(0).toUpperCase() + format(date, 'EEE', { locale: it }).slice(1);
       const formattedDate = format(date, 'yyyy-MM-dd');
@@ -85,7 +85,7 @@ const Calendario = () => {
           </div>
         ),
         accessor: `day${i}`,
-        isWeekend: getDay(date) === 0 || getDay(date) === 6, // Controllo per weekend (Domenica e Sabato)
+        isWeekend: getDay(date) === 1 || getDay(date) === 2, // Controllo per weekend (Domenica e Sabato)
         isHoliday: isHoliday,
       });
     }
@@ -209,6 +209,23 @@ const Calendario = () => {
   }, [users, days, calendarData]);
   
 
+  // Tabella vuota
+  const emptyTableData = useMemo(() => {
+    return users.map(user => ({
+      Nome: user.name,
+      Cognome: user.surname,
+      ...Array.from({ length: days }, (_, i) => ({ [`day${i + 1}`]: { value: '' } })).reduce((acc, curr) => ({ ...acc, ...curr }), {}),
+    }));
+  }, [users, days]);
+
+  const emptyTableInstance = useTable({ columns, data: emptyTableData });
+  const {
+    getTableProps: getEmptyTableProps,
+    getTableBodyProps: getEmptyTableBodyProps,
+    headerGroups: emptyHeaderGroups,
+    rows: emptyRows,
+    prepareRow: prepareEmptyRow,
+  } = emptyTableInstance;
   
 
   function exportData() {
@@ -371,33 +388,33 @@ const Calendario = () => {
 
                     return (
                       <td
-                      {...cell.getCellProps()}
-                      className={`px-2 py-1 border-b text-gray-600 border border-gray-300 ${isWeekend ? 'bg-gray-200' : ''} ${isHoliday ? 'bg-[#FF3399]' : ''} ${cellClass}`}
-                      style={{
-                        fontSize: '12px',
-                        padding: '5px',
-                        textAlign: 'right',
-                        backgroundColor: cell.column.sticky ? 'white' : '',
-                        position: cell.column.sticky ? 'sticky' : 'static',
-                        left: cell.column.sticky ? 0 : 'auto',
-                        zIndex: cell.column.sticky ? 1 : 'auto',
-                      }}
-                    >
-                      {columnId === 'Nome' || columnId === 'Cognome' 
-                        ? cell.value 
-                        : (isWeekend 
-                          ? '' 
-                          : (cell.value && cell.value.value !== undefined 
-                            ? cell.value.value // Assicurati che cell.value esista
-                            : ''))} {/* Mostra vuoto se il valore non è definito */}
-                    </td>
-                    
-                    
+                        {...cell.getCellProps()}
+                        className={`px-2 py-1 border-b text-gray-600 border border-gray-300 ${isWeekend ? 'bg-gray-200' : ''} ${isHoliday ? 'bg-[#FF3399]' : ''} ${cellClass}`}
+                        style={{
+                          fontSize: '12px',
+                          padding: '5px',
+                          textAlign: 'right',
+                          backgroundColor: cell.column.sticky ? 'white' : '',
+                          position: cell.column.sticky ? 'sticky' : 'static',
+                          left: cell.column.sticky ? 0 : 'auto',
+                          zIndex: cell.column.sticky ? 1 : 'auto',
+                        }}
+                      >
+                        {isHoliday 
+                          ? '' // Se è una festività, lascia vuota la cella
+                          : (columnId === 'Nome' || columnId === 'Cognome'
+                            ? cell.value
+                            : (isWeekend
+                              ? '' 
+                              : (cell.value && cell.value.value !== undefined
+                                ? cell.value.value // Assicurati che cell.value esista
+                                : '')))}
+                      </td>
                     );
                   })}
-                  </tr>
-                );
-              })};
+                </tr>
+              );
+            })}
 
                 
             </tbody>
@@ -405,9 +422,53 @@ const Calendario = () => {
         </div>
       </div>
       
+
+
+
+    <div className="flex w-full space-x-4 mt-1">
+        <div className="flex-grow bg-white rounded-lg shadow overflow-x-auto" ref={scrollRef}>
+        <table {...getEmptyTableProps()} className="min-w-full">
+          <thead>
+            {emptyHeaderGroups.map(headerGroup => (
+              <tr {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map(column => (
+                  <th {...column.getHeaderProps()} className="bg-gray-200 px-4 py-2 text-left">
+                    {column.render('Header')}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+          <tbody {...getEmptyTableBodyProps()}>
+            {emptyRows.map(row => {
+              prepareEmptyRow(row);
+              return (
+                <tr {...row.getRowProps()} className="border-b">
+                  {row.cells.map(cell => (
+                    <td {...cell.getCellProps()} className="px-4 py-2">
+                      {cell.value?.value || 0}
+                    </td>
+                  ))}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="flex justify-end mt-4">
+        <span className="text-lg font-semibold">Total Hours: {tableData.reduce((acc, user) => {
+          let userTotal = 0;
+          for (let i = 1; i <= days; i++) {
+            userTotal += user[`day${i}`]?.value || 0;
+          }
+          return acc + userTotal;
+        }, 0)}</span>
+      </div>
+    </div>
     </div>
   );
-  
 };
+
 
 export default Calendario;

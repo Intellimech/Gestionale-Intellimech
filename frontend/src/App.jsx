@@ -41,7 +41,7 @@ import JobInfo from './components/job/jobdetail.jsx'
 import ForgotPasswordPage from './components/system/forgotpassword';
 import OfferInfo from './components/offer/offerdetail.jsx';
 import SettingsPage from './components/system/settings.jsx';
-import SalesOrderDetail from './components/salesorder/salesorderinfo.jsx';
+import SalesOrderDetail from './components/salesorder/salesorderdetail.jsx';
 
 
 const Logo = './assets/intellimech.svg'

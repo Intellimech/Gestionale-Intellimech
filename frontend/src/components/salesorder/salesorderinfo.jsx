@@ -1,52 +1,7 @@
 import { PaperClipIcon } from '@heroicons/react/20/solid';
-import { jsPDF } from 'jspdf';
-import logo from '../../images/logo.jpg';
-import 'jspdf-autotable';
-import { useEffect, useState } from 'react';
-import axios from 'axios';
 
-export default function SalesOrderInfo( id_saleorder ) {
-  const [salesOrder, setSalesOrder] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    // Fetch sales order details from the backend
-    const fetchSalesOrder = async () => {
-      try {
-        console.log("Ecco cosa ricevo: " + JSON.stringify(id_saleorder, null, 2));
-        // Supponiamo che questa sia la stringa che ricevi
-        let responseString = '{"salesorder": 1}'; // Stringa che ricevi
-
-        // Converti la stringa in un oggetto
-        let responseObject = JSON.parse(responseString);
-
-        // Accedi all'ID
-        let salesOrderId = responseObject.salesorder; // Questo sarà 1
-
-        console.log("ID Sales Order: " + salesOrderId); // Stampa: ID Sales Order: 1
-
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/salesorder/read/${salesOrderId}`); 
-        setSalesOrder(response.data.salesorder);
-      } catch (error) {
-        console.error('Error fetching sales order:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSalesOrder();
-  }, [id_saleorder]);
-
-  // Render loading state
-  if (loading) {
-    return <p>Loading...</p>;
-  }
-
-  // Check if salesOrder is null after loading
-  if (!salesOrder) {
-    return <p>No sales order found.</p>;
-  }
-
+export default function SalesOrderInfo({ salesOrder }) {
+  console.log(salesOrder); // Aggiungi questo per vedere i dati ricevuti
   return (
     <div>
       <div className="px-4 sm:px-0">
@@ -55,32 +10,63 @@ export default function SalesOrderInfo( id_saleorder ) {
       </div>
       <div className="mt-6">
         <dl className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5">
+          {/* Codice Ordine di Vendita */}
           <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
             <dt className="text-sm font-medium leading-6 text-gray-900">Codice Ordine di Vendita</dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{salesOrder.name}</dd>
+            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{salesOrder?.name || 'N/A'}</dd>
           </div>
+
+          {/* Stato Ordine */}
           <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
             <dt className="text-sm font-medium leading-6 text-gray-900">Stato</dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{salesOrder.status}</dd>
+            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{salesOrder?.status || 'N/A'}</dd>
           </div>
-          <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-gray-900">Data di Creazione</dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
-              {new Date(salesOrder.createdAt).toLocaleDateString() + ' ' + new Date(salesOrder.createdAt).toLocaleTimeString()}
-            </dd>
-          </div>
-          <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-gray-900">Data di Aggiornamento</dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
-              {new Date(salesOrder.updatedAt).toLocaleDateString() + ' ' + new Date(salesOrder.updatedAt).toLocaleTimeString()}
-            </dd>
-          </div>
-          {/* Additional fields as needed */}
+
+          {/* Descrizione Ordine */}
           <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-2 sm:px-0">
             <dt className="text-sm font-medium leading-6 text-gray-900">Descrizione</dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{salesOrder.description || 'N/A'}</dd>
+            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{salesOrder?.description || 'N/A'}</dd>
           </div>
+
+          {/* Dettagli Offerta */}
           <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-2 sm:px-0">
+            <dt className="text-sm font-medium leading-6 text-gray-900">Offerta</dt>
+            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
+              Codice Offerta: {salesOrder?.Offer?.name || 'N/A'}<br />
+              Stato Offerta: {salesOrder?.Offer?.status || 'N/A'}<br/>
+              Descrizione Offerta: {salesOrder?.Offer?.description || 'N/A'}
+            </dd>
+          </div>
+
+          {/* Dettagli Richiesta di Quotazione */}
+          <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-2 sm:px-0">
+            <dt className="text-sm font-medium leading-6 text-gray-900">Richiesta di Offerta</dt>
+            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
+              Codice Richiesta: {salesOrder?.Offer?.QuotationRequest?.name || 'N/A'}<br />
+              Stato Richiesta: {salesOrder?.Offer?.QuotationRequest?.status || 'N/A'}<br />
+              Descrizione Richiesta: {salesOrder?.Offer?.QuotationRequest?.description || 'N/A'}
+            </dd>
+          </div>
+
+          {/* Dettagli Azienda */}
+          <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-2 sm:px-0">
+            <dt className="text-sm font-medium leading-6 text-gray-900">Azienda</dt>
+            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
+              Nome Azienda: {salesOrder?.Offer?.QuotationRequest?.Company?.name || 'N/A'}<br />
+            </dd>
+          </div>
+
+          {/* Creato da */}
+          <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-2 sm:px-0">
+            <dt className="text-sm font-medium leading-6 text-gray-900">Creato da</dt>
+            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
+              Nome: {salesOrder?.createdByUser?.name || 'N/A'}<br />
+              Cognome: {salesOrder?.createdByUser?.surname || 'N/A'}
+            </dd>
+          </div>
+
+          {/* Stato Documento */}
+          {/* <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-2 sm:px-0">
             <dt className="text-sm font-medium leading-6 text-gray-900">Documenti</dt>
             <dd className="mt-2 text-sm text-gray-900">
               <ul role="list" className="divide-y divide-gray-100 rounded-md border border-gray-200">
@@ -88,7 +74,7 @@ export default function SalesOrderInfo( id_saleorder ) {
                   <div className="flex w-0 flex-1 items-center">
                     <PaperClipIcon className="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
                     <div className="ml-4 flex min-w-0 flex-1 gap-2">
-                      <span className="truncate font-medium">{salesOrder.name}.pdf</span>
+                      <span className="truncate font-medium">{salesOrder?.name}.pdf</span>
                       <span className="flex-shrink-0 text-gray-400">2.4mb</span>
                     </div>
                   </div>
@@ -100,7 +86,7 @@ export default function SalesOrderInfo( id_saleorder ) {
                 </li>
               </ul>
             </dd>
-          </div>
+          </div> */}
         </dl>
       </div>
     </div>

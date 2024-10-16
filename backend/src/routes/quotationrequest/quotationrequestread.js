@@ -23,64 +23,56 @@ const router = express.Router();
 // Middleware
 router.use(bodyParser.json());
 router.use(cors());
+// router.get("/read/free", async (req, res) => {
+//     const user = req.user;  // Assuming req.user is populated by the authentication middleware
+//     const id = req.query.id;  // Retrieve ID from query params (e.g., /read/free?id=123)
 
-// Routes
-router.get("/read/free", async (req, res) => {
-    
-    const user = req.user;  // Assuming req.user is populated by the authentication middleware
+//     try {
+//         // Se viene passato un ID, cerca solo quella richiesta
+//         let whereClause = {};
+//         if (id) {
+//             whereClause = { id_quotationrequest: id };
+//         }
 
-    try {
-        // Fetch all quotation requests joined with company, category, subcategory, technical area, and user
-        let quotationrequest = await QuotationRequest.findAll({
-            include: [
-                { model: Company, attributes: ["id_company", "name"] },
-                { model: Category, attributes: ["id_category", "name"] },
-                { model: Subcategory, attributes: ["id_subcategory", "name"] },
-                { model: TechnicalArea, attributes: ["id_technicalarea", "name"] },
-                { model: sequelize.models.User, as: 'createdByUser', attributes: ['id_user', 'name', 'surname'] },
-                { model: sequelize.models.User, as: 'updatedByUser', attributes: ['id_user', 'name', 'surname'] },
-                { model: sequelize.models.User, as: 'deletedByUser', attributes: ['id_user', 'name', 'surname'] }    
-            ],
-        });
+//         // Fetch quotation requests based on whether an ID is provided or not
+//         let quotationrequest = await QuotationRequest.findAll({
+//             where: whereClause,
+//             include: [
+//                 { model: Company, attributes: ["id_company", "name"] },
+//                 { model: Category, attributes: ["id_category", "name"] },
+//                 { model: Subcategory, attributes: ["id_subcategory", "name"] },
+//                 { model: TechnicalArea, attributes: ["id_technicalarea", "name"] },
+//                 { model: sequelize.models.User, as: 'createdByUser', attributes: ['id_user', 'name', 'surname'] },
+//                 { model: sequelize.models.User, as: 'updatedByUser', attributes: ['id_user', 'name', 'surname'] },
+//                 { model: sequelize.models.User, as: 'deletedByUser', attributes: ['id_user', 'name', 'surname'] }
+//             ],
+//         });
 
-        // Filter out quotation requests with accepted offers
-        for (let i = 0; i < quotationrequest.length; i++) {
-            const quotation = quotationrequest[i];
+//         // Filtro per richieste con offerte accettate
+//         for (let i = 0; i < quotationrequest.length; i++) {
+//             const quotation = quotationrequest[i];
 
-            // Check if there is an offer for the quotation request
-            const offer = await Offer.findOne({
-                where: {
-                    quotationrequest: quotation.id_quotationrequest,
-                },
-            });
+//             const offer = await Offer.findOne({
+//                 where: { quotationrequest: quotation.id_quotationrequest },
+//             });
 
-            // If there is an offer and the status is nuova or inviata al cliente or accettata, remove the quotation request from the list
-            if (offer && (offer.status === "Nuova" || offer.status === "Inviata al cliente" || offer.status === "Accettata")) {
-                quotationrequest = quotationrequest.filter((qr) => qr.id_quotationrequest !== quotation.id_quotationrequest);
-            }
+//             if (offer && (offer.status === "Nuova" || offer.status === "Inviata al cliente" || offer.status === "Accettata")) {
+//                 quotationrequest = quotationrequest.filter((qr) => qr.id_quotationrequest !== quotation.id_quotationrequest);
+//             }
+//         }
 
-            const creationDate = new Date(quotation.createdAt); // Assuming quotation.createdAt is a valid date string or a Date object
-            const deadlineDate = new Date(creationDate.getTime() + 7 * 24 * 60 * 60 * 1000); // Adding 7 days to the creation date
-            const currentDate = new Date(); // Get current date
+//         res.status(200).json({
+//             message: "Quotation Requests found",
+//             quotationrequest: quotationrequest,
+//         });
+//     } catch (error) {
+//         console.log(error);
+//         res.status(500).json({
+//             message: "Internal server error",
+//         });
+//     }
+// });
 
-            // Save the changes (assuming you meant to update the quotation here)
-            await quotation.save();
-
-            // Create a new field in the object if needed
-            // quotation.someNewField = someValue;
-        }
-
-        res.status(200).json({
-            message: "Quotation Requests found",
-            quotationrequest: quotationrequest,
-        });
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            message: "Internal server error",
-        });
-    }
-});
 
 router.get("/read/", async (req, res) => {
     try {
@@ -103,6 +95,43 @@ router.get("/read/", async (req, res) => {
         });
     } catch (error) {
         console.log(error);
+        res.status(500).json({
+            message: "Internal server error",
+        });
+    }
+});
+// New route to get a specific quotation request by ID
+router.get("/read/:id", async (req, res) => {
+    const id= req.params.id;  // Estrai l'ID dai parametri della rotta
+console.log("Questo è l'id sono il backend"+ id)
+    try {
+        // Trova la richiesta di offerta tramite l'ID
+        const quotationrequest = await QuotationRequest.findOne({
+            where: { id_quotationrequest: id },  // Ricerca tramite ID
+            include: [
+                { model: Company, attributes: ["id_company", "name"] },
+                { model: Category, attributes: ["id_category", "name"] },
+                { model: Subcategory, attributes: ["id_subcategory", "name"] },
+                { model: TechnicalArea, attributes: ["id_technicalarea", "name", "code"] },
+                { model: sequelize.models.User, as: 'createdByUser', attributes: ['id_user', 'name', 'surname'] },
+                { model: sequelize.models.User, as: 'updatedByUser', attributes: ['id_user', 'name', 'surname'] },
+                { model: sequelize.models.User, as: 'deletedByUser', attributes: ['id_user', 'name', 'surname'] }
+            ],
+        });
+
+        // Controlla se la richiesta di offerta esiste
+        if (!quotationrequest) {
+            return res.status(404).json({ message: "Quotation Request not found" });
+        }
+
+        // Rispondi con i dati della richiesta di offerta
+        res.status(200).json({
+            message: "Quotation Request found",
+            quotationrequest: quotationrequest,
+        });
+
+    } catch (error) {
+        console.error(error);
         res.status(500).json({
             message: "Internal server error",
         });

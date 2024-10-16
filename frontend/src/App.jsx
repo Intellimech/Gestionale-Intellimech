@@ -42,6 +42,7 @@ import ForgotPasswordPage from './components/system/forgotpassword';
 import OfferInfo from './components/offer/offerdetail.jsx';
 import SettingsPage from './components/system/settings.jsx';
 import SalesOrderDetail from './components/salesorder/salesorderdetail.jsx';
+import QuotationrequestDetail from './components/quotationrequest/quotationrequestdetail.jsx';
 
 
 const Logo = './assets/intellimech.svg'
@@ -67,6 +68,7 @@ const App = () => {
             <Route path="calendar" element={<PrivateRoute element={<Calendar />} />} />
             <Route path="generalcalendar" element={<PrivateRoute element={<GeneralCalendar />} />} />
             <Route path="quotation-request" element={<PrivateRoute element={<Quotationrequesttable />} />} />
+            <Route path="quotation-request/:id_quotationrequest" element={<PrivateRoute element={<QuotationrequestDetail />} />} />
             
             <Route path="offer" element={<PrivateRoute element={<Offer />} />} />
             <Route path="offer/:id_offer" element={<PrivateRoute element={<OfferInfo />} />} />

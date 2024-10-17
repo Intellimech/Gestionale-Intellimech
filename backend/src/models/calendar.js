@@ -36,13 +36,15 @@ Calendar.init(
         type: DataTypes.INTEGER,
     },
     createdAt: {
-        type: DataTypes.DATE,
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW
     },
-    updatedAt: {
-        type: DataTypes.DATE,
+  updatedAt: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW
     },
-    deletedAt: {
-        type: DataTypes.DATE,
+  deletedAt: {
+      type: DataTypes.DATE,
     }
   },
   {

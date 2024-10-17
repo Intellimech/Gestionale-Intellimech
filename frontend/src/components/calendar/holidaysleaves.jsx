@@ -9,8 +9,8 @@ function classNames(...classes) {
 
 export default function HolidaysLeavesManagement({ permissions }) {
   const [calendars, setCalendars] = useState([]);
-  const [sortColumn, setSortColumn] = useState(''); // Default empty
-  const [sortDirection, setSortDirection] = useState('asc'); // Default ascending
+  const [sortColumn, setSortColumn] = useState('');
+  const [sortDirection, setSortDirection] = useState('asc');
   const [searchQueries, setSearchQueries] = useState({
     location: '',
     date: '',
@@ -18,12 +18,12 @@ export default function HolidaysLeavesManagement({ permissions }) {
     status: '',
     owner: ''
   });
+  const [expandedGroups, setExpandedGroups] = useState({}); // Keep track of expanded groups
 
   useEffect(() => {
     fetchCalendars();
   }, []);
 
-  // Fetch data from the API
   const fetchCalendars = () => {
     axios
       .get(`${process.env.REACT_APP_API_URL}/holidays-leaves/read/`)
@@ -35,7 +35,6 @@ export default function HolidaysLeavesManagement({ permissions }) {
       });
   };
 
-  // Approve request
   const approveCalendar = (id) => {
     toast.promise(
       axios
@@ -53,7 +52,6 @@ export default function HolidaysLeavesManagement({ permissions }) {
     );
   };
 
-  // Reject request
   const rejectCalendar = (id) => {
     toast.promise(
       axios
@@ -71,7 +69,6 @@ export default function HolidaysLeavesManagement({ permissions }) {
     );
   };
 
-  // Sorting logic
   const handleSort = (column) => {
     if (sortColumn === column) {
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
@@ -91,9 +88,8 @@ export default function HolidaysLeavesManagement({ permissions }) {
     }
   };
 
-  // Filtering and sorting the data
   const filteredCalendars = calendars
-    .filter((item) => item.status === 'In Attesa di Approvazione') // Show only "In Attesa di Approvazione"
+    .filter((item) => item.status === 'In Attesa di Approvazione')
     .filter((item) => {
       return (
         (searchQueries.location === '' || item.Location.name.toLowerCase().includes(searchQueries.location.toLowerCase())) &&
@@ -115,12 +111,10 @@ export default function HolidaysLeavesManagement({ permissions }) {
     }
   });
 
-  // Handle search input changes
   const handleSearchInputChange = (column) => (event) => {
     setSearchQueries({ ...searchQueries, [column]: event.target.value });
   };
 
-  // Export data to CSV
   const exportData = () => {
     const csvContent =
       'data:text/csv;charset=utf-8,' +
@@ -133,6 +127,60 @@ export default function HolidaysLeavesManagement({ permissions }) {
     link.click();
   };
 
+  const approveGroup = (calendarsGroup) => {
+    const ids = calendarsGroup.map(calendar => calendar.id_calendar);
+    toast.promise(
+      Promise.all(ids.map(id => axios.post(`${process.env.REACT_APP_API_URL}/holidays-leaves/approve/${id}`)))
+        .then(() => fetchCalendars())
+        .catch((error) => {
+          console.log(error);
+          throw new Error('Error while approving group');
+        }),
+      {
+        loading: 'Approving group...',
+        success: 'Successfully approved group!',
+        error: 'Error in approving group',
+      }
+    );
+  };
+
+  const rejectGroup = (calendarsGroup) => {
+    const ids = calendarsGroup.map(calendar => calendar.id_calendar);
+    toast.promise(
+      Promise.all(ids.map(id => axios.post(`${process.env.REACT_APP_API_URL}/holidays-leaves/reject/${id}`)))
+        .then(() => fetchCalendars())
+        .catch((error) => {
+          console.log(error);
+          throw new Error('Error while rejecting group');
+        }),
+      {
+        loading: 'Rejecting group...',
+        success: 'Successfully rejected group!',
+        error: 'Error in rejecting group',
+      }
+    );
+  };
+
+  const groupBy = (array, key) => {
+    return array.reduce((result, currentValue) => {
+      const groupKey = currentValue[key];
+      if (!result[groupKey]) {
+        result[groupKey] = [];
+      }
+      result[groupKey].push(currentValue);
+      return result;
+    }, {});
+  };
+
+  const groupedCalendars = groupBy(sortedCalendars, 'createdAt');
+
+  const toggleGroup = (groupKey) => {
+    setExpandedGroups((prev) => ({
+      ...prev,
+      [groupKey]: !prev[groupKey],
+    }));
+  };
+
   return (
     <>
       <Toaster position="bottom-right" reverseOrder={false} />
@@ -140,8 +188,8 @@ export default function HolidaysLeavesManagement({ permissions }) {
         <div className="py-4">
           <div className="flex items-center justify-between">
             <div className="sm:flex-auto">
-            <h1 className="text-base font-semibold leading-6 text-gray-900">Ferie e Permessi</h1>
-            <p className="mt-2 text-sm text-gray-700">Lista delle richieste di ferie e permessi</p>
+              <h1 className="text-base font-semibold leading-6 text-gray-900">Ferie e Permessi</h1>
+              <p className="mt-2 text-sm text-gray-700">Lista delle richieste di ferie e permessi</p>
             </div>
             <div className="flex items-center space-x-4">
               <button
@@ -190,63 +238,84 @@ export default function HolidaysLeavesManagement({ permissions }) {
                           className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                           placeholder=""
                         />
-                      </th>
-                    ))}
-                    <th scope="col" className="relative py-3.5 pl-3 pr-3 sm:pr-3">
-                      <span className="sr-only">Azioni</span>
-                    </th>
-                  </tr>
-                </thead>
-
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
                   <tbody className="divide-y divide-gray-200 bg-white">
-                    {sortedCalendars.map((calendar) => (
-                      <tr key={calendar.id_calendar}>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{calendar.Location.name}</td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{calendar.date}</td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {calendar.period === 'morning' ? 'Mattina' : calendar.period === 'afternoon' ? 'Pomeriggio' : calendar.period}
-                        </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          <span className={classNames(
-                            'px-2 inline-flex text-xs leading-5 font-semibold rounded-full',
-                            calendar.status === 'In Attesa di Approvazione'
-                              ? 'bg-yellow-100 text-yellow-800'
-                              : calendar.status === 'Approvata'
-                              ? 'bg-green-100 text-green-800'
-                              : calendar.status === 'Rifiutata'
-                              ? 'bg-red-100 text-red-800'
-                              : 'bg-gray-100 text-gray-800'
-                          )}>
-                            {calendar.status}
-                          </span>
-                        </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {calendar.ownerUser?.name.slice(0, 2).toUpperCase() + calendar.ownerUser?.surname.slice(0, 2).toUpperCase()}
-                        </td>
-                        <td className="whitespace-nowrap py-4 px-3 text-right text-sm font-medium sm:pr-3">
-                          <div className="flex items-center space-x-2">
-                            <button
-                              type="button"
-                              className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30"
-                              onClick={() => approveCalendar(calendar.id_calendar)}
-                              disabled={calendar.status !== 'In Attesa di Approvazione'}
-                            >
-                              <CheckIcon className="h-5 w-4 text-gray-500" />
-                            </button>
-                            <button
-                              type="button"
-                              className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30"
-                              onClick={() => rejectCalendar(calendar.id_calendar)}
-                              disabled={calendar.status !== 'In Attesa di Approvazione'}
-                            >
-                              <XMarkIcon className="h-5 w-4 text-gray-500" />
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
+                    {Object.keys(groupedCalendars).map((groupKey) => {
+                      const calendarsGroup = groupedCalendars[groupKey];
+                      const isExpanded = expandedGroups[groupKey];
+
+                      return (
+                        <Fragment key={groupKey}>
+                          <tr className="bg-gray-100">
+                            <td colSpan={5} className="px-3 py-2 text-left text-sm font-semibold text-gray-900">
+                              <button
+                                className="mr-2 text-[#7fb7d4] hover:text-[#7fb7d4]"
+                                onClick={() => toggleGroup(groupKey)}
+                              >
+                                {isExpanded ? (
+                                  <ArrowUpIcon className="h-5 w-5 inline" aria-hidden="true" />
+                                ) : (
+                                  <ArrowDownIcon className="h-5 w-5 inline" aria-hidden="true" />
+                                )}
+                                {new Date(groupKey).toLocaleString()} {/* Formatted date */}
+                              </button>
+                              <span className="ml-4">
+                                {calendarsGroup.length} richieste
+                              </span>
+                            </td>
+                            <td className="text-center">
+                              <button
+                                onClick={() => approveGroup(calendarsGroup)}
+                                className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30">
+                                <CheckIcon className="h-5 w-4 text-gray-500" />
+                              
+                              </button>
+                              <button
+                                onClick={() => rejectGroup(calendarsGroup)}
+                                className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30"
+                                >
+                                  <XMarkIcon className="h-5 w-4 text-gray-500" />
+                              </button>
+                            </td>
+                          </tr>
+                          {isExpanded &&
+                            calendarsGroup.map((calendar) => (
+                              <tr key={calendar.id_calendar}>
+                                <td className="px-3 py-2 text-sm text-gray-500">{calendar.Location.name}</td>
+                                <td className="px-3 py-2 text-sm text-gray-500">{new Date(calendar.date).toLocaleDateString()}</td>
+                                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                  {calendar.period === 'morning' ? 'Mattina' : calendar.period === 'afternoon' ? 'Pomeriggio' : calendar.period}
+                                </td>
+                                <td className="px-3 py-2 text-sm text-gray-500">{calendar.status}</td>
+                                <td className="px-3 py-2 text-sm text-gray-500">
+                                  {calendar.ownerUser?.name} {calendar.ownerUser?.surname}
+                                </td>
+                                <td className="px-3 py-2 text-right text-sm font-medium">
+                                  <button
+                                    onClick={() => approveCalendar(calendar.id_calendar)}
+                                    className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30">
+                                    <CheckIcon className="h-5 w-4 text-gray-500" />
+                                  </button>
+                                  <button
+                                    onClick={() => rejectCalendar(calendar.id_calendar)}
+                                       className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30"
+                                  >
+                                    <XMarkIcon className="h-5 w-4 text-gray-500" />
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                        </Fragment>
+                      );
+                    })}
                   </tbody>
                 </table>
+                {sortedCalendars.length === 0 && (
+                  <p className="text-center text-sm text-gray-500 py-8">Nessuna richiesta trovata</p>
+                )}
               </div>
             </div>
           </div>

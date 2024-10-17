@@ -205,6 +205,33 @@ export default function Example({ permissions }) {
     
   }
 
+  const Revision = (offer) => {
+    axios
+    .post(`${process.env.REACT_APP_API_URL}/offer/revision/${offer}`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    .then((response) => {
+      console.log(response.data.offer);
+      axios
+      .get(`${process.env.REACT_APP_API_URL}/offer/read`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((response) => {
+        setOffer(response.data.offer);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  }
+
   const Refuse = (offer) => {
     axios
     .post(`${process.env.REACT_APP_API_URL}/offer/refuse/${offer}`, {
@@ -697,7 +724,7 @@ export default function Example({ permissions }) {
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           <div className="flex items-center space-x-2">
-                            {offer.createdByUser === user.id_user && (
+                            {true && (
                               <>
                                 {offer.status === 'Inviata al cliente' && (
                                   <>
@@ -720,7 +747,7 @@ export default function Example({ permissions }) {
                                     <button
                                       type="button"
                                       className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
-                                      onClick={() => Revision()}
+                                      onClick={() => Revision(offer.id_offer)}
                                       title="Revisione"
                                     >
                                       <ArrowPathIcon className="h-5 w-4 text-gray-500" />
@@ -729,16 +756,6 @@ export default function Example({ permissions }) {
                                 )}
                                 {offer.status === 'Nuova' && (
                                   <>
-                                    {false && (
-                                      <button
-                                        type="button"
-                                        className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
-                                        onClick={() => console.log(user)}
-                                        title="Visualizza"
-                                      >
-                                        <EyeIcon className="h-5 w-4 text-gray-500" />
-                                      </button>
-                                    )}
                                     <button
                                       type="button"
                                       className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"

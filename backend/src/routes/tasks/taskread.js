@@ -41,7 +41,7 @@ router.get("/read/:job", (req, res) => {
         Tasks.findAll({
             where: {
                 assignedTo: user.id_user,
-                job: job
+               
             },
             include: [
                 {

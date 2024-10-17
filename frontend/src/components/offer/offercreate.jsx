@@ -20,6 +20,23 @@ export default function UserCreateForm() {
   // Handle changes for the quotation request selection
   const handleQuotationRequestChange = (value) => setSelectedQuotationRequest(value);
 
+  const addTask = (parentIndex = null) => {
+    if (parentIndex !== null) {
+      // Add a subtask to a specific task
+      const newTasks = [...tasks];
+      newTasks[parentIndex].children.push({ name: '', duration: '', assignedTo: '', children: [] });
+      setTasks(newTasks);
+    } else {
+      // Add a top-level task
+      setTasks([...tasks, { name: '', duration: '', assignedTo: '', children: [] }]);
+    }
+  };
+  
+  const removeTask = (index) => {
+    setTasks(tasks.filter((_, i) => i !== index));
+  };
+  
+  const updateTask = (index, updatedTask) => setTasks(tasks.map((product, i) => (i === index ? updatedTask : product)));
   // Handle changes for the team selection
   const handleTeamChange = (value) => setSelectedTeam(value);
 
@@ -32,7 +49,7 @@ export default function UserCreateForm() {
           technicalAreaRes,
           usersRes,
         ] = await Promise.all([
-          axios.get(`${process.env.REACT_APP_API_URL}/quotationrequest/read/free`,),
+          axios.get(`${process.env.REACT_APP_API_URL}/quotationrequest/read`,),
           axios.get(`${process.env.REACT_APP_API_URL}/technicalarea/read`, ),
           axios.get(`${process.env.REACT_APP_API_URL}/user/read`, ),
         ]);
@@ -223,8 +240,19 @@ export default function UserCreateForm() {
             </div>
 
             <div className="col-span-full">
-              <TaskForm tasks={tasks} setTasks={setTasks} users={users} />
+              {tasks.map((task, index) => (
+                <TaskForm
+                  key={index}
+                  task={task}
+                  onChange={(newTask) => updateTask(index, newTask)}
+                  onAddChild={() => addTask(index)} // Pass the index to add a child
+                  onRemove={() => removeTask(index)} // Pass the index to remove
+                  users={users}
+                />
+              ))}
+             
             </div>
+
           </div>
         </div>
       </div>

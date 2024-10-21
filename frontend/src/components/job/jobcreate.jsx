@@ -25,7 +25,6 @@ export default function UserCreateForm() {
 
   const handleSalesOrderChange = (value) => {
     setSelectedSalesOrder(value);
-    console.log(value);
   };
 
   const createJob = (event) => {
@@ -42,7 +41,6 @@ export default function UserCreateForm() {
     )
     .then((response) => {
        toast.success('Job creato con successo!');
-      console.log('Job creato:', response);
      
     })
     .catch((error) => {

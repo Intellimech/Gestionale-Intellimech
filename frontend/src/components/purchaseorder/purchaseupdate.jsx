@@ -68,7 +68,6 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
   //   }
   // }, [initialPurchase]);
 
-  console.log(initialPurchase)
   
   const handleProductChange = (index, updatedProduct) => {
     const updatedProducts = [...products];

@@ -64,13 +64,9 @@ function generateCalendarArrayWithLocations(targetDate, calendars = [], location
 
  // Funzione per ottenere il nome della location tramite id_location
 const getLocationNameById = (id) => {
-  console.log("Cercando la location con id:", id); // Debugging: verifica l'id cercato
-  console.log("Locations disponibili:", JSON.stringify(locations, null, 2)); // Visualizza tutte le locations
-
+ 
   // Match per id_location
   const location = locations.find(loc => loc.id_location === id); 
-  console.log("Location trovata:", JSON.stringify(location, null, 2)); // Debugging: verifica la location trovata
-
   return location ? location.name : null; // Restituisce la proprietà name o null
 };
 
@@ -78,35 +74,26 @@ const getLocationNameById = (id) => {
   // Assegna le locations (mattina e pomeriggio)
   days.forEach((day) => {
     const dayLocations = calendars?.filter(loc => loc.date === day.date) || [];
-    
-    // Debugging: verifica le locations per il giorno corrente
-    console.log("Locations per il giorno:", day.date, " -> ", dayLocations);
 
     if (dayLocations.length > 0) {
       dayLocations.forEach(loc => {
-        console.log("Location dettagli:", loc); // Debugging: verifica i dettagli della location
-
+       
         if (loc.period === 'morning') {
           // Ricerca del nome della location per il mattino
           const morningLocationName = getLocationNameById(loc.location);
-          console.log("Nome della location mattutina:", morningLocationName); // Debugging: verifica il nome trovato
+         
           day.morningLocation = morningLocationName || null; // Assegna il nome della location o null
           day.morningStatus = loc.status; // Mantiene lo stato
         } else if (loc.period === 'afternoon') {
           // Ricerca del nome della location per il pomeriggio
           const afternoonLocationName = getLocationNameById(loc.location);
-          console.log("Nome della location pomeridiana:", afternoonLocationName); // Debugging: verifica il nome trovato
+          
           day.afternoonLocation = afternoonLocationName || null; // Assegna il nome della location o null
           day.afternoonStatus = loc.status; // Mantiene lo stato
         }
         day.id_calendar = loc.id_calendar; // Assegna l'id del calendario
       });
-
-      // Debugging: verifica il giorno aggiornato con le locations
-      console.log("Giorno aggiornato con locations:", day);
-    } else {
-      console.log("Nessuna location trovata per il giorno:", day.date); // Debugging: verifica se non ci sono location
-    }
+    } 
   });
 
   return days;
@@ -142,7 +129,6 @@ export default function Calendar() {
     async function fetchCalendar() {
       try {
         const response = await axios.get('http://localhost:3000/calendar/read', );
-        console.log('Calendar:', response.data.calendars);
         
         setCalendars(response.data.calendars);
       } catch (error) {
@@ -155,13 +141,10 @@ export default function Calendar() {
   }, []);
   const fetchLocations = async () => {
     try { const response = await axios.get(`${process.env.REACT_APP_API_URL}/locations/read`, );
-  
-      console.log('Risposta delle locations:', response.data); // Debugging: stampa la risposta dell'API
-  
       if (Array.isArray(response.data.locations)) {
         const formattedLocations = formatLocations(response.data.locations);
         setLocations(formattedLocations);
-        console.log("Locations disponibili:", formattedLocations); // Debugging: controlla le locations
+       
       } else {
         console.error('Invalid locations data:', response.data.locations);
       }

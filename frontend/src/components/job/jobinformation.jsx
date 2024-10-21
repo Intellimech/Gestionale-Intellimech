@@ -7,7 +7,6 @@ export default function Example({ job }) {
   
     
   useEffect(() => {
-    console.log(job);
   }, [job]);
     
   return (

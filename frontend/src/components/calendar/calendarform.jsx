@@ -73,7 +73,6 @@ export default function Example({ date, setOpen }) {
       try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/user/read`, );
         setUsers(response.data.users);
-        console.log('Fetched Users:', response.data.users); // Log users fetched
       } catch (error) {
         console.error('Error fetching users:', error);
       }
@@ -86,7 +85,7 @@ export default function Example({ date, setOpen }) {
             
             params: { date: startDate },
         });
-        console.log('All Calendar Data Response:', response.data); // Log the entire response
+        
         setAllCalendarData(response.data); // Set the state
     } catch (error) {
         console.error('Error fetching all calendar data:', error);
@@ -157,9 +156,6 @@ export default function Example({ date, setOpen }) {
       });
     };
     
-  if (allCalendarData.length > 0) {
-      console.log("All Calendars", allCalendarData);
-  }
 
     const submitEntries = () => {
       const morningPromise = createEntry('morning', morningLocation);
@@ -167,12 +163,10 @@ export default function Example({ date, setOpen }) {
 
       Promise.all([morningPromise, afternoonPromise])
         .then((responses) => {
-          console.log('Entries created:', responses);
           notifySuccess();  // Notifica di successo
         })
         .catch((error) => {
-          console.error('Error creating entries:', error);
-          notifyError();  // Notifica di errore
+         notifyError();  // Notifica di errore
         });
     };
 
@@ -325,13 +319,9 @@ export default function Example({ date, setOpen }) {
         const entryDateFormatted = entryDate.toISOString().split('T')[0];
 
         const userId = entry.owner; // Using 'owner' as user ID
-        console.log(`Comparing Entry Date: ${entryDateFormatted} with Start Date: ${startDateFormatted} and User ID: ${user.id_user} with Entry Owner ID: ${userId}`);
-        
+       
         return entryDateFormatted === startDateFormatted && userId === user.id_user; // Updated condition
       });
-
-      // Log the resulting user entries
-      console.log(`User ID: ${user.id_user}, User Entries:`, userEntries);
 
       let morningLocation = 'Non disponibile';
       let afternoonLocation = 'Non disponibile';

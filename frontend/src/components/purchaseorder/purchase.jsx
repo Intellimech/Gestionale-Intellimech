@@ -68,7 +68,6 @@ export default function Example({ permissions }) {
         setItems(Array.isArray(response.data.purchases) ? response.data.purchases : []);
       })
       .catch((error) => {
-        console.log(error);
       });
   };
 

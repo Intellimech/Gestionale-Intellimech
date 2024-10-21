@@ -50,11 +50,9 @@ export default function Example({ permissions, user }) {
       .get(`${process.env.REACT_APP_API_URL}/job/read`, )
       .then((response) => {
         setJob(response.data.jobs);
-        console.log(user)
-        console.log(response.data.jobs);
+       
       })
       .catch((error) => {
-        console.log(error);
       });
   }, []); // Empty dependency array
   const handleSearchInputChange = (column) => (event) => {

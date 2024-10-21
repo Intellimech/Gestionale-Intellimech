@@ -15,6 +15,7 @@ const Calendario = () => {
   const [users, setUsers] = useState([]); // Stato per memorizzare gli utenti
   const [calendarData, setCalendarData] = useState([]); // Stato per memorizzare i dati del calendario
   const scrollRef = useRef(null);
+  let [userData, setUserData] = useState([]); // Stato per memorizzare i dati del calendario
 
   const fetchUsers = async () => {
    
@@ -156,7 +157,7 @@ const Calendario = () => {
   }, []);
   const tableData = useMemo(() => {
     return users.map(user => {
-      const userData = {
+       userData = {
         Nome: user.name,
         Cognome: user.surname,
       };
@@ -194,16 +195,20 @@ const Calendario = () => {
           morningLocation = locations[0] || ''; // First location for morning
           afternoonLocation = locations[1] || ''; // Second location for afternoon
   
-          // Debugging output to ensure logic works as intended
-          console.log(`User: ${user.id_user}, Date: ${formattedDate}`);
-          console.log(`Locations: ${locations}`);
-          console.log(`Total Value: ${totalValue}, Morning: ${morningLocation}, Afternoon: ${afternoonLocation}`);
-        }
-  
+         // --> QUI INSERISCI I console.log PER IL DEBUG
+    console.log(`User: ${user.id_user}, Date: ${formattedDate}`);
+    console.log(`Locations: ${locations}`);
+    console.log(`Total Value: ${totalValue}, Morning: ${morningLocation}, Afternoon: ${afternoonLocation}`);
+ 
+   }
         // Assign to the current day
         userData[`day${i}`] = { value: totalValue, morningLocation, afternoonLocation };
+
+      console.log("Total Value sono userData:"+ userData[`day${i}`].value );
+
       }
-  
+     setUserData(userData);
+     console.log(userData);
       return userData;
     });
   }, [users, days, calendarData]);
@@ -217,6 +222,7 @@ const Calendario = () => {
       ...Array.from({ length: days }, (_, i) => ({ [`day${i + 1}`]: { value: '' } })).reduce((acc, curr) => ({ ...acc, ...curr }), {}),
     }));
   }, [users, days]);
+  
 
   const emptyTableInstance = useTable({ columns, data: emptyTableData });
   const {
@@ -226,6 +232,82 @@ const Calendario = () => {
     rows: emptyRows,
     prepareRow: prepareEmptyRow,
   } = emptyTableInstance;
+  
+ const calculateSummary = () => {
+  const summary = {
+    twhTeoriche: {},
+    twhReali: {},
+    otTotale: {},
+  };
+
+  for (let i = 1; i <= days; i++) {
+    // Calcoli per ogni giorno
+    const teoriche = 8 * users.length;  // Supponendo 8 ore lavorative teoriche per utente
+    const reali = users.reduce((sum, user) => sum + (user[`day${i}`]?.value || 0), 0);
+    const overtime = reali > teoriche ? reali - teoriche : 0;
+
+    summary.twhTeoriche[`day${i}`] = teoriche;
+    summary.twhReali[`day${i}`] = reali;
+    summary.otTotale[`day${i}`] = overtime;
+  }
+
+  // Calcolo settimanale
+  summary.twhTeoriche.settimana = Object.values(summary.twhTeoriche).reduce((sum, val) => sum + val, 0);
+  summary.twhReali.settimana = Object.values(summary.twhReali).reduce((sum, val) => sum + val, 0);
+  summary.otTotale.settimana = Object.values(summary.otTotale).reduce((sum, val) => sum + val, 0);
+
+  return summary;
+};
+
+const summary = useMemo(() => calculateSummary(), [users, days]);
+const calculateTotals = () => {
+  const totals = {};
+  
+  for (let i = 1; i <= days; i++) {
+    totals[`day${i}`] = users.reduce((sum, user) => {
+      const dayData = user[`day${i}`];
+      return sum + (dayData?.value || 0); // Somma i valori di ogni utente per il giorno
+    }, 0);
+  }
+
+  return totals;
+};
+
+const totals = useMemo(() => calculateTotals(), [users, days, calendarData]); // Ricalcola quando utenti, giorni o dati del calendario cambiano
+
+const calculateColumnSums = () => {
+  const columnSums = {};
+
+  // Log generale all'inizio per mostrare gli utenti
+  console.log("Utenti:", users);
+
+  // Itera sui giorni per sommare i valori delle colonne
+  for (let i = 1; i <= days; i++) {
+    let sum = 0;
+
+    // Itera sugli utenti e somma i valori per ogni giorno
+    users.forEach((user, index) => {
+      const value = userData[`day${i}`].value;  // Prende il valore o 0 se non è definito
+      
+      console.log(`Giorno ${i}, Utente ${index + 1} (${user.name}): Total Value = ${value}`);  // Log per ogni cella
+
+      sum += value;
+    });
+
+    columnSums[`day${i}`] = sum;
+
+    // Log della somma finale per la colonna
+    console.log(`Somma colonna giorno ${i}: ${sum}`);
+  }
+
+  console.log("Somme totali per ogni giorno:", columnSums);
+  
+  return columnSums;
+};
+
+
+const columnSums = useMemo(() => calculateColumnSums(), [users, days]);
+
   
 
   function exportData() {
@@ -357,67 +439,105 @@ const Calendario = () => {
               ))}
             </thead>
             <tbody {...getTableBodyProps()} className="bg-white divide-y divide-gray-300">
-            {rows.map(row => {
-              prepareRow(row);
-              return (
-                <tr {...row.getRowProps()} className="hover:bg-gray-100">
-                  {row.cells.map((cell, index) => {
-                    const columnId = cell.column.id;
-                    const dayColumn = columns[index + 2]; // Indice delle colonne giorni (dopo Nome e Cognome)
-                    const isWeekend = dayColumn && dayColumn.isWeekend;
-                    const isHoliday = dayColumn && dayColumn.isHoliday;
-                    const { value, morningLocation, afternoonLocation } = cell.value || {};
+              {rows.map(row => {
+                prepareRow(row);
+                return (
+                  <tr {...row.getRowProps()} className="hover:bg-gray-100">
+                    {row.cells.map((cell, index) => {
+                      const columnId = cell.column.id;
+                      const dayColumn = columns[index + 2]; // Indice delle colonne giorni (dopo Nome e Cognome)
+                      const isWeekend = dayColumn && dayColumn.isWeekend;
+                      const isHoliday = dayColumn && dayColumn.isHoliday;
+                      const { value, morningLocation, afternoonLocation } = cell.value || {};
 
-                    const zeroValueLocations = [2, 3, 1, 5, 8];
-                    const isZeroValueLocation = zeroValueLocations.includes(morningLocation) || zeroValueLocations.includes(afternoonLocation);
+                      const zeroValueLocations = [2, 3, 1, 5, 8];
+                      const isZeroValueLocation = zeroValueLocations.includes(morningLocation) || zeroValueLocations.includes(afternoonLocation);
 
-                    const cellClass = isZeroValueLocation ? (
-                      morningLocation === 4 ? ''
-                      : morningLocation === 5 ? 'bg-[#FFFF00] text-gray-900'
-                      : morningLocation === 3 ? 'bg-[#FF9966] text-gray-900'
-                      : morningLocation === 2 ? 'bg-[#8ED973] text-gray-900'
-                      : morningLocation === 1 ? 'bg-[#8ED973] text-gray-900'
-                      : morningLocation === 8 ? 'bg-[#00D5D0] text-gray-900'
-                      : afternoonLocation === 5 ? 'bg-[#FFFF00] text-gray-900'
-                      : afternoonLocation === 3 ? 'bg-[#FF9966] text-gray-900'
-                      : afternoonLocation === 2 ? 'bg-[#8ED973] text-gray-900'
-                      : afternoonLocation === 1 ? 'bg-[#8ED973] text-gray-900'
-                      : afternoonLocation === 8 ? 'bg-[#00D5D0] text-gray-900'
-                      : ''
-                    ) : '';
+                      const cellClass = isZeroValueLocation ? (
+                        morningLocation === 4 ? ''
+                        : morningLocation === 5 ? 'bg-[#FFFF00] text-gray-900'
+                        : morningLocation === 3 ? 'bg-[#FF9966] text-gray-900'
+                        : morningLocation === 2 ? 'bg-[#8ED973] text-gray-900'
+                        : morningLocation === 1 ? 'bg-[#8ED973] text-gray-900'
+                        : morningLocation === 8 ? 'bg-[#00D5D0] text-gray-900'
+                        : afternoonLocation === 5 ? 'bg-[#FFFF00] text-gray-900'
+                        : afternoonLocation === 3 ? 'bg-[#FF9966] text-gray-900'
+                        : afternoonLocation === 2 ? 'bg-[#8ED973] text-gray-900'
+                        : afternoonLocation === 1 ? 'bg-[#8ED973] text-gray-900'
+                        : afternoonLocation === 8 ? 'bg-[#00D5D0] text-gray-900'
+                        : ''
+                      ) : '';
 
-                    return (
-                      <td
-                        {...cell.getCellProps()}
-                        className={`px-2 py-1 border-b text-gray-600 border border-gray-300 ${isWeekend ? 'bg-gray-200' : ''} ${isHoliday ? 'bg-[#FF3399]' : ''} ${cellClass}`}
-                        style={{
-                          fontSize: '12px',
-                          padding: '5px',
-                          textAlign: 'right',
-                          backgroundColor: cell.column.sticky ? 'white' : '',
-                          position: cell.column.sticky ? 'sticky' : 'static',
-                          left: cell.column.sticky ? 0 : 'auto',
-                          zIndex: cell.column.sticky ? 1 : 'auto',
-                        }}
-                      >
-                        {isHoliday 
-                          ? '' // Se è una festività, lascia vuota la cella
-                          : (columnId === 'Nome' || columnId === 'Cognome'
-                            ? cell.value
-                            : (isWeekend
-                              ? '' 
-                              : (cell.value && cell.value.value !== undefined
-                                ? cell.value.value // Assicurati che cell.value esista
-                                : '')))}
-                      </td>
-                    );
-                  })}
-                </tr>
-              );
-            })}
+                      return (
+                        <td
+                          {...cell.getCellProps()}
+                          className={`px-2 py-1 border-b text-gray-600 border border-gray-300 ${isWeekend ? 'bg-gray-200' : ''} ${isHoliday ? 'bg-[#FF3399]' : ''} ${cellClass}`}
+                          style={{
+                            fontSize: '12px',
+                            padding: '5px',
+                            textAlign: 'right',
+                            backgroundColor: cell.column.sticky ? 'white' : '',
+                            position: cell.column.sticky ? 'sticky' : 'static',
+                            left: cell.column.sticky ? 0 : 'auto',
+                            zIndex: cell.column.sticky ? 1 : 'auto',
+                          }}
+                        >
+                          {isHoliday 
+                            ? '' // Se è una festività, lascia vuota la cella
+                            : (columnId === 'Nome' || columnId === 'Cognome'
+                              ? cell.value
+                              : (isWeekend
+                                ? '' 
+                                : (cell.value && cell.value.value !== undefined
+                                  ? cell.value.value // Assicurati che cell.value esista
+                                  : '')))}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
 
-                
-            </tbody>
+ {/* RIGA TWH TEORICHE */}
+<tr className="bg-gray-200 font-bold">
+  <td className="px-2 py-1 border-b text-gray-600 border border-gray-300" colSpan={2}>TWH teoriche</td>
+  {Array.from({ length: days }).map((_, i) => (
+    <td key={`twh-teoriche-${i}`} className="px-2 py-1 border-b text-right text-gray-600 border border-gray-300">
+      {columnSums[`day${i + 1}`] } {/* Mostra la somma dei valori di ogni colonna */}
+    </td>
+  ))}
+  <td className="px-2 py-1 border-b text-right text-gray-600 border border-gray-300">
+    {Object.values(columnSums).reduce((acc, val) => acc + (val || 0), 0)} {/* Somma totale settimanale */}
+  </td>
+</tr>
+
+
+  {/* RIGA TWH REALI */}
+  <tr className="bg-gray-200 font-bold">
+    <td className="px-2 py-1 border-b text-gray-600 border border-gray-300" colSpan={2}>TWH reali</td>
+    {Array.from({ length: days }).map((_, i) => (
+      <td key={`twh-reali-${i}`} className="px-2 py-1 border-b text-right text-gray-600 border border-gray-300">
+        {summary.twhReali[`day${i + 1}`]}
+      </td>
+    ))}
+    <td className="px-2 py-1 border-b text-right text-gray-600 border border-gray-300">
+      {summary.twhReali.settimana}
+    </td>
+  </tr>
+
+  {/* RIGA OT TOTALE */}
+  <tr className="bg-purple-200 font-bold">
+    <td className="px-2 py-1 border-b text-gray-600 border border-gray-300" colSpan={2}>OT Totale</td>
+    {Array.from({ length: days }).map((_, i) => (
+      <td key={`ot-totale-${i}`} className="px-2 py-1 border-b text-right text-gray-600 border border-gray-300 bg-purple-100">
+        {summary.otTotale[`day${i + 1}`]}
+      </td>
+    ))}
+    <td className="px-2 py-1 border-b text-right text-gray-600 border border-gray-300 bg-purple-100">
+      {summary.otTotale.settimana}
+    </td>
+  </tr>
+</tbody>
           </table>
         </div>
       </div>
@@ -425,47 +545,7 @@ const Calendario = () => {
 
 
 
-    <div className="flex w-full space-x-4 mt-1">
-        <div className="flex-grow bg-white rounded-lg shadow overflow-x-auto" ref={scrollRef}>
-        <table {...getEmptyTableProps()} className="min-w-full">
-          <thead>
-            {emptyHeaderGroups.map(headerGroup => (
-              <tr {...headerGroup.getHeaderGroupProps()}>
-                {headerGroup.headers.map(column => (
-                  <th {...column.getHeaderProps()} className="bg-gray-200 px-4 py-2 text-left">
-                    {column.render('Header')}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody {...getEmptyTableBodyProps()}>
-            {emptyRows.map(row => {
-              prepareEmptyRow(row);
-              return (
-                <tr {...row.getRowProps()} className="border-b">
-                  {row.cells.map(cell => (
-                    <td {...cell.getCellProps()} className="px-4 py-2">
-                      {cell.value?.value || 0}
-                    </td>
-                  ))}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-
-      <div className="flex justify-end mt-4">
-        <span className="text-lg font-semibold">Total Hours: {tableData.reduce((acc, user) => {
-          let userTotal = 0;
-          for (let i = 1; i <= days; i++) {
-            userTotal += user[`day${i}`]?.value || 0;
-          }
-          return acc + userTotal;
-        }, 0)}</span>
-      </div>
-    </div>
+   
     </div>
   );
 };

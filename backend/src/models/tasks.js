@@ -27,16 +27,21 @@ Tasks.init(
       type: DataTypes.INTEGER,
       allowNull: false
     },
-    job: {
-      type: DataTypes.INTEGER,
-      allowNull: false
-    },
+    
     assignedTo: {
       type: DataTypes.INTEGER,
       allowNull: false
     },
     parentTask: {
       type: DataTypes.INTEGER,
+      allowNull: true
+    },
+    estimatedstart: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
+    estimatedend: {
+      type: DataTypes.DATE,
       allowNull: true
     },
     createdAt: {

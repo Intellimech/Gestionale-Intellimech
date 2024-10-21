@@ -30,7 +30,6 @@ export default function CategoryTable() {
     axios
       .get(`${process.env.REACT_APP_API_URL}/category/read`)
       .then((response) => {
-        console.log('Fetched categories:', response.data.categories);
         setCategories(response.data.categories || []);
       })
       .catch((error) => {

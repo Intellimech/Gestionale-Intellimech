@@ -102,7 +102,6 @@ export default function PurchaseCreateForm() {
       }))
     };
   
-    console.log(jsonObject);
     toast.promise(
       axios.post(`${process.env.REACT_APP_API_URL}/purchase/create`, jsonObject), // 
       {

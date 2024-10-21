@@ -12,15 +12,9 @@ const JobDetails = () => {
   useEffect(() => {
     const fetchJobData = async () => {
       try {
-        console.log(`Fetching job data for ID: ${id_job}`); // Log ID del lavoro
-
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/job/read?id=${id_job}`); // Usa l'ID per la query
-        console.log('Response data:', response.data); // Log della risposta
-
-        // Assicurati di confrontare gli ID come stringhe
+        
         const jobData = response.data.jobs.find(job => job.id_job.toString() === id_job); // Modificato per forzare il confronto come stringhe
-        console.log('Filtered job data:', jobData); // Log del lavoro filtrato
-
         setJob(jobData);
       } catch (error) {
         console.error('Fetch error:', error); // Log dell'errore per il debug
@@ -32,16 +26,6 @@ const JobDetails = () => {
 
     fetchJobData();
   }, [id_job]);
-
-  if (loading) {
-    console.log('Loading job data...'); // Log per il caricamento
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    console.error('Error occurred:', error); // Log dell'errore
-    return <div>Error: {error}</div>;
-  }
 
   // Log finale per verificare se il lavoro è stato trovato
   if (!job) {

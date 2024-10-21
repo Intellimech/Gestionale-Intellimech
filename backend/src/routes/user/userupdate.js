@@ -1,64 +1,86 @@
-import express from "express";
-import bodyParser from "body-parser";
-import cors from "cors";
-import http from "http";
-import dotenv from "dotenv";
-import fs from "fs";
-import path from "path";
-import bcrypt from "bcrypt";
-import sequelize from "../../utils/db.js";
-import Logger from "../../utils/logger.js";
+import express from 'express';
+import bcrypt from 'bcrypt';
+import sequelize from '../../utils/db.js';
+import Logger from '../../utils/logger.js';
 
 // Setup the express router
 const router = express.Router();
 
-router.put("/update", (req, res) => {
-    // Get the user from the database
-    const { user_id, name, surname, username, password, email, role } = req.body;
-    if (!name || !surname || !username || !password || !email || !role) {
-        res.status(400).json({
-        message: "Bad request, view documentation for more information",
-        });
-        return;
-    }
-    const User = sequelize.models.User;
+router.put("/update", async (req, res) => {
 
-    User.findOne({ where: { id_user: user_id } })
-        .then((user) => {
-        if (user) {
-            // Hash the password
-            bcrypt.hash(password, 10, (err, hash) => {
-            if (err) {
-                res.status(500).json({
-                message: "Internal server error",
-                });
-                Logger("error", err);
-            } else {
-                user.name = name;
-                user.surname = surname;
-                user.username = username;
-                user.password = hash;
-                user.email = email;
-                user.role = role;
-                user.updatedAt = new Date();
-                user.save();
-                res.status(200).json({
-                message: "User updated",
-                });
-            }
-            });
-        } else {
-            res.status(400).json({
-            message: "User does not exist",
-            });
+    const user = req.user;  
+    
+    const { user_id, name, surname, username, password, email, role, birthdate, group, subGroup, contractType, institute, qualification, hWeek, TaxIdCode, Phone, hiringdate, drivingLicenseExp, country, streetaddress, city, province, zip, sessionId, changepass, birthprovince, businessphone } = req.body;
+
+    // Debugging: log the request body
+    console.log(req.body);
+    try {
+        // Recupera il modello User
+        const User = sequelize.models.User;
+
+        // Cerca l'utente nel database
+        const user = await User.findOne({ where: { id_user: user_id } });
+
+        if (!user) {
+            return res.status(404).json({ message: "User does not exist" });
         }
-        })
-        .catch((err) => {
-        res.status(500).json({
-            message: "Internal server error",
+
+        // Hash della nuova password solo se è stata fornita
+        let hashedPassword = user.password;
+        if (password) {
+            hashedPassword = await bcrypt.hash(password, 10);
+        }
+
+        // Aggiorna i dati dell'utente
+        await user.update({
+            name,
+            surname,
+            birthdate,
+            username,
+            email,
+            password: hashedPassword,
+            role,
+            isActive: false,            
+            isDeleted: false,          
+            lastLoginAt: null,
+            lastLoginIp: null,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            deletedAt: null,
+            createdBy: user.id_user,
+            updatedBy: user.id_user,
+            deletedBy: null,
+            group,
+            subGroup,
+            contractType,
+            institute,
+            qualification,
+            hWeek,
+            TaxIdCode,
+            Phone,
+            hiringdate,
+            drivingLicenseExp,
+            country,
+            streetaddress,
+            city,
+            province,
+            zip,
+            sessionId,
+            changepass,
+            birthprovince,
+            businessphone
         });
-        Logger("error", err);
-        });
+
+        // Risposta di successo
+        return res.status(200).json({ message: "User updated successfully" });
+
+    } catch (error) {
+        // Log dell'errore
+        Logger("error", 'Error updating user:', error);
+
+        // Risposta in caso di errore interno del server
+        return res.status(500).json({ message: "Internal server error" });
+    }
 });
 
 export default router;

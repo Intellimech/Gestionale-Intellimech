@@ -185,7 +185,6 @@ export default function Example({ permissions }) {
       },
     })
     .then((response) => {
-      console.log(response.data.offer);
       axios
       .get(`${process.env.REACT_APP_API_URL}/offer/read`, {
         headers: {
@@ -196,11 +195,9 @@ export default function Example({ permissions }) {
         setOffer(response.data.offer);
       })
       .catch((error) => {
-        console.log(error);
       });
     })
     .catch((error) => {
-      console.log(error);
     });
     
   }
@@ -213,7 +210,6 @@ export default function Example({ permissions }) {
       },
     })
     .then((response) => {
-      console.log(response.data.offer);
       axios
       .get(`${process.env.REACT_APP_API_URL}/offer/read`, {
         headers: {
@@ -224,11 +220,9 @@ export default function Example({ permissions }) {
         setOffer(response.data.offer);
       })
       .catch((error) => {
-        console.log(error);
       });
     })
     .catch((error) => {
-      console.log(error);
     });
   }
 
@@ -240,7 +234,6 @@ export default function Example({ permissions }) {
       },
     })
     .then((response) => {
-      console.log(response.data.offer);
       axios
       .get(`${process.env.REACT_APP_API_URL}/offer/read`, {
         headers: {
@@ -251,11 +244,9 @@ export default function Example({ permissions }) {
         setOffer(response.data.offer);
       })
       .catch((error) => {
-        console.log(error);
       });
     })
     .catch((error) => {
-      console.log(error);
     });
   }
 
@@ -267,7 +258,6 @@ export default function Example({ permissions }) {
       },
     })
     .then((response) => {
-      console.log(response.data.offer);
       axios
       .get(`${process.env.REACT_APP_API_URL}/offer/read`, {
         headers: {
@@ -278,11 +268,9 @@ export default function Example({ permissions }) {
         setOffer(response.data.offer);
       })
       .catch((error) => {
-        console.log(error);
       });
     })
     .catch((error) => {
-      console.log(error);
     });
   }
 
@@ -295,11 +283,8 @@ export default function Example({ permissions }) {
       })
       .then((response) => {
         setOffer(response.data.offer);
-        console.log(user)
-        console.log(response.data.offer);
       })
       .catch((error) => {
-        console.log(error);
       });
 
     axios.get(`${process.env.REACT_APP_API_URL}/technicalarea/read`, )
@@ -313,7 +298,6 @@ export default function Example({ permissions }) {
     axios
       .get(`${process.env.REACT_APP_API_URL}/subcategory/read`)
       .then((response) => {
-        console.log('Fetched subcategories:', response.data.subcategories);
         setSubcategories(response.data.subcategories || []);
       })
       .catch((error) => {
@@ -323,7 +307,7 @@ export default function Example({ permissions }) {
     axios
       .get(`${process.env.REACT_APP_API_URL}/category/read`)
       .then((response) => {
-        console.log('Fetched categories:', response.data.categories);
+       
         setCategories(response.data.categories || []);
       })
       .catch((error) => {
@@ -649,8 +633,7 @@ export default function Example({ permissions }) {
                             } else {
                               setShowInfo(true);
                               setSelectedOfferInfo(offer);
-                              console.log(offer);// Mostra il form nella stessa finestra
-                            }
+                              }
                           }}
                           className={classNames(
                             'whitespace-nowrap px-3 py-4 pr-3 text-sm font-medium',

@@ -1,80 +1,111 @@
-import React from 'react';
-import Select from "react-tailwindcss-select";
+import React, { useMemo } from 'react';
+import Select from 'react-tailwindcss-select';
 
 export default function TaskForm({ task, onChange, onAddChild, onRemove, level = 1, users }) {
   const indentStyle = {
-    paddingLeft: `${level * 20}px`,
-    borderLeft: `${level > 0 ? '2px solid #E5E7EB' : 'none'}`,
+    paddingLeft: `${level * 10}px`,
+    borderLeft: level > 0 ? '2px solid #E5E7EB' : 'none'
   };
 
+  const hasChildren = task.children && task.children.length > 0;
+
+  const calculatedValues = useMemo(() => {
+    if (!hasChildren) return null;
+
+    return task.children.reduce((acc, child) => ({
+      hours: acc.hours + (child.hours || 0),
+      value: acc.value + (child.value || 0),
+      startDate: acc.startDate ? (child.startDate && child.startDate < acc.startDate ? child.startDate : acc.startDate) : child.startDate,
+      endDate: acc.endDate ? (child.endDate && child.endDate > acc.endDate ? child.endDate : acc.endDate) : child.endDate,
+    }), { hours: 0, value: 0, startDate: null, endDate: null });
+  }, [task.children]);
+
+  const handleInputChange = (field, value) => {
+    if (hasChildren && (field === 'hours' || field === 'value' || field === 'startDate' || field === 'endDate')) {
+      // If there are children, don't allow direct changes to these fields
+      return;
+    }
+    onChange({ ...task, [field]: value });
+  };
+
+  // Determine if the "Aggiungi Sotto Task" button should be shown
+  const showAddSubtaskButton = level === 1 || hasChildren;
+
   return (
-    <div className="border p-4 mb-4 rounded-lg shadow-sm bg-gray-50" style={indentStyle}>
-      <div className="mb-2">
-        <label className="block text-sm font-medium leading-6 text-gray-900">Nome</label>
+    <div className="border p-2 mb-2 rounded-lg shadow-sm bg-gray-50" style={indentStyle}>
+      <div className="flex flex-wrap items-center space-x-2 text-sm">
+        <textarea
+          value={task?.name || ''}
+          onChange={(e) => handleInputChange('name', e.target.value)}
+          placeholder="Descrizione"
+          className="flex-grow max-w-[400px] px-2 py-1 rounded border-gray-300 focus:border-[#7fb7d4] focus:ring-[#7fb7d4]"
+        />
         <input
-          type="text"
-          value={task?.name}
-          onChange={(e) => onChange({ ...task, name: e.target.value })}
-          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
+          type="number"
+          value={hasChildren ? calculatedValues?.hours : (task?.hours || '')}
+          onChange={(e) => handleInputChange('hours', parseFloat(e.target.value) || 0)}
+          placeholder="Ore"
+          className="w-20 px-2 py-1 rounded border-gray-300 focus:border-[#7fb7d4] focus:ring-[#7fb7d4]"
+          readOnly={hasChildren}
         />
-      </div>
-
-      <div className="mb-2">
-        <label className="block text-sm font-medium leading-6 text-gray-900">Durata</label>
         <input
-          type="text"
-          value={task?.duration}
-          onChange={(e) => onChange({ ...task, duration: e.target.value })}
-          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
+          type="date"
+          value={hasChildren ? calculatedValues?.startDate : (task?.startDate || '')}
+          onChange={(e) => handleInputChange('startDate', e.target.value)}
+          className="w-32 px-2 py-1 rounded border-gray-300 focus:border-[#7fb7d4] focus:ring-[#7fb7d4]"
+          readOnly={hasChildren}
         />
-      </div>
-
-      <div className="mb-2">
-        <label className="block text-sm font-medium leading-6 text-gray-900">Assegnata a</label>
-        <Select
-          value={task?.assignedTo}
-          onChange={(value) => onChange({ ...task, assignedTo: value })}
-          options={users.map((user) => ({ value: user.value, label: user.label }))}
-          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
+        <input
+          type="date"
+          value={hasChildren ? calculatedValues.endDate : (task?.endDate || '')}
+          onChange={(e) => handleInputChange('endDate', e.target.value)}
+          className="w-32 px-2 py-1 rounded border-gray-300 focus:border-[#7fb7d4] focus:ring-[#7fb7d4]"
+          readOnly={hasChildren}
         />
-      </div>
-
-      <div className="flex space-x-2 mb-2">
-        <button
-          type="button"
-          onClick={onAddChild}
-          className="rounded-md bg-[#7fb7d4] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#7fb7d4]"
-        >
-          Aggiungi Sotto Task
-        </button>
-        <button
-          type="button"
+        <div className="w-40">
+          <Select
+            value={task?.assignedTo}
+            onChange={(value) => handleInputChange('assignedTo', value)}
+            options={users.map((user) => ({ value: user.value, label: user.label }))}
+            classNames={{
+              menuButton: () => 'flex text-sm text-gray-500 border border-gray-300 rounded shadow-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#7fb7d4] focus:border-[#7fb7d4]'
+            }}
+          />
+        </div>
+        {showAddSubtaskButton && (
+          <button 
+            type="button" 
+            onClick={onAddChild}
+            className="px-2 py-1 text-xs font-semibold text-white bg-[#7fb7d4] rounded hover:bg-[#6ca7c4]"
+          >
+            +Sotto Task
+          </button>
+        )}
+        <button 
+          type="button" 
           onClick={onRemove}
-          className="rounded-md border border-[#7fb7d4] px-3 py-2 text-sm font-semibold text-[#7fb7d4]"
+          className="px-2 py-1 text-xs font-semibold text-[#7fb7d4] border border-[#7fb7d4] rounded hover:bg-[#7fb7d4] hover:text-white"
         >
-          Rimuovi
+          -
         </button>
       </div>
-
-      <div className="pl-6">
-        {task?.children.map((child, index) => (
+      <div className="mt-2">
+        {task?.children?.map((child, index) => (
           <TaskForm
             key={index}
             task={child}
             onChange={(newChild) => {
-              const newChildren = [...task.children];
+              const newChildren = [...(task.children || [])];
               newChildren[index] = newChild;
               onChange({ ...task, children: newChildren });
             }}
-            onAddChild={() => {
-              onAddChild(); // This will add a subtask under the current task
-            }}
+            onAddChild={onAddChild}
             onRemove={() => {
-              const newChildren = [...task.children];
+              const newChildren = [...(task.children || [])];
               newChildren.splice(index, 1);
               onChange({ ...task, children: newChildren });
             }}
-            level={level + 1} // Increase the level for nested tasks
+            level={level + 1}
             users={users}
           />
         ))}

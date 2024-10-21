@@ -420,19 +420,24 @@ export default function Example({ permissions }) {
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('description')}>
-                    Descrizione
-                    {sortColumn === 'description' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                    <br />
-                    <input
-                      value={searchQueries.description}
-                      onClick={(e) => e.stopPropagation()}
-                      onChange={handleSearchInputChange('description')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                      placeholder=""
-                      rows={1}
-                    />
-                  </th>
+                  <th 
+                  scope="col" 
+                  className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer ellipsis" 
+                  onClick={() => handleSort('description')}
+                >
+                  Descrizione
+                  {sortColumn === 'description' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                  <br />
+                  <input
+                    value={searchQueries.description}
+                    onClick={(e) => e.stopPropagation()}
+                    onChange={handleSearchInputChange('description')}
+                    className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                    placeholder=""
+                    rows={1}
+                  />
+                </th>
+
                   <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Company')}>
                     Cliente
                     {sortColumn === 'Company' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
@@ -539,8 +544,8 @@ export default function Example({ permissions }) {
                         >
                           {quotationrequest.name}
                         </td>
-                        <td className="whitespace-normal max-w-[100px] overflow-hidden text-sm text-gray-500 px-3 py-4 break-words max-h-[100px] overflow-y-auto">
-                          {quotationrequest.description}
+                        <td className="text-sm text-gray-500 px-3 py-4">
+                          {quotationrequest.description.split(" ").slice(0, 2).join(" ") + (quotationrequest.description.split(" ").length > 2 ? "..." : "")}
                         </td>
                         <td className="whitespace-normal max-w-[200px] overflow-hidden text-sm text-gray-500 px-3 py-4 break-words">
                           {quotationrequest.Company.name}

@@ -23,6 +23,10 @@ Tasks.init(
       type: DataTypes.STRING,
       allowNull: false
     },
+    id_offer: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
     percentage: {
       type: DataTypes.INTEGER,
       allowNull: false

@@ -5,7 +5,6 @@ import logo from '../../images/logo.jpg'
 import 'jspdf-autotable';
 
 export default function Example({ offer }) {
-
     const handleDownloadPdf = () => {
         const doc = new jsPDF();
         const logoPath = '../images/logo.jpg'; 

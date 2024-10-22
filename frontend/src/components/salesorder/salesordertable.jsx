@@ -33,8 +33,8 @@ export default function Example({ permissions }) {
   const statusOptions = ['Da fatturare', 'Fatturata', 'Nessuna'];
 
   useEffect(() => {
-    const isIndeterminate = selectedOffer.length > 0 && selectedOffer.length < salesorders.length;
-    setChecked(selectedOffer.length === salesorders.length);
+    const isIndeterminate = selectedOffer?.length > 0 && selectedOffer?.length < salesorders.length;
+    setChecked(selectedOffer?.length === salesorders.length);
     setIndeterminate(isIndeterminate);
     if (checkbox.current) checkbox.current.indeterminate = isIndeterminate;
   }, [selectedOffer, salesorders]);
@@ -87,11 +87,11 @@ export default function Example({ permissions }) {
   const filteredSaleOrder= salesorders.filter((item) => {
     return (
     (searchQueries.name === '' || item.name.toLowerCase().includes(searchQueries.name.toLowerCase())) &&
-    (searchQueries.description=== '' || item.Offer.QuotationRequest.description.toLowerCase().includes(searchQueries.description.toLowerCase())) &&
-    (searchQueries.Company === '' || item.Offer.QuotationRequest.Company?.name.toLowerCase().includes(searchQueries.Company.toLowerCase())) &&
+    (searchQueries.description=== '' || item.Offer?.QuotationRequest.description.toLowerCase().includes(searchQueries.description.toLowerCase())) &&
+    (searchQueries.Company === '' || item.Offer?.QuotationRequest.Company?.name.toLowerCase().includes(searchQueries.Company.toLowerCase())) &&
   
    
-    (searchQueries.offer === '' || item.Offer.name.toLowerCase().includes(searchQueries.offer.toLowerCase())) &&
+    (searchQueries.offer === '' || item.Offer?.name.toLowerCase().includes(searchQueries.offer.toLowerCase())) &&
     (searchQueries.status === '' || item.status.toLowerCase().includes(searchQueries.status.toLowerCase())) &&
 
     (searchQueries.createdByUser === '' || (item.createdByUser?.name + ' ' + item.createdByUser?.surname).toLowerCase().includes(searchQueries.createdByUser.toLowerCase()))
@@ -112,11 +112,11 @@ const sortedSaleOrder = filteredSaleOrder.sort((a, b) => {
   const getValue = (item, column) => {
     switch (column) {
       case 'Company':
-        return item.Offer.QuotationRequest.Company.name || '';
+        return item.Offer?.QuotationRequest.Company.name || '';
       case 'description':
-        return item.Offer.QuotationRequest.description || '';
+        return item.Offer?.QuotationRequest.description || '';
       case 'offer':
-        return item.Offer.name || '';
+        return item.Offer?.name || '';
       case 'createdByUser':
         return item.createdByUser ? `${item.createdByUser.name} ${item.createdByUser.surname}` : '';
       default:
@@ -451,13 +451,13 @@ const sortedSaleOrder = filteredSaleOrder.sort((a, b) => {
                           {salesorder.name}
                         </td>
                         <td className="whitespace-nowrap px-2 py-4 text-sm text-gray-500">
-                          {salesorder.Offer.QuotationRequest.Company.name}
+                          {salesorder.Offer?.QuotationRequest.Company.name}
                         </td>
                         <td className="whitespace-nowrap px-2 py-4 text-sm text-gray-500">
-                          <a href={`/offer/${salesorder.Offer.id_offer}`} className="truncate">{salesorder.Offer.name}</a>
+                          <a href={`/offer/${salesorder.Offer?.id_offer}`} className="truncate">{salesorder.Offer?.name}</a>
                         </td>
                         <td className="whitespace-nowrap px-2 py-4 text-sm text-gray-500">
-                          <span className="truncate">{salesorder.Offer.description || salesorder.Offer.QuotationRequest.description}</span>
+                          <span className="truncate">{salesorder.Offer?.description || salesorder.Offer?.QuotationRequest.description}</span>
                         </td>
                         <td className="whitespace-nowrap px-2 py-4 text-sm text-gray-500">
                           {salesorder.status === 'Da Fatturare' ? (

@@ -10,6 +10,7 @@ import { UserContext } from '../../module/userContext'
 
 import OfferCreate from './offercreate';
 import OfferInformation from './offerinformation';
+import OfferRevision from './offerrevision';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -37,7 +38,9 @@ export default function Example({ permissions }) {
   const [sortColumn, setSortColumn] = useState('name');
   const [sortDirection, setSortDirection] = useState('asc');
   const [filterType, setFilterType] = useState('name');
+  const [showRevision, setShowRevision] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
+  const [selectedOfferRevision, setSelectedOfferRevision] = useState({});
   const [selectedOfferInfo, setSelectedOfferInfo] = useState({});
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -203,6 +206,7 @@ export default function Example({ permissions }) {
   }
 
   const Revision = (offer) => {
+    setShowRevision(true);
     axios
     .post(`${process.env.REACT_APP_API_URL}/offer/revision/${offer}`, {
       headers: {
@@ -374,6 +378,53 @@ export default function Example({ permissions }) {
           </div>
         </Dialog>
       </Transition.Root>
+
+      <Transition.Root show={showRevision} as={Fragment}>
+        <Dialog className="relative z-50" onClose={setShowRevision}>
+          <div className="fixed inset-0" />
+
+          <div className="fixed inset-0 overflow-hidden">
+            <div className="absolute inset-0 overflow-hidden">
+              <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-16">
+                <Transition.Child
+                  as={Fragment}
+                  enter="transform transition ease-in-out duration-500 sm:duration-700"
+                  enterFrom="translate-x-full"
+                  enterTo="translate-x-0"
+                  leave="transform transition ease-in-out duration-500 sm:duration-700"
+                  leaveFrom="translate-x-0"
+                  leaveTo="translate-x-full"
+                >
+                  <Dialog.Panel className="pointer-events-auto w-screen max-w-7xl">
+                    <div className="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
+                      <div className="px-4 sm:px-6">
+                        <div className="flex items-start justify-between">
+                          <Dialog.Title className="text-base font-semibold leading-6 text-gray-900">
+                            {selectedOfferInfo?.name}
+                          </Dialog.Title>
+                          <div className="ml-3 flex h-7 items-center">
+                            <button
+                              type="button"
+                              className="relative rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#7fb7d4] focus:ring-offset-2"
+                              onClick={() => setShowRevision(false)}
+                            >
+                              <span className="absolute -inset-2.5" />
+                              <span className="sr-only">Close panel</span>
+                              <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="relative mt-6 flex-1 px-4 sm:px-6">{ <OfferRevision offer={selectedOfferRevision} /> }</div>
+                    </div>
+                  </Dialog.Panel>
+                </Transition.Child>
+              </div>
+            </div>
+          </div>
+        </Dialog>
+      </Transition.Root> 
+
       <Transition.Root show={showCreate} as={Fragment}>
         <Dialog className="relative z-50" onClose={setShowCreate}>
           <div className="fixed inset-0" />
@@ -672,7 +723,7 @@ export default function Example({ permissions }) {
                             : new Date(offer.deadlineDate).toLocaleDateString()}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {offer.status === 'Inviata' ? (
+                          {offer.status === 'Inviata al cliente' ? (
                             <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-yellow-500">
                               Inviata
                             </span>
@@ -730,7 +781,13 @@ export default function Example({ permissions }) {
                                     <button
                                       type="button"
                                       className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
-                                      onClick={() => Revision(offer.id_offer)}
+                                      onClick={(event) => {
+                                       
+                                          setShowRevision(true);
+                                          setSelectedOfferRevision(offer);
+                                          
+                                      }}
+                                     
                                       title="Revisione"
                                     >
                                       <ArrowPathIcon className="h-5 w-4 text-gray-500" />
@@ -747,14 +804,20 @@ export default function Example({ permissions }) {
                                     >
                                       <PaperAirplaneIcon className="h-5 w-4 text-gray-500" />
                                     </button>
+                                   
+                                  </>
+                                )}
+                                {offer.status === 'Revisionata' && (
+                                  <>
                                     <button
                                       type="button"
                                       className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
-                                      onClick={() => Revision()}
-                                      title="Revisione"
+                                      onClick={() => Sent(offer.id_offer)}
+                                      title="Invia al cliente"
                                     >
-                                      <ArrowPathIcon className="h-5 w-4 text-gray-500" />
+                                      <PaperAirplaneIcon className="h-5 w-4 text-gray-500" />
                                     </button>
+                                   
                                   </>
                                 )}
                               </>

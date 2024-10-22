@@ -19,7 +19,7 @@ router.get("/read/", async (req, res) => {
     try {
         
     const user = req.user;  // Assuming req.user is populated by the authentication middleware
-
+        const Tasks=sequelize.models.Tasks;
         // Get the role from the database
         const Offer = sequelize.models.Offer;
         const offers = await Offer.findAll({
@@ -45,6 +45,10 @@ router.get("/read/", async (req, res) => {
                             attributes: ["id_technicalarea", "name", "code"],
                         },
                     ],
+                },
+                {
+                  model: Tasks,
+                  attributes: ["id_task", "name", "hour","description", "percentage", "assignedTo", "estimatedend", "estimatedstart"],
                 },
                 { model: sequelize.models.User,  as:'team', attributes: ['id_user', 'name', 'surname'] },
                 { model: sequelize.models.User, as: 'createdByUser', attributes: ['id_user', 'name', 'surname'] },
@@ -89,6 +93,9 @@ router.get("/read/", async (req, res) => {
 router.get("/read/:id", async (req, res) => {
     const id = req.params.id; // Estrai l'id dall'URL
   
+    const Tasks=sequelize.models.Tasks;
+    // Get the role from the database
+    const Offer = sequelize.models.Offer;
     try {
       // Ottieni l'offerta specifica tramite ID
       const offer = await sequelize.models.Offer.findOne({
@@ -117,6 +124,10 @@ router.get("/read/:id", async (req, res) => {
                 attributes: ["id_technicalarea", "name", "code"],
               },
             ],
+          },
+          {
+            model: Tasks,
+            attributes: ["id_task", "name", "hour","description", "percentage", "assignedTo", "estimatedend", "estimatedstart"],
           },
           {
             model: sequelize.models.User,

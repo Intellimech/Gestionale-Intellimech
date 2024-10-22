@@ -107,6 +107,14 @@ QuotationRequest.hasMany(Offer, { foreignKey: 'quotationrequest' });
 SalesOrder.belongsTo(Offer, { foreignKey: 'offer' });
 Offer.hasMany(SalesOrder, { foreignKey: 'offer' });
 
+Tasks.belongsTo(Offer, { foreignKey: 'task' });
+Offer.hasMany(Tasks, { foreignKey: 'task' });
+
+
+Tasks.belongsTo(Offer, { foreignKey: 'id_offer' });
+Offer.hasMany(Tasks, { foreignKey: 'id_offer' });
+
+
 //salesorder is associated with User in the createdBy, updatedBy, and deletedBy fields
 SalesOrder.belongsTo(User, { foreignKey: 'createdBy', as: 'createdByUser' });
 SalesOrder.belongsTo(User, { foreignKey: 'updatedBy', as: 'updatedByUser' });

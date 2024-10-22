@@ -12,16 +12,16 @@ export default function TaskForm({ task, onChange, onAddChild, onRemove, level =
   const calculatedValues = useMemo(() => {
     if (!hasChildren) return null;
 
-    return task.children.reduce((acc, child) => ({
+    return task?.children.reduce((acc, child) => ({
       hours: acc.hours + (child.hours || 0),
       value: acc.value + (child.value || 0),
-      startDate: acc.startDate ? (child.startDate && child.startDate < acc.startDate ? child.startDate : acc.startDate) : child.startDate,
-      endDate: acc.endDate ? (child.endDate && child.endDate > acc.endDate ? child.endDate : acc.endDate) : child.endDate,
-    }), { hours: 0, value: 0, startDate: null, endDate: null });
+      estimatedstart: acc.estimatedstart ? (child.estimatedstart && child.estimatedstart < acc.estimatedstart ? child.estimatedstart : acc.estimatedstart) : child.estimatedstart,
+      estimatedend: acc.estimatedend ? (child.estimatedend && child.estimatedend > acc.estimatedend ? child.estimatedend : acc.estimatedend) : child.estimatedend,
+    }), { hours: 0, value: 0, estimatedstart: null, estimatedend: null });
   }, [task.children]);
 
   const handleInputChange = (field, value) => {
-    if (hasChildren && (field === 'hours' || field === 'value' || field === 'startDate' || field === 'endDate')) {
+    if (hasChildren && (field === 'hours' || field === 'value' || field === 'estimatedstart' || field === 'estimatedend')) {
       // If there are children, don't allow direct changes to these fields
       return;
     }
@@ -50,15 +50,15 @@ export default function TaskForm({ task, onChange, onAddChild, onRemove, level =
         />
         <input
           type="date"
-          value={hasChildren ? calculatedValues?.startDate : (task?.startDate || '')}
-          onChange={(e) => handleInputChange('startDate', e.target.value)}
+          value={hasChildren ? calculatedValues?.estimatedstart : (task?.estimatedstart || '')}
+          onChange={(e) => handleInputChange('estimatedstart', e.target.value)}
           className="w-32 px-2 py-1 rounded border-gray-300 focus:border-[#7fb7d4] focus:ring-[#7fb7d4]"
           readOnly={hasChildren}
         />
         <input
           type="date"
-          value={hasChildren ? calculatedValues.endDate : (task?.endDate || '')}
-          onChange={(e) => handleInputChange('endDate', e.target.value)}
+          value={hasChildren ? calculatedValues?.estimatedend : (task?.estimatedend || '')}
+          onChange={(e) => handleInputChange('estimatedend', e.target.value)}
           className="w-32 px-2 py-1 rounded border-gray-300 focus:border-[#7fb7d4] focus:ring-[#7fb7d4]"
           readOnly={hasChildren}
         />

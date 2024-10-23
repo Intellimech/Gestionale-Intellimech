@@ -73,10 +73,6 @@ const App = () => {
             <Route path="offer" element={<PrivateRoute element={<Offer />} />} />
             <Route path="offer/:id_offer" element={<PrivateRoute element={<OfferInfo />} />} />
             <Route path="sales-order" element={<PrivateRoute element={<Salesorder />} />} />
-            <Route path="purchase">
-              <Route index element={<PrivateRoute element={<Purchase />} />} />
-              <Route path=":id" element={<PrivateRoute element={<PurchaseInfo />} />} />
-            </Route>
             <Route path="profile">
               <Route index element={<PrivateRoute element={<Profile />} />} />
               <Route path=":id" element={<PrivateRoute element={<Profile />} />} />

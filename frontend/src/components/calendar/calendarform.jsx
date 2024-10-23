@@ -7,7 +7,6 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-
 // const Locations = [
 //   { value: 'Ferie', label: 'Ferie' },
 //   { value: 'Permesso', label: 'Permesso' },
@@ -29,6 +28,7 @@ export default function Example({ date, setOpen }) {
   const [calendarData, setCalendarData] = useState([]);
   const [allCalendarData, setAllCalendarData] = useState([]);
 
+
   
  
 
@@ -47,17 +47,11 @@ export default function Example({ date, setOpen }) {
   };
 
   useEffect(() => {
-    const token = Cookies.get('token');
-    if (!token) {
-      console.error('No authorization token found');
-      return;
-    }
+    
 
     const fetchLocations = async () => {
         try {
-          const response = await axios.get(`${process.env.REACT_APP_API_URL}/locations/read`, {
-            headers: { authorization: `Bearer ${token}` },
-          });
+          const response = await axios.get(`${process.env.REACT_APP_API_URL}/locations/read`);
          
           if (Array.isArray(response.data.locations)) {
             const formattedLocations = response.data.locations.map(location => ({
@@ -77,14 +71,8 @@ export default function Example({ date, setOpen }) {
       
     const fetchUsers = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_URL}/user/read`, {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/user/read`, );
         setUsers(response.data.users);
-        console.log('Fetched Users:', response.data.users); // Log users fetched
       } catch (error) {
         console.error('Error fetching users:', error);
       }
@@ -94,10 +82,10 @@ export default function Example({ date, setOpen }) {
   const fetchAllCalendarData = async () => {
     try {
         const response = await axios.get(`${process.env.REACT_APP_API_URL}/calendar/read/all`, {
-            headers: { Authorization: `Bearer ${Cookies.get('token')}` },
+            
             params: { date: startDate },
         });
-        console.log('All Calendar Data Response:', response.data); // Log the entire response
+        
         setAllCalendarData(response.data); // Set the state
     } catch (error) {
         console.error('Error fetching all calendar data:', error);
@@ -168,9 +156,6 @@ export default function Example({ date, setOpen }) {
       });
     };
     
-  if (allCalendarData.length > 0) {
-      console.log("All Calendars", allCalendarData);
-  }
 
     const submitEntries = () => {
       const morningPromise = createEntry('morning', morningLocation);
@@ -178,12 +163,10 @@ export default function Example({ date, setOpen }) {
 
       Promise.all([morningPromise, afternoonPromise])
         .then((responses) => {
-          console.log('Entries created:', responses);
           notifySuccess();  // Notifica di successo
         })
         .catch((error) => {
-          console.error('Error creating entries:', error);
-          notifyError();  // Notifica di errore
+         notifyError();  // Notifica di errore
         });
     };
 
@@ -336,13 +319,9 @@ export default function Example({ date, setOpen }) {
         const entryDateFormatted = entryDate.toISOString().split('T')[0];
 
         const userId = entry.owner; // Using 'owner' as user ID
-        console.log(`Comparing Entry Date: ${entryDateFormatted} with Start Date: ${startDateFormatted} and User ID: ${user.id_user} with Entry Owner ID: ${userId}`);
-        
+       
         return entryDateFormatted === startDateFormatted && userId === user.id_user; // Updated condition
       });
-
-      // Log the resulting user entries
-      console.log(`User ID: ${user.id_user}, User Entries:`, userEntries);
 
       let morningLocation = 'Non disponibile';
       let afternoonLocation = 'Non disponibile';

@@ -35,11 +35,7 @@ export default function Example({ purchase: initialPurchase }) {
 
   useEffect(() => {
     if (!initialPurchase) {
-      axios.get(`http://localhost:3000/purchase/read/${id}`, {
-        headers: {
-          Authorization: `Bearer ${Cookies.get('token')}`
-        }
-      })
+      axios.get(`http://localhost:3000/purchase/read/${id}`, )
       .then(response => {
         setPurchase(response.data.purchases);
         setFormData(response.data.purchases); 
@@ -58,10 +54,10 @@ export default function Example({ purchase: initialPurchase }) {
             { data: { users } },
             { data: { value: companies } },
           ] = await Promise.all([
-            axios.get(`${process.env.REACT_APP_API_URL}/category/read`, { headers: { authorization: `Bearer ${token}` } }),
-            axios.get(`${process.env.REACT_APP_API_URL}/technicalarea/read`, { headers: { authorization: `Bearer ${token}` } }),
-            axios.get(`${process.env.REACT_APP_API_URL}/user/read`, { headers: { authorization: `Bearer ${token}` } }),
-            axios.get(`${process.env.REACT_APP_API_URL}/company/read`, { headers: { authorization: `Bearer ${token}` }, params: { filter: "Suppliers" } }),
+            axios.get(`${process.env.REACT_APP_API_URL}/category/read`,),
+            axios.get(`${process.env.REACT_APP_API_URL}/technicalarea/read`,),
+            axios.get(`${process.env.REACT_APP_API_URL}/user/read`, ),
+            axios.get(`${process.env.REACT_APP_API_URL}/company/read`,),
           ]);
   
           setCategories(categories);
@@ -89,12 +85,12 @@ export default function Example({ purchase: initialPurchase }) {
 
   
   const handleCategoryChange = async (event, index) => {
-    const token = Cookies.get('token');
+   
     const updatedProducts = [...products];
     updatedProducts[index].category = event.target.value;
   
     try {
-      const { data: { subcategories } } = await axios.get(`${process.env.REACT_APP_API_URL}/subcategory/read/${event.target.value}`, { headers: { authorization: `Bearer ${token}` } });
+      const { data: { subcategories } } = await axios.get(`${process.env.REACT_APP_API_URL}/subcategory/read/${event.target.value}`,);
       updatedProducts[index].subcategories = subcategories;
       updatedProducts[index].subcategory = '';
       setProducts(updatedProducts);
@@ -279,11 +275,7 @@ export default function Example({ purchase: initialPurchase }) {
   };
 
   const handleSaveClick = () => {
-    axios.put(`http://localhost:3000/purchase/update/${id}`, formData, {
-      headers: {
-        Authorization: `Bearer ${Cookies.get('token')}`
-      }
-    })
+    axios.put(`http://localhost:3000/purchase/update/${id}`, formData, )
     .then(response => {
       setPurchase(response.data.purchases);
       setIsEditing(false);

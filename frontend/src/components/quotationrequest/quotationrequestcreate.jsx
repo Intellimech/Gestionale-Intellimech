@@ -17,12 +17,12 @@ export default function UserCreateForm() {
   const [selectedTechnicalArea, setSelectedTechnicalArea] = useState(null);
 
   useEffect(() => {
-    const token = Cookies.get('token');
+  
 
     // Fetching company data
     axios
       .get(`${process.env.REACT_APP_API_URL}/company/read`, {
-        headers: { authorization: `Bearer ${token}` },
+        
         params: { filter: 'client' },
       })
       .then((response) => {
@@ -39,9 +39,7 @@ export default function UserCreateForm() {
 
     // Fetching category data
     axios
-      .get(`${process.env.REACT_APP_API_URL}/category/read`, {
-        headers: { authorization: `Bearer ${token}` },
-      })
+      .get(`${process.env.REACT_APP_API_URL}/category/read`)
       .then((response) => {
         setCategory(
           response.data.categories.map((item) => ({
@@ -56,9 +54,7 @@ export default function UserCreateForm() {
 
     // Fetching technical area data
     axios
-      .get(`${process.env.REACT_APP_API_URL}/technicalarea/read`, {
-        headers: { authorization: `Bearer ${token}` },
-      })
+      .get(`${process.env.REACT_APP_API_URL}/technicalarea/read`)
       .then((response) => {
         setTechnicalArea(
           response.data.technicalareas.map((item) => ({
@@ -74,13 +70,10 @@ export default function UserCreateForm() {
 
   const handleCategoryChange = (value) => {
     setSelectedCategory(value);
-    const token = Cookies.get('token');
-
+    
     // Fetching subcategories with the selected category
     axios
-      .get(`${process.env.REACT_APP_API_URL}/subcategory/read/${value.value}`, {
-        headers: { authorization: `Bearer ${token}` },
-      })
+      .get(`${process.env.REACT_APP_API_URL}/subcategory/read/${value.value}`)
       .then((response) => {
         setSubcategory(
           response.data.subcategories.map((item) => ({
@@ -96,7 +89,7 @@ export default function UserCreateForm() {
 
   const createQuotationRequest = (event) => {
     event.preventDefault();
-    const token = Cookies.get('token');
+   
     const form = document.forms.createquotationrequest;
     const formData = new FormData(form);
   
@@ -114,9 +107,7 @@ export default function UserCreateForm() {
   
     // Toast promise to handle loading, success, and error states
     toast.promise(
-      axios.post(`${process.env.REACT_APP_API_URL}/quotationrequest/create`, jsonObject, {
-        headers: { authorization: `Bearer ${token}` },
-      }),
+      axios.post(`${process.env.REACT_APP_API_URL}/quotationrequest/create`, jsonObject),
       {
         loading: 'Invio in corso...',
         success: 'Richiesta di offerta creata con successo!',

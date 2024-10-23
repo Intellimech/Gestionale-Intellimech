@@ -14,11 +14,7 @@ router.post("/create/", async (req, res) => {
         const { description, category, subcategory, technicalarea, company, name } = req.body;
         const user = req.user;  // Assuming req.user is populated by the authentication middleware
 
-        if (!description || !category || !subcategory || !technicalarea || !company) {
-            return res.status(400).json({
-                message: "Bad request, view documentation for more information",
-            });
-        }
+     
 
         // Fetch the company data
         const companyData = await Company.findOne({

@@ -10,6 +10,7 @@ import { UserContext } from '../../module/userContext'
 
 import OfferCreate from './offercreate';
 import OfferInformation from './offerinformation';
+import OfferRevision from './offerrevision';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -37,7 +38,9 @@ export default function Example({ permissions }) {
   const [sortColumn, setSortColumn] = useState('name');
   const [sortDirection, setSortDirection] = useState('asc');
   const [filterType, setFilterType] = useState('name');
+  const [showRevision, setShowRevision] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
+  const [selectedOfferRevision, setSelectedOfferRevision] = useState({});
   const [selectedOfferInfo, setSelectedOfferInfo] = useState({});
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -105,6 +108,10 @@ export default function Example({ permissions }) {
 
 
   
+  const handlectrlClick = (offer) => {
+    window.open(`/app/offer/${offer.id_offer}`, '_blank'); // Apre in una nuova scheda
+    return <OfferInformation offer = {offer}/>;
+  };
   
   const filteredSaleOrder = offers.filter((item) => {
     return (
@@ -178,29 +185,49 @@ export default function Example({ permissions }) {
     .post(`${process.env.REACT_APP_API_URL}/offer/accept/${offer}`, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + Cookies.get('token'),
       },
     })
     .then((response) => {
-      console.log(response.data.offer);
       axios
       .get(`${process.env.REACT_APP_API_URL}/offer/read`, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + Cookies.get('token'),
         },
       })
       .then((response) => {
         setOffer(response.data.offer);
       })
       .catch((error) => {
-        console.log(error);
       });
     })
     .catch((error) => {
-      console.log(error);
     });
     
+  }
+
+  const Revision = (offer) => {
+    setShowRevision(true);
+    axios
+    .post(`${process.env.REACT_APP_API_URL}/offer/revision/${offer}`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    .then((response) => {
+      axios
+      .get(`${process.env.REACT_APP_API_URL}/offer/read`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+      .then((response) => {
+        setOffer(response.data.offer);
+      })
+      .catch((error) => {
+      });
+    })
+    .catch((error) => {
+    });
   }
 
   const Refuse = (offer) => {
@@ -208,27 +235,22 @@ export default function Example({ permissions }) {
     .post(`${process.env.REACT_APP_API_URL}/offer/refuse/${offer}`, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + Cookies.get('token'),
       },
     })
     .then((response) => {
-      console.log(response.data.offer);
       axios
       .get(`${process.env.REACT_APP_API_URL}/offer/read`, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + Cookies.get('token'),
         },
       })
       .then((response) => {
         setOffer(response.data.offer);
       })
       .catch((error) => {
-        console.log(error);
       });
     })
     .catch((error) => {
-      console.log(error);
     });
   }
 
@@ -236,28 +258,23 @@ export default function Example({ permissions }) {
     axios
     .post(`${process.env.REACT_APP_API_URL}/offer/sent/${offer}`, {
       headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + Cookies.get('token'),
+        'Content-Type': 'application/json'
       },
     })
     .then((response) => {
-      console.log(response.data.offer);
       axios
       .get(`${process.env.REACT_APP_API_URL}/offer/read`, {
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + Cookies.get('token'),
+          'Content-Type': 'application/json'
         },
       })
       .then((response) => {
         setOffer(response.data.offer);
       })
       .catch((error) => {
-        console.log(error);
       });
     })
     .catch((error) => {
-      console.log(error);
     });
   }
 
@@ -266,21 +283,15 @@ export default function Example({ permissions }) {
       .get(`${process.env.REACT_APP_API_URL}/offer/read`, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + Cookies.get('token'),
         },
       })
       .then((response) => {
         setOffer(response.data.offer);
-        console.log(user)
-        console.log(response.data.offer);
       })
       .catch((error) => {
-        console.log(error);
       });
 
-    axios.get(`${process.env.REACT_APP_API_URL}/technicalarea/read`, { 
-      headers: { authorization: `Bearer ${Cookies.get('token')}` },
-    })
+    axios.get(`${process.env.REACT_APP_API_URL}/technicalarea/read`, )
       .then((response) => {
         setTechnicalArea(response.data.technicalareas);
       })
@@ -289,11 +300,8 @@ export default function Example({ permissions }) {
       });
     
     axios
-      .get(`${process.env.REACT_APP_API_URL}/subcategory/read`, {
-        headers: { authorization: `Bearer ${Cookies.get('token')}` },
-      })
+      .get(`${process.env.REACT_APP_API_URL}/subcategory/read`)
       .then((response) => {
-        console.log('Fetched subcategories:', response.data.subcategories);
         setSubcategories(response.data.subcategories || []);
       })
       .catch((error) => {
@@ -301,11 +309,9 @@ export default function Example({ permissions }) {
       });
 
     axios
-      .get(`${process.env.REACT_APP_API_URL}/category/read`, {
-        headers: { authorization: `Bearer ${Cookies.get('token')}` },
-      })
+      .get(`${process.env.REACT_APP_API_URL}/category/read`)
       .then((response) => {
-        console.log('Fetched categories:', response.data.categories);
+       
         setCategories(response.data.categories || []);
       })
       .catch((error) => {
@@ -372,6 +378,53 @@ export default function Example({ permissions }) {
           </div>
         </Dialog>
       </Transition.Root>
+
+      <Transition.Root show={showRevision} as={Fragment}>
+        <Dialog className="relative z-50" onClose={setShowRevision}>
+          <div className="fixed inset-0" />
+
+          <div className="fixed inset-0 overflow-hidden">
+            <div className="absolute inset-0 overflow-hidden">
+              <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-16">
+                <Transition.Child
+                  as={Fragment}
+                  enter="transform transition ease-in-out duration-500 sm:duration-700"
+                  enterFrom="translate-x-full"
+                  enterTo="translate-x-0"
+                  leave="transform transition ease-in-out duration-500 sm:duration-700"
+                  leaveFrom="translate-x-0"
+                  leaveTo="translate-x-full"
+                >
+                  <Dialog.Panel className="pointer-events-auto w-screen max-w-7xl">
+                    <div className="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
+                      <div className="px-4 sm:px-6">
+                        <div className="flex items-start justify-between">
+                          <Dialog.Title className="text-base font-semibold leading-6 text-gray-900">
+                            {selectedOfferInfo?.name}
+                          </Dialog.Title>
+                          <div className="ml-3 flex h-7 items-center">
+                            <button
+                              type="button"
+                              className="relative rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#7fb7d4] focus:ring-offset-2"
+                              onClick={() => setShowRevision(false)}
+                            >
+                              <span className="absolute -inset-2.5" />
+                              <span className="sr-only">Close panel</span>
+                              <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="relative mt-6 flex-1 px-4 sm:px-6">{ <OfferRevision offer={selectedOfferRevision} /> }</div>
+                    </div>
+                  </Dialog.Panel>
+                </Transition.Child>
+              </div>
+            </div>
+          </div>
+        </Dialog>
+      </Transition.Root> 
+
       <Transition.Root show={showCreate} as={Fragment}>
         <Dialog className="relative z-50" onClose={setShowCreate}>
           <div className="fixed inset-0" />
@@ -624,10 +677,14 @@ export default function Example({ permissions }) {
                         className={selectedOffer.includes(offer) ? 'bg-gray-50' : undefined}
                       >
                         <td
-                          onClick={() => {
-                            setShowInfo(true);
-                            setSelectedOfferInfo(offer);
-                            console.log(offer);
+                          onClick={(event) => {
+                            // ctrl + click per aprire un nuovo tab
+                            if (event.ctrlKey) {
+                              handlectrlClick(offer);
+                            } else {
+                              setShowInfo(true);
+                              setSelectedOfferInfo(offer);
+                              }
                           }}
                           className={classNames(
                             'whitespace-nowrap px-3 py-4 pr-3 text-sm font-medium',
@@ -666,7 +723,7 @@ export default function Example({ permissions }) {
                             : new Date(offer.deadlineDate).toLocaleDateString()}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {offer.status === 'Inviata' ? (
+                          {offer.status === 'Inviata al cliente' ? (
                             <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-yellow-500">
                               Inviata
                             </span>
@@ -701,7 +758,7 @@ export default function Example({ permissions }) {
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           <div className="flex items-center space-x-2">
-                            {offer.createdByUser === user.id_user && (
+                            {true && (
                               <>
                                 {offer.status === 'Inviata al cliente' && (
                                   <>
@@ -724,7 +781,13 @@ export default function Example({ permissions }) {
                                     <button
                                       type="button"
                                       className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
-                                      onClick={() => Revision()}
+                                      onClick={(event) => {
+                                       
+                                          setShowRevision(true);
+                                          setSelectedOfferRevision(offer);
+                                          
+                                      }}
+                                     
                                       title="Revisione"
                                     >
                                       <ArrowPathIcon className="h-5 w-4 text-gray-500" />
@@ -733,16 +796,6 @@ export default function Example({ permissions }) {
                                 )}
                                 {offer.status === 'Nuova' && (
                                   <>
-                                    {false && (
-                                      <button
-                                        type="button"
-                                        className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
-                                        onClick={() => console.log(user)}
-                                        title="Visualizza"
-                                      >
-                                        <EyeIcon className="h-5 w-4 text-gray-500" />
-                                      </button>
-                                    )}
                                     <button
                                       type="button"
                                       className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
@@ -751,14 +804,20 @@ export default function Example({ permissions }) {
                                     >
                                       <PaperAirplaneIcon className="h-5 w-4 text-gray-500" />
                                     </button>
+                                   
+                                  </>
+                                )}
+                                {offer.status === 'Revisionata' && (
+                                  <>
                                     <button
                                       type="button"
                                       className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
-                                      onClick={() => Revision()}
-                                      title="Revisione"
+                                      onClick={() => Sent(offer.id_offer)}
+                                      title="Invia al cliente"
                                     >
-                                      <ArrowPathIcon className="h-5 w-4 text-gray-500" />
+                                      <PaperAirplaneIcon className="h-5 w-4 text-gray-500" />
                                     </button>
+                                   
                                   </>
                                 )}
                               </>

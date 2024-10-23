@@ -5,110 +5,8 @@ import 'jspdf-autotable';
 
 export default function Example({ job }) {
   
-    const handleDownloadPdf = () => {
-        const doc = new jsPDF();
-
-        // Dati dell'intestazione
-        const headerText = `
-    cid:60e23365-6651-4074-b933-e737d4c5eacf@eurprd03.prod.outlook.com
-    CONSORZIO INTELLIMECH
-    c/o Kilomentro Rosso Innovation District - Via Stezzano, 87 24126 Bergamo
-    Tel. +39 035 0690366 - C.C.I.A.A. di BG n. 03388700167 C.F. 95160560165
-    REA N. BG 3713330 - Codice Identificativo SDI: J6URRTW
-    PEC: intellimech@legalmail.it - www.intellimech.it
-        `;
-        doc.setFontSize(6); // Riduci la dimensione del font dell'intestazione
-        doc.setFont('Helvetica', 'normal');
-
-        // Calcola la larghezza della pagina e la larghezza del testo
-        const pageWidth = doc.internal.pageSize.width;
-
-        doc.text(headerText, 120, 10);
-
-        // Dati dell'jobta
-        const jobDetails = [
-            ['Job Name', job.name],
-            ['Status', job.status],
-            ['Created By', `${job.createdByUser.name} ${job.createdByUser.surname}`],
-            ['Created At', new Date(job.createdAt).toLocaleDateString()]
-        ];
-
-        // Titolo centrato a 30 mm dal margine sinistro
-        const marginLeft = 10; // Margine sinistro in mm
-        const title = "Job Details";
-        doc.setFontSize(12); // Riduci la dimensione del font del titolo
-        doc.setFont('Helvetica', 'bold');
-        const titleWidth = doc.getTextWidth(title);
-        doc.text(title, 15, 50);
-
-        // Dati dell'jobta
-        doc.setFontSize(10);
-        doc.setFont('Helvetica', 'normal');
-        
-        // Usa autoTable per creare una tabella orizzontale
-        doc.autoTable({
-            startY: 55,
-            body: jobDetails,
-            headStyles: {
-            fillColor: [255, 0, 0], // Colore di sfondo rosso per l'intestazione
-            textColor: [255, 255, 255], // Colore del testo bianco
-            fontStyle: 'bold'
-            },
-            styles: {
-            cellPadding: 0.5, // Riduci il padding delle celle per meno spazio tra le righe
-            fontSize: 10, // Riduci la dimensione del font per più spazio
-            fillColor: [255, 255, 255] 
-            },
-            columnStyles: {
-            0: { cellWidth: 50 }, 
-            1: { cellWidth: 120 } 
-            },
-            margin: { top: 10 },
-            alternateRowStyles: { fillColor: [255, 255, 255] } 
-        });
-
-        // Iterate over Sales Orders
-        job.SalesOrders.forEach((salesOrder, index) => {
-            const salesOrderDetails = [
-                ['Sales Order Name', salesOrder.name],
-                ['Offer Name', salesOrder.Offer.name],
-                ['Hours', salesOrder.Offer.hour],
-                ['Amount', salesOrder.Offer.amount],
-                ['Estimated Start', new Date(salesOrder.Offer.estimatedstart).toLocaleDateString()],
-                ['Estimated End', new Date(salesOrder.Offer.estimatedend).toLocaleDateString()],
-                ['Client', salesOrder.Offer.QuotationRequest.Company.name],
-            ];
-
-            // Titolo Sales Order
-            const salesOrderTitle = `Sales Order ${index + 1}`;
-            doc.setFontSize(12);
-            doc.setFont('Helvetica', 'bold');
-            doc.text(salesOrderTitle, 15, doc.autoTable.previous.finalY + 10);
-
-            // Dettagli Sales Order
-            doc.autoTable({
-                startY: doc.autoTable.previous.finalY + 15,
-                body: salesOrderDetails,
-                styles: {
-                    cellPadding: 0.5, // Riduci il padding delle celle
-                    fontSize: 10, // Riduci la dimensione del font
-                    fillColor: [255, 255, 255]
-                },
-                columnStyles: {
-                    0: { cellWidth: 50 },
-                    1: { cellWidth: 120 }
-                },
-                margin: { top: 10 },
-                alternateRowStyles: { fillColor: [255, 255, 255] }
-            });
-        });
-
-        const safeFileName =  `${job.name}.pdf`; 
-        doc.save(safeFileName);
-    };
     
   useEffect(() => {
-    console.log(job);
   }, [job]);
     
   return (
@@ -234,31 +132,36 @@ export default function Example({ job }) {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-200 bg-white">
-                            {job?.Reportings?.length === 0 ? (
-                              <tr className='text-center'>
-                                <td colSpan="4" className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                    Nessuna rendicontazione trovata
-                                </td>
-                              </tr>
-                            ) : (job?.Reportings?.map((salesorder) => (
-                                    <tr key={salesorder.id_salesorder}>
-                                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                            {salesorder.createdByUser.name + " " + salesorder.createdByUser.surname}
-                                        </td>
-                                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                            {salesorder.Task.name + " " + "(" + salesorder.Task.description + ")"}
-                                        </td>
-                                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                            {salesorder.Task.hour} h
-                                        </td>
-                                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                            {salesorder.Task.percentage} %
-                                        </td>
-                                        
-                                    </tr>
-                                ))
-                              )}
-                            </tbody>
+    {job?.Reportings?.length === 0 ? (
+        <tr className='text-center'>
+            <td colSpan="4" className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                Nessuna rendicontazione trovata
+            </td>
+        </tr>
+    ) : (
+        job?.Reportings?.map((reporting) => (
+            <tr key={reporting.id_reporting}>
+                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                    {reporting.createdByUser?.name} {reporting.createdByUser?.surname || ''}
+                </td>
+                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+    {reporting.task ? `${reporting.task || 'Task name not available'}` : 'No Task Assigned'}
+</td>
+
+                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                    {reporting.hour || 0} h
+                </td>
+                <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                    {/* If Task is null, handle percentage gracefully */}
+                    {reporting.Task ? `${reporting.Task.percentage || 'N/A'} %` : 'N/A'}
+                </td>
+            </tr>
+        ))
+    )}
+</tbody>
+
+
+
                         </table>
           </div>
 

@@ -22,19 +22,14 @@ export default function Company({ companytype }) {
 
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_API_URL}/company/read`, {
-        headers: { authorization: `Bearer ${Cookies.get('token')}` },
-        params: { filter: companytype }
-      })
+      .get(`${process.env.REACT_APP_API_URL}/company/read`)
       .then((response) => {
-        console.log('response', response);
         setCompanies(
           response.data.value
             .sort((a, b) => new Date(b.ReceptionDate) - new Date(a.ReceptionDate))
         );
       })
       .catch((error) => {
-        console.log('error', error);
       });
   }, [companytype]);
 // Function to compare values of different types

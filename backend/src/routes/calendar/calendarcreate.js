@@ -23,22 +23,78 @@ const __dirname = path.resolve();
 const publicKeyPath = path.join(__dirname, "src/keys/public.key");
 const publicKey = fs.readFileSync(publicKeyPath, "utf8");
 
-router.post("/create/", async (req, res) => {
-    try {
-        // Get the token from the header
-        const token = req.headers.authorization?.split(" ")[1];
-        const { startDate, endDate, part, location, status } = req.body; // part è ora una stringa singola
+router.post("/generalcreate/", async (req, res) => {
+   
+    const user = req.user;  // Assuming req.user is populated by the authentication middleware
+    const { startDate, endDate, part, location, status, owner } = req.body; // part è ora una stringa singola
 
-        if (!token) {
-            return res.status(401).json({ message: "Unauthorized" });
-        }
+  
+ 
+        try {
+            // Get the Calendar model
+            const Calendar = sequelize.models.Calendar;
 
-        // Verify the token
-        jwt.verify(token, publicKey, async (err, decoded) => {
-            if (err) {
-                return res.status(401).json({ message: "Unauthorized" });
+            // Create calendar entries
+            const calendarEntries = [];
+
+            if (startDate) {
+                const start = new Date(startDate);
+                const end = endDate ? new Date(endDate) : start;
+                
+                // Check if startDate and endDate are the same or if endDate is undefined
+                if (start.getTime() === end.getTime()) {
+                    //Get the location object
+                    const Location = sequelize.models.Location;
+                    const locationObj = await Location.findOne({
+                        where: {
+                            id_location: location,
+                        },
+                    });
+                    
+                    // Insert once for that day and the specific part
+                    const entry = await Calendar.create({
+                        date: start.toISOString().split('T')[0],
+                        period: part,
+                        location: location,
+                        status: status,
+                        owner: owner,
+                        createdBy:user.id_user,
+                    });
+                    calendarEntries.push(entry);
+                } else {
+                    // If there is an interval, insert for each day in the range
+                    for (let currentDate = new Date(start); currentDate <= end; currentDate.setDate(currentDate.getDate() + 1)) {
+                        const entry = await Calendar.create({
+                            date: currentDate.toISOString().split('T')[0],
+                            period: part,  // single 'part' per request
+                            location: location,
+                            status: location == '1' || location == '2' ? "In Attesa di Approvazione" : "Approvato",
+                            owner: user.id_user,
+                            createdBy:user.id_user,
+                        });
+                        calendarEntries.push(entry);
+                    }
+                }
             }
 
+            res.json({
+                message: "Calendar entries created",
+                calendars: calendarEntries,
+            });
+        } catch (dbError) {
+            Logger("error","Database error:", dbError);
+            res.status(500).json({ message: "Internal server error" });
+        }
+        
+  
+});
+router.post("/create/", async (req, res) => {
+   
+        const user = req.user;  // Assuming req.user is populated by the authentication middleware
+        const { startDate, endDate, part, location, status } = req.body; // part è ora una stringa singola
+
+      
+     
             try {
                 // Get the Calendar model
                 const Calendar = sequelize.models.Calendar;
@@ -66,8 +122,8 @@ router.post("/create/", async (req, res) => {
                             period: part,
                             location: location,
                             status: locationObj.needApproval ? "In Attesa di Approvazione" : "Approvato",
-                            owner: decoded.id,
-                            createdBy: decoded.id,
+                            owner: user.id_user,
+                            createdBy:user.id_user,
                         });
                         calendarEntries.push(entry);
                     } else {
@@ -78,8 +134,8 @@ router.post("/create/", async (req, res) => {
                                 period: part,  // single 'part' per request
                                 location: location,
                                 status: location == '1' || location == '2' ? "In Attesa di Approvazione" : "Approvato",
-                                owner: decoded.id,
-                                createdBy: decoded.id,
+                                owner: user.id_user,
+                                createdBy:user.id_user,
                             });
                             calendarEntries.push(entry);
                         }
@@ -94,11 +150,8 @@ router.post("/create/", async (req, res) => {
                 Logger("error","Database error:", dbError);
                 res.status(500).json({ message: "Internal server error" });
             }
-        });
-    } catch (error) {
-        Logger("error","Server error:", error);
-        res.status(500).json({ message: "Internal server error" });
-    }
+            
+      
 });
 
 export default router;

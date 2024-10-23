@@ -3,7 +3,6 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import http from "http";
 import dotenv from "dotenv";
-import jwt from "jsonwebtoken";
 import fs from "fs";
 import path from "path";
 import bcrypt from "bcrypt";
@@ -18,15 +17,9 @@ const __dirname = path.resolve();
 
 router.get("/read/:job", (req, res) => {
     const { job } = req.params;
-    const token = req.headers.authorization?.split(" ")[1];
+    const user = req.user;  // Assuming req.user is populated by the authentication middleware
 
     const publickey = fs.readFileSync(__dirname + "/src/keys/public.key", "utf8");
-
-    if (!token) {
-        return res.status(401).json({
-            message: "Unauthorized",
-        });
-    }
 
     if (!job) {
         return res.status(400).json({
@@ -34,7 +27,7 @@ router.get("/read/:job", (req, res) => {
         });
     }
 
-    jwt.verify(token, publickey, async (err, decoded) => {
+
         if (err) {
             return res.status(401).json({
                 message: "Unauthorized",
@@ -47,8 +40,8 @@ router.get("/read/:job", (req, res) => {
 
         Tasks.findAll({
             where: {
-                assignedTo: decoded.id,
-                job: job
+                assignedTo: user.id_user,
+               
             },
             include: [
                 {
@@ -83,7 +76,7 @@ router.get("/read/:job", (req, res) => {
                 tasks: tasks
             });
         })
-    });
+    
 });
 
 export default router;

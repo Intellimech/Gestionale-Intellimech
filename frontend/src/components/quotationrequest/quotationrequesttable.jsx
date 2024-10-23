@@ -6,6 +6,7 @@ import Cookies from 'js-cookie';
 import toast, { Toaster } from 'react-hot-toast';
 
 import QuotationRequestCreate from './quotationrequestcreate';
+import QuotationRequestInfo from './quotationrequestinfo';
 
 
 function classNames(...classes) {
@@ -21,6 +22,9 @@ export default function Example({ permissions }) {
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [showPopup, setShowPopup] = useState(false);
+
+  const [showInfo, setShowInfo] = useState(false);
+  const [selectedQuotationInfo, setSelectedQuotationInfo] = useState({});
 
   const [category, setCategory] = useState([]);
   const [subcategory, setSubcategory] = useState([]);
@@ -152,12 +156,7 @@ export default function Example({ permissions }) {
 
   function handleReloadQuotationRequests() {
     axios
-      .get(`${process.env.REACT_APP_API_URL}/quotationrequest/read`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + Cookies.get('token'),
-        },
-      })
+      .get(`${process.env.REACT_APP_API_URL}/quotationrequest/read`)
       .then((response) => {
         setQuotationRequest(response.data.quotationrequest);
       })
@@ -169,12 +168,7 @@ export default function Example({ permissions }) {
   const Accept = (quotationrequest) => {
     toast.promise(
         axios
-          .post(`${process.env.REACT_APP_API_URL}/quotationrequest/accept/${quotationrequest}`, {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: 'Bearer ' + Cookies.get('token'),
-            },
-          })
+          .post(`${process.env.REACT_APP_API_URL}/quotationrequest/accept/${quotationrequest}`)
           .then((response) => {
             console.log(response.data.quotationrequest);
             handleReloadQuotationRequests();
@@ -194,12 +188,7 @@ export default function Example({ permissions }) {
   const Refuse = (quotationrequest) => {
     toast.promise(
       axios
-        .post(`${process.env.REACT_APP_API_URL}/quotationrequest/refuse/${quotationrequest}`, {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + Cookies.get('token'),
-          },
-        })
+        .post(`${process.env.REACT_APP_API_URL}/quotationrequest/refuse/${quotationrequest}`)
         .then((response) => {
           console.log(response.data.quotationrequest);
           handleReloadQuotationRequests();
@@ -218,12 +207,7 @@ export default function Example({ permissions }) {
 
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_API_URL}/quotationrequest/read`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + Cookies.get('token'),
-        },
-      })
+      .get(`${process.env.REACT_APP_API_URL}/quotationrequest/read`)
       .then((response) => {
         setQuotationRequest(response.data.quotationrequest);
         console.log(response.data.quotationrequest);
@@ -231,9 +215,7 @@ export default function Example({ permissions }) {
       .catch((error) => {
         console.log(error);
       });
-      axios.get(`${process.env.REACT_APP_API_URL}/technicalarea/read`, { 
-        headers: { authorization: `Bearer ${Cookies.get('token')}` },
-      })
+      axios.get(`${process.env.REACT_APP_API_URL}/technicalarea/read`)
         .then((response) => {
           setTechnicalArea(response.data.technicalareas);
         })
@@ -242,9 +224,7 @@ export default function Example({ permissions }) {
         });
       
       axios
-        .get(`${process.env.REACT_APP_API_URL}/subcategory/read`, {
-          headers: { authorization: `Bearer ${Cookies.get('token')}` },
-        })
+        .get(`${process.env.REACT_APP_API_URL}/subcategory/read`)
         .then((response) => {
           console.log('Fetched subcategories:', response.data.subcategories);
           setSubcategories(response.data.subcategories || []);
@@ -254,9 +234,7 @@ export default function Example({ permissions }) {
         });
   
       axios
-        .get(`${process.env.REACT_APP_API_URL}/category/read`, {
-          headers: { authorization: `Bearer ${Cookies.get('token')}` },
-        })
+        .get(`${process.env.REACT_APP_API_URL}/category/read`, )
         .then((response) => {
           console.log('Fetched categories:', response.data.categories);
           setCategories(response.data.categories || []);
@@ -289,7 +267,13 @@ export default function Example({ permissions }) {
     document.body.appendChild(link);
     link.click();
   }
-
+    
+  const handlectrlClick = (quotationrequest) => {
+    console.log("ho cliccato "+ quotationrequest.id_quotationrequest)
+    window.open(`/app/quotation-request/${quotationrequest.id_quotationrequest}`, '_blank'); // Apre in una nuova scheda
+    
+  };
+  
   return (
     <div className="px-4 sm:px-6 lg:px-8">
       <Toaster
@@ -297,6 +281,51 @@ export default function Example({ permissions }) {
         reverseOrder={false}
         
       />
+            <Transition.Root show={showInfo} as={Fragment}>
+        <Dialog className="relative z-50" onClose={setShowInfo}>
+          <div className="fixed inset-0" />
+
+          <div className="fixed inset-0 overflow-hidden">
+            <div className="absolute inset-0 overflow-hidden">
+              <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-16">
+                <Transition.Child
+                  as={Fragment}
+                  enter="transform transition ease-in-out duration-500 sm:duration-700"
+                  enterFrom="translate-x-full"
+                  enterTo="translate-x-0"
+                  leave="transform transition ease-in-out duration-500 sm:duration-700"
+                  leaveFrom="translate-x-0"
+                  leaveTo="translate-x-full"
+                >
+                  <Dialog.Panel className="pointer-events-auto w-screen max-w-7xl">
+                    <div className="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
+                      <div className="px-4 sm:px-6">
+                        <div className="flex items-start justify-between">
+                          <Dialog.Title className="text-base font-semibold leading-6 text-gray-900">
+                            {selectedQuotationInfo?.name}
+                          </Dialog.Title>
+                          <div className="ml-3 flex h-7 items-center">
+                            <button
+                              type="button"
+                              className="relative rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#7fb7d4] focus:ring-offset-2"
+                              onClick={() => setShowInfo(false)}
+                            >
+                              <span className="absolute -inset-2.5" />
+                              <span className="sr-only">Close panel</span>
+                              <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="relative mt-6 flex-1 px-4 sm:px-6">{ <QuotationRequestInfo quotationrequest={selectedQuotationInfo} /> }</div>
+                    </div>
+                  </Dialog.Panel>
+                </Transition.Child>
+              </div>
+            </div>
+          </div>
+        </Dialog>
+      </Transition.Root>
       <Transition.Root show={open} as={Fragment}>
        <Dialog as="div" className="relative z-50" onClose={setOpen}>
         <div className="fixed inset-0" />
@@ -391,19 +420,24 @@ export default function Example({ permissions }) {
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('description')}>
-                    Descrizione
-                    {sortColumn === 'description' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                    <br />
-                    <input
-                      value={searchQueries.description}
-                      onClick={(e) => e.stopPropagation()}
-                      onChange={handleSearchInputChange('description')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                      placeholder=""
-                      rows={1}
-                    />
-                  </th>
+                  <th 
+                  scope="col" 
+                  className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer ellipsis" 
+                  onClick={() => handleSort('description')}
+                >
+                  Descrizione
+                  {sortColumn === 'description' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                  <br />
+                  <input
+                    value={searchQueries.description}
+                    onClick={(e) => e.stopPropagation()}
+                    onChange={handleSearchInputChange('description')}
+                    className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                    placeholder=""
+                    rows={1}
+                  />
+                </th>
+
                   <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Company')}>
                     Cliente
                     {sortColumn === 'Company' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
@@ -493,6 +527,16 @@ export default function Example({ permissions }) {
                       <tr key={quotationrequest.id_user}>
                       
                         <td
+                        onClick={(event) => {
+                          // ctrl + click per aprire un nuovo tab
+                          if (event.ctrlKey) {
+                            handlectrlClick(quotationrequest);
+                          } else {
+                            setShowInfo(true);
+                            setSelectedQuotationInfo(quotationrequest);
+                            console.log(quotationrequest);// Mostra il form nella stessa finestra
+                          }
+                        }}
                           className={classNames(
                             'whitespace-nowrap px-3 py-4 pr-3 text-sm font-medium',
                             selectedQuotationRequest.includes(quotationrequest) ? 'text-[#7fb7d4]' : 'text-gray-900'
@@ -500,8 +544,8 @@ export default function Example({ permissions }) {
                         >
                           {quotationrequest.name}
                         </td>
-                        <td className="whitespace-normal max-w-[100px] overflow-hidden text-sm text-gray-500 px-3 py-4 break-words max-h-[100px] overflow-y-auto">
-                          {quotationrequest.description}
+                        <td className="text-sm text-gray-500 px-3 py-4">
+                          {quotationrequest.description.split(" ").slice(0, 2).join(" ") + (quotationrequest.description.split(" ").length > 2 ? "..." : "")}
                         </td>
                         <td className="whitespace-normal max-w-[200px] overflow-hidden text-sm text-gray-500 px-3 py-4 break-words">
                           {quotationrequest.Company.name}

@@ -28,7 +28,7 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = Cookies.get('token');
+       
         const [
           { data: { quotationrequest } },
           { data: { categories } },
@@ -36,11 +36,11 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
           { data: { users } },
           { data: { value: companies } },
         ] = await Promise.all([
-          axios.get(`${process.env.REACT_APP_API_URL}/quotationrequest/read/free`, { headers: { authorization: `Bearer ${token}` } }),
-          axios.get(`${process.env.REACT_APP_API_URL}/category/read`, { headers: { authorization: `Bearer ${token}` } }),
-          axios.get(`${process.env.REACT_APP_API_URL}/technicalarea/read`, { headers: { authorization: `Bearer ${token}` } }),
-          axios.get(`${process.env.REACT_APP_API_URL}/user/read`, { headers: { authorization: `Bearer ${token}` } }),
-          axios.get(`${process.env.REACT_APP_API_URL}/company/read`, { headers: { authorization: `Bearer ${token}` }, params: { filter: "Suppliers" } }),
+          axios.get(`${process.env.REACT_APP_API_URL}/quotationrequest/read/free`, ),
+          axios.get(`${process.env.REACT_APP_API_URL}/category/read` ),
+          axios.get(`${process.env.REACT_APP_API_URL}/technicalarea/read`),
+          axios.get(`${process.env.REACT_APP_API_URL}/user/read`),
+          axios.get(`${process.env.REACT_APP_API_URL}/company/read`),
         ]);
 
         setQuotationRequests(quotationrequest);
@@ -68,7 +68,6 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
   //   }
   // }, [initialPurchase]);
 
-  console.log(initialPurchase)
   
   const handleProductChange = (index, updatedProduct) => {
     const updatedProducts = [...products];
@@ -79,8 +78,8 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
 
   const handleCategoryChange = async (index, categoryId) => {
     try {
-      const token = Cookies.get('token');
-      const { data: { subcategories } } = await axios.get(`${process.env.REACT_APP_API_URL}/subcategory/read/${categoryId}`, { headers: { authorization: `Bearer ${token}` } });
+      
+      const { data: { subcategories } } = await axios.get(`${process.env.REACT_APP_API_URL}/subcategory/read/${categoryId}`, );
       const updatedProducts = [...products];
       updatedProducts[index].subcategories = subcategories;
       setProducts(updatedProducts);
@@ -99,7 +98,6 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
 
   const updatePurchaseOrder = async (event) => {
     event.preventDefault();
-    const token = Cookies.get('token');
     
     const jsonObject = {
       id_purchase: purchase.id_purchase, // Assicurati che id_purchase sia presente e corretto
@@ -117,7 +115,7 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
     };
 
     toast.promise(
-      await axios.put(`${process.env.REACT_APP_API_URL}/purchase/update`, jsonObject, { headers: { authorization: `Bearer ${token}` } }),
+      await axios.put(`${process.env.REACT_APP_API_URL}/purchase/update`, jsonObject, ),
       {
         loading: 'Invio in corso...',
         success: 'Richiesta di acquisto creata con successo!',

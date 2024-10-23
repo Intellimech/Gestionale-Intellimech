@@ -20,6 +20,7 @@ router.get("/read/", (req, res) => {
     // Get the role from the database
     const Location = sequelize.models.Location;
 
+    const user = req.user;  // Assuming req.user is populated by the authentication middleware
     Location.findAll()
     .then((locations) => {
         res.status(200).json({

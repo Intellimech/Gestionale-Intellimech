@@ -18,6 +18,8 @@ const __dirname = path.resolve();
 
 router.get("/read/", (req, res) => {
     // Get the role from the database
+    const user = req.user;  // Assuming req.user is populated by the authentication middleware
+
     const Category = sequelize.models.Category;
 
     Category.findAll()

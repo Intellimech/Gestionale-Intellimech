@@ -1,5 +1,4 @@
 import express from 'express';
-import jwt from 'jsonwebtoken';
 import logger from '../../utils/logger.js';
 
 // Setup the express router

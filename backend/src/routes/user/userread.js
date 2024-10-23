@@ -3,7 +3,6 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import http from "http";
 import dotenv from "dotenv";
-import jwt from "jsonwebtoken";
 import fs from "fs";
 import path from "path";
 import bcrypt from "bcrypt";
@@ -67,6 +66,8 @@ router.get("/read/", (req, res) => {
     const User = sequelize.models.User;
     const { force } = req.body;
     let user = null;
+    
+
 
     user = User.findAll({
         where: {

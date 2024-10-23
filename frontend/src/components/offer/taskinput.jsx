@@ -1,89 +1,111 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import Select from 'react-tailwindcss-select';
 
 export default function TaskForm({ task, onChange, onAddChild, onRemove, level = 1, users }) {
-  // Style for indentation
   const indentStyle = {
-    paddingLeft: `${level * 20}px`, // Adjust indentation based on level
-    borderLeft: `${level > 0 ? '2px solid #E5E7EB' : 'none'}`, // Indentation border for subtasks
+    paddingLeft: `${level * 10}px`,
+    borderLeft: level > 0 ? '2px solid #E5E7EB' : 'none'
   };
 
-  // Ensure task object is defined and has expected properties to avoid undefined errors
-  const handleTaskChange = (updatedTask) => {
-    onChange({
-      ...task,
-      ...updatedTask,
-      children: task.children || [], // Ensure children is always an array
-    });
+  const hasChildren = task.children && task.children.length > 0;
+
+  const calculatedValues = useMemo(() => {
+    if (!hasChildren) return null;
+
+    return task?.children.reduce((acc, child) => ({
+      hours: acc.hours + (child.hours || 0),
+      value: acc.value + (child.value || 0),
+      estimatedstart: acc.estimatedstart ? (child.estimatedstart && child.estimatedstart < acc.estimatedstart ? child.estimatedstart : acc.estimatedstart) : child.estimatedstart,
+      estimatedend: acc.estimatedend ? (child.estimatedend && child.estimatedend > acc.estimatedend ? child.estimatedend : acc.estimatedend) : child.estimatedend,
+    }), { hours: 0, value: 0, estimatedstart: null, estimatedend: null });
+  }, [task.children]);
+
+  const handleInputChange = (field, value) => {
+    if (hasChildren && (field === 'hours' || field === 'value' || field === 'estimatedstart' || field === 'estimatedend')) {
+      // If there are children, don't allow direct changes to these fields
+      return;
+    }
+    onChange({ ...task, [field]: value });
   };
+
+  // Determine if the "Aggiungi Sotto Task" button should be shown
+  const showAddSubtaskButton = level === 1 || hasChildren;
 
   return (
-    <div className="border p-4 mb-4 rounded-lg shadow-sm bg-gray-50" style={indentStyle}>
-      <div className="mb-2">
-        <label className="block text-sm font-medium leading-6 text-gray-900">Nome</label>
+    <div className="border p-2 mb-2 rounded-lg shadow-sm bg-gray-50" style={indentStyle}>
+      <div className="flex flex-wrap items-center space-x-2 text-sm">
+        <textarea
+          value={task?.name || ''}
+          onChange={(e) => handleInputChange('name', e.target.value)}
+          placeholder="Descrizione"
+          className="flex-grow max-w-[400px] px-2 py-1 rounded border-gray-300 focus:border-[#7fb7d4] focus:ring-[#7fb7d4]"
+        />
         <input
-          type="text"
-          value={task?.name || ''} // Safe access with fallback to empty string
-          onChange={(e) => handleTaskChange({ name: e.target.value })}
-          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
+          type="number"
+          value={hasChildren ? calculatedValues?.hours : (task?.hours || '')}
+          onChange={(e) => handleInputChange('hours', parseFloat(e.target.value) || 0)}
+          placeholder="Ore"
+          className="w-20 px-2 py-1 rounded border-gray-300 focus:border-[#7fb7d4] focus:ring-[#7fb7d4]"
+          readOnly={hasChildren}
         />
-      </div>
-      <div className="mb-2">
-        <label className="block text-sm font-medium leading-6 text-gray-900">Durata</label>
         <input
-          type="text"
-          value={task?.duration || ''} // Safe access with fallback to empty string
-          onChange={(e) => handleTaskChange({ duration: e.target.value })}
-          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
+          type="date"
+          value={hasChildren ? calculatedValues?.estimatedstart : (task?.estimatedstart || '')}
+          onChange={(e) => handleInputChange('estimatedstart', e.target.value)}
+          className="w-32 px-2 py-1 rounded border-gray-300 focus:border-[#7fb7d4] focus:ring-[#7fb7d4]"
+          readOnly={hasChildren}
         />
-      </div>
-      <div className="mb-2">
-        <label className="block text-sm font-medium leading-6 text-gray-900">Assegnata a</label>
-        <Select
-          value={users.find(user => user.value === task?.assignedTo) || null} // Safely handle undefined
-          onChange={(value) => handleTaskChange({ assignedTo: value })}
-          options={users.map((user) => ({ value: user.id, label: user.name }))}
-          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
+        <input
+          type="date"
+          value={hasChildren ? calculatedValues?.estimatedend : (task?.estimatedend || '')}
+          onChange={(e) => handleInputChange('estimatedend', e.target.value)}
+          className="w-32 px-2 py-1 rounded border-gray-300 focus:border-[#7fb7d4] focus:ring-[#7fb7d4]"
+          readOnly={hasChildren}
         />
-      </div>
-      <div className="flex space-x-2 mb-2">
-        <button
-          type="button"
-          onClick={onAddChild}
-          className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
-        >
-          Aggiungi Sotto Task
-        </button>
-        <button
-          type="button"
+        <div className="w-40">
+          <Select
+            value={task?.assignedTo}
+            onChange={(value) => handleInputChange('assignedTo', value)}
+            options={users.map((user) => ({ value: user.value, label: user.label }))}
+            classNames={{
+              menuButton: () => 'flex text-sm text-gray-500 border border-gray-300 rounded shadow-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#7fb7d4] focus:border-[#7fb7d4]'
+            }}
+          />
+        </div>
+        {showAddSubtaskButton && (
+          <button 
+            type="button" 
+            onClick={onAddChild}
+            className="px-2 py-1 text-xs font-semibold text-white bg-[#7fb7d4] rounded hover:bg-[#6ca7c4]"
+          >
+            +Sotto Task
+          </button>
+        )}
+        <button 
+          type="button" 
           onClick={onRemove}
-          className="rounded-md border border-[#A7D0EB] px-3 py-2 text-sm font-semibold text-black shadow-sm hover:bg-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+          className="px-2 py-1 text-xs font-semibold text-[#7fb7d4] border border-[#7fb7d4] rounded hover:bg-[#7fb7d4] hover:text-white"
         >
-          Rimuovi
+          -
         </button>
       </div>
-      <div className="pl-6">
+      <div className="mt-2">
         {task?.children?.map((child, index) => (
           <TaskForm
             key={index}
             task={child}
             onChange={(newChild) => {
-              const newChildren = [...task.children];
+              const newChildren = [...(task.children || [])];
               newChildren[index] = newChild;
-              handleTaskChange({ children: newChildren });
+              onChange({ ...task, children: newChildren });
             }}
-            onAddChild={() => {
-              const newChildren = [...task.children];
-              newChildren[index] = { ...newChildren[index], children: newChildren[index].children || [] }; // Ensure children array exists
-              newChildren[index].children.push({ name: '', duration: '', assignedTo: '', children: [] });
-              handleTaskChange({ children: newChildren });
-            }}
+            onAddChild={onAddChild}
             onRemove={() => {
-              const newChildren = [...task.children];
+              const newChildren = [...(task.children || [])];
               newChildren.splice(index, 1);
-              handleTaskChange({ children: newChildren });
+              onChange({ ...task, children: newChildren });
             }}
-            level={level + 1} // Increase the level for nested tasks
+            level={level + 1}
             users={users}
           />
         ))}

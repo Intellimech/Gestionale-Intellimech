@@ -32,7 +32,7 @@ export default function PurchaseCreateForm() {
   const handleDateChange = (event) => setSelectedDate(event.target.value);
 
   useEffect(() => {
-    const token = Cookies.get('token');
+    
     const fetchData = async () => {
       try {
         const [
@@ -42,11 +42,11 @@ export default function PurchaseCreateForm() {
           { data: { users } },
           { data: { value: companies } },
         ] = await Promise.all([
-          axios.get(`${process.env.REACT_APP_API_URL}/quotationrequest/read/free`, { headers: { authorization: `Bearer ${token}` } }),
-          axios.get(`${process.env.REACT_APP_API_URL}/category/read`, { headers: { authorization: `Bearer ${token}` } }),
-          axios.get(`${process.env.REACT_APP_API_URL}/technicalarea/read`, { headers: { authorization: `Bearer ${token}` } }),
-          axios.get(`${process.env.REACT_APP_API_URL}/user/read`, { headers: { authorization: `Bearer ${token}` } }),
-          axios.get(`${process.env.REACT_APP_API_URL}/company/read`, { headers: { authorization: `Bearer ${token}` }, params: { filter: "Suppliers" } }),
+          axios.get(`${process.env.REACT_APP_API_URL}/quotationrequest/read/free`,),
+          axios.get(`${process.env.REACT_APP_API_URL}/category/read`, ),
+          axios.get(`${process.env.REACT_APP_API_URL}/technicalarea/read`, ),
+          axios.get(`${process.env.REACT_APP_API_URL}/user/read`, ),
+          axios.get(`${process.env.REACT_APP_API_URL}/company/read`),
         ]);
 
         setQuotationRequests(quotationrequest);
@@ -65,12 +65,12 @@ export default function PurchaseCreateForm() {
   }, []);
 
   const handleCategoryChange = async (event, index) => {
-    const token = Cookies.get('token');
+    
     const updatedProducts = [...products];
     updatedProducts[index].category = event.target.value;
   
     try {
-      const { data: { subcategories } } = await axios.get(`${process.env.REACT_APP_API_URL}/subcategory/read/${event.target.value}`, { headers: { authorization: `Bearer ${token}` } });
+      const { data: { subcategories } } = await axios.get(`${process.env.REACT_APP_API_URL}/subcategory/read/${event.target.value}`,);
       updatedProducts[index].subcategories = subcategories;
       updatedProducts[index].subcategory = '';
       setProducts(updatedProducts);
@@ -85,16 +85,15 @@ export default function PurchaseCreateForm() {
 
   const createPurchaseOrder = async (event) => {
     event.preventDefault();
-    const token = Cookies.get('token');
     const form = new FormData(event.target);
     const formDataObject = Object.fromEntries(form.entries());
-
+  
     const jsonObject = {
       id_company: selectedCompany.value,
       payment: selectedPaymentMethod.value,
       date: selectedDate,
       currency: currency.value,
-      products: products.map((product, index) => ({
+      products: products.map((product) => ({
         category: product.category,
         subcategory: product.subcategory,
         description: product.description || '',
@@ -102,12 +101,9 @@ export default function PurchaseCreateForm() {
         quantity: parseInt(product.quantity, 10),
       }))
     };
-
-    console.log(jsonObject);
+  
     toast.promise(
-      axios.post(`${process.env.REACT_APP_API_URL}/purchase/create`, jsonObject, {
-        headers: { authorization: `Bearer ${token}` },
-      }),
+      axios.post(`${process.env.REACT_APP_API_URL}/purchase/create`, jsonObject), // 
       {
         loading: 'Invio in corso...',
         success: 'Richiesta di acquisto creata con successo!',
@@ -122,6 +118,7 @@ export default function PurchaseCreateForm() {
         setCreateSuccess(false);
       });
   };
+  
 
   return (
     <form name="createpurchaseorder" onSubmit={createPurchaseOrder}>

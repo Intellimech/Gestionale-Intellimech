@@ -23,23 +23,12 @@ const publicKeyPath = path.join(__dirname, 'src/keys/public.key');
 const publicKey = fs.readFileSync(publicKeyPath, 'utf8');
 
 router.post('/update/', async (req, res) => {
-    try {
-        const token = req.headers.authorization?.split(' ')[1];
+ 
+        const user = req.user;  
         const { morning_id, afternoon_id, afternoon_status, date, morning_location_id, afternoon_location_id , morning_status } = req.body;
 
         console.log('Dati ricevuti:', { morning_id, afternoon_id, afternoon_status, date, morning_location_id, afternoon_location_id , morning_status});
-        console.log('Token:', token);
-
-        if (!token) {
-            return res.status(401).json({ message: 'Unauthorized' });
-        }
-
-        jwt.verify(token, publicKey, async (err, decoded) => {
-            if (err) {
-                console.error('Errore nella verifica del token:', err);
-                return res.status(401).json({ message: 'Unauthorized' });
-            }
-            console.log('Token decodificato:', decoded);
+        
 
             try {
                 const Calendar = sequelize.models.Calendar;
@@ -61,7 +50,7 @@ router.post('/update/', async (req, res) => {
                     await morningEntry.update({
                         location: morning_location_id,
                         status: morning_status,
-                        updatedBy: decoded.id
+                        updatedBy: user.id_user
                     });
                     console.log('Location mattutina aggiornata con successo');
                 }
@@ -83,7 +72,7 @@ router.post('/update/', async (req, res) => {
                     await afternoonEntry.update({
                         location: afternoon_location_id,
                         status: afternoon_status,
-                        updatedBy: decoded.id
+                        updatedBy: user.id_user
                     });
                     console.log('Location pomeridiana aggiornata con successo');
                 }
@@ -96,11 +85,7 @@ router.post('/update/', async (req, res) => {
                 Logger("error",'Database error:', dbError);
                 res.status(500).json({ message: 'Internal server error' });
             }
-        });
-    } catch (error) {
-        Logger("error",'Server error:', error);
-        res.status(500).json({ message: 'Internal server error' });
-    }
+        
 });
 
 export default router;

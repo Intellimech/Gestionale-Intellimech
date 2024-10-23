@@ -5,6 +5,8 @@ import { startOfMonth, endOfMonth, eachDayOfInterval, isToday, format, addDays, 
 import CalendarPopup from './calendarpopup';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import toast, { Toaster } from 'react-hot-toast';
+
 
 function generateCalendarArrayWithLocations(targetDate, calendars = [], locations = []) {
   const startDate = startOfMonth(targetDate);
@@ -62,13 +64,9 @@ function generateCalendarArrayWithLocations(targetDate, calendars = [], location
 
  // Funzione per ottenere il nome della location tramite id_location
 const getLocationNameById = (id) => {
-  console.log("Cercando la location con id:", id); // Debugging: verifica l'id cercato
-  console.log("Locations disponibili:", JSON.stringify(locations, null, 2)); // Visualizza tutte le locations
-
+ 
   // Match per id_location
   const location = locations.find(loc => loc.id_location === id); 
-  console.log("Location trovata:", JSON.stringify(location, null, 2)); // Debugging: verifica la location trovata
-
   return location ? location.name : null; // Restituisce la proprietà name o null
 };
 
@@ -76,35 +74,26 @@ const getLocationNameById = (id) => {
   // Assegna le locations (mattina e pomeriggio)
   days.forEach((day) => {
     const dayLocations = calendars?.filter(loc => loc.date === day.date) || [];
-    
-    // Debugging: verifica le locations per il giorno corrente
-    console.log("Locations per il giorno:", day.date, " -> ", dayLocations);
 
     if (dayLocations.length > 0) {
       dayLocations.forEach(loc => {
-        console.log("Location dettagli:", loc); // Debugging: verifica i dettagli della location
-
+       
         if (loc.period === 'morning') {
           // Ricerca del nome della location per il mattino
           const morningLocationName = getLocationNameById(loc.location);
-          console.log("Nome della location mattutina:", morningLocationName); // Debugging: verifica il nome trovato
+         
           day.morningLocation = morningLocationName || null; // Assegna il nome della location o null
           day.morningStatus = loc.status; // Mantiene lo stato
         } else if (loc.period === 'afternoon') {
           // Ricerca del nome della location per il pomeriggio
           const afternoonLocationName = getLocationNameById(loc.location);
-          console.log("Nome della location pomeridiana:", afternoonLocationName); // Debugging: verifica il nome trovato
+          
           day.afternoonLocation = afternoonLocationName || null; // Assegna il nome della location o null
           day.afternoonStatus = loc.status; // Mantiene lo stato
         }
         day.id_calendar = loc.id_calendar; // Assegna l'id del calendario
       });
-
-      // Debugging: verifica il giorno aggiornato con le locations
-      console.log("Giorno aggiornato con locations:", day);
-    } else {
-      console.log("Nessuna location trovata per il giorno:", day.date); // Debugging: verifica se non ci sono location
-    }
+    } 
   });
 
   return days;
@@ -139,12 +128,7 @@ export default function Calendar() {
 
     async function fetchCalendar() {
       try {
-        const response = await axios.get('http://localhost:3000/calendar/read', {
-          headers: {
-            Authorization: `Bearer ${Cookies.get('token')}`
-          }
-        });
-        console.log('Calendar:', response.data.calendars);
+        const response = await axios.get('http://localhost:3000/calendar/read', );
         
         setCalendars(response.data.calendars);
       } catch (error) {
@@ -156,18 +140,11 @@ export default function Calendar() {
     fetchLocations();
   }, []);
   const fetchLocations = async () => {
-    try {
-      const token = Cookies.get('token'); // Assicurati che 'token' venga estratto correttamente
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/locations/read`, {
-        headers: { authorization: `Bearer ${token}` },
-      });
-  
-      console.log('Risposta delle locations:', response.data); // Debugging: stampa la risposta dell'API
-  
+    try { const response = await axios.get(`${process.env.REACT_APP_API_URL}/locations/read`, );
       if (Array.isArray(response.data.locations)) {
         const formattedLocations = formatLocations(response.data.locations);
         setLocations(formattedLocations);
-        console.log("Locations disponibili:", formattedLocations); // Debugging: controlla le locations
+       
       } else {
         console.error('Invalid locations data:', response.data.locations);
       }
@@ -179,11 +156,7 @@ export default function Calendar() {
 
   const fetchCalendar = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/calendar/read', {
-        headers: {
-          Authorization: `Bearer ${Cookies.get('token')}`
-        }
-      });
+      const response = await axios.get('http://localhost:3000/calendar/read', );
       setCalendars(response.data.calendars);
     } catch (error) {
       console.error('Error fetching calendars:', error);
@@ -256,11 +229,7 @@ export default function Calendar() {
 // Inside Calendar.js
 const handleFormSubmit = async (newLocation) => {
   try {
-    await axios.post('http://localhost:3000/calendar/create-or-update', newLocation, {
-      headers: {
-        Authorization: `Bearer ${Cookies.get('token')}`,
-      },
-    });
+    await axios.post('http://localhost:3000/calendar/create-or-update', newLocation,);
 
     // Close the popup
     setAddLocationPopupOpen(false);
@@ -295,6 +264,7 @@ const handleFormSubmit = async (newLocation) => {
     />
 
     <div className="h-[80vh] flex flex-col"> {/* Adjusted height */}
+      <Toaster/>
       <header className="flex items-center justify-between border-b border-gray-200 px-0 lg:flex-none">
         <h1 className="text-sm font-semibold leading-5 text-gray-900">
           <time dateTime={format(currentMonth, 'yyyy-MM', { locale: it })}>

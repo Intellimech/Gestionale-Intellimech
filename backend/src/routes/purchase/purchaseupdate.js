@@ -15,16 +15,10 @@ const __dirname = path.resolve();
 
 const publickey = fs.readFileSync(__dirname + "/src/keys/public.key", "utf8");
 router.put("/update", async (req, res) => {
-  const token = req.headers.authorization?.split(" ")[1];
 
-  if (!token) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
+  const user = req.user;  // Assuming req.user is populated by the authentication middleware
 
-  jwt.verify(token, publickey, async (err, decoded) => {
-    if (err) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
+
 
     try {
       console.log('Request Body:', req.body); // Log della richiesta
@@ -46,7 +40,7 @@ router.put("/update", async (req, res) => {
       purchase.date = date || purchase.date;
       purchase.currency = currency || purchase.currency;
       purchase.status = status || purchase.status;
-      purchase.updatedBy = decoded.id;
+      purchase.updatedBy = user.id_user;
       purchase.updatedAt = new Date();
 
       await purchase.save();
@@ -86,7 +80,7 @@ router.put("/update", async (req, res) => {
       console.error('Error:', error); // Log dell'errore
       res.status(500).json({ message: "Internal server error" });
     }
-  });
+  
 });
 
 

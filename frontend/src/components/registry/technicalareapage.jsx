@@ -22,9 +22,7 @@ export default function TechnicalAreaTable() {
 
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_API_URL}/technicalarea/read`, {
-        headers: { authorization: `Bearer ${Cookies.get('token')}` },
-      })
+      .get(`${process.env.REACT_APP_API_URL}/technicalarea/read`)
       .then((response) => {
         console.log('Fetched technical areas:', response.data.technicalareas);
         setTechnicalAreas(response.data.technicalareas || []);
@@ -131,8 +129,7 @@ export default function TechnicalAreaTable() {
     axios
       .post(
         `${process.env.REACT_APP_API_URL}/technicalarea/create`, 
-        { name: newTechnicalAreaName, code: newTechnicalAreaCode }, 
-        { headers: { authorization: `Bearer ${Cookies.get('token')}` } }
+        { name: newTechnicalAreaName, code: newTechnicalAreaCode }
       )
       .then((response) => {
         setTechnicalAreas([...technicalAreas, response.data.technicalarea]);

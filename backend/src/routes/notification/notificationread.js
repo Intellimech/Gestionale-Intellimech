@@ -3,7 +3,6 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import http from "http";
 import dotenv from "dotenv";
-import jwt from "jsonwebtoken";
 import fs from "fs";
 import path from "path";
 import bcrypt from "bcrypt";
@@ -19,33 +18,20 @@ const __dirname = path.resolve();
 
 router.get("/read/me", (req, res) => {
     //get from the db all the notifications
-    const token = req.headers["authorization"]?.split(" ")[1] || "";
-
-    if (!token) {
-        return res.status(401).json({
-            message: "Unauthorized",
-        });
-    }
+    
+    const user = req.user;  // Assuming req.user is populated by the authentication middleware
 
     const publicKey = fs.readFileSync(
         path.resolve(__dirname, "./src/keys/public.key")
     );
 
-    const decoded = jwt.verify(token, publicKey, {
-        algorithms: ["RS256"],
-    });
-
-    if (!decoded) {
-        return res.status(401).json({
-            message: "Unauthorized",
-        });
-    }
+   
 
     const notification = sequelize.models.Notification;
 
     notification.findAll({
         where: {
-            receiver: decoded.id
+            receiver: user.id_user
         },
         include: [
             {

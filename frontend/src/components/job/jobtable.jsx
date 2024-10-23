@@ -5,6 +5,7 @@ import { XMarkIcon, CheckIcon, PaperAirplaneIcon, EyeIcon, ArrowPathIcon } from 
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import JobInformation from './jobinformation';
+import { useNavigate } from 'react-router-dom';
 
 
 import OfferCreate from './jobcreate';
@@ -46,19 +47,12 @@ export default function Example({ permissions, user }) {
 
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_API_URL}/job/read`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer ' + Cookies.get('token'),
-        },
-      })
+      .get(`${process.env.REACT_APP_API_URL}/job/read`, )
       .then((response) => {
         setJob(response.data.jobs);
-        console.log(user)
-        console.log(response.data.jobs);
+       
       })
       .catch((error) => {
-        console.log(error);
       });
   }, []); // Empty dependency array
   const handleSearchInputChange = (column) => (event) => {
@@ -193,6 +187,9 @@ export default function Example({ permissions, user }) {
   }
   
   
+  const handlectrlClick = (job) => {
+    window.open(`/app/job/${job.id_job}`, '_blank'); // Apre in una nuova scheda
+  };
 
   function handleJobClick(job) {
     setSelectedJob(job);
@@ -448,19 +445,25 @@ export default function Example({ permissions, user }) {
                   </th>
                 </tr>
               </thead>
-
-                <tbody className="divide-y divide-gray-200 bg-white">
-                  {Array.isArray(sortedJob) && sortedJob.length > 0  ? (
+              <tbody className="divide-y divide-gray-200 bg-white">
+                    {Array.isArray(sortedJob) && sortedJob.length > 0 ? (
                     sortedJob.map((job) => (
                       <tr key={job.id_user}
-                      className={selectedJobs.includes(job) ? 'bg-gray-50' : undefined}>
+                        className={selectedJobs.includes(job) ? 'bg-gray-50' : undefined}>
                         <td
                           className={classNames(
                             'whitespace-nowrap px-3 py-4 pr-3 text-sm font-medium',
                             selectedJobs.includes(job) ? 'text-[#7fb7d4]' : 'text-gray-700'
-                          )}onClick={() => handleJobClick(job)}
+                          )}
+                          onClick={(event) => {
+                            // ctrl + click per aprire un nuovo tab
+                            if (event.ctrlKey) {
+                              handlectrlClick(job);
+                            } else {
+                              handleJobClick(job); // Mostra il form nella stessa finestra
+                            }
+                          }}
                         >
-                           
                           {job.name}
                         </td>
                         <td className={classNames(

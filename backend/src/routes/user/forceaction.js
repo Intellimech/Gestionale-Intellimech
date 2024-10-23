@@ -23,18 +23,16 @@ router.use(cookieparser());
 
 
 router.post("/force/:action/:userid", async (req, res) => {
+    
+    const user = req.user;  // Assuming req.user is populated by the authentication middleware
+
     //verify if token is valid and if user is active or not deleted and return user data and get also the information about role and permissionss
     try {
         console.log(req.headers["authorization"])
-        const token = req.headers["authorization"]?.split(" ")[1] || "";
+       
         const { action, userid } = req.params;
         const User = sequelize.models.User;
-        if (!token) {
-            console.log("No token");
-            return res.status(401).json({
-                message: "Unauthorized",
-            });
-        }
+        
 
         const publicKey = fs.readFileSync(
             path.resolve(__dirname, "./src/keys/public.key")

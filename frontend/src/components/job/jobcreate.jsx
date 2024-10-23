@@ -9,11 +9,8 @@ export default function UserCreateForm() {
   const [selectedSalesOrder, setSelectedSalesOrder] = useState([]);
 
   useEffect(() => {
-    const token = Cookies.get('token');
-    // Fetching sales orders
-    axios.get(`${process.env.REACT_APP_API_URL}/salesorder/read/`, { 
-      headers: { authorization: `Bearer ${token}` },
-    })
+    
+    axios.get(`${process.env.REACT_APP_API_URL}/salesorder/read/`, )
     .then((response) => {
       const salesorder = response.data.salesorders.map((salesorder) => ({
         value: salesorder.id_salesorder,
@@ -28,24 +25,22 @@ export default function UserCreateForm() {
 
   const handleSalesOrderChange = (value) => {
     setSelectedSalesOrder(value);
-    console.log(value);
   };
 
   const createJob = (event) => {
     event.preventDefault();
-    const token = Cookies.get('token');
+  
     const jsonObject = {
       SalesOrders: selectedSalesOrder.map((salesorder) => salesorder.value),
     };
 
     // Using toast.promise for notifications
     toast.promise(
-      axios.post(`${process.env.REACT_APP_API_URL}/job/create`, jsonObject, { headers: { authorization: `Bearer ${token}` } }),
+      axios.post(`${process.env.REACT_APP_API_URL}/job/create`, jsonObject,),
      toast.loading ("In Creazione")
     )
     .then((response) => {
        toast.success('Job creato con successo!');
-      console.log('Job creato:', response);
      
     })
     .catch((error) => {

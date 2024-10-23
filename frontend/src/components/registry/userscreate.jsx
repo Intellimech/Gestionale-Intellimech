@@ -22,8 +22,8 @@ export default function UserCreateForm() {
   const [selectedcontracttype, setSelectedContracttype] = useState('');
 
   useEffect(() => {
-    const token = Cookies.get('token');
-    axios.get(`${process.env.REACT_APP_API_URL}/role/read`,  { headers: { authorization: `Bearer ${token}` } })
+   
+    axios.get(`${process.env.REACT_APP_API_URL}/role/read`)
       .then((response) => {
         console.log('response', response);
         setRoles(response.data.roles);
@@ -32,7 +32,7 @@ export default function UserCreateForm() {
         console.error('Error:', error);
       });
 
-    axios.get(`${process.env.REACT_APP_API_URL}/group/read`,  { headers: { authorization: `Bearer ${token}` } })
+    axios.get(`${process.env.REACT_APP_API_URL}/group/read`)
       .then((response) => {
         console.log('response', response);
         setGroups(response.data.groups);
@@ -41,7 +41,7 @@ export default function UserCreateForm() {
         console.error('Error:', error);
       });
 
-    axios.get(`${process.env.REACT_APP_API_URL}/subgroup/read`,  { headers: { authorization: `Bearer ${token}` } })
+    axios.get(`${process.env.REACT_APP_API_URL}/subgroup/read`)
       .then((response) => {
         console.log('response subgroup', response);
         setSubgroups(response.data.subgroups);
@@ -50,7 +50,7 @@ export default function UserCreateForm() {
         console.error('Error:', error);
       });
 
-      axios.get(`${process.env.REACT_APP_API_URL}/workingsite/read`,  { headers: { authorization: `Bearer ${token}` } })
+      axios.get(`${process.env.REACT_APP_API_URL}/workingsite/read`)
       .then((response) => {
         console.log('response workingsite', response.data.sites);
         setWorkingsite(response.data.sites);
@@ -59,7 +59,7 @@ export default function UserCreateForm() {
         console.error('Error:', error);
       });
 
-      axios.get(`${process.env.REACT_APP_API_URL}/contracttype/read`,  { headers: { authorization: `Bearer ${token}` } })
+      axios.get(`${process.env.REACT_APP_API_URL}/contracttype/read`)
       .then((response) => {
         console.log('response contracttype', response);
         setContracttype(response.data.contracts);
@@ -72,7 +72,7 @@ export default function UserCreateForm() {
 
   const createUser = async (event) => {
     event.preventDefault();
-    const token = Cookies.get('token');
+   
     const form = document.forms.createuser;
     const formData = new FormData(form);
   
@@ -84,9 +84,7 @@ export default function UserCreateForm() {
     setLoading(true); // Inizia il caricamento
   
     try {
-      const response = await axios.post(`${process.env.REACT_APP_API_URL}/user/create`, jsonObject, {
-        headers: { authorization: `Bearer ${token}` }
-      });
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/user/create`, jsonObject);
       
       setCreateSuccess(true);
       
@@ -323,7 +321,7 @@ export default function UserCreateForm() {
   
             <div className="col-span-full">
               <label htmlFor="street-address" className="block text-sm font-medium leading-6 text-gray-900">
-                Inidirizzo
+                Indirizzo
               </label>
               <div className="mt-2">
                 <input
@@ -338,7 +336,7 @@ export default function UserCreateForm() {
   
             <div className="sm:col-span-2 sm:col-start-1">
               <label htmlFor="city" className="block text-sm font-medium leading-6 text-gray-900">
-                City
+                Città
               </label>
               <div className="mt-2">
                 <input

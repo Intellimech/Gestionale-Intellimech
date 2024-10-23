@@ -107,6 +107,14 @@ QuotationRequest.hasMany(Offer, { foreignKey: 'quotationrequest' });
 SalesOrder.belongsTo(Offer, { foreignKey: 'offer' });
 Offer.hasMany(SalesOrder, { foreignKey: 'offer' });
 
+Tasks.belongsTo(Offer, { foreignKey: 'task' });
+Offer.hasMany(Tasks, { foreignKey: 'task' });
+
+
+Tasks.belongsTo(Offer, { foreignKey: 'id_offer' });
+Offer.hasMany(Tasks, { foreignKey: 'id_offer' });
+
+
 //salesorder is associated with User in the createdBy, updatedBy, and deletedBy fields
 SalesOrder.belongsTo(User, { foreignKey: 'createdBy', as: 'createdByUser' });
 SalesOrder.belongsTo(User, { foreignKey: 'updatedBy', as: 'updatedByUser' });
@@ -133,6 +141,8 @@ Job.hasMany(Reporting, { foreignKey: 'job' });
 Reporting.belongsTo(Tasks, { foreignKey: 'task' });
 Tasks.hasMany(Reporting, { foreignKey: 'task' });
 
+
+
 //reporting is associated with User in the createdBy, updatedBy, and deletedBy fields
 Reporting.belongsTo(User, { foreignKey: 'createdBy', as: 'createdByUser' });
 Reporting.belongsTo(User, { foreignKey: 'updatedBy', as: 'updatedByUser' });
@@ -148,8 +158,16 @@ Tasks.belongsTo(User, { foreignKey: 'updatedBy', as: 'updatedByUser' });
 Tasks.belongsTo(User, { foreignKey: 'deletedBy', as: 'deletedByUser' });
 
 //Tasks is associated with Job
-Tasks.belongsTo(Job, { foreignKey: 'job' });
-Job.hasMany(Tasks, { foreignKey: 'job' });
+Tasks.belongsTo(Job, {
+  foreignKey: 'job', // La chiave esterna deve essere coerente con il model Job
+  as: 'Job'
+});
+
+Job.hasMany(Tasks, {
+  foreignKey: 'job', // Devi usare la chiave esterna corretta
+  as: 'Task' // L'alias deve corrispondere a quello usato nell'inclusione
+});
+
 
 //Tasks is associated with User in the assignedTo field
 Tasks.belongsTo(User, { foreignKey: 'assignedTo', as: 'assignedToUser' });

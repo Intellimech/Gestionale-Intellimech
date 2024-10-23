@@ -203,4 +203,36 @@ router.post("/create/rev", async (req, res) => {
     });
   }
 });
+
+
+router.post('/updaterev', async (req, res) => {
+  
+  let { id } = req.body;
+    const Offer = sequelize.models.Offer;
+    
+    console.log("Updating offer with ID:", id);
+    console.log("Request body:", req.body);  // Added this log
+    
+    try {
+      const result = await Offer.update(
+        { status: "Annullata" },
+        { where: { id_offer: id } }
+      );
+      
+      console.log("Update result:", result);  // Added this log
+      
+   
+      
+      res.status(200).json({
+        message: 'Offerta annullata con successo'
+      });
+      
+    } catch (error) {
+      console.error('Error canceling offer:', error);
+      res.status(500).json({
+        message: 'Errore durante l\'annullamento dell\'offerta',
+        error: error.message
+      });
+    }
+  });
 export default router;

@@ -158,9 +158,9 @@ export default function UserCreateForm() {
     toast.promise(
       axios.post(`${process.env.REACT_APP_API_URL}/offer/create`, jsonObject,),
       {
-        loading: 'Modifica in corso...',
-        success: 'Offerta modificata con successo!',
-        error: 'Errore durante la modifica dell\'offerta',
+        loading: 'Creazione in corso...',
+        success: 'Offerta creata con successo!',
+        error: 'Errore durante la creazione dell\'offerta',
       }
     ).catch((error) => {
       console.error('Errore nella creazione dell\'offerta:', error);

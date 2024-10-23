@@ -192,10 +192,6 @@ export default function RevisionForm({offer}) {
     }
   };
 
-  const removeTask = (index) => setTasks(tasks.filter((_, i) => i !== index));
-
-  const updateTask = (index, updatedTask) => setTasks(tasks.map((task, i) => (i === index ? updatedTask : task)));
-//   const { totalHours, totalValue } = calculateTotals(tasks);
 
   const calculateTotals = (tasks) => {
     let totalHours = 0;
@@ -259,23 +255,26 @@ export default function RevisionForm({offer}) {
           error: 'Error creating offer',
         }
       );
-    } catch (error) {
-      console.error('Errore nella creazione dell\'offerta:', error);
-    }
-
-    try {
+    
+      console.log('API URL:', process.env.REACT_APP_API_URL);
+      console.log('Offer ID:', offer.id_offer);
+   
+      if (offer.id_offer) {
         await toast.promise(
-          axios.put(`${process.env.REACT_APP_API_URL}/offer/update/${offer.id_offer}`),
-         
+          axios.post(`${process.env.REACT_APP_API_URL}/offer/updaterev`, {
+            id: offer.id_offer // Invia l'ID come oggetto
+          }),
           {
-            loading: 'Creating offer...',
-            success: 'Offer created successfully!',
-            error: 'Error creating offer',
+            loading: 'Updating current offer status...',
+            success: 'Current offer status updated successfully!',
+            error: 'Error updating current offer status',
           }
         );
-      } catch (error) {
-        console.error('Errore nella modifica dell\'offerta:', error);
-      } console.log(offer.id_offer);
+      }
+    } catch (error) {
+      console.error('Error in offer revision process:', error);
+      toast.error('Error occurred during the revision process');
+    }
   };
 
   function FunselectedQuotationRequest(){

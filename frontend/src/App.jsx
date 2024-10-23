@@ -72,7 +72,10 @@ const App = () => {
               <Route index element={<PrivateRoute element={<Purchase />} />} />
               <Route path=":id" element={<PrivateRoute element={<PurchaseInfo />} />} />
             </Route>
-            <Route path="profile" element={<PrivateRoute element={<Profile />} />} />
+            <Route path="profile">
+              <Route index element={<PrivateRoute element={<Profile />} />} />
+              <Route path=":id" element={<PrivateRoute element={<Profile />} />} />
+            </Route>
             <Route path="job" element={<PrivateRoute element={<Job />} />} />
             <Route path="holidays-leaves" element={<PrivateRoute element={<HolidaysLeaves />} />} />
             <Route path="invoices">

@@ -22,18 +22,24 @@ router.get("/read/", (req, res) => {
     const invoice = sequelize.models.Invoices;
     let result = [];
     try {
-        //get all the invoices making join with the company table
+        //get all the invoices making join with the company table and removing where the company is named CONSORZIO INTELLIMECH
         invoice.findAll({
             include: [
-            {
-                model: sequelize.models.Company,
-                required: true
-            },
-            {
-                model: sequelize.models.InvoiceLine,
-                required: false
+                {
+                    model: sequelize.models.Company,
+                    
+                    required: true
+                },
+                {
+                    model: sequelize.models.InvoiceLine,
+                    required: false
+                }
+            ],
+            where: {
+                [Op.not]: {
+                    '$Company.Name$': 'CONSORZIO INTELLIMECH'
+                }
             }
-            ]
         }).then((invoices) => {
             result = invoices;
             sendResponse(result, res);

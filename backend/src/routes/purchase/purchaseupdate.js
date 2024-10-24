@@ -18,8 +18,6 @@ router.put("/update", async (req, res) => {
 
   const user = req.user;  // Assuming req.user is populated by the authentication middleware
 
-
-
     try {
       console.log('Request Body:', req.body); // Log della richiesta
 

@@ -35,8 +35,8 @@ export default function TaskForm({ task, onChange, onAddChild, onRemove, level =
     <div className="border p-2 mb-2 rounded-lg shadow-sm bg-gray-50" style={indentStyle}>
       <div className="flex flex-wrap items-center space-x-2 text-sm">
         <textarea
-          value={task?.name || ''}
-          onChange={(e) => handleInputChange('name', e.target.value)}
+          value={task?.description || ''}
+          onChange={(e) => handleInputChange('description', e.target.value)}
           placeholder="Descrizione"
           className="flex-grow max-w-[400px] px-2 py-1 rounded border-gray-300 focus:border-[#7fb7d4] focus:ring-[#7fb7d4]"
         />

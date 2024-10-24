@@ -26,6 +26,7 @@ import Purchase from './purchase.js';
 import PurchaseRow from './purchaserow.js';
 import Calendar from './calendar.js';
 import Locations from './locations.js';
+import CommercialOffer from './commercialoffer.js';
 
 // Define associations
 User.belongsTo(Role, { foreignKey: 'role' });
@@ -107,6 +108,7 @@ QuotationRequest.hasMany(Offer, { foreignKey: 'quotationrequest' });
 SalesOrder.belongsTo(Offer, { foreignKey: 'offer' });
 Offer.hasMany(SalesOrder, { foreignKey: 'offer' });
 
+CommercialOffer.belongsTo(Offer, { foreignKey: 'task' });
 Tasks.belongsTo(Offer, { foreignKey: 'task' });
 Offer.hasMany(Tasks, { foreignKey: 'task' });
 

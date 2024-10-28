@@ -111,12 +111,11 @@ router.post("/create", async (req, res) => {
   }
 });
 
-  
 router.post("/create/rev", async (req, res) => {
-  let { amount, hour, name, revision, estimatedstart, estimatedend, quotationrequest, team, tasks } = req.body;
+  let { amount, hour, name, revision, estimatedstart, estimatedend, quotationrequest, team, tasks, commercialoffers } = req.body; // Aggiungi commercialoffers
   const user = req.user;
 
-  console.log("Received data:", { amount, hour, estimatedstart, estimatedend, quotationrequest, team, tasks });
+  console.log("Received data:", { amount, hour, estimatedstart, estimatedend, quotationrequest, team, tasks, commercialoffers });
 
   if (!amount || !hour || !estimatedstart || !estimatedend || !quotationrequest || !team || !tasks) {
     return res.status(400).json({
@@ -133,31 +132,30 @@ router.post("/create/rev", async (req, res) => {
 
   const Offer = sequelize.models.Offer;
   const Tasks = sequelize.models.Tasks; 
-  const QuotationRequest = sequelize.models.QuotationRequest; // Access the QuotationRequest model
+  const QuotationRequest = sequelize.models.QuotationRequest;
 
   try {
     // Fetch the quotation request to get additional data
     const quotationData = await QuotationRequest.findOne({
       where: {
-        id_quotationrequest: quotationrequest, // Ensure this matches the ID sent in the request
+        id_quotationrequest: quotationrequest,
       },
     });
 
-    // Log the quotation data
     console.log("Fetched quotation data:", quotationData ? quotationData.toJSON() : "Quotation request not found");
 
     if (!quotationData) {
       return res.status(404).json({ message: "Quotation request not found" });
     }
 
-    // Use data from quotationData as needed
-    const percentage = quotationData.percentage; // Assuming this field exists
+    const percentage = quotationData.percentage; 
 
-    // Assicurati che name non sia undefined o null
-    let trimmedName = name ? name.slice(0, -2) : ''; // Rimuove gli ultimi 2 caratteri
+    // Ensure name is not undefined or null
+    let trimmedName = name ? name.slice(0, -2) : ''; // Remove the last 2 characters
 
-    // Genera il nome dell'offerta se non fornito
+    // Generate the offer name if not provided
     let offerName = `${trimmedName}_R${revision}`;
+
     // Create the offer
     const offer = await Offer.create({
       name: offerName,
@@ -168,7 +166,7 @@ router.post("/create/rev", async (req, res) => {
       estimatedend: new Date(estimatedend),
       quotationrequest: quotationrequest,
       createdBy: user.id_user,
-     status: "Revisionata"
+      status: "Revisionata"
     });
 
     // Associate teams with the offer
@@ -177,7 +175,7 @@ router.post("/create/rev", async (req, res) => {
     // Function to create tasks
     const createTasks = async (parentId, tasks) => {
       for (const task of tasks) {
-        console.log("Creating task with assignedTo:", task.assignedTo); // Aggiungi questo log
+        console.log("Creating task with assignedTo:", task.assignedTo); // Log assignedTo for debugging
         const newTask = await Tasks.create({
           name: task.name,
           hour: task?.hours,
@@ -185,8 +183,8 @@ router.post("/create/rev", async (req, res) => {
           estimatedstart: new Date(task?.startDate),
           estimatedend: new Date(task?.endDate),
           description: task.description || '',
-          percentage: percentage || 0, // Use fetched percentage
-          assignedTo: task.assignedTo || "null",
+          percentage: percentage || 0,
+          assignedTo: task.assignedTo || null,
           parentTask: parentId || null,
           createdBy: user.id_user,
           id_offer: offer.id_offer
@@ -202,8 +200,25 @@ router.post("/create/rev", async (req, res) => {
     // Create tasks
     await createTasks(null, tasks);
 
+    // Function to create commercial offers
+    const createCommercialOffers = async (offers) => {
+      for (const offerData of offers) {
+        await CommercialOffer.create({
+          linkedTask: offerData.linkedTask || null,
+          date: new Date(offerData.date),
+          amount: offerData.amount || 0,
+          id_offer: offer.id_offer
+        });
+      }
+    };
+
+    // Create commercial offers if provided
+    if (commercialoffers && commercialoffers.length > 0) {
+      await createCommercialOffers(commercialoffers);
+    }
+
     res.status(200).json({
-      message: "Offer created with tasks",
+      message: "Offer created with tasks and commercial offers",
       offer: offer,
     });
   } catch (err) {
@@ -213,6 +228,7 @@ router.post("/create/rev", async (req, res) => {
     });
   }
 });
+
 
 
 router.post('/updaterev', async (req, res) => {

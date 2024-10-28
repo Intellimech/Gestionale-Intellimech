@@ -93,7 +93,7 @@ export default function HolidayCreateForm() {
                 part: part,
                 location: location.value,
                 owner: owner,
-                status: "Approvato",
+                status: "Approvata",
             });
         };
 

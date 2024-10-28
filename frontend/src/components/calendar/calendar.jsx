@@ -339,7 +339,7 @@ const handleFormSubmit = async (newLocation) => {
               {day.morningLocation ? (
                 <div className={classNames(
                   'rounded-md flex items-center justify-center px-2 py-1 text-xs inline-block',
-                  day.morningStatus === 'Approvato' 
+                  day.morningStatus === 'Approvata' 
                     ? day.morningLocation === 'Ufficio' ? 'bg-[#CC99FF] text-gray-900'
                       : day.morningLocation === 'Trasferta' ? 'bg-[#FFFF00] text-gray-900'
                       : day.morningLocation === 'Malattia' ? 'bg-[#FF9966] text-gray-900'
@@ -371,7 +371,7 @@ const handleFormSubmit = async (newLocation) => {
               {day.afternoonLocation ? (
                 <div className={classNames(
                   'rounded-md flex items-center justify-center px-2 py-1 text-xs inline-block',
-                  day.afternoonStatus === 'Approvato' 
+                  day.afternoonStatus === 'Approvata' 
                     ? day.afternoonLocation === 'Ufficio' ? 'bg-[#CC99FF] text-gray-900'
                       : day.afternoonLocation === 'Trasferta' ? 'bg-[#FFFF00] text-gray-900'
                       : day.afternoonLocation === 'Malattia' ? 'bg-[#FF9966] text-gray-900'

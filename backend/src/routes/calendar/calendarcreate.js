@@ -68,7 +68,7 @@ router.post("/generalcreate/", async (req, res) => {
                             date: currentDate.toISOString().split('T')[0],
                             period: part,  // single 'part' per request
                             location: location,
-                            status: location == '1' || location == '2' ? "In Attesa di Approvazione" : "Approvato",
+                            status: location == '1' || location == '2' ? "In Attesa di Approvazione" : "Approvata",
                             owner: user.id_user,
                             createdBy:user.id_user,
                         });
@@ -121,7 +121,7 @@ router.post("/create/", async (req, res) => {
                             date: start.toISOString().split('T')[0],
                             period: part,
                             location: location,
-                            status: locationObj.needApproval ? "In Attesa di Approvazione" : "Approvato",
+                            status: locationObj.needApproval ? "In Attesa di Approvazione" : "Approvata",
                             owner: user.id_user,
                             createdBy:user.id_user,
                         });
@@ -133,7 +133,7 @@ router.post("/create/", async (req, res) => {
                                 date: currentDate.toISOString().split('T')[0],
                                 period: part,  // single 'part' per request
                                 location: location,
-                                status: location == '1' || location == '2' ? "In Attesa di Approvazione" : "Approvato",
+                                status: location == '1' || location == '2' ? "In Attesa di Approvazione" : "Approvata",
                                 owner: user.id_user,
                                 createdBy:user.id_user,
                             });

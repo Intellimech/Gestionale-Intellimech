@@ -144,7 +144,7 @@ export default function Example({ date, setOpen }) {
     }
     const createEntry = (part, location) => {
       // Imposta lo status in base alla posizione selezionata
-      const status = ['1', '2'].includes(location.value) ? 'In Attesa di Approvazione' : 'Approvato';
+      const status = ['1', '2'].includes(location.value) ? 'In Attesa di Approvazione' : 'Approvata';
     
       // Invia la richiesta al server con lo status
       return axios.post('http://localhost:3000/calendar/create', {

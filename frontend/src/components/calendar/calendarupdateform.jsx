@@ -25,7 +25,7 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
       const dataP = initialData.split(','); 
       setDataSelezionata(dataP[1]); // Data selezionata, esempio "2024-10-03"
     
-      const dataParts = dataP[2].split(';'); // Esempio: ["morning:Permesso", "afternoon:Malattia", "morningStatus:Approvato", "afternoonStatus:Approvato"]
+      const dataParts = dataP[2].split(';'); // Esempio: ["morning:Permesso", "afternoon:Malattia", "morningStatus:Approvata", "afternoonStatus:Approvata"]
     
       // Analizza ogni parte
       dataParts.forEach((part) => {

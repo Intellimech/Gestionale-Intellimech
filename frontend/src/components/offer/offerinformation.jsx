@@ -231,6 +231,7 @@ PEC: intellimech@legalmail.it - www.intellimech.it
                     <div className="flex w-0 flex-1 items-center">
                         <div className="ml-4 flex min-w-0 flex-1 gap-2">
                         <span className="truncate font-medium">{task.name}</span>
+                        <span className="truncate font-medium">{task.description}</span>
                         <span className="flex-shrink-0 text-gray-400">{task.hour}h</span>
                         <span className="flex-shrink-0 text-gray-400">Stato: {task.percentage}%</span>
                         </div>

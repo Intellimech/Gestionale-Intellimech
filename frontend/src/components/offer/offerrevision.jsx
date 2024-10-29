@@ -14,7 +14,7 @@ export default function RevisionForm({offer}) {
     value: offer?.quotationrequest,
     label:`${ offer?.quotationRequest?.name} - ${ offer?.quotationRequest?.Company?.name}`,
   });
-  const [tasks, setTasks] = useState(offer?.tasks || [{ name: '', hours: 0, value: 0, assignedTo: '', children: [] }]);
+  const [tasks, setTasks] = useState(offer?.tasks || [{ name: '', hour: 0, value: 0, assignedTo: '', children: [] }]);
   const [estimatedStartDate, setEstimatedStartDate] = useState(offer?.estimatedstart || new Date().toISOString().split('T')[0]);
   const [estimatedEndDate, setEstimatedEndDate] = useState(offer?.estimatedend || new Date().toISOString().split('T')[0]);
   const [quotationRequest, setQuotationRequest] = useState([]);
@@ -248,7 +248,7 @@ const [commercialoffers, setCommercialOffers] = useState(() => {
   };
 
   const addTask = (parentIndex = null) => {
-    const newTask = { description: '', hours: 0, value: 0, assignedTo: '', children: [] };
+    const newTask = { description: '', hour: 0, value: 0, assignedTo: '', children: [] };
     if (parentIndex !== null) {
       const newTasks = [...tasks];
       newTasks[parentIndex].children.push(newTask);
@@ -265,7 +265,7 @@ const calculateTotals = (tasks) => {
   const calculate = (task) => {
     // Se il task ha dei figli, non sommare i suoi valori diretti
     if (!task.children || task.children.length === 0) {
-      totalHours += Number(task.hours || task.hour || 0);
+      totalHours += Number(task.hour || task.hour || 0);
       // Assicurati che il valore sia convertito in numero e gestisci i valori null/undefined
       totalValue += parseFloat(task.value || 0);
     }
@@ -273,7 +273,7 @@ const calculateTotals = (tasks) => {
     // Somma ricorsivamente i valori dei figli
     if (task.children) {
       task.children.forEach(child => {
-        totalHours += Number(child.hours || child.hour || 0);
+        totalHours += Number(child.hour || child.hour || 0);
         totalValue += parseFloat(child.value || 0);
       });
     }
@@ -286,10 +286,49 @@ const calculateTotals = (tasks) => {
 
 // Aggiungi questa funzione useEffect per aggiornare i totali
 useEffect(() => {
-  const { totalHours: hours, totalValue: value } = calculateTotals(tasks);
-  setTotalHours(hours);
+  const { totalHours: hour, totalValue: value } = calculateTotals(tasks);
+  setTotalHours(hour);
   setTotalValue(value);
 }, [tasks]);
+
+// const createOffer = async (event) => {
+//   event.preventDefault();
+
+//   // Verifica se sono stati modificati i valori o meno
+//   const finalHour = hour !== offer.hour ? hour : offer.hour;
+//   const finalAmount = amount !== offer.amount ? amount : offer.amount;
+//   const finalTasks = tasks.map((task, index) => ({
+//     name: task.name,
+//     hour: task.hour || task.hour,
+//     value: task.value,
+//     startDate: task.estimatedstart || task.startDate,
+//     endDate: task.estimatedend || task.endDate,
+//     assignedTo: task.assignedTo?.value || task.assignedTo,
+//     children: (task.children || []).map((child) => ({
+//       name: child.name,
+//       hour: child.hour || child.hour,
+//       value: child.value,
+//       startDate: child.estimatedstart || child.startDate,
+//       endDate: child.estimatedend || child.endDate,
+//       assignedTo: child.assignedTo?.value || child.assignedTo,
+//     })),
+//   }));
+
+//   const jsonObject = {
+//     amount: finalAmount,
+//     hour: finalHour,
+//     name: offer?.name,
+//     description: description,
+//     estimatedstart: estimatedStartDate,
+//     estimatedend: estimatedEndDate,
+//     quotationrequest: selectedQuotationRequest?.value || null,
+//     revision: (offer.revision + 1),
+//     team: selectedTeam?.map((team) => team.value) || [],
+//     tasks: finalTasks,
+//   };
+
+
+//   console.log("Sending data:", jsonObject);
 const createOffer = async (event) => {
   event.preventDefault();
 
@@ -303,7 +342,8 @@ const createOffer = async (event) => {
   jsonObject.amount=totalCommercialAmount;
   jsonObject.team = selectedTeam?.map((team) => team.value);
   jsonObject.quotationrequest = selectedQuotationRequest?.value;
-
+  jsonObject.name= offer?.name;
+  jsonObject.revision = (offer.revision + 1)
   // Aggiungi i dati delle commercial offers
   jsonObject.commercialoffers = commercialoffers.map(offer => ({
     linkedTask: offer.linkedTask?.value || null,
@@ -314,7 +354,7 @@ const createOffer = async (event) => {
   // Aggiungi i tasks come prima, con le date
   jsonObject.tasks = tasks.map((task) => ({
     ...task,
-    assignedTo: task.assignedTo?.value ,
+    assignedTo: task.assignedTo?.value || null,
     estimatedstart: task.estimatedstart || estimatedStartDate,
     estimatedend: task.estimatedend || estimatedEndDate,
     children: task.children.map((child) => ({
@@ -326,19 +366,34 @@ const createOffer = async (event) => {
   }));
 
   console.log("Sending data:", jsonObject);
-
-  toast.promise(
-    axios.post(`${process.env.REACT_APP_API_URL}/offer/create/rev`, jsonObject),
-    {
-      loading: 'Creazione in corso...',
-      success: 'Offerta creata con successo!',
-      error: 'Errore durante la creazione dell\'offerta',
-    }
-  ).catch((error) => {
+  try {
+    await toast.promise(
+      axios.post(`${process.env.REACT_APP_API_URL}/offer/create/rev`, jsonObject),
+      {
+        loading: 'Creating offer...',
+        success: 'Offer created successfully!',
+        error: 'Error creating offer',
+      }
+    );
+  } catch (error) {
     console.error('Errore nella creazione dell\'offerta:', error);
-  });
-};
+  }
 
+  try {
+      await toast.promise(
+        axios.post(`${process.env.REACT_APP_API_URL}/offer/updaterev`, {
+          id: offer.id_offer // Invia l'ID come oggetto
+        }),
+        {
+          loading: 'Creating offer...',
+          success: 'Offer created successfully!',
+          error: 'Error creating offer',
+        }
+      );
+    } catch (error) {
+      console.error('Errore nella modifica dell\'offerta:', error);
+    } console.log(offer.id_offer);
+};
 
   function FunselectedQuotationRequest(){
     let valueRight = selectedQuotationRequest;
@@ -495,7 +550,7 @@ const createOffer = async (event) => {
                   const newTasks = [...tasks];
                   newTasks[index].children = [
                     ...(newTasks[index].children || []),
-                    { name: '', hours: 0, value: 0, assignedTo: 0, children: [] }
+                    { name: '', hour: 0, value: 0, assignedTo: 0, children: [] }
                   ];
                   setTasks(newTasks);
                 }}
@@ -504,7 +559,7 @@ const createOffer = async (event) => {
             ))}
             <button
               type="button"
-              onClick={() => setTasks([...tasks, { description: '', hours: 0, value: 0, assignedTo: '', children: [] }])}
+              onClick={() => setTasks([...tasks, { description: '', hour: 0, value: 0, assignedTo: '', children: [] }])}
               className="mt-4 inline-flex justify-center rounded-md border border-transparent bg-[#7fb7d4] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#62a0bc] focus:outline-none focus:ring-2 focus:ring-[#62a0bc] focus:ring-offset-2"
             >
               Aggiungi Task

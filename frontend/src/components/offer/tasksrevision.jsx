@@ -7,9 +7,8 @@ const TaskRevision = ({ task, users, onChange, onAddChild, onRemove, level = 1 }
   if (!task) {
     console.error('Task is undefined');
     return null;
-  }
-  else {
-    console.log("Sono la task " +task.assignedTo)
+  } else {
+    console.log("Sono la task " + task.assignedTo);
   }
 
   const [selectedUser, setSelectedUser] = useState(null);
@@ -49,11 +48,10 @@ const TaskRevision = ({ task, users, onChange, onAddChild, onRemove, level = 1 }
         : child.endDate,
     }), { hour: 0, value: 0, startDate: null, endDate: null });
   }, [task?.children]);
-
+  
   useEffect(() => {
     if (task.assignedTo) {
-      // Cerca l'utente nell'array `users` utilizzando il valore di `task.assignedTo`
-      const userFound = users.find((user) => user.value === task.assignedTo.id);
+      const userFound = users.find((user) => user.id === task.assignedTo.id);
       setSelectedUser(userFound || null);
     } else {
       setSelectedUser(null);
@@ -61,15 +59,23 @@ const TaskRevision = ({ task, users, onChange, onAddChild, onRemove, level = 1 }
   }, [task.assignedTo, users]);
 
   const handleInputChange = (field, value) => {
-    const updatedTask = { ...task, [field]: field === 'assignedTo' ? { id: value.value } : value };
+    const updatedTask = { ...task, [field]: field === 'assignedTo' ? value : value };
     onChange(updatedTask);
   };
+
+  const selectOptions = useMemo(() => {
+    return users.map((user) => ({
+      value: user.id,
+      label: `${user.name} ${user.surname}`,
+    }));
+  }, [users]);
+
 
   return (
     <div className="border p-2 mb-2 rounded-lg shadow-sm bg-gray-50" style={indentStyle}>
       <div className="flex flex-wrap items-center space-x-2 text-sm">
         <textarea
-          value={task?.description || ''}
+          value={task?.description }
           onChange={(e) => handleInputChange('description', e.target.value)}
           placeholder="Descrizione"
           className="flex-grow max-w-[400px] px-2 py-1 rounded border-gray-300 focus:border-[#7fb7d4] focus:ring-[#7fb7d4]"
@@ -97,18 +103,18 @@ const TaskRevision = ({ task, users, onChange, onAddChild, onRemove, level = 1 }
           readOnly={hasChildren}
         />
         <div className="w-40">
-          <Select
-            value={selectedUser}
-            onChange={(value) => handleInputChange('assignedTo', { id: value.value })}
-            options={users}
-            classNames={{
-              menuButton: () =>
-                'flex text-sm text-gray-500 border border-gray-300 rounded shadow-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#7fb7d4] focus:border-[#7fb7d4]',
-            }}
-            primaryColor="[#7fb7d4]"
-            isSearchable
-            placeholder="Select a user"
-          />
+        <Select
+          value={selectedUser}
+          onChange={(value) => handleInputChange('assignedTo', value)}
+          options={selectOptions}
+          classNames={{
+            menuButton: () =>
+              'flex text-sm text-gray-500 border border-gray-300 rounded shadow-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#7fb7d4] focus:border-[#7fb7d4]',
+          }}
+          primaryColor="[#7fb7d4]"
+          isSearchable
+          placeholder="Select a user"
+        />
         </div>
         <button
           type="button"

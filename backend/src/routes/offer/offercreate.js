@@ -60,16 +60,16 @@ router.post("/create", async (req, res) => {
           ? `${parentPrefix}.${taskCounter}`
           : taskCounter.toString();
 
-        const newTask = await Tasks.create({
-          name: taskName,
-          hour: task?.hours,
-          value: task.value || 0,
-          estimatedstart: new Date(task?.estimatedstart),
-          estimatedend: new Date(task?.estimatedend),
-          description: task.description,
-          percentage: percentage || 0,
-          assignedTo: task.assignedTo || null,
-          parentTask: parentId || null,
+          const newTask = await Tasks.create({
+            name: taskName,
+            hour: task?.hours,
+            value: task.value || 0,
+            estimatedstart: new Date(task?.estimatedstart),
+            estimatedend: new Date(task?.estimatedend),
+            description: task.description,
+            percentage: percentage || 0,
+            assignedTo: task.assignedTo || null,
+            parentTask: parentId || null,
           createdBy: user.id_user,
           id_offer: offer.id_offer
         });
@@ -122,7 +122,7 @@ router.post("/create/rev", async (req, res) => {
     let { amount, hour, estimatedstart, name, revision, estimatedend, quotationrequest, team, tasks, commercialoffers } = req.body;
     const user = req.user;
   
-    console.log("Received data:", { amount, hour, estimatedstart, estimatedend, quotationrequest, team, tasks, commercialoffers });
+    console.log("Received data:", { name, amount, hour, estimatedstart, estimatedend, quotationrequest, team, tasks, commercialoffers });
   
   
   
@@ -184,7 +184,7 @@ router.post("/create/rev", async (req, res) => {
             estimatedend: new Date(task?.estimatedend),
             description: task.description,
             percentage: percentage || 0,
-            assignedTo: task.assignedTo || null,
+            assignedTo: task.assignedTo || 2,
             parentTask: parentId || null,
             createdBy: user.id_user,
             id_offer: offer.id_offer
@@ -234,5 +234,34 @@ router.post("/create/rev", async (req, res) => {
     }
   });
   
-  // Rest of the router code remains the same...
+router.post('/updaterev', async (req, res) => {
+  
+  let { id } = req.body;
+    const Offer = sequelize.models.Offer;
+    
+    console.log("Updating offer with ID:", id);
+    console.log("Request body:", req.body);  // Added this log
+    
+    try {
+      const result = await Offer.update(
+        { status: "Annullata" },
+        { where: { id_offer: id } }
+      );
+      
+      console.log("Update result:", result);  // Added this log
+      
+   
+      
+      res.status(200).json({
+        message: 'Offerta annullata con successo'
+      });
+      
+    } catch (error) {
+      console.error('Error canceling offer:', error);
+      res.status(500).json({
+        message: 'Errore durante l\'annullamento dell\'offerta',
+        error: error.message
+      });
+    }
+  });
 export default router;

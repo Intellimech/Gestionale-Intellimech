@@ -107,7 +107,7 @@ const CommercialOfferRev = ({
           <div className="font-medium">Fine Attività</div>
         ) : (
           <Select
-            value={localData?.linkedTask}
+            
             onChange={handleTaskSelection}
             options={allTasks}
             placeholder="Seleziona un task..."

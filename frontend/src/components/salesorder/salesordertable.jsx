@@ -335,14 +335,14 @@ const sortedSaleOrder = filteredSaleOrder.sort((a, b) => {
 
 
 
-      <div className="mt-8 flow-root">
+        <div className="mt-8 flow-root">
         <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">          
           <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
             <div className="relative">
-              <table className="min-w-full divide-y divide-gray-300">
+              <table className="min-w-full table-fixed divide-y divide-gray-300">
                 <thead>
                   <tr>
-                    <th scope="col" className="px-2 py-3 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
+                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
                       Ordine
                       {sortColumn === 'name' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                       <br></br>
@@ -413,7 +413,7 @@ const sortedSaleOrder = filteredSaleOrder.sort((a, b) => {
                         rows= {1}
                       />
                     </th>
-                    <th scope="col" className="px-2 py-3 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('createdByUser')}>
+                    <th scope="col" className="px-16 py-3 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('createdByUser')}>
                       Creata da
                       {sortColumn === 'createdByUser' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                       <br></br>
@@ -436,7 +436,7 @@ const sortedSaleOrder = filteredSaleOrder.sort((a, b) => {
                     sortedSaleOrder.map((salesorder) => (
                       <tr
                         key={salesorder.id}
-                        className={salesorders.includes(salesorder) ? 'bg-gray-50' : undefined}
+                      
                         onClick={(event) => {
                           // ctrl + click per aprire un nuovo tab
                           if (event.ctrlKey) {
@@ -474,7 +474,7 @@ const sortedSaleOrder = filteredSaleOrder.sort((a, b) => {
                             </span>
                           )}
                         </td>
-                        <td className="whitespace-nowrap px-2 py-4 text-sm text-gray-500">
+                        <td className="whitespace-nowrap px-16 py-4 text-sm text-gray-500">
                           {salesorder.createdByUser?.name.slice(0, 2).toUpperCase() + salesorder.createdByUser?.surname.slice(0, 2).toUpperCase()}
                         </td>
                       </tr>

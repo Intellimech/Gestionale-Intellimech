@@ -124,7 +124,7 @@ export default function Example({ permissions, user }) {
     }
   
     // Altrimenti, ordina per la colonna specificata
-    const valueA = sortColumn === 'Company' ? a.SalesOrders[0].Offer.QuotationRequest.Company.name :
+    const valueA = sortColumn === 'Company' ? a.SalesOrders[0].Offer?.QuotationRequest?.Company?.name :
                     sortColumn === 'reportedhour' ? a.SalesOrders[0].name :
                     sortColumn === 'offerhour' ? a.SalesOrders[0].name :
                     sortColumn === 'total' ? a.SalesOrders[0].name :
@@ -133,7 +133,7 @@ export default function Example({ permissions, user }) {
                     sortColumn === 'offer' ? a.SalesOrders[0].name :
                     sortColumn === 'createdByUser' ? (a.createdByUser?.name + ' ' + a.createdByUser?.surname) :
                     a[sortColumn];
-    const valueB = sortColumn === 'Company' ? b.SalesOrders[0].Offer.QuotationRequest.Company.name :
+    const valueB = sortColumn === 'Company' ? b.SalesOrders[0].Offer?.QuotationRequest?.Company?.name :
                     sortColumn === 'reportedhour' ? b.SalesOrders[0].name :
                     sortColumn === 'offerhour' ? b.SalesOrders[0].name :
                     sortColumn === 'total' ? b.SalesOrders[0].name :
@@ -471,27 +471,27 @@ export default function Example({ permissions, user }) {
                             selectedJobs.includes(job) ? 'text-[#7fb7d4]' : 'text-gray-700'
                           )}>
                           {
-                            job.SalesOrders.length > 1 ? job.SalesOrders[0].Offer.QuotationRequest.Company.name + '...' + " (" + job.SalesOrders.length + ")" : job.SalesOrders[0]?.Offer.QuotationRequest.Company.name
+                            job?.SalesOrders.length > 1 ? job.SalesOrders[0].Offer?.QuotationRequest?.Company?.name + '...' + " (" + job.SalesOrders.length + ")" : job.SalesOrders[0]?.Offer?.QuotationRequest?.Company?.name
                           }
                         </td>
                         <td className="px-3 py-4 text-sm text-gray-700">
                           {
-                            job.SalesOrders.length > 1 ? job.SalesOrders[0].name + '...' + " (" + job.SalesOrders.length + ")" : job.SalesOrders[0]?.name
+                            job.SalesOrders.length > 1 ? job.SalesOrders[0].name + '...' + " (" + job?.SalesOrders?.length + ")" : job?.SalesOrders[0]?.name
                           }
                         </td>
                         <td className="px-3 py-4 text-sm text-gray-700">
                           {
-                            job.SalesOrders.reduce((total, order) => total + parseFloat(order.Offer.amount), 0).toFixed(2) + ' €'
+                            job.SalesOrders.reduce((total, order) => total + parseFloat(order?.Offer?.amount), 0).toFixed(2) + ' €'
                           }
                         </td>
                         <td className="px-3 py-4 text-sm text-gray-700">
                           {
-                            job.SalesOrders.reduce((total, order) => total + parseFloat(order.Offer.hour), 0) + ' h'
+                            job.SalesOrders.reduce((total, order) => total + parseFloat(order?.Offer?.hour), 0) + ' h'
                           }
                         </td>
                         <td className="px-3 py-4 text-sm text-gray-700">
                           {
-                            (job.Reportings.reduce((total, reported) => total + reported.hour, 0) * (job.SalesOrders.reduce((total, order) => total + parseFloat(order.Offer.amount), 0).toFixed(2) / job.SalesOrders.reduce((total, order) => total + parseFloat(order.Offer.hour), 0).toFixed(2))).toFixed(2) + '€'
+                            (job.Reportings.reduce((total, reported) => total + reported.hour, 0) * (job.SalesOrders.reduce((total, order) => total + parseFloat(order?.Offer?.amount), 0).toFixed(2) / job?.SalesOrders?.reduce((total, order) => total + parseFloat(order?.Offer?.hour), 0).toFixed(2))).toFixed(2) + '€'
                           }
                         </td>
                         <td className="px-3 py-4 text-sm text-gray-700">

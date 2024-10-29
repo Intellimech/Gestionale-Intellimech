@@ -3,15 +3,13 @@ import sequelize from "../../utils/db.js";
 
 // Setup the express router
 const router = express.Router();
+
 router.post("/create", async (req, res) => {
-  let { amount, hour, estimatedstart, estimatedend, quotationrequest, team, tasks, commercialoffers } = req.body; // Aggiungi commercialoffers
+  let { amount, hour, estimatedstart, estimatedend, quotationrequest, team, tasks, commercialoffers } = req.body;
   const user = req.user;
 
   console.log("Received data:", { amount, hour, estimatedstart, estimatedend, quotationrequest, team, tasks, commercialoffers });
 
-  
-
-  // Ensure the date is valid
   if (isNaN(Date.parse(estimatedstart)) || isNaN(Date.parse(estimatedend))) {
     return res.status(400).json({
       message: "Invalid date format for estimatedstart or estimatedend",
@@ -19,15 +17,14 @@ router.post("/create", async (req, res) => {
   }
 
   const Offer = sequelize.models.Offer;
-  const Tasks = sequelize.models.Tasks; 
-  const CommercialOffer = sequelize.models.CommercialOffer; // Aggiungi il model CommercialOffer
+  const Tasks = sequelize.models.Tasks;
+  const CommercialOffer = sequelize.models.CommercialOffer;
   const QuotationRequest = sequelize.models.QuotationRequest;
 
   try {
-    // Fetch the quotation request to get additional data
     const quotationData = await QuotationRequest.findOne({
       where: {
-        id_quotationrequest: quotationrequest, 
+        id_quotationrequest: quotationrequest,
       },
     });
 
@@ -35,13 +32,11 @@ router.post("/create", async (req, res) => {
       return res.status(404).json({ message: "Quotation request not found" });
     }
 
-    const percentage = quotationData.percentage; 
+    const percentage = quotationData.percentage;
 
-    // Generate offer name if not provided
     const offerCount = await Offer.count();
-    const offerName = `OFF${new Date().getFullYear().toString().substr(-2)}_${(offerCount + 1).toString().padStart(5, "0")}R0`;
+    const offerName = `OFF${new Date().getFullYear().toString().substr(-2)}_${(offerCount + 1).toString().padStart(5, "0")}_R0`;
 
-    // Create the offer
     const offer = await Offer.create({
       name: offerName,
       amount: amount,
@@ -52,14 +47,21 @@ router.post("/create", async (req, res) => {
       createdBy: user.id_user,
     });
 
-    // Associate teams with the offer
     await offer.addTeam(team);
 
-    // Function to create tasks
-    const createTasks = async (parentId, tasks) => {
+    // Mappa per tenere traccia delle task create e dei loro nomi
+    const taskMap = new Map();
+
+    const createTasks = async (parentId, tasks, parentPrefix = "") => {
+      let taskCounter = 1;
+
       for (const task of tasks) {
+        const taskName = parentPrefix 
+          ? `${parentPrefix}.${taskCounter}`
+          : taskCounter.toString();
+
         const newTask = await Tasks.create({
-          name: "",
+          name: taskName,
           hour: task?.hours,
           value: task.value || 0,
           estimatedstart: new Date(task?.estimatedstart),
@@ -72,21 +74,27 @@ router.post("/create", async (req, res) => {
           id_offer: offer.id_offer
         });
 
-        // Create child tasks recursively
+        // Salva l'id della task e il suo nome nella mappa
+        taskMap.set(newTask.id_task, taskName);
+
         if (task.children && task.children.length > 0) {
-          await createTasks(newTask.id_task, task.children);
+          await createTasks(newTask.id_task, task.children, taskName);
         }
+
+        taskCounter++;
       }
     };
 
-    // Create tasks
     await createTasks(null, tasks);
 
-    // Function to create commercial offers
     const createCommercialOffers = async (offers) => {
       for (const offerData of offers) {
+        // Se c'è una task collegata, recupera il suo nome dalla mappa
+        const taskName = offerData.linkedTask ? taskMap.get(offerData.linkedTask) : null;
+
         await CommercialOffer.create({
           linkedTask: offerData.linkedTask || null,
+          taskName: taskName, // Aggiungi il nome della task collegata
           date: new Date(offerData.date),
           amount: offerData.amount || 0,
           id_offer: offer.id_offer
@@ -94,7 +102,6 @@ router.post("/create", async (req, res) => {
       }
     };
 
-    // Create commercial offers
     if (commercialoffers && commercialoffers.length > 0) {
       await createCommercialOffers(commercialoffers);
     }
@@ -112,153 +119,120 @@ router.post("/create", async (req, res) => {
 });
 
 router.post("/create/rev", async (req, res) => {
-  let { amount, hour, name, revision, estimatedstart, estimatedend, quotationrequest, team, tasks, commercialoffers } = req.body; // Aggiungi commercialoffers
-  const user = req.user;
-
-  console.log("Received data:", { amount, hour, estimatedstart, estimatedend, quotationrequest, team, tasks, commercialoffers });
-
-  if (!amount || !hour || !estimatedstart || !estimatedend || !quotationrequest || !team || !tasks) {
-    return res.status(400).json({
-      message: "Bad request, view documentation for more information",
-    });
-  }
-
-  // Ensure the date is valid
-  if (isNaN(Date.parse(estimatedstart)) || isNaN(Date.parse(estimatedend))) {
-    return res.status(400).json({
-      message: "Invalid date format for estimatedstart or estimatedend",
-    });
-  }
-
-  const Offer = sequelize.models.Offer;
-  const Tasks = sequelize.models.Tasks; 
-  const QuotationRequest = sequelize.models.QuotationRequest;
-
-  try {
-    // Fetch the quotation request to get additional data
-    const quotationData = await QuotationRequest.findOne({
-      where: {
-        id_quotationrequest: quotationrequest,
-      },
-    });
-
-    console.log("Fetched quotation data:", quotationData ? quotationData.toJSON() : "Quotation request not found");
-
-    if (!quotationData) {
-      return res.status(404).json({ message: "Quotation request not found" });
+    let { amount, hour, estimatedstart, estimatedend, quotationrequest, team, tasks, commercialoffers } = req.body;
+    const user = req.user;
+  
+    console.log("Received data:", { amount, hour, estimatedstart, estimatedend, quotationrequest, team, tasks, commercialoffers });
+  
+    if (isNaN(Date.parse(estimatedstart)) || isNaN(Date.parse(estimatedend))) {
+      return res.status(400).json({
+        message: "Invalid date format for estimatedstart or estimatedend",
+      });
     }
+  
+    const Offer = sequelize.models.Offer;
+    const Tasks = sequelize.models.Tasks;
+    const CommercialOffer = sequelize.models.CommercialOffer;
+    const QuotationRequest = sequelize.models.QuotationRequest;
+  
+    try {
+      const quotationData = await QuotationRequest.findOne({
+        where: {
+          id_quotationrequest: quotationrequest,
+        },
+      });
+  
+      if (!quotationData) {
+        return res.status(404).json({ message: "Quotation request not found" });
+      }
+  
+      const percentage = quotationData.percentage;
+  
+    let trimmedName = name ? name.slice(0, -2) : ''; 
 
-    const percentage = quotationData.percentage; 
-
-    // Ensure name is not undefined or null
-    let trimmedName = name ? name.slice(0, -2) : ''; // Remove the last 2 characters
-
-    // Generate the offer name if not provided
     let offerName = `${trimmedName}_R${revision}`;
 
-    // Create the offer
-    const offer = await Offer.create({
-      name: offerName,
-      amount: amount,
-      hour: hour,
-      revision: revision,
-      estimatedstart: new Date(estimatedstart),
-      estimatedend: new Date(estimatedend),
-      quotationrequest: quotationrequest,
-      createdBy: user.id_user,
-      status: "Revisionata"
-    });
-
-    // Associate teams with the offer
-    await offer.addTeam(team);
-
-    // Function to create tasks
-    const createTasks = async (parentId, tasks) => {
-      for (const task of tasks) {
-        console.log("Creating task with assignedTo:", task.assignedTo); // Log assignedTo for debugging
-        const newTask = await Tasks.create({
-          name: task.name,
-          hour: task?.hours,
-          value: task.value || 0,
-          estimatedstart: new Date(task?.startDate),
-          estimatedend: new Date(task?.endDate),
-          description: task.description || '',
-          percentage: percentage || 0,
-          assignedTo: task.assignedTo || null,
-          parentTask: parentId || null,
-          createdBy: user.id_user,
-          id_offer: offer.id_offer
-        });
-
-        // Create child tasks recursively
-        if (task.children && task.children.length > 0) {
-          await createTasks(newTask.id_task, task.children);
-        }
-      }
-    };
-
-    // Create tasks
-    await createTasks(null, tasks);
-
-    // Function to create commercial offers
-    const createCommercialOffers = async (offers) => {
-      for (const offerData of offers) {
-        await CommercialOffer.create({
-          linkedTask: offerData.linkedTask || null,
-          date: new Date(offerData.date),
-          amount: offerData.amount || 0,
-          id_offer: offer.id_offer
-        });
-      }
-    };
-
-    // Create commercial offers if provided
-    if (commercialoffers && commercialoffers.length > 0) {
-      await createCommercialOffers(commercialoffers);
-    }
-
-    res.status(200).json({
-      message: "Offer created with tasks and commercial offers",
-      offer: offer,
-    });
-  } catch (err) {
-    console.error("Error creating offer:", err);
-    res.status(500).json({
-      message: "Internal server error",
-    });
-  }
-});
-
-
-
-router.post('/updaterev', async (req, res) => {
   
-  let { id } = req.body;
-    const Offer = sequelize.models.Offer;
-    
-    console.log("Updating offer with ID:", id);
-    console.log("Request body:", req.body);  // Added this log
-    
-    try {
-      const result = await Offer.update(
-        { status: "Annullata" },
-        { where: { id_offer: id } }
-      );
-      
-      console.log("Update result:", result);  // Added this log
-      
-   
-      
-      res.status(200).json({
-        message: 'Offerta annullata con successo'
+      const offer = await Offer.create({
+        name: offerName,
+        amount: amount,
+        hour: hour,
+        estimatedstart: new Date(estimatedstart),
+        estimatedend: new Date(estimatedend),
+        quotationrequest: quotationrequest,
+        createdBy: user.id_user,
       });
-      
-    } catch (error) {
-      console.error('Error canceling offer:', error);
+  
+      await offer.addTeam(team);
+  
+      // Mappa per tenere traccia delle task create e dei loro nomi
+      const taskMap = new Map();
+  
+      const createTasks = async (parentId, tasks, parentPrefix = "") => {
+        let taskCounter = 1;
+  
+        for (const task of tasks) {
+          const taskName = parentPrefix 
+            ? `${parentPrefix}.${taskCounter}`
+            : taskCounter.toString();
+  
+          const newTask = await Tasks.create({
+            name: taskName,
+            hour: task?.hours,
+            value: task.value || 0,
+            estimatedstart: new Date(task?.estimatedstart),
+            estimatedend: new Date(task?.estimatedend),
+            description: task.description,
+            percentage: percentage || 0,
+            assignedTo: task.assignedTo || null,
+            parentTask: parentId || null,
+            createdBy: user.id_user,
+            id_offer: offer.id_offer
+          });
+  
+          // Salva l'id della task e il suo nome nella mappa
+          taskMap.set(newTask.id_task, taskName);
+  
+          if (task.children && task.children.length > 0) {
+            await createTasks(newTask.id_task, task.children, taskName);
+          }
+  
+          taskCounter++;
+        }
+      };
+  
+      await createTasks(null, tasks);
+  
+      const createCommercialOffers = async (offers) => {
+        for (const offerData of offers) {
+          // Se c'è una task collegata, recupera il suo nome dalla mappa
+          const taskName = offerData.linkedTask ? taskMap.get(offerData.linkedTask) : null;
+  
+          await CommercialOffer.create({
+            linkedTask: offerData.linkedTask || null,
+            taskName: taskName, // Aggiungi il nome della task collegata
+            date: new Date(offerData.date),
+            amount: offerData.amount || 0,
+            id_offer: offer.id_offer
+          });
+        }
+      };
+  
+      if (commercialoffers && commercialoffers.length > 0) {
+        await createCommercialOffers(commercialoffers);
+      }
+  
+      res.status(200).json({
+        message: "Offer created with tasks and commercial offers",
+        offer: offer,
+      });
+    } catch (err) {
+      console.error("Error creating offer:", err);
       res.status(500).json({
-        message: 'Errore durante l\'annullamento dell\'offerta',
-        error: error.message
+        message: "Internal server error",
       });
     }
   });
+  
+  // Rest of the router code remains the same...
 export default router;

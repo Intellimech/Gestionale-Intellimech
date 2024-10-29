@@ -285,16 +285,19 @@ export default function Example({ permissions }) {
 
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_API_URL}/offer/read`, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-      .then((response) => {
-        setOffer(response.data.offer);
-      })
-      .catch((error) => {
-      });
+    .get(`${process.env.REACT_APP_API_URL}/offer/read`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    .then((response) => {
+      console.log("Offerta completa:", JSON.stringify(response.data.offer, null, 2));
+      setOffer(response.data.offer);
+    })
+    .catch((error) => {
+      console.error("Errore nel recupero dell'offerta:", error);
+    });
+  
 
     axios.get(`${process.env.REACT_APP_API_URL}/technicalarea/read`, )
       .then((response) => {

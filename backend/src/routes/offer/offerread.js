@@ -20,6 +20,7 @@ router.get("/read/", async (req, res) => {
         
     const user = req.user;  // Assuming req.user is populated by the authentication middleware
         const Tasks=sequelize.models.Tasks;
+        const CommercialOffer= sequelize.models.CommercialOffer;
         // Get the role from the database
         const Offer = sequelize.models.Offer;
         const offers = await Offer.findAll({
@@ -46,6 +47,10 @@ router.get("/read/", async (req, res) => {
                         },
                     ],
                 },
+                 {
+                   model: CommercialOffer,
+                   attributes: ["id_commercialoffer", "linkedtask", "amount", "date","id_offer"],
+                 },
                 {
                   model: Tasks,
                   attributes: ["id_task", "name", "hour","description", "percentage", "assignedTo", "estimatedend", "estimatedstart"],
@@ -92,7 +97,7 @@ router.get("/read/", async (req, res) => {
 });
 router.get("/read/:id", async (req, res) => {
     const id = req.params.id; // Estrai l'id dall'URL
-  
+    const CommercialOffer= sequelize.models.CommercialOffer;
     const Tasks=sequelize.models.Tasks;
     // Get the role from the database
     const Offer = sequelize.models.Offer;
@@ -124,6 +129,10 @@ router.get("/read/:id", async (req, res) => {
                 attributes: ["id_technicalarea", "name", "code"],
               },
             ],
+          },
+          {
+            model: CommercialOffer,
+            attributes: ["id_commercialoffer", "id_offer", "date", "amount", "linkedtask"],
           },
           {
             model: Tasks,

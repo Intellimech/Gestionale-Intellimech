@@ -108,7 +108,8 @@ QuotationRequest.hasMany(Offer, { foreignKey: 'quotationrequest' });
 SalesOrder.belongsTo(Offer, { foreignKey: 'offer' });
 Offer.hasMany(SalesOrder, { foreignKey: 'offer' });
 
-CommercialOffer.belongsTo(Offer, { foreignKey: 'task' });
+CommercialOffer.belongsTo(Offer, { foreignKey: 'id_offer' });
+Offer.hasMany(CommercialOffer, { foreignKey: 'id_offer' });
 Tasks.belongsTo(Offer, { foreignKey: 'task' });
 Offer.hasMany(Tasks, { foreignKey: 'task' });
 

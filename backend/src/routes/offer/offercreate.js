@@ -93,7 +93,7 @@ router.post("/create", async (req, res) => {
         const taskName = offerData.linkedTask ? taskMap.get(offerData.linkedTask) : null;
 
         await CommercialOffer.create({
-          linkedTask: offerData.linkedTask || null,
+          linkedTask: offerData?.linkedTask || "Accettazione dell'offerta",
           taskName: taskName, // Aggiungi il nome della task collegata
           date: new Date(offerData.date),
           amount: offerData.amount || 0,
@@ -119,16 +119,12 @@ router.post("/create", async (req, res) => {
 });
 
 router.post("/create/rev", async (req, res) => {
-    let { amount, hour, estimatedstart, estimatedend, quotationrequest, team, tasks, commercialoffers } = req.body;
+    let { amount, hour, estimatedstart, name, revision, estimatedend, quotationrequest, team, tasks, commercialoffers } = req.body;
     const user = req.user;
   
     console.log("Received data:", { amount, hour, estimatedstart, estimatedend, quotationrequest, team, tasks, commercialoffers });
   
-    if (isNaN(Date.parse(estimatedstart)) || isNaN(Date.parse(estimatedend))) {
-      return res.status(400).json({
-        message: "Invalid date format for estimatedstart or estimatedend",
-      });
-    }
+  
   
     const Offer = sequelize.models.Offer;
     const Tasks = sequelize.models.Tasks;
@@ -154,6 +150,10 @@ router.post("/create/rev", async (req, res) => {
 
   
       const offer = await Offer.create({
+        
+
+
+
         name: offerName,
         amount: amount,
         hour: hour,
@@ -178,7 +178,7 @@ router.post("/create/rev", async (req, res) => {
   
           const newTask = await Tasks.create({
             name: taskName,
-            hour: task?.hours,
+            hour: task?.hour,
             value: task.value || 0,
             estimatedstart: new Date(task?.estimatedstart),
             estimatedend: new Date(task?.estimatedend),
@@ -209,7 +209,7 @@ router.post("/create/rev", async (req, res) => {
           const taskName = offerData.linkedTask ? taskMap.get(offerData.linkedTask) : null;
   
           await CommercialOffer.create({
-            linkedTask: offerData.linkedTask || null,
+            linkedTask: offerData?.linkedTask || "Accettazione dell'offerta",
             taskName: taskName, // Aggiungi il nome della task collegata
             date: new Date(offerData.date),
             amount: offerData.amount || 0,

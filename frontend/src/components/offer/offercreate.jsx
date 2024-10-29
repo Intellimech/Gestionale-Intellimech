@@ -161,7 +161,7 @@ export default function UserCreateForm() {
       totalHours += task.hours || 0;
       totalValue += task.value || 0;
   
-      task.children.forEach((child) => calculate(child));
+      task?.children.forEach((child) => calculate(child));
     };
   
     tasks.forEach(calculate);

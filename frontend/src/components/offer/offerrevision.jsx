@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import { CheckBadgeIcon, XCircleIcon } from '@heroicons/react/20/solid';
+import { CheckBadgeIcon, XCircleIcon , PencilIcon} from '@heroicons/react/20/solid';
 import Select from 'react-tailwindcss-select';
 import TaskRevision from './tasksrevision';
+import CommercialOfferRev from './commercialofferrev'
 import toast, { Toaster } from 'react-hot-toast';
 
 export default function RevisionForm({offer}) {
@@ -20,6 +21,72 @@ export default function RevisionForm({offer}) {
   const [amount, setAmount] = useState(offer?.amount || '');
   const [hour, setHour] = useState(offer?.hour || '');
   const [users, setUsers] = useState([]);
+  const [totalHours, setTotalHours] = useState(0);
+  const [totalValue, setTotalValue] = useState(0);
+  
+const [commercialoffers, setCommercialOffers] = useState(() => {
+  if (offer?.CommercialOffers?.length > 0) {
+    return offer.CommercialOffers.map((offerItem, index) => ({
+      ...offerItem,
+      index,
+      linkedTask: offerItem.linkedTask ? {
+        value: offerItem.linkedTask.name,
+        label: offerItem.linkedTask.name,
+        estimatedend: offerItem.linkedTask.estimatedend
+      } : null,
+      date: offerItem.date || new Date().toISOString().split('T')[0],
+      amount: offerItem.amount || 0,
+    }));
+  }
+  
+  return [{
+    linkedTask: null,
+    date: new Date().toISOString().split('T')[0],
+    amount: 0,
+    index: 0
+  }];
+});
+  const [totalCommercialAmount, setTotalCommercialAmount] = useState(0);
+
+  const recalculateTotals = () => {
+    
+    const { totalHours, totalValue } = calculateTotals(tasks);
+    setTotalHours(totalHours);
+    setTotalValue(totalValue);
+
+    const commercialTotal = commercialoffers.reduce((sum, offer) => sum + (offer.amount || 0), 0);
+    setTotalCommercialAmount(commercialTotal);
+  };
+
+ 
+  useEffect(() => {
+    recalculateTotals();
+  }, [tasks, commercialoffers]);
+
+  const addCommercialOffer = () => {
+    if (commercialoffers.length < 6) {
+      const newOffer = {
+        linkedTask: null,
+        date: new Date().toISOString().split('T')[0],
+        amount: 0,
+        index: commercialoffers.length
+      };
+      setCommercialOffers([...commercialoffers, newOffer]);
+    }
+  };
+  
+  const updateCommercialOffer = (index, updatedOffer) => {
+    const newCommercialOffers = commercialoffers.map((offer, i) => 
+      i === index ? { ...updatedOffer, index } : offer
+    );
+    setCommercialOffers(newCommercialOffers);
+  };
+
+  const removeCommercialOffer = (index) => {
+    const newCommercialOffers = commercialoffers.filter((_, i) => i !== index);
+    setCommercialOffers(newCommercialOffers);
+  };
+
  // Example: Accessing the label for logging
  useEffect(() => {
     if (selectedQuotationRequest) {
@@ -73,6 +140,7 @@ export default function RevisionForm({offer}) {
     }
   }, [offer]);
 
+  
   useEffect(() => {
     const fetchData = async () => {
         try {
@@ -107,17 +175,11 @@ export default function RevisionForm({offer}) {
           
           
       
-          setCategories(categories);
-          setTechnicalAreas(technicalareas);
           setUsers(users.map(({ id_user, name, surname }) => ({
             value: id_user,
             label: `${name} ${surname}`
           })));
           
-          setCompanies(companies.map(({ id_company, name }) => ({
-            value: id_company,
-            label: name
-          })));
         } catch (error) {
           console.error('Error fetching data:', error);
         }
@@ -126,6 +188,10 @@ export default function RevisionForm({offer}) {
     fetchData();
   }, []);
   
+  const stampa= ()=>{
+    console.log("PANICO"+ tasks)
+   };
+
   useEffect(() => {
     const fetchQuotationRequests = async () => {
         try {
@@ -182,7 +248,7 @@ export default function RevisionForm({offer}) {
   };
 
   const addTask = (parentIndex = null) => {
-    const newTask = { name: '', hours: 0, value: 0, assignedTo: '', children: [] };
+    const newTask = { description: '', hours: 0, value: 0, assignedTo: '', children: [] };
     if (parentIndex !== null) {
       const newTasks = [...tasks];
       newTasks[parentIndex].children.push(newTask);
@@ -191,96 +257,92 @@ export default function RevisionForm({offer}) {
       setTasks([...tasks, newTask]);
     }
   };
+// Modifica la funzione calculateTotals
+const calculateTotals = (tasks) => {
+  let totalHours = 0;
+  let totalValue = 0;
 
+  const calculate = (task) => {
+    // Se il task ha dei figli, non sommare i suoi valori diretti
+    if (!task.children || task.children.length === 0) {
+      totalHours += Number(task.hours || task.hour || 0);
+      // Assicurati che il valore sia convertito in numero e gestisci i valori null/undefined
+      totalValue += parseFloat(task.value || 0);
+    }
 
-  const calculateTotals = (tasks) => {
-    let totalHours = 0;
-    let totalValue = 0;
-
-    const calculate = (task) => {
-      totalHours += task.hours || 0;
-      totalValue += task.value || 0;
-      task.children.forEach(calculate);
-    };
-
-    tasks.forEach(calculate);
-    return { totalHours, totalValue };
-  };
-
-  const { totalHours, totalValue } = calculateTotals(tasks);
-
-  const createOffer = async (event) => {
-    event.preventDefault();
-  
-    // Verifica se sono stati modificati i valori o meno
-    const finalHour = hour !== offer.hour ? hour : offer.hour;
-    const finalAmount = amount !== offer.amount ? amount : offer.amount;
-    const finalTasks = tasks.map((task, index) => ({
-      name: task.name,
-      hours: task.hours || task.hour,
-      value: task.value,
-      startDate: task.estimatedstart || task.startDate,
-      endDate: task.estimatedend || task.endDate,
-      assignedTo: task.assignedTo?.value || task.assignedTo,
-      children: (task.children || []).map((child) => ({
-        name: child.name,
-        hours: child.hours || child.hour,
-        value: child.value,
-        startDate: child.estimatedstart || child.startDate,
-        endDate: child.estimatedend || child.endDate,
-        assignedTo: child.assignedTo?.value || child.assignedTo,
-      })),
-    }));
-  
-    const jsonObject = {
-      amount: finalAmount,
-      hour: finalHour,
-      name: offer?.name,
-      estimatedstart: estimatedStartDate,
-      estimatedend: estimatedEndDate,
-      quotationrequest: selectedQuotationRequest?.value || null,
-      revision: (offer.revision + 1),
-      team: selectedTeam?.map((team) => team.value) || [],
-      tasks: finalTasks,
-    };
-  
-    console.log("Sending data:", jsonObject);
-  
-    try {
-      await toast.promise(
-        axios.post(`${process.env.REACT_APP_API_URL}/offer/create/rev`, jsonObject),
-        {
-          loading: 'Creating offer...',
-          success: 'Offer created successfully!',
-          error: 'Error creating offer',
-        }
-      );
-    
-      console.log('API URL:', process.env.REACT_APP_API_URL);
-      console.log('Offer ID:', offer.id_offer);
-   
-      if (offer.id_offer) {
-        await toast.promise(
-          axios.post(`${process.env.REACT_APP_API_URL}/offer/updaterev`, {
-            id: offer.id_offer // Invia l'ID come oggetto
-          }),
-          {
-            loading: 'Updating current offer status...',
-            success: 'Current offer status updated successfully!',
-            error: 'Error updating current offer status',
-          }
-        );
-      }
-    } catch (error) {
-      console.error('Error in offer revision process:', error);
-      toast.error('Error occurred during the revision process');
+    // Somma ricorsivamente i valori dei figli
+    if (task.children) {
+      task.children.forEach(child => {
+        totalHours += Number(child.hours || child.hour || 0);
+        totalValue += parseFloat(child.value || 0);
+      });
     }
   };
+
+  tasks.forEach(calculate);
+  return { totalHours, totalValue };
+};
+
+
+// Aggiungi questa funzione useEffect per aggiornare i totali
+useEffect(() => {
+  const { totalHours: hours, totalValue: value } = calculateTotals(tasks);
+  setTotalHours(hours);
+  setTotalValue(value);
+}, [tasks]);
+const createOffer = async (event) => {
+  event.preventDefault();
+
+  const form = document.forms.createoffer;
+  const formData = new FormData(form);
+  const jsonObject = Object.fromEntries(formData.entries());
+  
+  // Aggiungi esplicitamente le date al jsonObject
+  jsonObject.estimatedstart = estimatedStartDate;
+  jsonObject.estimatedend = estimatedEndDate;
+  jsonObject.amount=totalCommercialAmount;
+  jsonObject.team = selectedTeam?.map((team) => team.value);
+  jsonObject.quotationrequest = selectedQuotationRequest?.value;
+
+  // Aggiungi i dati delle commercial offers
+  jsonObject.commercialoffers = commercialoffers.map(offer => ({
+    linkedTask: offer.linkedTask?.value || null,
+    date: offer.date,
+    amount: offer.amount
+  }));
+
+  // Aggiungi i tasks come prima, con le date
+  jsonObject.tasks = tasks.map((task) => ({
+    ...task,
+    assignedTo: task.assignedTo?.value ,
+    estimatedstart: task.estimatedstart || estimatedStartDate,
+    estimatedend: task.estimatedend || estimatedEndDate,
+    children: task.children.map((child) => ({
+      ...child,
+      assignedTo: child.assignedTo?.value || null,
+      estimatedstart: child.estimatedstart || task.estimatedstart || estimatedStartDate,
+      estimatedend: child.estimatedend || task.estimatedend || task.estimatedEndDate,
+    })),
+  }));
+
+  console.log("Sending data:", jsonObject);
+
+  toast.promise(
+    axios.post(`${process.env.REACT_APP_API_URL}/offer/create/rev`, jsonObject),
+    {
+      loading: 'Creazione in corso...',
+      success: 'Offerta creata con successo!',
+      error: 'Errore durante la creazione dell\'offerta',
+    }
+  ).catch((error) => {
+    console.error('Errore nella creazione dell\'offerta:', error);
+  });
+};
+
 
   function FunselectedQuotationRequest(){
     let valueRight = selectedQuotationRequest;
    
-        console.log("val:" +selectedQuotationRequest.name);
     
     return valueRight;
   }
@@ -355,7 +417,7 @@ export default function RevisionForm({offer}) {
                     name="hour"
                     type="number"
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
-                    value={hour}
+                    value={totalHours}
                     readOnly
                     />
                 </div>
@@ -367,15 +429,16 @@ export default function RevisionForm({offer}) {
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <span className="text-gray-500 sm:text-sm">€</span>
                     </div>
-                    <input
+                   
+                      <input
                         type="text"
                         name="amount"
                         id="amount"
                         className="block w-full pl-7 pr-12 rounded-md border-gray-300 focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
                         placeholder="0.00"
-                        value={amount}
+                        value={totalValue.toFixed(2)}
                         readOnly
-                    />
+                      />
                     <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                         <span className="text-gray-500 sm:text-sm" id="price-currency">EUR</span>
                     </div>
@@ -432,7 +495,7 @@ export default function RevisionForm({offer}) {
                   const newTasks = [...tasks];
                   newTasks[index].children = [
                     ...(newTasks[index].children || []),
-                    { name: '', hours: 0, value: 0, assignedTo: '', children: [] }
+                    { name: '', hours: 0, value: 0, assignedTo: 0, children: [] }
                   ];
                   setTasks(newTasks);
                 }}
@@ -441,12 +504,44 @@ export default function RevisionForm({offer}) {
             ))}
             <button
               type="button"
-              onClick={() => setTasks([...tasks, { name: '', hours: 0, value: 0, assignedTo: '', children: [] }])}
+              onClick={() => setTasks([...tasks, { description: '', hours: 0, value: 0, assignedTo: '', children: [] }])}
               className="mt-4 inline-flex justify-center rounded-md border border-transparent bg-[#7fb7d4] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#62a0bc] focus:outline-none focus:ring-2 focus:ring-[#62a0bc] focus:ring-offset-2"
             >
               Aggiungi Task
             </button>
           </div>
+        </div>
+         
+       <div>
+          <h3 className="text-lg font-medium leading-6 text-gray-900 mb-2">
+            Tabella di Pianificazione
+          </h3>
+          
+          {commercialoffers.map((offer, index) => (
+            <CommercialOfferRev
+              key={index}
+              offer={offer}  
+              onChange={(updatedOffer) => updateCommercialOffer(index, updatedOffer)}
+              onRemove={() => removeCommercialOffer(index)}
+              tasks={tasks}
+              index={index}
+            />
+          ))}
+
+
+          {commercialoffers.length < 6 && (
+            <button
+              type="button"
+              onClick={() => {
+                addCommercialOffer();
+                stampa();
+              }}
+              className="mt-2 rounded-md bg-[#7fb7d4] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#6ca7c4]"
+            >
+              Aggiungi CommercialOffer
+            </button>
+          )}
+
         </div>
 
         <div className="mt-6 flex justify-end">

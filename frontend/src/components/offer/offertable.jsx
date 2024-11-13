@@ -26,16 +26,16 @@ export default function Example({ permissions }) {
   const [offers, setOffer] = useState([]);
   const [showCreate, setShowCreate] = useState(false);
   
-  const [category, setCategory] = useState([]);
-  const [subcategory, setSubcategory] = useState([]);
+  const [projecttype, setProjectType] = useState([]);
+  const [assignment, setAssignment] = useState([]);
   
   const [purchaseOrder, setPurchaseOrder] = useState([])
   const [areas, setTechnicalArea] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [selectedSubcategory, setSelectedSubcategory] = useState('');
+  const [selectedAssignment, setSelectedAssignment] = useState('');
   const [selectedArea, setSelectedArea] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedProjectType, setSelectedProjectType] = useState('');
   const [sortColumn, setSortColumn] = useState('name');
   const [sortDirection, setSortDirection] = useState('asc');
   const [filterType, setFilterType] = useState('name');
@@ -96,8 +96,8 @@ export default function Example({ permissions }) {
     name: '',
     description: '',
     Company: '',
-    category: '',
-    subcategory: '',
+    projecttype: '',
+    assignment: '',
     technicalarea: '',
     status: '',
     revision: '',
@@ -123,10 +123,10 @@ export default function Example({ permissions }) {
     (searchQueries.description=== '' || item.description.toLowerCase().includes(searchQueries.description.toLowerCase())) &&
     (searchQueries.revision=== '' || item.revision.toString().includes(searchQueries.revision.toString())) &&
     (searchQueries.Company === '' || item.QuotationRequest.Company?.name.toLowerCase().includes(searchQueries.Company.toLowerCase())) &&
-    (searchQueries.category === '' || 
-      [item.QuotationRequest.Category?.name, item.QuotationRequest.Subcategory?.name].some(value => value?.toLowerCase().includes(searchQueries.category.toLowerCase()))
+    (searchQueries.projecttype === '' || 
+      [item.QuotationRequest.ProjectType?.code].some(value => value?.toLowerCase().includes(searchQueries.projecttype.toLowerCase()))
     ) &&
-    (searchQueries.subcategory === '' || item.QuotationRequest.Subcategory?.name.toLowerCase().includes(searchQueries.subcategory.toLowerCase())) &&
+    (searchQueries.assignment === '' || item.QuotationRequest.Assignment?.code.toLowerCase().includes(searchQueries.assignment.toLowerCase())) &&
     (searchQueries.technicalarea === '' || item.QuotationRequest.TechnicalArea?.code.toLowerCase().includes(searchQueries.technicalarea.toLowerCase())) &&
     (searchQueries.status === '' || item.status.toLowerCase().includes(searchQueries.status.toLowerCase())) &&
     
@@ -145,10 +145,10 @@ export default function Example({ permissions }) {
       switch (column) {
         case 'Company':
           return item.QuotationRequest?.Company?.name || '';
-        case 'category':
-          return item.QuotationRequest?.Category?.name || '';
-        case 'subcategory':
-          return item.QuotationRequest?.Subcategory?.name || '';
+        case 'projecttype':
+          return item.QuotationRequest?.ProjectType?.code || '';
+        case 'assignment':
+          return item.QuotationRequest?.Assignment?.code || '';
         case 'technicalarea':
           return item.QuotationRequest?.TechnicalArea?.name || '';
         case 'description':
@@ -308,7 +308,7 @@ export default function Example({ permissions }) {
       });
     
     axios
-      .get(`${process.env.REACT_APP_API_URL}/subcategory/read`)
+      .get(`${process.env.REACT_APP_API_URL}/assignment/read`)
       .then((response) => {
         setSubcategories(response.data.subcategories || []);
       })
@@ -317,7 +317,7 @@ export default function Example({ permissions }) {
       });
 
     axios
-      .get(`${process.env.REACT_APP_API_URL}/category/read`)
+      .get(`${process.env.REACT_APP_API_URL}/projecttype/read`)
       .then((response) => {
        
         setCategories(response.data.categories || []);
@@ -642,7 +642,19 @@ export default function Example({ permissions }) {
                       rows={1}
                     />
                   </th>
-
+                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('projecttype')}>
+                    Progetto
+                    {sortColumn === 'projecttype' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <br />
+                    <input
+                      value={searchQueries.projecttype}
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={handleSearchInputChange('projecttype')}
+                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      placeholder=""
+                      rows={1}
+                    />
+                  </th>
                   <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('technicalarea')}>
                     Area Tecnica
                     {sortColumn === 'technicalarea' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
@@ -762,6 +774,9 @@ export default function Example({ permissions }) {
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           {`${offer.amount} €`}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          {offer.QuotationRequest?.ProjectType?.code}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           {offer.QuotationRequest.TechnicalArea.code}

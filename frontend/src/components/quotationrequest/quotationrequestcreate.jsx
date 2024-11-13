@@ -7,13 +7,13 @@ import toast, { Toaster } from 'react-hot-toast';
 
 export default function UserCreateForm() {
   const [company, setCompany] = useState([]);
-  const [category, setCategory] = useState([]);
-  const [subcategory, setSubcategory] = useState([]);
+  const [projecttype, setProjecttype] = useState([]);
+  const [assignment, setAssignment] = useState([]);
   const [technicalArea, setTechnicalArea] = useState([]);
 
   const [selectedCompany, setSelectedCompany] = useState(null);
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [selectedSubcategory, setSelectedSubcategory] = useState(null);
+  const [selectedProjecttype, setSelectedProjecttype] = useState(null);
+  const [selectedAssignment, setSelectedAssignment] = useState(null);
   const [selectedTechnicalArea, setSelectedTechnicalArea] = useState(null);
 
   useEffect(() => {
@@ -37,21 +37,34 @@ export default function UserCreateForm() {
         console.error('Error fetching company data:', error);
       });
 
-    // Fetching category data
-    axios
-      .get(`${process.env.REACT_APP_API_URL}/category/read`)
-      .then((response) => {
-        setCategory(
-          response.data.categories.map((item) => ({
-            value: item.id_category,
-            label: item.name,
-          }))
-        );
-      })
-      .catch((error) => {
-        console.error('Error fetching category data:', error);
-      });
 
+    axios
+    .get(`${process.env.REACT_APP_API_URL}/projecttype/read`)
+    .then((response) => {
+      setProjecttype(
+        response.data.projectypes.map((item) => ({
+          value: item.id_projecttype,
+          label: item.description,
+        }))
+      );
+    })
+    .catch((error) => {
+      console.error('Error fetching projecttype data:', error);
+    });
+
+    axios
+    .get(`${process.env.REACT_APP_API_URL}/assignment/read`)
+    .then((response) => {
+      setAssignment(
+        response.data.assignments.map((item) => ({
+          value: item.id_assignment,
+          label: item.description,
+        }))
+      );
+    })
+    .catch((error) => {
+      console.error('Error fetching assignments data:', error);
+    });
     // Fetching technical area data
     axios
       .get(`${process.env.REACT_APP_API_URL}/technicalarea/read`)
@@ -68,24 +81,6 @@ export default function UserCreateForm() {
       });
   }, []);
 
-  const handleCategoryChange = (value) => {
-    setSelectedCategory(value);
-    
-    // Fetching subcategories with the selected category
-    axios
-      .get(`${process.env.REACT_APP_API_URL}/subcategory/read/${value.value}`)
-      .then((response) => {
-        setSubcategory(
-          response.data.subcategories.map((item) => ({
-            value: item.id_subcategory,
-            label: item.name,
-          }))
-        );
-      })
-      .catch((error) => {
-        console.error('Error fetching subcategory data:', error);
-      });
-  };
 
   const createQuotationRequest = (event) => {
     event.preventDefault();
@@ -95,8 +90,8 @@ export default function UserCreateForm() {
   
     // Append selected values to formData
     formData.append('company', selectedCompany?.value || '');
-    formData.append('category', selectedCategory?.value || '');
-    formData.append('subcategory', selectedSubcategory?.value || '');
+    formData.append('projecttype', selectedProjecttype?.value || '');
+    formData.append('assignment', selectedAssignment?.value || '');
     formData.append('technicalarea', selectedTechnicalArea?.value || '');
   
     // Converting formData to JSON
@@ -154,39 +149,38 @@ export default function UserCreateForm() {
             </div>
 
             <div className="sm:col-span-2">
-              <label htmlFor="category" className="block text-sm font-medium leading-6 text-gray-900">
-                Categoria
+              <label htmlFor="projecttype" className="block text-sm font-medium leading-6 text-gray-900">
+                Tipo Progetto
               </label>
               <div className="mt-2">
                 <Select
-                  id="category"
-                  name="category"
-                  options={category}
-                  value={selectedCategory}
-                  onChange={handleCategoryChange}
-                  placeholder="Seleziona una categoria"
+                  id="projecttype"
+                  name="projecttype"
+                  options={projecttype}
+                  value={selectedProjecttype}
+                  onChange={setSelectedProjecttype}
+                  placeholder="Seleziona tipo progetto"
                   isSearchable
                 />
               </div>
             </div>
-
             <div className="sm:col-span-2">
-              <label htmlFor="subcategory" className="block text-sm font-medium leading-6 text-gray-900">
-                Sotto Categoria
+              <label htmlFor="assignment" className="block text-sm font-medium leading-6 text-gray-900">
+                Tipo Incarico
               </label>
               <div className="mt-2">
                 <Select
-                  id="subcategory"
-                  name="subcategory"
-                  options={subcategory}
-                  value={selectedSubcategory}
-                  onChange={setSelectedSubcategory}
-                  placeholder="Seleziona una sotto categoria"
+                  id="assignment"
+                  name="assignment"
+                  options={assignment}
+                  value={selectedAssignment}
+                  onChange={setSelectedAssignment}
+                  placeholder="Seleziona tipo incarico"
                   isSearchable
-                  isDisabled={subcategory.length === 0}
                 />
               </div>
             </div>
+            
 
             <div className="sm:col-span-2">
               <label htmlFor="technicalarea" className="block text-sm font-medium leading-6 text-gray-900">
@@ -199,7 +193,7 @@ export default function UserCreateForm() {
                   options={technicalArea}
                   value={selectedTechnicalArea}
                   onChange={setSelectedTechnicalArea}
-                  placeholder="Seleziona un'area tecnica"
+                  placeholder="Seleziona area tecnica"
                   isSearchable
                 />
               </div>

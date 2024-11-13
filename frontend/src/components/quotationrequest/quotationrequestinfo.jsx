@@ -33,14 +33,14 @@ export default function Example({ quotationrequest }) {
 
           {/* Categoria */}
           <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-gray-900">Categoria</dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{quotationrequest?.Category?.name}</dd>
+            <dt className="text-sm font-medium leading-6 text-gray-900">Tipo Progetto</dt>
+            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{quotationrequest?.ProjectType?.description}</dd>
           </div>
 
           {/* Sottocategoria */}
           <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-gray-900">Sottocategoria</dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{quotationrequest?.Subcategory?.name}</dd>
+            <dt className="text-sm font-medium leading-6 text-gray-900">Incarico</dt>
+            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{quotationrequest?.Assignment?.description}</dd>
           </div>
 
           {/* Area Tecnica */}

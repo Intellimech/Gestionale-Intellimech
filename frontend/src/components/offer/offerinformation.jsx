@@ -168,8 +168,12 @@ PEC: intellimech@legalmail.it - www.intellimech.it
               <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{offer?.QuotationRequest?.description}</dd>
             </div>
             <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
-              <dt className="text-sm font-medium leading-6 text-gray-900">Categoria</dt>
-              <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{offer?.QuotationRequest?.Category?.name}</dd>
+              <dt className="text-sm font-medium leading-6 text-gray-900">Tipo Progetto</dt>
+              <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{offer?.QuotationRequest?.ProjectType?.description}</dd>
+            </div>
+            <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
+              <dt className="text-sm font-medium leading-6 text-gray-900">Incarico</dt>
+              <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{offer?.QuotationRequest?.Assignment?.description}</dd>
             </div>
             <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
               <dt className="text-sm font-medium leading-6 text-gray-900">Area Tecnica</dt>

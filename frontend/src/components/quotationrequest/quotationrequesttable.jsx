@@ -26,13 +26,13 @@ export default function Example({ permissions }) {
   const [showInfo, setShowInfo] = useState(false);
   const [selectedQuotationInfo, setSelectedQuotationInfo] = useState({});
 
-  const [category, setCategory] = useState([]);
-  const [subcategory, setSubcategory] = useState([]);
+  const [assignment, setCategory] = useState([]);
+  const [projecttype, setProjectType] = useState([]);
   
   const [areas, setTechnicalArea] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [selectedSubcategory, setSelectedSubcategory] = useState('');
+  const [assignments, setAssignment] = useState([]);
+  const [selectedProjectType, setSelectedProjectType] = useState('');
   const [selectedArea, setSelectedArea] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [sortColumn, setSortColumn] = useState('');
@@ -45,8 +45,8 @@ export default function Example({ permissions }) {
     name: '',
     description: '',
     Company: '',
-    category: '',
-    subcategory: '',
+    assignment: '',
+    projecttype: '',
     technicalarea: '',
     status: '',
     data: '',
@@ -78,13 +78,13 @@ export default function Example({ permissions }) {
 
   const filteredRequest = quotationrequests.filter((item) => {
     return (
-      (searchQueries.name === '' || item.name.toLowerCase().includes(searchQueries.name.toLowerCase())) &&
+      (searchQueries?.name === '' || item?.name.toLowerCase().includes(searchQueries?.name.toLowerCase())) &&
       (searchQueries.description=== '' || item.description.toLowerCase().includes(searchQueries.description.toLowerCase())) &&
       (searchQueries.Company === '' || item.Company?.name.toLowerCase().includes(searchQueries.Company.toLowerCase())) &&
-      (searchQueries.category === '' || 
-        [item.Category?.name, item.Subcategory?.name].some(value => value?.toLowerCase().includes(searchQueries.category.toLowerCase()))
+      (searchQueries.assignment === '' || 
+        [item.Assignment?.name].some(value => value?.toLowerCase().includes(searchQueries.assignment.toLowerCase()))
       ) &&
-      (searchQueries.subcategory === '' || item.Subcategory?.name.toLowerCase().includes(searchQueries.subcategory.toLowerCase())) &&
+      (searchQueries.projecttype === '' || item.ProjectType?.name.toLowerCase().includes(searchQueries.projecttype.toLowerCase())) &&
       (searchQueries.technicalarea === '' || item.TechnicalArea?.code.toLowerCase().includes(searchQueries.technicalarea.toLowerCase())) &&
       (searchQueries.status === '' || item.status.toLowerCase().includes(searchQueries.status.toLowerCase())) &&
       (searchQueries.data === '' || item.createdAt.includes(searchQueries.data)) &&
@@ -116,10 +116,10 @@ export default function Example({ permissions }) {
       switch (column) {
         case 'Company':
           return item.Company?.name || '';
-        case 'category':
-          return item.Category?.name || '';
-        case 'subcategory':
-          return item.Subcategory?.name || '';
+        case 'assignment':
+          return item.Assignment?.name || '';
+        case 'projecttype':
+          return item.ProjectType?.name || '';
         case 'area':
           return item.Technicaltechnicalarea?.name || '';
         case 'createdByUser':
@@ -224,7 +224,7 @@ export default function Example({ permissions }) {
         });
       
       axios
-        .get(`${process.env.REACT_APP_API_URL}/subcategory/read`)
+        .get(`${process.env.REACT_APP_API_URL}/projecttype/read`)
         .then((response) => {
           console.log('Fetched subcategories:', response.data.subcategories);
           setSubcategories(response.data.subcategories || []);
@@ -234,10 +234,10 @@ export default function Example({ permissions }) {
         });
   
       axios
-        .get(`${process.env.REACT_APP_API_URL}/category/read`, )
+        .get(`${process.env.REACT_APP_API_URL}/assignment/read`, )
         .then((response) => {
-          console.log('Fetched categories:', response.data.categories);
-          setCategories(response.data.categories || []);
+         
+          setAssignment(response.data.assignments || []);
         })
         .catch((error) => {
           console.error('Error fetching categories:', error);
@@ -412,7 +412,7 @@ export default function Example({ permissions }) {
                     {sortColumn === 'name' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
                     <input
-                      value={searchQueries.name}
+                      value={searchQueries?.name}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('name')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
@@ -451,14 +451,27 @@ export default function Example({ permissions }) {
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('category')}>
-                    Categoria
-                    {sortColumn === 'category' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('assignment')}>
+                    Incarico
+                    {sortColumn === 'assignment' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
                     <input
-                      value={searchQueries.category}
+                      value={searchQueries.assignmnt}
                       onClick={(e) => e.stopPropagation()}
-                      onChange={handleSearchInputChange('category')}
+                      onChange={handleSearchInputChange('assignment')}
+                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      placeholder=""
+                      rows={1}
+                    />
+                  </th>
+                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('projecttype')}>
+                    Tipo Progetto
+                    {sortColumn === 'projecttype' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <br />
+                    <input
+                      value={searchQueries.projecttype}
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={handleSearchInputChange('projecttype')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
                       rows={1}
@@ -542,18 +555,19 @@ export default function Example({ permissions }) {
                             selectedQuotationRequest.includes(quotationrequest) ? 'text-[#7fb7d4]' : 'text-gray-900'
                           )}
                         >
-                          {quotationrequest.name}
+                          {quotationrequest?.name}
                         </td>
                         <td className="text-sm text-gray-500 px-3 py-4">
                           {quotationrequest.description.split(" ").slice(0, 2).join(" ") + (quotationrequest.description.split(" ").length > 2 ? "..." : "")}
                         </td>
                         <td className="whitespace-normal max-w-[200px] overflow-hidden text-sm text-gray-500 px-3 py-4 break-words">
-                          {quotationrequest.Company.name}
+                          {quotationrequest.Company?.name}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {quotationrequest.Category.name}
-                          <br />
-                          {quotationrequest.Subcategory.name}
+                          {quotationrequest.Assignment?.code}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          {quotationrequest.ProjectType?.code}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           {quotationrequest.TechnicalArea.code}
@@ -562,7 +576,7 @@ export default function Example({ permissions }) {
                           {quotationrequest.createdAt ? new Date(quotationrequest.createdAt).toLocaleDateString() : ''}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {quotationrequest.status === 'In Approvazione' ? (
+                          {quotationrequest.status === 'In Attesa' ? (
                             <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-yellow-500">
                               In Approvazione
                             </span>

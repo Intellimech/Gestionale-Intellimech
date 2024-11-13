@@ -21,13 +21,7 @@ router.get("/read/:job", (req, res) => {
 
     const publickey = fs.readFileSync(__dirname + "/src/keys/public.key", "utf8");
 
-    if (!job) {
-        return res.status(400).json({
-            message: "Bad request, view documentation for more information",r
-        });
-    }
-
-
+   
         if (err) {
             return res.status(401).json({
                 message: "Unauthorized",

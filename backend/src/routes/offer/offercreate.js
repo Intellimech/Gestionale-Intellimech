@@ -146,17 +146,15 @@ router.post("/create/rev", async (req, res) => {
   
     let trimmedName = name ? name.slice(0, -2) : ''; 
 
-    let offerName = `${trimmedName}_R${revision}`;
+    let offerName = `${trimmedName}R${revision}`;
 
   
       const offer = await Offer.create({
         
-
-
-
         name: offerName,
         amount: amount,
         hour: hour,
+        revision: revision,
         estimatedstart: new Date(estimatedstart),
         estimatedend: new Date(estimatedend),
         quotationrequest: quotationrequest,

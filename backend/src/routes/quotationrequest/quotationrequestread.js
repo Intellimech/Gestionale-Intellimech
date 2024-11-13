@@ -7,6 +7,8 @@ import path from "path";
 import bcrypt from "bcrypt";
 import sequelize from "../../utils/db.js";
 import Logger from "../../utils/logger.js";
+import Assignment from "../../models/assignment.js";
+import ProjectType from "../../models/projecttype.js";
 
 // Import models
 const QuotationRequest = sequelize.models.QuotationRequest;
@@ -82,6 +84,8 @@ router.get("/read/", async (req, res) => {
                 { model: Company, attributes: ["id_company", "name"] },
                 { model: Category, attributes: ["id_category", "name"] },
                 { model: Subcategory, attributes: ["id_subcategory", "name"] },
+                { model: Assignment, attributes: ["id_assignment", "code","description"] },
+                { model: ProjectType, attributes: ["id_projecttype", "code", "description"] },
                 { model: TechnicalArea, attributes: ["id_technicalarea", "name", "code"] },
                 { model: sequelize.models.User, as: 'createdByUser', attributes: ['id_user', 'name', 'surname'] },
                 { model: sequelize.models.User, as: 'updatedByUser', attributes: ['id_user', 'name', 'surname'] },
@@ -103,7 +107,7 @@ router.get("/read/", async (req, res) => {
 // New route to get a specific quotation request by ID
 router.get("/read/:id", async (req, res) => {
     const id= req.params.id;  // Estrai l'ID dai parametri della rotta
-console.log("Questo è l'id sono il backend"+ id)
+
     try {
         // Trova la richiesta di offerta tramite l'ID
         const quotationrequest = await QuotationRequest.findOne({
@@ -112,6 +116,8 @@ console.log("Questo è l'id sono il backend"+ id)
                 { model: Company, attributes: ["id_company", "name"] },
                 { model: Category, attributes: ["id_category", "name"] },
                 { model: Subcategory, attributes: ["id_subcategory", "name"] },
+                { model: Assignment, attributes: ["id_assignment", "code","description"] },
+                { model: ProjectType, attributes: ["id_projecttype", "code", "description"] },
                 { model: TechnicalArea, attributes: ["id_technicalarea", "name", "code"] },
                 { model: sequelize.models.User, as: 'createdByUser', attributes: ['id_user', 'name', 'surname'] },
                 { model: sequelize.models.User, as: 'updatedByUser', attributes: ['id_user', 'name', 'surname'] },

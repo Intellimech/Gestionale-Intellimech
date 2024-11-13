@@ -6,10 +6,11 @@ const router = express.Router();
 
 // Routes
 import companyread from './companyread.js';;
-
+import companycreate from './companycreate.js'
 import Protect from '../../middleware/authmiddleware.js'; 
 router.use(Protect);
 
 router.use('/company', companyread);
 
+router.use('/company', companycreate);
 export default router;

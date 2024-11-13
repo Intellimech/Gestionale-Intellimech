@@ -11,7 +11,7 @@ const Category = sequelize.models.Category;
 
 router.post("/create/", async (req, res) => {
     try {
-        const { description, category, subcategory, technicalarea, company, name } = req.body;
+        const { description, category, subcategory, assignment, projecttype,  technicalarea, company, name } = req.body;
         const user = req.user;  // Assuming req.user is populated by the authentication middleware
 
      
@@ -29,19 +29,7 @@ router.post("/create/", async (req, res) => {
             });
         }
 
-        // Fetch the category data
-        const categoryData = await Category.findOne({
-            where: {
-                id_category: category,
-            },
-        });
-
-        if (!categoryData) {
-            return res.status(404).json({
-                message: "Category not found",
-            });
-        }
-
+       
         // Count the existing quotation requests to generate a unique name
         const countOffer = await QuotationRequest.count();
 
@@ -54,9 +42,9 @@ router.post("/create/", async (req, res) => {
         const quotationRequest = await QuotationRequest.create({
             name: requestName,
             description: description,
-            category: category,
-            subcategory: subcategory,
             technicalarea: technicalarea,
+            projecttype: projecttype,
+            assignment: assignment,
             company: company,
             createdBy: user.id_user,  // Use the user ID from req.user
             status: "In Attesa",

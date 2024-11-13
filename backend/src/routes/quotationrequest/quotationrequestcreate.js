@@ -11,7 +11,7 @@ const Category = sequelize.models.Category;
 
 router.post("/create/", async (req, res) => {
     try {
-        const { description, category, subcategory, assignment, projecttype,  technicalarea, company, name } = req.body;
+        const { description, category, subcategory, externalcode, assignment, projecttype,  technicalarea, company, name } = req.body;
         const user = req.user;  // Assuming req.user is populated by the authentication middleware
 
      
@@ -44,6 +44,7 @@ router.post("/create/", async (req, res) => {
             description: description,
             technicalarea: technicalarea,
             projecttype: projecttype,
+            externalcode: externalcode || '',
             assignment: assignment,
             company: company,
             createdBy: user.id_user,  // Use the user ID from req.user

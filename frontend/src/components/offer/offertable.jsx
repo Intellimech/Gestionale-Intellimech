@@ -97,6 +97,7 @@ export default function Example({ permissions }) {
     description: '',
     Company: '',
     projecttype: '',
+    clienttype: '',
     assignment: '',
     technicalarea: '',
     status: '',
@@ -122,6 +123,7 @@ export default function Example({ permissions }) {
     (searchQueries.name === '' || item.name.toLowerCase().includes(searchQueries.name.toLowerCase())) &&
     (searchQueries.description=== '' || item.description.toLowerCase().includes(searchQueries.description.toLowerCase())) &&
     (searchQueries.revision=== '' || item.revision.toString().includes(searchQueries.revision.toString())) &&
+    (searchQueries.clienttype === '' || item.QuotationRequest.Company?.ClientType?.code.toLowerCase().includes(searchQueries.clienttype.toLowerCase())) &&
     (searchQueries.Company === '' || item.QuotationRequest.Company?.name.toLowerCase().includes(searchQueries.Company.toLowerCase())) &&
     (searchQueries.projecttype === '' || 
       [item.QuotationRequest.ProjectType?.code].some(value => value?.toLowerCase().includes(searchQueries.projecttype.toLowerCase()))
@@ -145,6 +147,8 @@ export default function Example({ permissions }) {
       switch (column) {
         case 'Company':
           return item.QuotationRequest?.Company?.name || '';
+          case 'clienttype':
+            return item.QuotationRequest?.Company?.Clienttype?.code || '';
         case 'projecttype':
           return item.QuotationRequest?.ProjectType?.code || '';
         case 'assignment':

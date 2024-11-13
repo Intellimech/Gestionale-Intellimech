@@ -45,6 +45,7 @@ export default function Example({ permissions }) {
     name: '',
     description: '',
     Company: '',
+    clienttype: '',
     assignment: '',
     projecttype: '',
     technicalarea: '',
@@ -81,6 +82,7 @@ export default function Example({ permissions }) {
       (searchQueries?.name === '' || item?.name.toLowerCase().includes(searchQueries?.name.toLowerCase())) &&
       (searchQueries.description=== '' || item.description.toLowerCase().includes(searchQueries.description.toLowerCase())) &&
       (searchQueries.Company === '' || item.Company?.name.toLowerCase().includes(searchQueries.Company.toLowerCase())) &&
+      (searchQueries.clienttype === '' || item.Company?.Clienttype?.code.toLowerCase().includes(searchQueries.clienttype.toLowerCase())) &&
       (searchQueries.assignment === '' || 
         [item.Assignment?.name].some(value => value?.toLowerCase().includes(searchQueries.assignment.toLowerCase()))
       ) &&
@@ -116,6 +118,8 @@ export default function Example({ permissions }) {
       switch (column) {
         case 'Company':
           return item.Company?.name || '';
+          case 'clienttype':
+            return item.Company?.ClientType?.code || '';
         case 'assignment':
           return item.Assignment?.name || '';
         case 'projecttype':
@@ -451,6 +455,20 @@ export default function Example({ permissions }) {
                       rows={1}
                     />
                   </th>
+                  
+                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('clienttype')}>
+                    Tipo Cliente
+                    {sortColumn === 'clienttype' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <br />
+                    <input
+                      value={searchQueries.Company}
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={handleSearchInputChange('clienttype')}
+                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      placeholder=""
+                      rows={1}
+                    />
+                  </th>
                   <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('assignment')}>
                     Incarico
                     {sortColumn === 'assignment' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
@@ -562,6 +580,9 @@ export default function Example({ permissions }) {
                         </td>
                         <td className="whitespace-normal max-w-[200px] overflow-hidden text-sm text-gray-500 px-3 py-4 break-words">
                           {quotationrequest.Company?.name}
+                        </td>
+                        <td className="whitespace-normal max-w-[200px] overflow-hidden text-sm text-gray-500 px-3 py-4 break-words">
+                          {quotationrequest.Company?.ClintType?.description}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           {quotationrequest.Assignment?.code}

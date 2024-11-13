@@ -81,7 +81,15 @@ router.get("/read/", async (req, res) => {
         // Fetch all quotation requests joined with company, category, subcategory, technical area, and user
         const quotationrequest = await QuotationRequest.findAll({
             include: [
-                { model: Company, attributes: ["id_company", "name"] },
+                { model: Company, attributes: ["id_company", "name", "companytype"],
+                    include: [
+                        {
+                            model: sequelize.models.ClientType,
+                            attributes: ["id_clienttype", "code", "description"],
+
+                        },
+                    ]
+                 },
                 { model: Category, attributes: ["id_category", "name"] },
                 { model: Subcategory, attributes: ["id_subcategory", "name"] },
                 { model: Assignment, attributes: ["id_assignment", "code","description"] },

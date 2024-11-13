@@ -29,10 +29,15 @@ router.get("/read/", async (req, res) => {
                     model: sequelize.models.QuotationRequest,
                     attributes: ["id_quotationrequest", "name", "description"],
                     include: [
-                        {
-                            model: sequelize.models.Company,
-                            attributes: ["id_company", "name"],
-                        },
+                      { model: Company, attributes: ["id_company", "name", "companytype"],
+                        include: [
+                            {
+                                model: sequelize.models.ClientType,
+                                attributes: ["id_clienttype", "code", "description"],
+    
+                            },
+                        ]
+                     },
                         {
                             model: sequelize.models.Category,
                             attributes: ["id_category", "name"],

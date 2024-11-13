@@ -7,9 +7,12 @@ import toast, { Toaster } from 'react-hot-toast';
 export default function ClientForm() {
   const [clienttypes, setClienttypes] = useState([]);
   const [selectedClienttype, setSelectedClienttype] = useState(null);
-  const [isClient, setIsClient] = useState(true);
+  const [companyType, setCompanyType] = useState({
+    isClient: false,
+    isSupplier: false,
+  });
 
-  // Riferimenti per ogni campo del form
+  // References for each form field
   const nameRef = useRef(null);
   const vatRef = useRef(null);
   const fiscalcodeRef = useRef(null);
@@ -43,17 +46,21 @@ export default function ClientForm() {
   };
 
   const handleCompanyTypeChange = (event) => {
-    setIsClient(event.target.value === 'client');
+    const { value, checked } = event.target;
+    setCompanyType((prev) => ({
+      ...prev,
+      [value]: checked,
+    }));
   };
 
   const createCustomer = (event) => {
     event.preventDefault();
 
-    // Crea un oggetto JSON con i dati del form
+    // Create JSON object with form data
     const jsonObject = {
       name: nameRef.current.value || '',
-      isClient: isClient ? 1 : 0,
-      isSuppliers: !isClient ? 1 : 0,
+      isClient: companyType.isClient ? 1 : 0,
+      isSupplier: companyType.isSupplier ? 1 : 0,
       clienttype: selectedClienttype?.value || '',
       vat: vatRef.current.value || '',
       fiscalcode: fiscalcodeRef.current.value || '',
@@ -66,7 +73,7 @@ export default function ClientForm() {
       country: countryRef.current.value || '',
     };
 
-    // Invia la richiesta POST con i dati JSON
+    // Send POST request with JSON data
     toast.promise(
       axios.post(`${process.env.REACT_APP_API_URL}/company/create`, jsonObject, {
         headers: {
@@ -111,21 +118,21 @@ export default function ClientForm() {
             <div className="flex gap-4 mt-2">
               <label className="inline-flex items-center">
                 <input
-                  type="radio"
-                  value="client"
-                  checked={isClient}
+                  type="checkbox"
+                  value="isClient"
+                  checked={companyType.isClient}
                   onChange={handleCompanyTypeChange}
-                  className="form-radio h-4 w-4 text-blue-600"
+                  className="form-checkbox h-4 w-4 text-blue-600"
                 />
                 <span className="ml-2">Cliente</span>
               </label>
               <label className="inline-flex items-center">
                 <input
-                  type="radio"
-                  value="supplier"
-                  checked={!isClient}
+                  type="checkbox"
+                  value="isSupplier"
+                  checked={companyType.isSupplier}
                   onChange={handleCompanyTypeChange}
-                  className="form-radio h-4 w-4 text-blue-600"
+                  className="form-checkbox h-4 w-4 text-blue-600"
                 />
                 <span className="ml-2">Fornitore</span>
               </label>
@@ -149,6 +156,7 @@ export default function ClientForm() {
               />
             </div>
           </div>
+
 
           {/* VAT */}
           <div className="col-span-full">

@@ -14,6 +14,7 @@ export default function Company({ companytype }) {
   const [companies, setCompanies] = useState([]);
   const [searchQueries, setSearchQueries] = useState({
     Name: '',
+    type: '',
     VAT: '',
     Code: '',
     Fiscal_Code: ''
@@ -57,9 +58,10 @@ export default function Company({ companytype }) {
   };
 
   const exportInvoices = () => {
-    const header = ['Company code', 'Name', 'VAT', 'Fiscal Code'];
+    const header = ['Company code', '','Name', 'VAT', 'Fiscal Code'];
     const rows = companies.map((company) => [
       company.Code,
+      company.type,
       company.name,
       company.VAT,
       company.Fiscal_Code
@@ -96,6 +98,7 @@ export default function Company({ companytype }) {
   const filteredCompanies = companies.filter((item) => {
     return (
       (searchQueries.Code === '' || item.Code.toLowerCase().includes(searchQueries.Code.toLowerCase())) &&
+      (searchQueries.type === '' || item.companytype.toLowerCase().includes(searchQueries.type.toLowerCase())) &&
       (searchQueries.Name === '' || item.name.toLowerCase().includes(searchQueries.Name.toLowerCase())) &&
       (searchQueries.Fiscal_Code === '' || item.Fiscal_Code.toLowerCase().includes(searchQueries.Fiscal_Code.toLowerCase())) &&
       (searchQueries.VAT === '' || item.VAT.toLowerCase().includes(searchQueries.VAT.toLowerCase()))
@@ -215,6 +218,7 @@ export default function Company({ companytype }) {
                         rows={1}
                       />
                     </th>
+                    {companytype === 'Clienti' && (
                     <th
                       scope="col"
                       className="px-0 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
@@ -228,7 +232,7 @@ export default function Company({ companytype }) {
                       )}
                       <br />
                       <input
-                        value={searchQueries.Code}
+                        value={searchQueries.type}
                         onClick={(e) => e.stopPropagation()}
                         onChange={handleSearchInputChange('type')}
                         className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
@@ -236,6 +240,8 @@ export default function Company({ companytype }) {
                         rows={1}
                       />
                     </th>
+                  )}
+
 
                     <th
                       scope="col"
@@ -309,8 +315,11 @@ export default function Company({ companytype }) {
                   {sortedCompanies.map((company) => (
                     <tr key={company.id_invoices}>
                       <td className="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-500 sm:pl-0">{company.Code}</td>
-                      <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">{company?.ClientType?.code}</td>
-                      
+                      {companytype === 'Clienti' && (
+                        <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">
+                          {company?.ClientType?.code}
+                        </td>
+                      )}
                       <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">{company.name}</td>
                       <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">{company.VAT}</td>
                       <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">{company.Fiscal_Code}</td>

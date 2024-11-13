@@ -1,14 +1,14 @@
 import React, { useMemo, useEffect, useState } from 'react';
 import Select from 'react-tailwindcss-select';
 
-const TaskRevision = ({ task, users, assignedto, onChange, onAddChild, onRemove, level = 1 }) => {
-  console.log(`Rendering TaskRevision at level ${level} with task:`, task);
+const TaskUpdate = ({ task, users, onChange, onAddChild, onRemove, level = 1 }) => {
+  console.log(`Rendering TaskUpdate at level ${level} with task:`, task);
 
   if (!task) {
     console.error('Task is undefined');
     return null;
   } else {
-    console.log("Sono la task ", assignedTo);
+    console.log("Sono la task " + task.assignedTo);
   }
 
   const [selectedUser, setSelectedUser] = useState(null);
@@ -51,7 +51,7 @@ const TaskRevision = ({ task, users, assignedto, onChange, onAddChild, onRemove,
   
   useEffect(() => {
     if (task.assignedTo) {
-      const userFound = users.find((user) => user.id === task.assignedTo.value);
+      const userFound = users.find((user) => user.id === task.assignedTo.id);
       setSelectedUser(userFound || null);
     } else {
       setSelectedUser(null);
@@ -63,12 +63,12 @@ const TaskRevision = ({ task, users, assignedto, onChange, onAddChild, onRemove,
     onChange(updatedTask);
   };
 
-  // const selectOptions = useMemo(() => {
-  //   return users.map((user) => ({
-  //     value: user.id,
-  //     label: `${user.name} ${user.surname}`,
-  //   }));
-  // }, [users]);
+  const selectOptions = useMemo(() => {
+    return users.map((user) => ({
+      value: user.id,
+      label: `${user.name} ${user.surname}`,
+    }));
+  }, [users]);
 
 
   return (
@@ -106,7 +106,7 @@ const TaskRevision = ({ task, users, assignedto, onChange, onAddChild, onRemove,
         <Select
           value={selectedUser}
           onChange={(value) => handleInputChange('assignedTo', value)}
-          options={users}
+          options={selectOptions}
           classNames={{
             menuButton: () =>
               'flex text-sm text-gray-500 border border-gray-300 rounded shadow-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#7fb7d4] focus:border-[#7fb7d4]',
@@ -135,4 +135,4 @@ const TaskRevision = ({ task, users, assignedto, onChange, onAddChild, onRemove,
   );
 };
 
-export default TaskRevision;
+export default TaskUpdate;

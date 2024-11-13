@@ -537,6 +537,7 @@ const createOffer = async (event) => {
               <TaskRevision
                 key={index}
                 task={task}
+                assignedto={task?.assignedTo}
                 onChange={(updatedTask) => {
                   const newTasks = [...tasks];
                   newTasks[index] = updatedTask;

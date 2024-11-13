@@ -43,6 +43,8 @@ import OfferInfo from './components/offer/offerdetail.jsx';
 import SettingsPage from './components/system/settings.jsx';
 import SalesOrderDetail from './components/salesorder/salesorderdetail.jsx';
 import QuotationrequestDetail from './components/quotationrequest/quotationrequestdetail.jsx';
+import ClientType from './components/registry/clienttype.jsx';
+
 
 
 const Logo = './assets/intellimech.svg'
@@ -98,6 +100,7 @@ const App = () => {
             <Route path="employees-consultants" element={<PrivateRoute element={<EmployeesConsultant />} />} />
             <Route path="category" element={<PrivateRoute element={<CategoriesPage />} />} />
             
+            <Route path="clienttype" element={<PrivateRoute element={<ClientType />} />} />
             <Route path="projecttype" element={<PrivateRoute element={<ProjectType />} />} />
             <Route path="assignment" element={<PrivateRoute element={<Assignment />} />} />
             <Route path="subcategory" element={<PrivateRoute element={<SubcategoriesPage />} />} />

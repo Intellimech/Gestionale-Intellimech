@@ -1,7 +1,9 @@
-import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/20/solid';
-import React, { useState, useEffect } from 'react';
+import { ArrowDownIcon, ArrowUpIcon, XMarkIcon } from '@heroicons/react/20/solid';
+import React, { useState, useEffect, Fragment } from 'react';
 import Cookies from 'js-cookie';
 import axios from 'axios';
+import { Dialog, Transition } from '@headlessui/react';
+import CustomersCreate from './customercreate'
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -19,7 +21,7 @@ export default function Company({ companytype }) {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString());
   const [sortColumn, setSortColumn] = useState('');
   const [sortDirection, setSortDirection] = useState('');
-
+  const [open, setOpen] = useState(false); 
   useEffect(() => {
     axios
       .get(`${process.env.REACT_APP_API_URL}/company/read`)
@@ -84,6 +86,9 @@ export default function Company({ companytype }) {
       setSortDirection('asc');
     }
   };
+  const handleCreateCompany = () =>{
+
+  }
   
   const filteredCompanies = companies.filter((item) => {
     return (
@@ -129,8 +134,55 @@ export default function Company({ companytype }) {
           >
             Esporta
           </button>
+          <button
+            onClick={() => setOpen(true)}
+            className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+          >
+            Crea
+          </button>
         </div>
       </div>
+
+      {/* Modal for Creating a New Company */}
+      <Transition.Root show={open} as={Fragment}>
+        <Dialog as="div" className="relative z-50" onClose={setOpen}>
+          <div className="fixed inset-0 overflow-hidden">
+            <div className="absolute inset-0 overflow-hidden">
+              <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-16">
+                <Transition.Child
+                  as={Fragment}
+                  enter="transform transition ease-in-out duration-500 sm:duration-700"
+                  enterFrom="translate-x-full"
+                  enterTo="translate-x-0"
+                  leave="transform transition ease-in-out duration-500 sm:duration-700"
+                  leaveFrom="translate-x-0"
+                  leaveTo="translate-x-full"
+                >
+                  <Dialog.Panel className="pointer-events-auto w-screen max-w-md">
+                    <form className="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
+                      <div className="px-4 sm:px-6">
+                        <div className="flex items-start justify-between">
+                          <Dialog.Title className="text-base font-semibold leading-6 text-gray-900">
+                            Crea un nuovo Cliente
+                          </Dialog.Title>
+                          <button
+                            type="button"
+                            className="text-gray-400 hover:text-gray-500 focus:outline-none"
+                            onClick={() => setOpen(false)}
+                          >
+                            <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+                          </button>
+                        </div>
+                      </div>
+                      <div className="relative mt-6 flex-1 px-4 sm:px-6">{<CustomersCreate />}</div>
+                    </form>
+                  </Dialog.Panel>
+                </Transition.Child>
+              </div>
+            </div>
+          </div>
+        </Dialog>
+      </Transition.Root>
 
       <div className="mt-8 flow-root">
         <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">

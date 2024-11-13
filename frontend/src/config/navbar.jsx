@@ -72,6 +72,7 @@ const logout = () => {
             { name: 'Sottocategorie', href: '#', icon: Squares2X2Icon, current: false, permissionss: 'sottocategorie' },
             { name: 'Aree Tecniche', href: '#', icon: Squares2X2Icon, current: false, permissionss: 'areetecniche' },
             { name: 'Incarichi', href: '#', icon: Squares2X2Icon, current: false, permissionss: 'assignment' },
+            { name: 'Tipo Progetto', href: '#', icon: Squares2X2Icon, current: false, permissionss: 'projecttype' },
             { name: 'Locations', href: '#', icon: HomeModernIcon, current: false, permissionss: 'locations' },
           ], 
         },

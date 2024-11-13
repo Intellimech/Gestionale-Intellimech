@@ -23,7 +23,7 @@ import Offer from './components/offer/offertable';
 import Salesorder from './components/salesorder/salesordertable.jsx';
 import Job from './components/job/jobtable';
 
-
+import ProjectType from './components/registry/projecttype';
 import Invoicetable from './components/invoices/invoicetable.jsx';
 import Company from './components/registry/companytable';
 import Assignment from './components/registry/assignment.jsx';
@@ -98,6 +98,7 @@ const App = () => {
             <Route path="employees-consultants" element={<PrivateRoute element={<EmployeesConsultant />} />} />
             <Route path="category" element={<PrivateRoute element={<CategoriesPage />} />} />
             
+            <Route path="projecttype" element={<PrivateRoute element={<ProjectType />} />} />
             <Route path="assignment" element={<PrivateRoute element={<Assignment />} />} />
             <Route path="subcategory" element={<PrivateRoute element={<SubcategoriesPage />} />} />
             <Route path="technicalarea" element={<PrivateRoute element={<TechnicalAreaPage />} />} />

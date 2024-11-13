@@ -88,6 +88,7 @@ router.get("/read/", async (req, res) => {
                             attributes: ["id_clienttype", "code", "description"],
 
                         },
+                      
                     ]
                  },
                 { model: Category, attributes: ["id_category", "name"] },

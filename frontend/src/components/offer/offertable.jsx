@@ -148,7 +148,7 @@ export default function Example({ permissions }) {
         case 'Company':
           return item.QuotationRequest?.Company?.name || '';
           case 'clienttype':
-            return item.QuotationRequest?.Company?.Clienttype?.code || '';
+            return item.QuotationRequest?.Company?.ClientType?.code || '';
         case 'projecttype':
           return item.QuotationRequest?.ProjectType?.code || '';
         case 'assignment':
@@ -612,7 +612,7 @@ export default function Example({ permissions }) {
                     {sortColumn === 'clienttype' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
                     <input
-                      value={searchQueries.Company}
+                      value={searchQueries.clienttype}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('clienttype')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"

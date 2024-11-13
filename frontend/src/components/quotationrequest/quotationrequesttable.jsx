@@ -79,14 +79,14 @@ export default function Example({ permissions }) {
 
   const filteredRequest = quotationrequests.filter((item) => {
     return (
-      (searchQueries?.name === '' || item?.name.toLowerCase().includes(searchQueries?.name.toLowerCase())) &&
+      (searchQueries?.name === '' || item?.name?.toLowerCase().includes(searchQueries?.name?.toLowerCase())) &&
       (searchQueries.description=== '' || item.description.toLowerCase().includes(searchQueries.description.toLowerCase())) &&
-      (searchQueries.Company === '' || item.Company?.name.toLowerCase().includes(searchQueries.Company.toLowerCase())) &&
-      (searchQueries.clienttype === '' || item.Company?.Clienttype?.code.toLowerCase().includes(searchQueries.clienttype.toLowerCase())) &&
+      (searchQueries.Company === '' || item.Company?.name?.toLowerCase().includes(searchQueries.Company.toLowerCase())) &&
+      (searchQueries.clienttype === '' || item?.Company?.ClientType?.code.toLowerCase().includes(searchQueries.clienttype.toLowerCase())) &&
       (searchQueries.assignment === '' || 
-        [item.Assignment?.name].some(value => value?.toLowerCase().includes(searchQueries.assignment.toLowerCase()))
+        [item.Assignment?.code].some(value => value?.toLowerCase().includes(searchQueries.assignment.toLowerCase()))
       ) &&
-      (searchQueries.projecttype === '' || item.ProjectType?.name.toLowerCase().includes(searchQueries.projecttype.toLowerCase())) &&
+      (searchQueries.projecttype === '' || item.ProjectType?.code?.toLowerCase().includes(searchQueries.projecttype.toLowerCase())) &&
       (searchQueries.technicalarea === '' || item.TechnicalArea?.code.toLowerCase().includes(searchQueries.technicalarea.toLowerCase())) &&
       (searchQueries.status === '' || item.status.toLowerCase().includes(searchQueries.status.toLowerCase())) &&
       (searchQueries.data === '' || item.createdAt.includes(searchQueries.data)) &&
@@ -121,9 +121,11 @@ export default function Example({ permissions }) {
           case 'clienttype':
             return item.Company?.ClientType?.code || '';
         case 'assignment':
-          return item.Assignment?.name || '';
+          return item.Assignment?.code || '';
+        case 'data':
+        return item.createdAt || '';
         case 'projecttype':
-          return item.ProjectType?.name || '';
+          return item.ProjectType?.code || '';
         case 'area':
           return item.Technicaltechnicalarea?.name || '';
         case 'createdByUser':
@@ -455,13 +457,13 @@ export default function Example({ permissions }) {
                       rows={1}
                     />
                   </th>
-                  
+
                   <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('clienttype')}>
                     Tipo Cliente
                     {sortColumn === 'clienttype' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
                     <input
-                      value={searchQueries.Company}
+                      value={searchQueries.clienttype}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('clienttype')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
@@ -474,7 +476,7 @@ export default function Example({ permissions }) {
                     {sortColumn === 'assignment' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
                     <input
-                      value={searchQueries.assignmnt}
+                      value={searchQueries.assignment}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('assignment')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
@@ -582,7 +584,7 @@ export default function Example({ permissions }) {
                           {quotationrequest.Company?.name}
                         </td>
                         <td className="whitespace-normal max-w-[200px] overflow-hidden text-sm text-gray-500 px-3 py-4 break-words">
-                          {quotationrequest.Company?.ClintType?.description}
+                          {quotationrequest.Company?.ClientType?.description}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           {quotationrequest.Assignment?.code}
@@ -620,7 +622,7 @@ export default function Example({ permissions }) {
                           )}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {quotationrequest.createdByUser?.name.slice(0, 2).toUpperCase() + quotationrequest.createdByUser?.surname.slice(0, 2).toUpperCase()}
+                          {quotationrequest.createdByUser?.name?.slice(0, 2).toUpperCase() + quotationrequest.createdByUser?.surname?.slice(0, 2).toUpperCase()}
                         </td>
                         <td className="whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
                           <div className="flex items-center space-x-2">

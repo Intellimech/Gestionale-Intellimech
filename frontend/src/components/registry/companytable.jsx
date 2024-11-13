@@ -108,17 +108,31 @@ export default function Company({ companytype }) {
   
   const sortedCompanies = filteredCompanies.sort((a, b) => {
     if (!sortColumn) {
-      
       return a.Code - b.Code;
     }
   
-    if (sortDirection === 'asc') {
-      return compareValues(a[sortColumn], b[sortColumn]);
+    if (sortColumn === 'type' && companytype === 'Customers') {
+      const aType = a.ClientType?.code || ''; // Assegna una stringa vuota se a.ClientType?.code è undefined
+      const bType = b.ClientType?.code || ''; // Assegna una stringa vuota se b.ClientType?.code è undefined
+      if (sortDirection === 'asc') {
+        return compareValues(aType, bType);
+      } else {
+        return compareValues(bType, aType);
+      }
+    } else if (sortColumn === 'Name') {
+      if (sortDirection === 'asc') {
+        return compareValues(a.name, b.name);
+      } else {
+        return compareValues(b.name, a.name);
+      }
     } else {
-      return compareValues(b[sortColumn], a[sortColumn]);
+      if (sortDirection === 'asc') {
+        return compareValues(a[sortColumn], b[sortColumn]);
+      } else {
+        return compareValues(b[sortColumn], a[sortColumn]);
+      }
     }
   });
-
   
 
   return (

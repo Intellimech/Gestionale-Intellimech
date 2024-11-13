@@ -93,7 +93,7 @@ export default function SubcategoryTable() {
   const filteredSubcategories = subcategories.filter((item) => {
     return (
       (searchQueries.id_subcategory === '' || item.id_subcategory.toString().includes(searchQueries.id_subcategory.toString())) &&
-      (searchQueries.category === '' || item.category.toString().includes(searchQueries.category.toString())) &&
+      (searchQueries.category === '' || item.Category.name.toLowerCase().includes(searchQueries.category.toLowerCase())) &&
       (searchQueries.name === '' || item.name.toLowerCase().includes(searchQueries.name.toLowerCase()))
     );
   });
@@ -289,7 +289,7 @@ export default function SubcategoryTable() {
                       <tr key={subcategory.id_subcategory}>
                         <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{subcategory.id_subcategory}</td>
                         <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{subcategory.name}</td>
-                        <td className="whitespace-nowrap px-20 py-2 text-sm text-gray-500">{subcategory.category}</td>
+                        <td className="whitespace-nowrap px-20 py-2 text-sm text-gray-500">{subcategory.Category.name}</td>
                       </tr>
                     ))}
                   </tbody>

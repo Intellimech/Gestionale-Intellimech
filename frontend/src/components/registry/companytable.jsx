@@ -58,7 +58,7 @@ export default function Company({ companytype }) {
   };
 
   const exportInvoices = () => {
-    const header = ['Company code', '','Name', 'VAT', 'Fiscal Code'];
+    const header = ['Company code', 'type','Name', 'VAT', 'Fiscal Code'];
     const rows = companies.map((company) => [
       company.Code,
       company.type,
@@ -98,7 +98,7 @@ export default function Company({ companytype }) {
   const filteredCompanies = companies.filter((item) => {
     return (
       (searchQueries.Code === '' || item.Code.toLowerCase().includes(searchQueries.Code.toLowerCase())) &&
-      (searchQueries.type === '' || item.companytype.toLowerCase().includes(searchQueries.type.toLowerCase())) &&
+      (searchQueries.type === '' || item?.ClientType?.code.toLowerCase().includes(searchQueries.type.toLowerCase())) &&
       (searchQueries.Name === '' || item.name.toLowerCase().includes(searchQueries.Name.toLowerCase())) &&
       (searchQueries.Fiscal_Code === '' || item.Fiscal_Code.toLowerCase().includes(searchQueries.Fiscal_Code.toLowerCase())) &&
       (searchQueries.VAT === '' || item.VAT.toLowerCase().includes(searchQueries.VAT.toLowerCase()))
@@ -218,10 +218,10 @@ export default function Company({ companytype }) {
                         rows={1}
                       />
                     </th>
-                    {companytype === 'Clienti' && (
+                    {companytype === 'Customers' && (
                     <th
                       scope="col"
-                      className="px-0 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
+                      className="px-2 py-4.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
                       onClick={() => handleSort('type')}
                     >
                       Tipo Cliente
@@ -245,7 +245,7 @@ export default function Company({ companytype }) {
 
                     <th
                       scope="col"
-                      className="px-1.5 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
+                      className="px-1.5 py-4.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
                       onClick={() => handleSort('Name')}
                     >
                       Nome
@@ -315,7 +315,7 @@ export default function Company({ companytype }) {
                   {sortedCompanies.map((company) => (
                     <tr key={company.id_invoices}>
                       <td className="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-500 sm:pl-0">{company.Code}</td>
-                      {companytype === 'Clienti' && (
+                      {companytype === 'Customers' && (
                         <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">
                           {company?.ClientType?.code}
                         </td>

@@ -26,14 +26,17 @@ export default function Company({ companytype }) {
     axios
       .get(`${process.env.REACT_APP_API_URL}/company/read`)
       .then((response) => {
+        console.log(response.data); // Log per verificare la struttura dei dati ricevuti
         setCompanies(
           response.data.value
             .sort((a, b) => new Date(b.ReceptionDate) - new Date(a.ReceptionDate))
         );
       })
       .catch((error) => {
+        console.error('Error fetching companies:', error);
       });
   }, [companytype]);
+  
 // Function to compare values of different types
   const compareValues = (a, b) => {
     if (typeof a === 'string' && typeof b === 'string') {
@@ -212,6 +215,27 @@ export default function Company({ companytype }) {
                         rows={1}
                       />
                     </th>
+                    <th
+                      scope="col"
+                      className="px-0 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
+                      onClick={() => handleSort('type')}
+                    >
+                      Tipo Cliente
+                      {sortColumn === 'type' && sortDirection && (
+                        sortDirection === 'asc' ? 
+                          <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : 
+                          <ArrowDownIcon className="h-5 w-5 inline ml-2" />
+                      )}
+                      <br />
+                      <input
+                        value={searchQueries.Code}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={handleSearchInputChange('type')}
+                        className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                        placeholder=""
+                        rows={1}
+                      />
+                    </th>
 
                     <th
                       scope="col"
@@ -285,6 +309,8 @@ export default function Company({ companytype }) {
                   {sortedCompanies.map((company) => (
                     <tr key={company.id_invoices}>
                       <td className="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-500 sm:pl-0">{company.Code}</td>
+                      <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">{company?.ClientType?.code}</td>
+                      
                       <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">{company.name}</td>
                       <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">{company.VAT}</td>
                       <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">{company.Fiscal_Code}</td>

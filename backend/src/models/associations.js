@@ -153,7 +153,9 @@ Job.hasMany(Reporting, { foreignKey: 'job' });
 Reporting.belongsTo(Tasks, { foreignKey: 'task' });
 Tasks.hasMany(Reporting, { foreignKey: 'task' });
 
+Company.belongsTo(ClientType, { foreignKey: 'companytype' });
 
+ClientType.hasMany(Company, { foreignKey: 'companytype' });
 
 //reporting is associated with User in the createdBy, updatedBy, and deletedBy fields
 Reporting.belongsTo(User, { foreignKey: 'createdBy', as: 'createdByUser' });

@@ -26,7 +26,7 @@ import Job from './components/job/jobtable';
 
 import Invoicetable from './components/invoices/invoicetable.jsx';
 import Company from './components/registry/companytable';
-
+import Assignment from './components/registry/assignment.jsx';
 import Profile from './components/registry/userinfo.jsx';
 import Permissions from './components/registry/permissionstable.jsx'
 import Purchase from  './components/purchaseorder/purchase.jsx';
@@ -97,6 +97,8 @@ const App = () => {
             <Route path="roles" element={<PrivateRoute element={<UsersTable />} />} />
             <Route path="employees-consultants" element={<PrivateRoute element={<EmployeesConsultant />} />} />
             <Route path="category" element={<PrivateRoute element={<CategoriesPage />} />} />
+            
+            <Route path="assignment" element={<PrivateRoute element={<Assignment />} />} />
             <Route path="subcategory" element={<PrivateRoute element={<SubcategoriesPage />} />} />
             <Route path="technicalarea" element={<PrivateRoute element={<TechnicalAreaPage />} />} />
             <Route path="locations" element={<PrivateRoute element={<Locations />} />} />

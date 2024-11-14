@@ -311,12 +311,12 @@ const sortedSaleOrder = filteredSaleOrder.sort((a, b) => {
       </Dialog>
     </Transition.Root>
    
-        <div className="px-4 sm:px-6 lg:px-8 py-4">
+        <div className="px-2 sm:px-6 lg:px-8 py-4">
           {/* Contenitore principale con Flexbox */}
-          <div className="flex items-center justify-between">
+          <div className="flex items-left justify-between">
             {/* Titolo e descrizione */}
-            <div className="sm:flex-auto">
-              <h1 className="text-base font-semibold leading-6 text-gray-900">Ordini di vendita</h1>
+            <div className="sm:flex-auto text-left">
+              <h1 className="text-base text-left font-semibold leading-6 text-gray-900">Ordini di vendita</h1>
               <p className="mt-2 text-sm text-gray-700">Lista offerte presenti a sistema</p>
             </div>
 

@@ -196,7 +196,7 @@ export default function UserCreateForm() {
             {selectedProjecttype?.value == '5' && (
               <div className="col-span-full">
                 <label htmlFor="externalcode" className="block text-sm font-medium leading-6 text-gray-900">
-                  Codice Esterno
+                  Codice Progetto
                 </label>
                 <div className="mt-2">
                   <input

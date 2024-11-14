@@ -36,7 +36,7 @@ export default function Example({ permissions }) {
   const [selectedArea, setSelectedArea] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [sortColumn, setSortColumn] = useState('');
-  const [sortDirection, setSortDirection] = useState('asc');
+  const [sortDirection, setSortDirection] = useState('desc');
   const [filterType, setFilterType] = useState('name');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setselectedStatus] = useState('');
@@ -82,7 +82,7 @@ export default function Example({ permissions }) {
       (searchQueries?.name === '' || item?.name?.toLowerCase().includes(searchQueries?.name?.toLowerCase())) &&
       (searchQueries.description=== '' || item.description.toLowerCase().includes(searchQueries.description.toLowerCase())) &&
       (searchQueries.Company === '' || item.Company?.name?.toLowerCase().includes(searchQueries.Company.toLowerCase())) &&
-      (searchQueries.clienttype === '' || item?.Company?.ClientType?.code.toLowerCase().includes(searchQueries.clienttype.toLowerCase())) &&
+      (searchQueries.clienttype === '' || item?.companytype.toLowerCase().includes(searchQueries.clienttype.toLowerCase())) &&
       (searchQueries.assignment === '' || 
         [item.Assignment?.code].some(value => value?.toLowerCase().includes(searchQueries.assignment.toLowerCase()))
       ) &&
@@ -105,7 +105,7 @@ export default function Example({ permissions }) {
         setSortColumn('');
         setSortDirection('asc');
       } else {
-        setSortDirection('asc');
+        setSortDirection('desc');
       }
     } else {
       setSortColumn(columnName);
@@ -119,7 +119,7 @@ export default function Example({ permissions }) {
         case 'Company':
           return item.Company?.name || '';
           case 'clienttype':
-            return item.Company?.ClientType?.code || '';
+            return item?.companytype || '';
         case 'assignment':
           return item.Assignment?.code || '';
         case 'data':
@@ -415,7 +415,7 @@ export default function Example({ permissions }) {
                 <tr>
                   <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
                     RDO
-                    {sortColumn === 'name' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'name' ? (sortDirection === 'desc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
                     <input
                       value={searchQueries?.name}
@@ -584,7 +584,7 @@ export default function Example({ permissions }) {
                           {quotationrequest.Company?.name}
                         </td>
                         <td className="whitespace-normal max-w-[200px] overflow-hidden text-sm text-gray-500 px-3 py-4 break-words">
-                          {quotationrequest.Company?.ClientType?.description}
+                          {quotationrequest.companytype}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           {quotationrequest.Assignment?.code}

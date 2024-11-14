@@ -121,10 +121,10 @@ export default function Example({ permissions }) {
   const filteredSaleOrder = offers.filter((item) => {
     return (
     (searchQueries.name === '' || item.name.toLowerCase().includes(searchQueries.name.toLowerCase())) &&
-    (searchQueries.description=== '' || item.description.toLowerCase().includes(searchQueries.description.toLowerCase())) &&
+    (searchQueries.description=== '' || item?.description.toLowerCase().includes(searchQueries.description.toLowerCase())) &&
     (searchQueries.revision=== '' || item.revision.toString().includes(searchQueries.revision.toString())) &&
-    (searchQueries.clienttype === '' || item.QuotationRequest.Company?.ClientType?.code.toLowerCase().includes(searchQueries.clienttype.toLowerCase())) &&
-    (searchQueries.Company === '' || item.QuotationRequest.Company?.name.toLowerCase().includes(searchQueries.Company.toLowerCase())) &&
+    (searchQueries.clienttype === '' || item.QuotationRequest?.companytype.toLowerCase().includes(searchQueries.clienttype.toLowerCase())) &&
+    (searchQueries.Company === '' || item.QuotationRequest?.Company?.name.toLowerCase().includes(searchQueries.Company.toLowerCase())) &&
     (searchQueries.projecttype === '' || 
       [item.QuotationRequest.ProjectType?.code].some(value => value?.toLowerCase().includes(searchQueries.projecttype.toLowerCase()))
     ) &&
@@ -148,7 +148,7 @@ export default function Example({ permissions }) {
         case 'Company':
           return item.QuotationRequest?.Company?.name || '';
           case 'clienttype':
-            return item.QuotationRequest?.Company?.ClientType?.code || '';
+            return item.QuotationRequest?.companytype || '';
         case 'projecttype':
           return item.QuotationRequest?.ProjectType?.code || '';
         case 'assignment':
@@ -586,7 +586,7 @@ export default function Example({ permissions }) {
                     {sortColumn === 'description' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
                     <input
-                      value={searchQueries.description}
+                      value={searchQueries?.description}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('description')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
@@ -599,7 +599,7 @@ export default function Example({ permissions }) {
                     {sortColumn === 'Company' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
                     <input
-                      value={searchQueries.Company}
+                      value={searchQueries?.Company}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('Company')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
@@ -778,16 +778,16 @@ export default function Example({ permissions }) {
                           {offer.name}
                         </td>
                         <td className="whitespace-normal max-w-[300px] overflow-hidden text-sm text-gray-500 px-3 py-4 break-words">
-                          {offer.description || offer.QuotationRequest.description}
+                          {offer?.description || offer.QuotationRequest?.description}
                         </td>
                         <td className="whitespace-normal max-w-[200px] overflow-hidden text-sm text-gray-500 px-3 py-4 break-words">
-                          {offer.QuotationRequest.Company.name}
+                          {offer.QuotationRequest?.Company.name}
                         </td>
                         <td className="whitespace-normal max-w-[200px] overflow-hidden text-sm text-gray-500 px-3 py-4 break-words">
-                          {offer.QuotationRequest.Company?.ClientType?.code}
+                          {offer?.QuotationRequest?.companytype}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {offer.revision}
+                          {offer?.revision}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           {`${offer.hour} h`}
@@ -799,7 +799,7 @@ export default function Example({ permissions }) {
                           {offer.QuotationRequest?.ProjectType?.code}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {offer.QuotationRequest.TechnicalArea.code}
+                          {offer?.QuotationRequest?.TechnicalArea?.code}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           {offer.estimatedstart ? new Date(offer.estimatedstart).toLocaleDateString() : ''}

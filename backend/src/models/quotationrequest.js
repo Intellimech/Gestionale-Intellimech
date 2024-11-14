@@ -44,6 +44,10 @@ QuotationRequest.init(
       allowNull: true
     },
     company: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    companytype: {
       type: DataTypes.INTEGER,
       allowNull: true
     },

@@ -1,10 +1,13 @@
-import { ArrowDownIcon, ArrowUpIcon, XMarkIcon } from '@heroicons/react/20/solid';
-import React, { useState, useEffect, Fragment } from 'react';
-import Cookies from 'js-cookie';
-import axios from 'axios';
-import { Dialog, Transition } from '@headlessui/react';
+
 import CustomersCreate from './customercreate'
 
+import { Fragment, useState, useRef, useEffect } from 'react'
+import { Dialog, Transition } from '@headlessui/react'
+import { XMarkIcon, CheckIcon, ArrowRightStartOnRectangleIcon, UsersIcon, EnvelopeOpenIcon, CursorArrowRaysIcon, ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/20/solid'
+import axios from 'axios';
+import Cookies from 'js-cookie';
+import toast, { Toaster } from 'react-hot-toast';
+import CompanyInfo from './companyinfo'
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
@@ -22,6 +25,9 @@ export default function Company({ companytype }) {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString());
   const [sortColumn, setSortColumn] = useState('');
   const [sortDirection, setSortDirection] = useState('');
+  
+  const [showInfo, setShowInfo] = useState(false);
+  const [selectedCompanyInfo, setSelectedCompanyInfo] = useState({});
   const [open, setOpen] = useState(false); 
   useEffect(() => {
     axios
@@ -134,9 +140,66 @@ export default function Company({ companytype }) {
     }
   });
   
+  
+  const handlectrlClick = (company) => {
+    console.log("ho cliccato "+ company.id_company)
+    window.open(`/app/quotation-request/${company.id_company}`, '_blank'); // Apre in una nuova scheda
+    
+  };
+  
 
   return (
     <div className="px-4 sm:px-6 lg:px-8">
+        <Toaster
+        position="bottom-right"
+        reverseOrder={false}
+        
+      />
+            <Transition.Root show={showInfo} as={Fragment}>
+        <Dialog className="relative z-50" onClose={setShowInfo}>
+          <div className="fixed inset-0" />
+
+          <div className="fixed inset-0 overflow-hidden">
+            <div className="absolute inset-0 overflow-hidden">
+              <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-16">
+                <Transition.Child
+                  as={Fragment}
+                  enter="transform transition ease-in-out duration-500 sm:duration-700"
+                  enterFrom="translate-x-full"
+                  enterTo="translate-x-0"
+                  leave="transform transition ease-in-out duration-500 sm:duration-700"
+                  leaveFrom="translate-x-0"
+                  leaveTo="translate-x-full"
+                >
+                  <Dialog.Panel className="pointer-events-auto w-screen max-w-7xl">
+                    <div className="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
+                      <div className="px-4 sm:px-6">
+                        <div className="flex items-start justify-between">
+                          <Dialog.Title className="text-base font-semibold leading-6 text-gray-900">
+                            {selectedCompanyInfo?.name}
+                          </Dialog.Title>
+                          <div className="ml-3 flex h-7 items-center">
+                            <button
+                              type="button"
+                              className="relative rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#7fb7d4] focus:ring-offset-2"
+                              onClick={() => setShowInfo(false)}
+                            >
+                              <span className="absolute -inset-2.5" />
+                              <span className="sr-only">Close panel</span>
+                              <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="relative mt-6 flex-1 px-4 sm:px-6">{ <CompanyInfo company={selectedCompanyInfo} /> }</div>
+                    </div>
+                  </Dialog.Panel>
+                </Transition.Child>
+              </div>
+            </div>
+          </div>
+        </Dialog>
+      </Transition.Root>
       <div className="flex items-center justify-between py-4">
         <div className="flex-grow">
           <h1 className="text-base font-semibold leading-6 text-gray-900">
@@ -328,12 +391,29 @@ export default function Company({ companytype }) {
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {sortedCompanies.map((company) => (
                     <tr key={company.id_invoices}>
-                      <td className="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-500 sm:pl-0">{company.Code}</td>
+                      
                       {companytype === 'Customers' && (
-                        <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">
-                          {company?.ClientType?.code}
+                        <td
+                        onClick={(event) => {
+                          // ctrl + click per aprire un nuovo tab
+                          if (event.ctrlKey) {
+                            handlectrlClick(company);
+                          } else {
+                            setShowInfo(true);
+                            setSelectedCompanyInfo(company);
+                            console.log(company);// Mostra il form nella stessa finestra
+                          }
+                        }}
+                          className={classNames(
+                            'whitespace-nowrap px-3 py-4 pr-3 text-sm font-medium',
+                            companies?.includes(company) ? 'text-gray-900' : 'text-gray-900'
+                          )}
+                        >
+                           {company?.Code}
                         </td>
                       )}
+                     
+                     <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">{company?.ClientType?.code}</td>
                       <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">{company.name}</td>
                       <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">{company.VAT}</td>
                       <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">{company.Fiscal_Code}</td>

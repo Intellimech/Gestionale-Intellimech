@@ -123,107 +123,114 @@ PEC: intellimech@legalmail.it - www.intellimech.it
         <p className="mt-1 max-w-2xl text-sm leading-6 text-gray-500">Informazioni dettagliate sull'offerta</p>
       </div>
       <div className="mt-6">
-        {/* Offer Details Section */}
-        <dl className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5">
-          <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-gray-900">Codice Offerta</dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{offer?.name}</dd>
-          </div>
-          <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-gray-900">Cliente</dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{offer?.QuotationRequest?.Company?.name}</dd>
-          </div>
-          <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-gray-900">Ore stimate</dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{offer?.hour + 'h'}</dd>
-          </div>
-          <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-gray-900">Valore</dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{offer?.amount + ' €'}</dd>
-          </div>
-          <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-gray-900">Costo Orario</dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{(offer?.amount / offer?.hour).toFixed(2)} €</dd>
-          </div>
-          {/* Additional Offer Details */}
-          <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-gray-900">Data di Creazione</dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
-              {new Date(offer?.createdAt).toLocaleDateString() + " " + new Date(offer?.createdAt).toLocaleTimeString()}
-            </dd>
-          </div>
-          {/* More offer fields can be added here */}
-        </dl>
+         {/* Main Details Table */}
+         <div className="overflow-hidden border border-gray-200 rounded-lg mb-8">
+        <table className="min-w-full divide-y divide-gray-200">
+          <tbody className="divide-y divide-gray-200">
+            <tr className="bg-white">
+              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 w-1/4">Codice Offerta</td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{offer?.name}</td>
+            </tr>
+            <tr className="bg-gray-50">
+              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Cliente</td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{offer?.QuotationRequest?.Company?.name}</td>
+            </tr>
+            <tr className="bg-white">
+              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Ore stimate</td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{offer?.hour}h</td>
+            </tr>
+            <tr className="bg-gray-50">
+              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Valore</td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{offer?.amount} €</td>
+            </tr>
+            <tr className="bg-white">
+              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Costo Orario</td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{(offer?.amount / offer?.hour).toFixed(2)} €</td>
+            </tr>
+            <tr className="bg-gray-50">
+              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Data di Creazione</td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {new Date(offer?.createdAt).toLocaleDateString() + " " + new Date(offer?.createdAt).toLocaleTimeString()}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-        {/* Quotation Request Details Section */}
-        <div className="mt-6">
-          <h4 className="text-lg font-semibold leading-6 text-gray-900">Dettagli Richiesta di Offerta</h4>
-          <dl className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-            <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
-              <dt className="text-sm font-medium leading-6 text-gray-900">Nome Richiesta</dt>
-              <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{offer?.QuotationRequest?.name}</dd>
-            </div>
-            <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
-              <dt className="text-sm font-medium leading-6 text-gray-900">Descrizione</dt>
-              <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{offer?.QuotationRequest?.description}</dd>
-            </div>
-            <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
-              <dt className="text-sm font-medium leading-6 text-gray-900">Tipo Progetto</dt>
-              <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{offer?.QuotationRequest?.ProjectType?.description}</dd>
-            </div>
-            <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
-              <dt className="text-sm font-medium leading-6 text-gray-900">Incarico</dt>
-              <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{offer?.QuotationRequest?.Assignment?.description}</dd>
-            </div>
-            <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
-              <dt className="text-sm font-medium leading-6 text-gray-900">Area Tecnica</dt>
-              <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{offer?.QuotationRequest?.TechnicalArea?.name}</dd>
-            </div>
-            
-          </dl>
-        </div>
+      {/* Quotation Request Details */}
+      <h4 className="text-lg font-semibold mb-4 text-gray-900">Dettagli Richiesta di Offerta</h4>
+      <div className="overflow-hidden border border-gray-200 rounded-lg mb-8">
+        <table className="min-w-full divide-y divide-gray-200">
+          <tbody className="divide-y divide-gray-200">
+            <tr className="bg-white">
+              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 w-1/4">Nome Richiesta</td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{offer?.QuotationRequest?.name}</td>
+            </tr>
+            <tr className="bg-gray-50">
+              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Tipo Progetto</td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{offer?.QuotationRequest?.ProjectType?.description}</td>
+            </tr>
+            <tr className="bg-white">
+              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Area Tecnica</td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{offer?.QuotationRequest?.TechnicalArea?.name}</td>
+            </tr>
+            <tr className="bg-gray-50">
+              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Incarico</td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{offer?.QuotationRequest?.Assignment?.description}</td>
+            </tr>
+            <tr className="bg-white">
+              <td className="px-6 py-4 text-sm font-medium text-gray-900">Descrizione</td>
+              <td className="px-6 py-4 text-sm text-gray-500">{offer?.QuotationRequest?.description}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-     {/* Company Details Section */}
-        <div className="mt-6">
-        <h4 className="text-lg font-semibold leading-6 text-gray-900">Dettagli Azienda</h4>
-        <dl className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-            <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-gray-900">Nome Azienda</dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{offer?.QuotationRequest?.Company?.name}</dd>
-            </div>
-           
-        </dl>
-        </div>
+      {/* Company Details */}
+      <h4 className="text-lg font-semibold mb-4 text-gray-900">Dettagli Azienda</h4>
+      <div className="overflow-hidden border border-gray-200 rounded-lg mb-8">
+        <table className="min-w-full">
+          <tbody>
+            <tr className="bg-white">
+              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 w-1/4">Nome Azienda</td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{offer?.QuotationRequest?.Company?.name}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
 
-        <div className="mt-6">
-            <h4 className="text-lg font-semibold leading-6 text-gray-900">Offerte Commerciali</h4>
-            <table className="min-w-full divide-y divide-gray-300">
-                <thead className="bg-gray-50">
-                <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"> Descrizione</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Importo</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data</th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Collegato a Task</th>
-                </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                {offer?.CommercialOffers?.length > 0 ? (
-                    offer.CommercialOffers.map((comOffer) => (
+      <div className="mt-6">
+    <h4 className="text-lg font-semibold leading-6 text-gray-900">Offerte Commerciali</h4>
+    <table className="min-w-[600px] divide-y divide-gray-300">
+        <thead className="bg-gray-50">
+            <tr>
+                <th className="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Descrizione</th>
+                <th className="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Importo</th>
+                <th className="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Data</th>
+                <th className="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Collegato a Task</th>
+            </tr>
+        </thead>
+        <tbody className="divide-y divide-gray-200">
+            {offer?.CommercialOffers?.length > 0 ? (
+                offer.CommercialOffers.map((comOffer) => (
                     <tr key={comOffer.id_commercialoffer}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{comOffer.linkedtask}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{comOffer.amount} €</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{new Date(comOffer.date).toLocaleDateString()}</td>
+                        <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900 text-right">{comOffer.linkedtask}</td>
+                        <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900 text-right">{comOffer.amount} €</td>
+                        <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900 text-right">{new Date(comOffer.date).toLocaleDateString()}</td>
+                        <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900 text-right">{comOffer.task}</td>
                     </tr>
-                    ))
-                ) : (
-                    <tr>
-                    <td colSpan="4" className="px-6 py-4 text-sm text-gray-500 text-center">Nessuna offerta commerciale disponibile.</td>
-                    </tr>
-                )}
-                </tbody>
-            </table>
-        </div>
+                ))
+            ) : (
+                <tr>
+                    <td colSpan="4" className="px-3 py-4 text-sm text-gray-500 text-center">Nessuna offerta commerciale disponibile.</td>
+                </tr>
+            )}
+        </tbody>
+    </table>
+</div>
+
+
 
            {/* Tasks Section */}
             <div className="mt-6">

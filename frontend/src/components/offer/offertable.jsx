@@ -530,26 +530,26 @@ export default function Example({ permissions }) {
         </Dialog>
       </Transition.Root>
 
-      <div className="py-4">
+      <div className="py-2">
         {/* Contenitore principale con Flexbox */}
         <div className="flex items-center justify-between">
           {/* Titolo e descrizione */}
           <div className="sm:flex-auto">
             <h1 className="text-base font-semibold leading-6 text-gray-900">Offerte</h1>
-            <p className="mt-2 text-sm text-gray-700">Lista delle offerte presenti a sistema</p>
+            <p className="mt-1 text-sm text-gray-700">Lista delle offerte presenti a sistema</p>
           </div>
 
           {/* Bottoni Export e Create */}
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2">
             <button
               onClick={exportData}
-              className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+              className="block rounded-md bg-[#A7D0EB] px-2 py-0.5 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
             >
               Esporta
             </button>
             <button
               onClick={() => setShowCreate(true)}
-              className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+              className="block rounded-md bg-[#A7D0EB] px-2 py-0.5 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
             >
               Crea
             </button>
@@ -558,17 +558,16 @@ export default function Example({ permissions }) {
       </div>
 
 
-      <div className="mt-8 flow-root">
-      {/* Adjusted outer div for the horizontal scrollbar */}
-      <div className="-mx-4 -my-2 overflow-x-scroll sm:-mx-6 lg:-mx-8"> 
-        <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+      <div className="mt-4 flow-root">
+        <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+          <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
           <div className="relative">
             {/* Updated table style */}
-            <table className="min-w-full table-fixed divide-y divide-gray-300">
+            <table className="min-w-full table-fixed divide-y divide-gray-200">
               <thead>
                 <tr>
                   {/* Example for setting column width; add this to each <th> as needed */}
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')} style={{ width: '150px' }}>
+                  <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
                     Ordine
                     {sortColumn === 'name' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
@@ -576,51 +575,48 @@ export default function Example({ permissions }) {
                       value={searchQueries.name}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('name')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                     className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
                       placeholder=""
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('description')} style={{ width: '150px' }}>
+                  <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer ellipsis" onClick={() => handleSort('description')}>
                     Descrizione
-                    {sortColumn === 'description' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'description' ? (sortDirection === 'desc' ? <ArrowUpIcon className="h-3 w-3 inline ml-1" /> : <ArrowDownIcon className="h-3 w-3 inline ml-1" />) : null}
                     <br />
                     <input
-                      value={searchQueries?.description}
+                      value={searchQueries.description}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('description')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
                       placeholder=""
-                      rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-2 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Company')}>
+                  <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('Company')}>
                     Cliente
-                    {sortColumn === 'Company' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'Company' ? (sortDirection === 'desc' ? <ArrowUpIcon className="h-3 w-3 inline ml-1" /> : <ArrowDownIcon className="h-3 w-3 inline ml-1" />) : null}
                     <br />
                     <input
-                      value={searchQueries?.Company}
+                      value={searchQueries.Company}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('Company')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
                       placeholder=""
-                      rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-2 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('clienttype')}>
+                  <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('clienttype')}>
                     Tipo Cliente
-                    {sortColumn === 'clienttype' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'clienttype' ? (sortDirection === 'desc' ? <ArrowUpIcon className="h-3 w-3 inline ml-1" /> : <ArrowDownIcon className="h-3 w-3 inline ml-1" />) : null}
                     <br />
                     <input
                       value={searchQueries.clienttype}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('clienttype')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
                       placeholder=""
-                      rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-2 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('revision')}>
+                  <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('clienttype')}>
                     Revisione
                     {sortColumn === 'revision' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
@@ -628,51 +624,51 @@ export default function Example({ permissions }) {
                       value={searchQueries.revision}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('revision')}
-                      className="mt-1 px-2 py-1 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
                       placeholder=""
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-2 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('hour')}>
-                    Ore
+                  <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('clienttype')}>
+                     Ore
                     {sortColumn === 'hour' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
                     <input
                       value={searchQueries.hour}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('hour')}
-                      className="mt-1 px-2 py-1 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                       className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
                       placeholder=""
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-2  py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('amount')}>
-                    Valore
+                  <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('clienttype')}>
+                     Valore
                     {sortColumn === 'amount' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
                     <input
                       value={searchQueries.amount}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('amount')}
-                      className="mt-1 px-0 py-1 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
                       placeholder=""
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('projecttype')}>
-                    Progetto
+                  <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('clienttype')}>
+                     Progetto
                     {sortColumn === 'projecttype' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
                     <input
                       value={searchQueries.projecttype}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('projecttype')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
                       placeholder=""
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('technicalarea')}>
+                  <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('clienttype')}>
                     Area Tecnica
                     {sortColumn === 'technicalarea' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
@@ -680,25 +676,25 @@ export default function Example({ permissions }) {
                       value={searchQueries.technicalarea}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('technicalarea')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                       className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
                       placeholder=""
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('estimatedstart')}>
-                    Inizio Stimato
+                  <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('clienttype')}>
+                     Inizio Stimato
                     {sortColumn === 'estimatedstart' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
                     <input
                       value={searchQueries.estimatedstart}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('estimatedstart')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                     className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
                       placeholder=""
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('estimatedend')}>
+                  <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('clienttype')}>
                     Fine Stimata
                     {sortColumn === 'estimatedend' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
@@ -706,25 +702,25 @@ export default function Example({ permissions }) {
                       value={searchQueries.estimatedend}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('estimatedend')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
                       placeholder=""
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('deadline')}>
-                    Scadenza
+                  <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('clienttype')}>
+                     Scadenza
                     {sortColumn === 'deadline' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
                     <input
                       value={searchQueries.deadline}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('deadline')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                     className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
                       placeholder=""
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('status')}>
+                  <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('clienttype')}>
                     Stato
                     {sortColumn === 'status' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
@@ -732,20 +728,20 @@ export default function Example({ permissions }) {
                       value={searchQueries.status}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('status')}
-                      className="mt-1 px-2 py-1 w-12 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
                       placeholder=""
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('createdByUser')}>
-                    Creata da
+                  <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('clienttype')}>
+                  Creata da
                     {sortColumn === 'createdByUser' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
                     <br />
                     <input
                       value={searchQueries.createdByUser}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('createdByUser')}
-                      className="mt-1 px-2 py-1 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
                       placeholder=""
                       rows={1}
                     />
@@ -771,49 +767,49 @@ export default function Example({ permissions }) {
                               }
                           }}
                           className={classNames(
-                            'whitespace-nowrap px-3 py-4 pr-3 text-sm font-medium',
+                            'whitespace-nowrap px-2 py-2 text-xs font-medium',
                             selectedOffer.includes(offer) ? 'text-red-600' : 'text-gray-900'
                           )}
                         >
                           {offer.name}
                         </td>
-                        <td className="whitespace-normal max-w-[300px] overflow-hidden text-sm text-gray-500 px-3 py-4 break-words">
-                          {offer?.description || offer.QuotationRequest?.description}
+                        <td className="whitespace-normal max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
+                        {offer?.description || offer.QuotationRequest?.description}
                         </td>
-                        <td className="whitespace-normal max-w-[200px] overflow-hidden text-sm text-gray-500 px-3 py-4 break-words">
-                          {offer.QuotationRequest?.Company.name}
+                        <td className="whitespace-normal max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
+                       {offer.QuotationRequest?.Company.name}
                         </td>
-                        <td className="whitespace-normal max-w-[200px] overflow-hidden text-sm text-gray-500 px-3 py-4 break-words">
+                        <td className="whitespace-normal max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
                           {offer?.QuotationRequest?.companytype}
                         </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {offer?.revision}
+                        <td className="whitespace-normal max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
+                        {offer?.revision}
                         </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {`${offer.hour} h`}
+                        <td className="whitespace-normal max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
+                         {`${offer.hour} h`}
                         </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {`${offer.amount} €`}
+                        <td className="whitespace-normal max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
+                        {`${offer.amount} €`}
                         </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {offer.QuotationRequest?.ProjectType?.code}
+                        <td className="whitespace-normal max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
+                        {offer.QuotationRequest?.ProjectType?.code}
                         </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {offer?.QuotationRequest?.TechnicalArea?.code}
+                        <td className="whitespace-normal max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
+                         {offer?.QuotationRequest?.TechnicalArea?.code}
                         </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {offer.estimatedstart ? new Date(offer.estimatedstart).toLocaleDateString() : ''}
+                        <td className="whitespace-normal max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
+                         {offer.estimatedstart ? new Date(offer.estimatedstart).toLocaleDateString() : ''}
                         </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {offer.estimatedend ? new Date(offer.estimatedend).toLocaleDateString() : ''}
+                        <td className="whitespace-normal max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
+                        {offer.estimatedend ? new Date(offer.estimatedend).toLocaleDateString() : ''}
                         </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {['Scaduta', 'Approvata', 'Rifiutata'].includes(offer.status)
+                        <td className="whitespace-normal max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
+                        {['Scaduta', 'Approvata', 'Rifiutata'].includes(offer.status)
                             ? 'Nessuna'
                             : new Date(offer.deadlineDate).toLocaleDateString()}
                         </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {offer.status === 'Inviata al cliente' ? (
+                        <td className="whitespace-normal max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
+                       {offer.status === 'Inviata al cliente' ? (
                             <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-yellow-500">
                               Inviata
                             </span>
@@ -847,8 +843,8 @@ export default function Example({ permissions }) {
                             </span>
                           )}
                         </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {offer.createdByUser?.name.slice(0, 2).toUpperCase() + offer.createdByUser?.surname.slice(0, 2).toUpperCase()}
+                        <td className="whitespace-normal max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
+                        {offer.createdByUser?.name.slice(0, 2).toUpperCase() + offer.createdByUser?.surname.slice(0, 2).toUpperCase()}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           <div className="flex items-center space-x-2">

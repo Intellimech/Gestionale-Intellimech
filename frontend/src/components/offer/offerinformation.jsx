@@ -208,7 +208,7 @@ PEC: intellimech@legalmail.it - www.intellimech.it
                 <th className="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Descrizione</th>
                 <th className="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Importo</th>
                 <th className="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Data</th>
-                <th className="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Collegato a Task</th>
+                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Collegato a Task</th>
             </tr>
         </thead>
         <tbody className="divide-y divide-gray-200">

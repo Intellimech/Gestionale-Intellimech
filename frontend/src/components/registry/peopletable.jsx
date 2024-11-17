@@ -156,15 +156,15 @@ export default function Example() {
       </Transition.Root>
 
 <div className="py-4">
-        <div className="flex items-center justify-between">
-          {/* Titolo e descrizione */}
-          <div className="sm:flex-auto">
-            <h1 className="text-base font-semibold leading-6 text-gray-900">Richieste di Offerta</h1>
-            <p className="mt-2 text-sm text-gray-700">Lista delle richieste di offerta presenti a sistema</p>
-          </div>
+        
+      </div>
 
-          {/* Bottoni Export e Create */}
-          <div className="flex items-center space-x-4">
+      <div className="flex items-center justify-between">
+        <div className="sm:flex-auto">
+          <h1 className="text-base font-semibold leading-6 text-gray-900">Utenti</h1>
+          <p className="mt-2 text-sm text-gray-700">Lista di tutti gli utenti nel sistema e anagrafiche.</p>
+        </div>
+        <div className="flex items-center mt-5 space-x-4">
             <button
               onClick={exportData}
               className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"            >
@@ -172,14 +172,6 @@ export default function Example() {
             </button>
             
           </div>
-        </div>
-      </div>
-
-      <div className="sm:flex sm:items-center">
-        <div className="sm:flex-auto">
-          <h1 className="text-base font-semibold leading-6 text-gray-900">Users</h1>
-          <p className="mt-2 text-sm text-gray-700">A list of all the users in the system and their details.</p>
-        </div>
       </div>
       <div className="mt-8 flow-root">
         <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
@@ -199,8 +191,10 @@ export default function Example() {
               <table className="min-w-full table-fixed divide-y divide-gray-300">
                 <thead>
                   <tr>
+    
                     <th scope="col" className="py-3.5 pr-3 text-left text-sm font-semibold text-gray-900">
                       Codice
+                    
                     </th>
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                       Nome

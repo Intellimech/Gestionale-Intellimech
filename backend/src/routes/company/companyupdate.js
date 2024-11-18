@@ -29,6 +29,8 @@ router.post("/update", async (req, res) => {
         province,
         country,
       } = req.body;
+
+      console.log(req.body)
   
       // Find the existing company record
       const company = await Company.findByPk(id);
@@ -42,7 +44,7 @@ router.post("/update", async (req, res) => {
         name,
         isClient,
         isSupplier,
-        clienttype,
+        companytype : clienttype,
         VAT: vat,
         Fiscal_Code: fiscalcode,
         SDI,

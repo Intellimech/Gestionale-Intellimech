@@ -12,7 +12,7 @@ export default function ClientUpdateForm({ company }) {
     isSupplier: company?.isSupplier || false,
   });
   const [isEditing, setIsEditing] = useState(false);
- console.log(company)
+
 
   // References for each form field
   const nameRef = useRef(null);
@@ -59,6 +59,7 @@ export default function ClientUpdateForm({ company }) {
   }, [company]);
 
   const handleClientChange = (value) => {
+    console.log('Selected client type:', value);
     setSelectedClienttype(value);
   };
 
@@ -77,7 +78,7 @@ export default function ClientUpdateForm({ company }) {
       name: nameRef.current.value || '',
       isClient: companyType.isClient ? 1 : 0,
       isSupplier: companyType.isSupplier ? 1 : 0,
-      clienttype: selectedClienttype?.value || '',
+      clienttype: selectedClienttype?.value ,
       vat: vatRef.current.value || '',
       fiscalcode: fiscalcodeRef.current.value || '',
       SDI: SDIRef.current.value || '',
@@ -88,6 +89,7 @@ export default function ClientUpdateForm({ company }) {
       province: provinceRef.current.value || '',
       country: countryRef.current.value || '',
     };
+    console.log('Payload inviato:', jsonObject);
   
     toast.promise(
       axios.post(`${process.env.REACT_APP_API_URL}/company/update`, jsonObject, {

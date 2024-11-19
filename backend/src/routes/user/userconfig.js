@@ -104,10 +104,11 @@ const userNavigation = [
         { name: 'Categorie', href: '/app/category', icon: 'TagIcon', current: false},
         { name: 'Sotto categorie', href: '/app/subcategory', icon: 'SwatchIcon', current: false},
         { name: 'Aree Tecniche', href: '/app/technicalarea', icon: 'WrenchScrewdriverIcon', current: false},
-        { name: 'Incarichi', href: '/app/assignment', icon: 'WrenchScrewdriverIcon', current: false},
-        { name: 'Tipo Progetto', href: '/app/projecttype', icon: 'WrenchScrewdriverIcon', current: false},
-        { name: 'Tipo Cliente', href: '/app/clienttype', icon: 'WrenchScrewdriverIcon', current: false},
-        { name: 'Locations', href: '/app/locations', icon: 'HomeIcon', current: false}
+        { name: 'Locations', href: '/app/locations', icon: 'HomeIcon', current: false},
+        { name: 'Incarichi', href: '/app/assignment', icon: 'TagIcon', current: false},
+        { name: 'Tipo Progetto', href: '/app/projecttype', icon: 'TagIcon', current: false},
+        { name: 'Tipo Cliente', href: '/app/clienttype', icon: 'TagIcon', current: false},
+       
       ], 
     },
     { 

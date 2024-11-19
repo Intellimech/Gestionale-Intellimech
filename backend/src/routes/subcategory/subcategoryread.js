@@ -27,7 +27,7 @@ router.get("/read/", (req, res) => {
         include: [
             {
                 model: Category,
-                attributes: ["name"],
+                attributes: ["name", "id_category"],
             },
         ],
     })

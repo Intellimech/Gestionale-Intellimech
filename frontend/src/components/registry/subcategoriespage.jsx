@@ -5,6 +5,7 @@ import Cookies from 'js-cookie';
 import Select from "react-tailwindcss-select";
 import { Dialog } from '@headlessui/react';
 import { ToastContainer } from 'react-toastify';
+import { XMarkIcon, TrashIcon ,PencilSquareIcon, ArrowRightStartOnRectangleIcon } from '@heroicons/react/20/solid'
 import toast, { Toaster } from 'react-hot-toast';
 
 function classNames(...classes) {
@@ -20,6 +21,11 @@ export default function SubcategoryTable() {
   const [filterType, setFilterType] = useState('name');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [update, setUpdate] = useState(false);
+  const [SubCategoryName, setSubCategoryName] = useState('');
+  const [SubCategoryCode, setSubCategoryCode] = useState('');
+  const [SubCategoryID, setSubCategoryID] = useState('');
+  
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [newSubcategory, setNewSubcategory] = useState({ name: '', category: '' });
   const [searchQueries, setSearchQueries] = useState({ name: '', id_subcategory: '', category: '' });
@@ -63,6 +69,54 @@ export default function SubcategoryTable() {
     }
   }, [isModalOpen]);
 
+  
+  const deleteItem = async (SubCategoryID) => {
+    try {
+      const response = await axios.delete(
+        `${process.env.REACT_APP_API_URL}/subcategory/delete/${SubCategoryID}`
+      );
+  
+      // Mostra una notifica di successo
+      toast.success('Sottocategoria cancellata');
+      console.log('Deleted:', response.data);
+  
+      // Aggiorna la lista locale (se gestita in stato)
+      setSubcategories((prevsubs) =>
+        prevsubs.filter((sub) => sub.id !== SubCategoryID)
+      );
+    } catch (error) {
+      console.error('Errore nella cancellazione: ', error.response?.data || error.message);
+  
+      // Mostra una notifica di errore
+      toast.error('Fallimento');
+    }
+    
+  };
+  
+  const handleUpdateSubcategory = () => {
+    axios
+      .put(
+        `${process.env.REACT_APP_API_URL}/subcategory/update`, 
+        { id: SubCategoryID, name: SubCategoryName, category: SubCategoryCode }
+      )
+      .then((response) => {
+        setSubcategories([...subcategories, response.data.subcategories]);
+        setSubCategoryName('');
+        setSubCategoryCode('');
+        setUpdate(false);
+        setIsConfirmModalOpen(false); // Chiude la modale di conferma
+  
+        // Mostra la notifica di successo
+        toast.success('Categoria creata con successo!');
+      })
+      .catch((error) => {
+        console.error('Errore durante la creazione della categoria:', error);
+        
+        // Mostra la notifica di errore
+        toast.error('Creazione della categoria fallita.');
+      });
+  };
+
   const handleSort = (columnName) => {
     if (sortColumn === columnName) {
       // Toggle sorting direction or reset if already descending
@@ -93,7 +147,7 @@ export default function SubcategoryTable() {
   const filteredSubcategories = subcategories.filter((item) => {
     return (
       (searchQueries.id_subcategory === '' || item.id_subcategory.toString().includes(searchQueries.id_subcategory.toString())) &&
-      (searchQueries.category === '' || item.Category.name.toLowerCase().includes(searchQueries.category.toLowerCase())) &&
+      (searchQueries.category === '' || item.Category?.name.toLowerCase().includes(searchQueries.category.toLowerCase())) &&
       (searchQueries.name === '' || item.name.toLowerCase().includes(searchQueries.name.toLowerCase()))
     );
   });
@@ -248,7 +302,9 @@ export default function SubcategoryTable() {
                     <tr>
                       <th scope="col" className="px-0 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('id_subcategory')}>
                         ID
-                        {sortColumn === 'id_subcategory' && sortDirection !== '' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                        {sortColumn === 'id_subcategory' && sortDirection !== '' ? (
+                      sortDirection === 'asc' ? null : null 
+                    ) : null}
                       <br />
                       <input
                           className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"                          type="text"
@@ -259,7 +315,9 @@ export default function SubcategoryTable() {
                       </th>
                       <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
                         Nome
-                        {sortColumn === 'name' && sortDirection !== '' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                        {sortColumn === 'name' && sortDirection !== ''? (
+                      sortDirection === 'asc' ? null : null 
+                    ) : null}
                         <br />
                         <input
                           className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
@@ -271,7 +329,9 @@ export default function SubcategoryTable() {
                       </th>
                       <th scope="col" className="px-20 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('category')}>
                         Categoria
-                        {sortColumn === 'category' && sortDirection !== '' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                        {sortColumn === 'category' && sortDirection !== '' ? (
+                      sortDirection === 'asc' ? null : null 
+                    ) : null}
                         <br />
                         <input
                           className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
@@ -286,10 +346,47 @@ export default function SubcategoryTable() {
                   </thead>
                   <tbody className="divide-y divide-gray-200">
                     {sortedSubcategories.map((subcategory) => (
-                      <tr key={subcategory.id_subcategory}>
-                        <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{subcategory.id_subcategory}</td>
-                        <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{subcategory.name}</td>
-                        <td className="whitespace-nowrap px-20 py-2 text-sm text-gray-500">{subcategory.Category.name}</td>
+                      <tr key={subcategory?.id_subcategory}>
+                        <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{subcategory?.id_subcategory}</td>
+                        <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{subcategory?.name}</td>
+                        <td className="whitespace-nowrap px-20 py-2 text-sm text-gray-500">{subcategory?.Category?.name}</td>
+                        <td className="whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
+                        <div className="flex items-center space-x-2">
+                          
+                          <button 
+                            type="button" 
+                            className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
+                            onClick={() => {
+                              setUpdate(true);
+                              setSubCategoryCode(subcategory?.category);
+                              setSubCategoryName(subcategory?.name);
+                              setSubCategoryID(subcategory?.id_subcategory);
+                            }}
+                          >
+            
+                            <PencilSquareIcon className="h-5 w-4 text-gray-500" />
+                          </button>
+                         
+                          
+                        </div>
+                      </td>
+                      <td className="whitespace-nowrap py-2 pl-3 pr-4 text-left text-sm font-medium sm:pr-3">
+                        <div className="flex items-right space-x-2">
+                          
+                          <button 
+                            type="button" 
+                            className="inline-flex items-right rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
+                            onClick={() => {
+                              deleteItem(subcategory.id_subcategory);
+                            }}
+                          >
+            
+                            <TrashIcon className="h-5 w-4 text-gray-500" />
+                          </button>
+                         
+                          
+                        </div>
+                      </td>
                       </tr>
                     ))}
                   </tbody>
@@ -298,6 +395,7 @@ export default function SubcategoryTable() {
             </div>
           </div>
         </div>
+
         {isModalOpen && (
   <Dialog as="div" className="relative z-10" open={isModalOpen} onClose={() => setIsModalOpen(false)}>
     <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
@@ -307,14 +405,18 @@ export default function SubcategoryTable() {
           <Dialog.Title className="text-lg mt-2 font-bold">Crea Nuova Sotto Categoria</Dialog.Title>
           <form  className="mt-4"onSubmit={handleSubmitNewSubcategory}>
             
-            <Select
-              isSearchable
-              placeholder="Select Category"
-              value={selectedCategory.name}
-              options={categories.map(category => ({ label: category.name, value: category.id_category }))}
-              onChange={(value) => setNewSubcategory({ ...newSubcategory, category: value.value })}
-              className="mt-2"
-            />
+          <Select
+            isSearchable
+            placeholder="Select Category"
+            value={selectedCategory ? { label: selectedCategory.name, value: selectedCategory.id_category } : null}
+            options={categories.map(category => ({ label: category.name, value: category.id_category }))}
+            onChange={(selectedOption) => {
+              setNewSubcategory({ ...newSubcategory, category: selectedOption.value });
+              setSelectedCategory({ name: selectedOption.label, id_category: selectedOption.value }); // Mantieni selezione
+            }}
+            className="mt-2"
+          />
+
             <input
               type="text"
               placeholder="Nome Sotto Categoria"
@@ -342,6 +444,49 @@ export default function SubcategoryTable() {
     </div>
   </Dialog>
 )}
+
+
+<Dialog open={update} onClose={() => setUpdate(false)} className="relative z-50">
+        <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+        <div className="fixed inset-0 flex items-center justify-center p-4">
+          <Dialog.Panel className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
+            <Dialog.Title className="text-lg font-semibold text-gray-900">Modifica una Sottocategoria</Dialog.Title>
+            <div className="mt-4">
+              <input
+                type="text"
+                placeholder="Nome di Sottocategoria"
+                value={SubCategoryName}
+                onChange={(e) => setSubCategoryName(e.target.value)}
+                className="w-full mt-2 p-2 border border-gray-300 rounded-md focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+              />
+              <input
+                type="text"
+                placeholder="Codice Sottocategoria"
+                value={SubCategoryCode}
+                onChange={(e) => setSubCategoryCode(e.target.value)}
+                className="w-full mt-4 p-2 border border-gray-300 rounded-md focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+              />
+            </div>
+            <div className="mt-6 flex justify-end space-x-3">
+           
+              <button
+                onClick={() => setUpdate(false)}
+                className="rounded-md bg-[#A7D0EB] px-3 py-2 text-sm font-bold text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+              >
+                Cancella
+              </button>
+              <button
+                onClick={handleUpdateSubcategory}
+                className="rounded-md bg-[#A7D0EB] px-3 py-2 text-sm font-bold text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+              >
+                Crea
+              </button>
+            </div>
+          </Dialog.Panel>
+        </div>
+      </Dialog>
+
+
 
 
         {/* Modal di conferma */}

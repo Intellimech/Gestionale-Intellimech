@@ -3,6 +3,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { ToastContainer, toast } from 'react-toastify';
+import { XMarkIcon, TrashIcon ,PencilSquareIcon, ArrowRightStartOnRectangleIcon } from '@heroicons/react/20/solid'
 import 'react-toastify/dist/ReactToastify.css';
 
 import { Dialog } from '@headlessui/react';
@@ -17,6 +18,11 @@ export default function CategoryTable() {
   const [sortColumn, setSortColumn] = useState('');
   const [sortDirection, setSortDirection] = useState('asc');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [update, setUpdate] = useState(false);
+  const [CategoryName, setCategoryName] = useState('');
+  const [CategoryCode, setCategoryCode] = useState('');
+  const [CategoryID, setCategoryID] = useState('');
+  
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState('');
   const tableRef = useRef(null);
@@ -66,6 +72,31 @@ export default function CategoryTable() {
       setSortDirection('asc');
     }
   };
+  
+  const handleUpdateCategory = () => {
+    axios
+      .put(
+        `${process.env.REACT_APP_API_URL}/category/update`, 
+        { id: CategoryID, name: CategoryName}
+      )
+      .then((response) => {
+        setCategories([...categories, response.data.categories]);
+        setCategoryName('');
+        setCategoryCode('');
+        setUpdate(false);
+        setIsConfirmModalOpen(false); // Chiude la modale di conferma
+  
+        // Mostra la notifica di successo
+        toast.success('Categoria modificata con successo!');
+      })
+      .catch((error) => {
+        console.error('Errore durante la modifica della categoria:', error);
+        
+        // Mostra la notifica di errore
+        toast.error('Creazione della categoria fallita.');
+      });
+  };
+
 
   const compareValues = (a, b) => {
     if (typeof a === 'string' && typeof b === 'string') {
@@ -84,7 +115,7 @@ export default function CategoryTable() {
 
   const filteredCategories = categories.filter((item) => {
     return (
-      (searchQueries.id_category === '' || item.id_category.toString().includes(searchQueries.id_category.toString())) &&
+      (searchQueries.id_category === '' || item.id_category?.toString().includes(searchQueries.id_category?.toString())) &&
       (searchQueries.name === '' || item.name.toLowerCase().includes(searchQueries.name.toLowerCase()))
     );
   });
@@ -106,7 +137,7 @@ export default function CategoryTable() {
       'data:text/csv;charset=utf-8,' +
       ['ID,Name'].concat(
         sortedCategories.map((category) =>
-          [category.id_category, category.name].join(',')
+          [category?.id_category, category?.name].join(',')
         )
       ).join('\n');
 
@@ -121,6 +152,29 @@ export default function CategoryTable() {
 
   const handleCreateCategory = () => {
     setIsConfirmModalOpen(true);
+  };
+    
+  const deleteItem = async (CategoryID) => {
+    try {
+      const response = await axios.delete(
+        `${process.env.REACT_APP_API_URL}/category/delete/${CategoryID}`
+      );
+  
+      // Mostra una notifica di successo
+      toast.success('Categoria cancellata');
+      console.log('Deleted:', response.data);
+  
+      // Aggiorna la lista locale (se gestita in stato)
+      setCategories((prevsubs) =>
+        prevsubs.filter((sub) => sub.id !== CategoryID)
+      );
+    } catch (error) {
+      console.error('Errore nella cancellazione: ', error.response?.data || error.message);
+  
+      // Mostra una notifica di errore
+      toast.error('Fallimento');
+    }
+    
   };
 
   const confirmCreateCategory = () => {
@@ -201,7 +255,9 @@ export default function CategoryTable() {
                     <tr>
                       <th scope="col" className="px-0 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('id_category')}>
                         ID
-                        {sortColumn === 'id_category' && sortDirection !== '' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                        {sortColumn === 'id_category' && sortDirection !== ''? (
+                      sortDirection === 'asc' ? null : null 
+                    ) : null}
                         <br />
                         <input
                           value={searchQueries.id_category}
@@ -215,7 +271,9 @@ export default function CategoryTable() {
 
                       <th scope="col" className="px-1.5 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
                         Nome
-                        {sortColumn === 'name' && sortDirection !== '' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                        {sortColumn === 'name' && sortDirection !== '' ? (
+                      sortDirection === 'asc' ? null : null 
+                    ) : null}
                         <br />
                         <input
                           value={searchQueries.name}
@@ -231,9 +289,45 @@ export default function CategoryTable() {
                   </thead>
                   <tbody className="divide-y divide-gray-200">
                     {sortedCategories.map((category) => (
-                      <tr key={category.id_category}>
-                        <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{category.id_category}</td>
-                        <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{category.name}</td>
+                      <tr key={category?.id_category}>
+                        <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{category?.id_category}</td>
+                        <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{category?.name}</td>
+                        <td className="whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
+                        <div className="flex items-center space-x-2">
+                          
+                          <button 
+                            type="button" 
+                            className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
+                            onClick={() => {
+                              setUpdate(true);
+                              setCategoryName(category?.name);
+                              setCategoryID(category?.id_category);
+                            }}
+                          >
+            
+                            <PencilSquareIcon className="h-5 w-4 text-gray-500" />
+                          </button>
+                         
+                          
+                        </div>
+                      </td>
+                      <td className="whitespace-nowrap py-2 pl-3 pr-4 text-left text-sm font-medium sm:pr-3">
+                        <div className="flex items-right space-x-2">
+                          
+                          <button 
+                            type="button" 
+                            className="inline-flex items-right rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
+                            onClick={() => {
+                              deleteItem(category?.id_category);
+                            }}
+                          >
+            
+                            <TrashIcon className="h-5 w-4 text-gray-500" />
+                          </button>
+                         
+                          
+                        </div>
+                      </td>
                       </tr>
                     ))}
                   </tbody>
@@ -274,6 +368,41 @@ export default function CategoryTable() {
     </div>
   </Dialog>
 )}
+
+<Dialog open={update} onClose={() => setUpdate(false)} className="relative z-50">
+        <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+        <div className="fixed inset-0 flex items-center justify-center p-4">
+          <Dialog.Panel className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
+            <Dialog.Title className="text-lg font-semibold text-gray-900">Modifica una Categoria</Dialog.Title>
+            <div className="mt-4">
+              <input
+                type="text"
+                placeholder="Nome di Categoria"
+                value={CategoryName}
+                onChange={(e) => setCategoryName(e.target.value)}
+                className="w-full mt-2 p-2 border border-gray-300 rounded-md focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+              />
+             
+            </div>
+            <div className="mt-6 flex justify-end space-x-3">
+           
+              <button
+                onClick={() => setUpdate(false)}
+                className="rounded-md bg-[#A7D0EB] px-3 py-2 text-sm font-bold text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+              >
+                Cancella
+              </button>
+              <button
+                onClick={handleUpdateCategory}
+                className="rounded-md bg-[#A7D0EB] px-3 py-2 text-sm font-bold text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+              >
+                Crea
+              </button>
+            </div>
+          </Dialog.Panel>
+        </div>
+      </Dialog>
+
 
       {isConfirmModalOpen && (
         <Dialog as="div" open={isConfirmModalOpen} onClose={() => setIsConfirmModalOpen(false)} className="relative z-50">

@@ -4,6 +4,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { XMarkIcon, TrashIcon ,PencilSquareIcon, ArrowRightStartOnRectangleIcon } from '@heroicons/react/20/solid'
 
 import { Dialog } from '@headlessui/react';
 
@@ -19,6 +20,11 @@ export default function ProjectTypeTable() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [newProjectTypeName, setNewProjectTypeName] = useState('');
+  
+  const [update, setUpdate] = useState(false);
+  const [ProjectTypeName, setProjectTypeName] = useState('');
+  const [ProjectTypeCode, setProjectTypeCode] = useState('');
+  const [ProjectTypeID, setProjectTypeID] = useState('');
   const [newProjectTypeCode, setNewProjectTypeCode] = useState('');
   const tableRef = useRef(null);
 
@@ -89,8 +95,9 @@ export default function ProjectTypeTable() {
 
   const filteredProjectTypes = projecttypes?.filter((item) => {
     return (
-      (searchQueries?.id_projecttype === '' || item.id_projecttype.toString().includes(searchQueries?.id_projecttype.toString())) &&
-      (searchQueries?.name === '' || item.description.toLowerCase().includes(searchQueries?.name.toLowerCase()))
+      (searchQueries?.id_projecttype === '' || item.id_projecttype?.toString().includes(searchQueries?.id_projecttype?.toString())) &&
+      (searchQueries?.name === '' || item.description.toLowerCase().includes(searchQueries?.name.toLowerCase())) &&
+      (searchQueries?.code === '' || item.code.toLowerCase().includes(searchQueries?.code.toLowerCase()))
     );
   });
 
@@ -111,7 +118,7 @@ export default function ProjectTypeTable() {
       'data:text/csv;charset=utf-8,' +
       ['ID,Name'].concat(
         sortedProjectTypes?.map((projecttype) =>
-          [projecttype.id_projecttype, projecttype.name].join(',')
+          [projecttype?.id_projecttype, projecttype?.name].join(',')
         )
       ).join('\n');
 
@@ -157,7 +164,7 @@ export default function ProjectTypeTable() {
         console.error('Error creating projecttype:', error);
         
         // Notifica di errore
-        toast.error('Errore durante la creazione della categoria!', {
+        toast.error('Errore durante la creazione del tipo progetto!', {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -166,6 +173,55 @@ export default function ProjectTypeTable() {
           draggable: true,
           progress: undefined,
         });
+      });
+  };
+
+  
+
+  
+  const deleteItem = async (ProjectTypeID) => {
+    try {
+      const response = await axios.delete(
+        `${process.env.REACT_APP_API_URL}/projecttype/delete/${ProjectTypeID}`
+      );
+  
+      // Mostra una notifica di successo
+      toast.success('Tipo progetto cancellato');
+      console.log('Deleted:', response.data);
+  
+      // Aggiorna la lista locale (se gestita in stato)
+      setProjectTypes((prevsubs) =>
+        prevsubs.filter((sub) => sub.id !== ProjectTypeID)
+      );
+    } catch (error) {
+      console.error('Errore nella cancellazione: ', error.response?.data || error.message);
+  
+      // Mostra una notifica di errore
+      toast.error('Fallimento');
+    }
+    
+  };
+  
+  const handleUpdateProjectType = () => {
+    axios
+      .put(
+        `${process.env.REACT_APP_API_URL}/projecttype/update`, 
+        { id: ProjectTypeID, description: ProjectTypeName, code: ProjectTypeCode }
+      )
+      .then((response) => {
+        setProjectTypes([...projecttypes, response.data.projecttypes]);
+        setProjectTypeName('');
+        setProjectTypeCode('');
+        setUpdate(false);
+  
+        // Mostra la notifica di successo
+        toast.success('Nuovo tipo modificato con successo!');
+      })
+      .catch((error) => {
+        console.error('Errore durante la modifica del tipo progetto:', error);
+        
+        // Mostra la notifica di errore
+        toast.error('Modifica del tipo progetto fallita.');
       });
   };
   
@@ -208,7 +264,7 @@ export default function ProjectTypeTable() {
                     <tr>
                       <th scope="col" className="px-0 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('id_projecttype')}>
                         ID
-                        {sortColumn === 'id_projecttype' && sortDirection !== '' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                        {sortColumn === 'id_projecttype' && sortDirection !== '' ? (sortDirection === 'asc' ? null : null) : null}
                         <br />
                         <input
                           value={searchQueries?.id_projecttype}
@@ -219,10 +275,23 @@ export default function ProjectTypeTable() {
                           rows={1}
                         />
                       </th>
+                      <th scope="col" className="px-0 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('code')}>
+                        Codice
+                        {sortColumn === 'code' && sortDirection !== '' ? (sortDirection === 'asc' ? null : null) : null}
+                        <br />
+                        <input
+                          value={searchQueries?.code}
+                          onClick={(e) => e.stopPropagation()} // Stop click propagation
+                          onChange={handleSearchInputChange('code')}
+                          className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                          placeholder=""
+                          rows={1}
+                        />
+                      </th>
 
                       <th scope="col" className="px-1.5 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
                         Nome
-                        {sortColumn === 'name' && sortDirection !== '' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                        {sortColumn === 'name' && sortDirection !== '' ? (sortDirection === 'asc' ? null : null) : null}
                         <br />
                         <input
                           value={searchQueries?.name}
@@ -238,9 +307,48 @@ export default function ProjectTypeTable() {
                   </thead>
                   <tbody className="divide-y divide-gray-200">
                     {sortedProjectTypes?.map((projecttype) => (
-                      <tr key={projecttype.id_projecttype}>
+                      <tr key={projecttype?.id_projecttype}>
                         <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{projecttype?.id_projecttype}</td>
-                        <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{projecttype.description}</td>
+                        <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{projecttype?.code}</td>
+                        <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{projecttype?.description}</td>
+                        <td className="whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
+                        <div className="flex items-center space-x-2">
+                          
+                          <button 
+                            type="button" 
+                            className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
+                            onClick={() => {
+                              setUpdate(true);
+                              setProjectTypeCode(projecttype?.code);
+                              setProjectTypeName(projecttype?.description);
+                              setProjectTypeID(projecttype?.id_projecttype);
+                            }}
+                          >
+            
+                            <PencilSquareIcon className="h-5 w-4 text-gray-500" />
+                          </button>
+                         
+                          
+                        </div>
+                      </td>
+                      <td className="whitespace-nowrap py-2 pl-3 pr-4 text-left text-sm font-medium sm:pr-3">
+                        <div className="flex items-right space-x-2">
+                          
+                          <button 
+                            type="button" 
+                            className="inline-flex items-right rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
+                            onClick={() => {
+                              deleteItem(projecttype?.id_projecttype);
+                            }}
+                          >
+            
+                            <TrashIcon className="h-5 w-4 text-gray-500" />
+                          </button>
+                         
+                          
+                        </div>
+                      </td>
+
                       </tr>
                     ))}
                   </tbody>
@@ -250,6 +358,46 @@ export default function ProjectTypeTable() {
           </div>
         </div>
       </div>
+      
+<Dialog open={update} onClose={() => setUpdate(false)} className="relative z-50">
+        <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+        <div className="fixed inset-0 flex items-center justify-center p-4">
+          <Dialog.Panel className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
+            <Dialog.Title className="text-lg font-semibold text-gray-900">Modifica un Tipo Progetto</Dialog.Title>
+            <div className="mt-4">
+              <input
+                type="text"
+                placeholder="Nome di Tipo Progetto"
+                value={ProjectTypeName}
+                onChange={(e) => setProjectTypeName(e.target.value)}
+                className="w-full mt-2 p-2 border border-gray-300 rounded-md focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+              />
+              <input
+                type="text"
+                placeholder="Codice Tipo Progetto"
+                value={ProjectTypeCode}
+                onChange={(e) => setProjectTypeCode(e.target.value)}
+                className="w-full mt-4 p-2 border border-gray-300 rounded-md focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+              />
+            </div>
+            <div className="mt-6 flex justify-end space-x-3">
+           
+              <button
+                onClick={() => setUpdate(false)}
+                className="rounded-md bg-[#A7D0EB] px-3 py-2 text-sm font-bold text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+              >
+                Cancella
+              </button>
+              <button
+                onClick={handleUpdateProjectType}
+                className="rounded-md bg-[#A7D0EB] px-3 py-2 text-sm font-bold text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+              >
+                Modifica
+              </button>
+            </div>
+          </Dialog.Panel>
+        </div>
+      </Dialog>
 
       {isModalOpen && (
   <Dialog id="projecttype-modal" as="div" open={isModalOpen} onClose={() => setIsModalOpen(false)} className="relative z-50">

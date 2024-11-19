@@ -218,51 +218,7 @@ const handleSearchInputChange = (column) => (event) => {
 
   return (
     <div className="px-4 sm:px-6 lg:px-8">
-      <Transition.Root show={open} as={Fragment}>
-       <Dialog as="div" className="relative z-50" onClose={setOpen}>
-        <div className="fixed inset-0" />
-          <div className="fixed inset-0 overflow-hidden">
-            <div className="absolute inset-0 overflow-hidden">
-              <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-16">
-                <Transition.Child
-                  as={Fragment}
-                  enter="transform transition ease-in-out duration-500 sm:duration-700"
-                  enterFrom="translate-x-full"
-                  enterTo="translate-x-0"
-                  leave="transform transition ease-in-out duration-500 sm:duration-700"
-                  leaveFrom="translate-x-0"
-                  leaveTo="translate-x-full"
-                >
-                  <Dialog.Panel className="pointer-events-auto w-screen max-w-2xl">
-                    <div className="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
-                      <div className="px-4 sm:px-6">
-                        <div className="flex items-start justify-between">
-                          <Dialog.Title className="text-base font-semibold leading-6 text-gray-900">
-                            Crea un nuovo utente
-                          </Dialog.Title>
-                          <div className="ml-3 flex h-7 items-center">
-                            <button
-                              type="button"
-                              className="relative rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#7fb7d4] focus:ring-offset-2"
-                              onClick={() => setOpen(false)}
-                            >
-                              <span className="absolute -inset-2.5" />
-                              <span className="sr-only">Close panel</span>
-                              <XMarkIcon className="h-6 w-6" aria-hidden="true" />
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="relative mt-6 flex-1 px-4 sm:px-6">{<UserCreateForm />}</div>
-                    </div>
-                  </Dialog.Panel>
-                </Transition.Child>
-              </div>
-            </div>
-          </div>
-        </Dialog>
-      </Transition.Root>
-
+     
 
 
       <div className="flex items-center justify-between mt-4 mb-4">
@@ -279,11 +235,7 @@ const handleSearchInputChange = (column) => (event) => {
             className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"          >
             Esporta
           </button>
-          <button
-            onClick={() => setOpen(true)}
-            className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"          >
-            Crea
-          </button>
+         
         </div>
       </div>
 
@@ -319,7 +271,9 @@ const handleSearchInputChange = (column) => (event) => {
                   
                   <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('email')}>
                     Email
-                    {sortColumn === 'email' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'email' ? (
+                      sortDirection === 'asc' ? null : null 
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.email}
@@ -331,7 +285,9 @@ const handleSearchInputChange = (column) => (event) => {
                   </th>
                   <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
                     Name
-                    {sortColumn === 'name' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'name' ? (
+                      sortDirection === 'asc' ? null : null 
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.name}
@@ -343,7 +299,9 @@ const handleSearchInputChange = (column) => (event) => {
                   </th>
                   <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('surname')}>
                     Surname
-                    {sortColumn === 'surname' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'surname' ? (
+                      sortDirection === 'asc' ? null : null 
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.surname}
@@ -355,7 +313,9 @@ const handleSearchInputChange = (column) => (event) => {
                   </th>
                   <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('username')}>
                     Username
-                    {sortColumn === 'username' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'username' ? (
+                      sortDirection === 'asc' ? null : null 
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.username}
@@ -367,7 +327,9 @@ const handleSearchInputChange = (column) => (event) => {
                   </th>
                   <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('updatedAt')}>
                     Updated At
-                    {sortColumn === 'updatedAt' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'updatedAt' ? (
+                      sortDirection === 'asc' ? null : null 
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.updatedAt}
@@ -379,7 +341,9 @@ const handleSearchInputChange = (column) => (event) => {
                   </th>
                   <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('createdAt')}>
                     Created At
-                    {sortColumn === 'createdAt' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'createdAt'? (
+                      sortDirection === 'asc' ? null : null 
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.createdAt}
@@ -391,7 +355,9 @@ const handleSearchInputChange = (column) => (event) => {
                   </th>
                   <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('lastLoginAt')}>
                     Last Login
-                    {sortColumn === 'lastLoginAt' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'lastLoginAt' ? (
+                      sortDirection === 'asc' ? null : null 
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.lastLoginAt}
@@ -403,7 +369,9 @@ const handleSearchInputChange = (column) => (event) => {
                   </th>
                   <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('role')}>
                     Role
-                    {sortColumn === 'role' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'role' ? (
+                      sortDirection === 'asc' ? null : null 
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.role}
@@ -415,7 +383,9 @@ const handleSearchInputChange = (column) => (event) => {
                   </th>
                   <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('status')}>
                     Stato
-                    {sortColumn === 'status' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'status' ? (
+                      sortDirection === 'asc' ? null : null 
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.status}

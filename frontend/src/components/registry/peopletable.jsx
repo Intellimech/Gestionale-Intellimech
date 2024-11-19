@@ -1,9 +1,11 @@
 import { Fragment, useState, useRef, useEffect } from 'react';
 import { Dialog, Menu, Transition, Disclosure } from '@headlessui/react';
-import { ChevronRightIcon, XMarkIcon, CheckBadgeIcon } from '@heroicons/react/20/solid';
+import { ChevronRightIcon, XMarkIcon, TrashIcon, CheckBadgeIcon } from '@heroicons/react/20/solid';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import UpdateForm from './peopleupdate';
+import 'react-toastify/dist/ReactToastify.css'
+import { ToastContainer, toast } from 'react-toastify';
 
 import {  PencilSquareIcon, ArrowRightStartOnRectangleIcon } from '@heroicons/react/20/solid'
 
@@ -27,6 +29,7 @@ export default function Example() {
   const [indeterminate, setIndeterminate] = useState(false);
   const [selectedPeople, setSelectedPeople] = useState([]);
   const [people, setPeople] = useState([]);
+  const [update, setUpdate] = useState(false);
   const [open, setOpen] = useState(false);
   const [selectedPerson, setSelectedPerson] = useState(null); // Stato per la persona selezionata
 
@@ -42,6 +45,30 @@ export default function Example() {
     setChecked(!checked && !indeterminate);
     setIndeterminate(false);
   }
+  
+  const deleteItem = async (userID) => {
+    try {
+      const response = await axios.delete(
+        `${process.env.REACT_APP_API_URL}/user/delete/${userID}`
+      );
+  
+      // Mostra una notifica di successo
+      toast.success('Utente cancellato');
+      console.log('Deleted:', response.data);
+  
+      // Aggiorna la lista locale (se gestita in stato)
+      setPeople((prevsubs) =>
+        prevsubs.filter((sub) => sub.id !== userID)
+      );
+    } catch (error) {
+      console.error('Errore nella cancellazione: ', error.response?.data || error.message);
+  
+      // Mostra una notifica di errore
+      toast.error('Fallimento');
+    }
+    
+  };
+  
 
   function deleteAll() {
     const selectedPeopleCopy = [...selectedPeople];
@@ -154,9 +181,54 @@ export default function Example() {
           </div>
         </Dialog>
       </Transition.Root>
+      <Transition.Root show={open} as={Fragment}>
+       <Dialog as="div" className="relative z-50" onClose={setOpen}>
+        <div className="fixed inset-0" />
+          <div className="fixed inset-0 overflow-hidden">
+            <div className="absolute inset-0 overflow-hidden">
+              <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-16">
+                <Transition.Child
+                  as={Fragment}
+                  enter="transform transition ease-in-out duration-500 sm:duration-700"
+                  enterFrom="translate-x-full"
+                  enterTo="translate-x-0"
+                  leave="transform transition ease-in-out duration-500 sm:duration-700"
+                  leaveFrom="translate-x-0"
+                  leaveTo="translate-x-full"
+                >
+                  <Dialog.Panel className="pointer-events-auto w-screen max-w-2xl">
+                    <div className="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
+                      <div className="px-4 sm:px-6">
+                        <div className="flex items-start justify-between">
+                          <Dialog.Title className="text-base font-semibold leading-6 text-gray-900">
+                            Crea un nuovo utente
+                          </Dialog.Title>
+                          <div className="ml-3 flex h-7 items-center">
+                            <button
+                              type="button"
+                              className="relative rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#7fb7d4] focus:ring-offset-2"
+                              onClick={() => setOpen(false)}
+                            >
+                              <span className="absolute -inset-2.5" />
+                              <span className="sr-only">Close panel</span>
+                              <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="relative mt-6 flex-1 px-4 sm:px-6">{<UserCreateForm />}</div>
+                    </div>
+                  </Dialog.Panel>
+                </Transition.Child>
+              </div>
+            </div>
+          </div>
+        </Dialog>
+      </Transition.Root>
+
 
 <div className="py-4">
-        
+        <ToastContainer/>
       </div>
 
       <div className="flex items-center justify-between">
@@ -170,7 +242,11 @@ export default function Example() {
               className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"            >
               Esporta
             </button>
-            
+            <button
+            onClick={() => setOpen(true)}
+            className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"          >
+            Crea
+          </button>
           </div>
       </div>
       <div className="mt-8 flow-root">
@@ -315,6 +391,23 @@ export default function Example() {
                             <PencilSquareIcon className="h-5 w-4 text-gray-500" />
                           </button>
                       </td> 
+                      <td className="whitespace-nowrap py-2 pl-3 pr-4 text-left text-sm font-medium sm:pr-3">
+                        <div className="flex items-right space-x-2">
+                          
+                          <button 
+                            type="button" 
+                            className="inline-flex items-right rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
+                            onClick={() => {
+                              deleteItem(person.id_user);
+                            }}
+                          >
+            
+                            <TrashIcon className="h-5 w-4 text-gray-500" />
+                          </button>
+                         
+                          
+                        </div>
+                      </td>
                     </tr>
                   ))}
                 </tbody>

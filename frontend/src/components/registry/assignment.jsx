@@ -4,6 +4,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { XMarkIcon, TrashIcon ,PencilSquareIcon, ArrowRightStartOnRectangleIcon } from '@heroicons/react/20/solid'
 
 import { Dialog } from '@headlessui/react';
 
@@ -21,10 +22,15 @@ export default function AssignmentTable() {
   const [newAssignmentName, setNewAssignmentName] = useState('');
   const [newAssignmentCode, setNewAssignmentCode] = useState('');
   const tableRef = useRef(null);
+  const [update, setUpdate] = useState(false);
+  const [AssignmentName, setAssignmentName] = useState('');
+  const [AssignmentCode, setAssignmentCode] = useState('');
+  const [AssignmentID, setAssignmentID] = useState('');
 
   const [searchQueries, setSearchQueries] = useState({
     name: '',
-    id_assignment: ''
+    id_assignment: '',
+    code: ''
   });
 
   useEffect(() => {
@@ -67,6 +73,55 @@ export default function AssignmentTable() {
       setSortDirection('asc');
     }
   };
+  
+  
+  const deleteItem = async (AssignmentID) => {
+    try {
+      const response = await axios.delete(
+        `${process.env.REACT_APP_API_URL}/assignment/delete/${AssignmentID}`
+      );
+  
+      // Mostra una notifica di successo
+      toast.success('Incarico cancellato');
+      console.log('Deleted:', response.data);
+  
+      // Aggiorna la lista locale (se gestita in stato)
+      setAssignments((prevsubs) =>
+        prevsubs.filter((sub) => sub.id !== AssignmentID)
+      );
+    } catch (error) {
+      console.error('Errore nella cancellazione: ', error.response?.data || error.message);
+  
+      // Mostra una notifica di errore
+      toast.error('Fallimento');
+    }
+    
+  };
+  
+  const handleUpdateAssignment = () => {
+    axios
+      .put(
+        `${process.env.REACT_APP_API_URL}/assignment/update`, 
+        { id: AssignmentID, name: AssignmentName, code: AssignmentCode }
+      )
+      .then((response) => {
+        setAssignments([...assignments, response.data.assignments]);
+        setAssignmentName('');
+        setAssignmentCode('');
+        setUpdate(false);
+        setIsConfirmModalOpen(false); // Chiude la modale di conferma
+  
+        // Mostra la notifica di successo
+        toast.success('Incarico modficato con successo!');
+      })
+      .catch((error) => {
+        console.error('Errore durante la modifica di incarico:', error);
+        
+        // Mostra la notifica di errore
+        toast.error('Modifica di incarico fallita.');
+      });
+  };
+
 
   const compareValues = (a, b) => {
     if (typeof a === 'string' && typeof b === 'string') {
@@ -86,7 +141,8 @@ export default function AssignmentTable() {
   const filteredAssignments = assignments.filter((item) => {
     return (
       (searchQueries.id_assignment === '' || item.id_assignment.toString().includes(searchQueries.id_assignment.toString())) &&
-      (searchQueries.name === '' || item.description.toLowerCase().includes(searchQueries.name.toLowerCase()))
+      (searchQueries.name === '' || item.description.toLowerCase().includes(searchQueries.name.toLowerCase()))  &&
+      (searchQueries.code === '' || item.code.toLowerCase().includes(searchQueries.code.toLowerCase()))
     );
   });
 
@@ -139,7 +195,7 @@ export default function AssignmentTable() {
         setIsConfirmModalOpen(false);
         
         // Notifica di successo
-        toast.success('Categoria creata con successo!', {
+        toast.success('Incarico creata con successo!', {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -153,7 +209,7 @@ export default function AssignmentTable() {
         console.error('Error creating assignment:', error);
         
         // Notifica di errore
-        toast.error('Errore durante la creazione della categoria!', {
+        toast.error('Errore durante la creazione di incarico!', {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -202,9 +258,9 @@ export default function AssignmentTable() {
                 <table className="min-w-full table-fixed divide-y divide-gray-300">
                   <thead>
                     <tr>
-                      <th scope="col" className="px-0 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('id_assignment')}>
+                      <th scope="col" className="px-2 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('id_assignment')}>
                         ID
-                        {sortColumn === 'id_assignment' && sortDirection !== '' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                        {sortColumn === 'id_assignment' && sortDirection !== '' ? (sortDirection === 'asc' ? null : null) : null}
                         <br />
                         <input
                           value={searchQueries?.id_assignment}
@@ -215,10 +271,23 @@ export default function AssignmentTable() {
                           rows={1}
                         />
                       </th>
+                      <th scope="col" className="px-2 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('code')}>
+                        Codice
+                        {sortColumn === 'code' && sortDirection !== '' ? (sortDirection === 'asc' ? null : null) : null}
+                        <br />
+                        <input
+                          value={searchQueries?.code}
+                          onClick={(e) => e.stopPropagation()} // Stop click propagation
+                          onChange={handleSearchInputChange('code')}
+                          className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                          placeholder=""
+                          rows={1}
+                        />
+                      </th>
 
                       <th scope="col" className="px-1.5 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
                         Nome
-                        {sortColumn === 'name' && sortDirection !== '' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                        {sortColumn === 'name' && sortDirection !== '' ? (sortDirection === 'asc' ? null : null) : null}
                         <br />
                         <input
                           value={searchQueries.name}
@@ -234,9 +303,48 @@ export default function AssignmentTable() {
                   </thead>
                   <tbody className="divide-y divide-gray-200">
                     {sortedAssignments.map((assignment) => (
-                      <tr key={assignment.id_assignment}>
-                        <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{assignment.id_assignment}</td>
-                        <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{assignment.description}</td>
+                      <tr key={assignment?.id_assignment}>
+                        <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{assignment?.id_assignment}</td>
+                        <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{assignment?.code}</td>
+                        <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{assignment?.description}</td>
+                        <td className="whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
+                        <div className="flex items-center space-x-2">
+                          
+                          <button 
+                            type="button" 
+                            className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
+                            onClick={() => {
+                              setUpdate(true);
+                              setAssignmentCode(assignment?.code);
+                              setAssignmentName(assignment?.description);
+                              setAssignmentID(assignment?.id_assignment);
+                            }}
+                          >
+            
+                            <PencilSquareIcon className="h-5 w-4 text-gray-500" />
+                          </button>
+                         
+                          
+                        </div>
+                      </td>
+                      <td className="whitespace-nowrap py-2 pl-3 pr-4 text-left text-sm font-medium sm:pr-3">
+                        <div className="flex items-right space-x-2">
+                          
+                          <button 
+                            type="button" 
+                            className="inline-flex items-right rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
+                            onClick={() => {
+                              deleteItem(assignment.id_assignment);
+                            }}
+                          >
+            
+                            <TrashIcon className="h-5 w-4 text-gray-500" />
+                          </button>
+                         
+                          
+                        </div>
+                      </td>
+
                       </tr>
                     ))}
                   </tbody>
@@ -246,6 +354,48 @@ export default function AssignmentTable() {
           </div>
         </div>
       </div>
+
+      
+
+<Dialog open={update} onClose={() => setUpdate(false)} className="relative z-50">
+        <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+        <div className="fixed inset-0 flex items-center justify-center p-4">
+          <Dialog.Panel className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
+            <Dialog.Title className="text-lg font-semibold text-gray-900">Modifica Incarico</Dialog.Title>
+            <div className="mt-4">
+              <input
+                type="text"
+                placeholder="Nome Incarico"
+                value={AssignmentName}
+                onChange={(e) => setAssignmentName(e.target.value)}
+                className="w-full mt-2 p-2 border border-gray-300 rounded-md focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+              />
+              <input
+                type="text"
+                placeholder="Codice"
+                value={AssignmentCode}
+                onChange={(e) => setAssignmentCode(e.target.value)}
+                className="w-full mt-4 p-2 border border-gray-300 rounded-md focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+              />
+            </div>
+            <div className="mt-6 flex justify-end space-x-3">
+           
+              <button
+                onClick={() => setUpdate(false)}
+                className="rounded-md bg-[#A7D0EB] px-3 py-2 text-sm font-bold text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+              >
+                Cancella
+              </button>
+              <button
+                onClick={handleUpdateAssignment}
+                className="rounded-md bg-[#A7D0EB] px-3 py-2 text-sm font-bold text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+              >
+                Modifica
+              </button>
+            </div>
+          </Dialog.Panel>
+        </div>
+      </Dialog>
 
       {isModalOpen && (
   <Dialog id="assignment-modal" as="div" open={isModalOpen} onClose={() => setIsModalOpen(false)} className="relative z-50">

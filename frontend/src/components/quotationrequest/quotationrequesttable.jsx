@@ -35,7 +35,7 @@ export default function Example({ permissions }) {
   const [selectedProjectType, setSelectedProjectType] = useState('');
   const [selectedArea, setSelectedArea] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
-  const [sortColumn, setSortColumn] = useState('');
+  const [sortColumn, setSortColumn] = useState('name');
   const [sortDirection, setSortDirection] = useState('desc');
   const [filterType, setFilterType] = useState('name');
   const [searchQuery, setSearchQuery] = useState('');
@@ -76,7 +76,6 @@ export default function Example({ permissions }) {
       return a < b ? -1 : a > b ? 1 : 0;
     }
   };
-
   const filteredRequest = quotationrequests.filter((item) => {
     return (
       (searchQueries?.name === '' || item?.name?.toLowerCase().includes(searchQueries?.name?.toLowerCase())) &&
@@ -95,7 +94,6 @@ export default function Example({ permissions }) {
   });
 
   
-
   const handleSort = (columnName) => {
     if (sortColumn === columnName) {
       if (sortDirection === 'desc') {
@@ -105,7 +103,7 @@ export default function Example({ permissions }) {
         setSortColumn('');
         setSortDirection('desc');
       } else {
-        setSortDirection('asc');
+        setSortDirection('desc');
       }
     } else {
       setSortColumn(columnName);
@@ -113,38 +111,36 @@ export default function Example({ permissions }) {
     }
   };
   
-  const sortedRequest = filteredRequest.sort((a, b) => {
-    const getValue = (item, column) => {
-      switch (column) {
-        case 'Company':
-          return item.Company?.name || '';
-          case 'clienttype':
-            return item?.companytype || '';
-        case 'assignment':
-          return item.Assignment?.code || '';
-        case 'data':
+const sortedRequest = filteredRequest.sort((a, b) => {
+  const getValue = (item, column) => {
+    switch (column) {
+      case 'Company':
+        return item.Company?.name || '';
+      case 'clienttype':
+        return item?.companytype || '';
+      case 'assignment':
+        return item.Assignment?.code || '';
+      case 'data':
         return item.createdAt || '';
-        case 'projecttype':
-          return item.ProjectType?.code || '';
-        case 'area':
-          return item.Technicaltechnicalarea?.name || '';
-        case 'createdByUser':
-          return item.createdByUser ? `${item.createdByUser.name} ${item.createdByUser.surname}` : '';
-        default:
-          return item[column] || '';
-      }
-    };
-   
-    const valueA = getValue(a, sortColumn);
-    const valueB = getValue(b, sortColumn);
-  
-    if (sortDirection === 'desc') {
-      return compareValues(valueA, valueB);
-    } else {
-      return compareValues(valueB, valueA);
+      case 'projecttype':
+        return item.ProjectType?.code || '';
+      case 'area':
+        return item.Technicaltechnicalarea?.name || '';
+      case 'createdByUser':
+        return item.createdByUser ? `${item.createdByUser.name} ${item.createdByUser.surname}` : '';
+      default:
+        return item[column] || '';
     }
-  });
-  
+  };
+  const valueA = getValue(a, sortColumn);
+  const valueB = getValue(b, sortColumn);
+
+  if (sortDirection === 'desc') {
+    return compareValues(valueB, valueA); // Invertito l'ordine qui per sort decrescente
+  } else {
+    return compareValues(valueA, valueB);
+  }
+});
 
   function exportData() {
     const csvContent =
@@ -394,7 +390,7 @@ export default function Example({ permissions }) {
               Esporta
             </button>
             <button
-              onClick={() => setShowCreate(true)}
+              onClick={() => setOpen(true)}
               className="block rounded-md bg-[#A7D0EB] px-2 py-0.5 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
             >
               Crea
@@ -410,32 +406,38 @@ export default function Example({ permissions }) {
               <thead className="mb-2">
                 <tr>
                   <th scope="col" className="w-1/8 px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
-                     RDO
-                    {sortColumn === 'name' ? (sortDirection === 'desc' ? <ArrowUpIcon className="h-3 w-3 inline ml-1" /> : <ArrowDownIcon className="h-3 w-3 inline ml-1" />) : null}
+                  <br /> RDO
+                    {sortColumn === 'name' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries?.name}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('name')}
-                      className=" mt-5 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
+                      className=" mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
                       placeholder=""
                     />
                   </th>
                   <th scope="col" className="w-1/5 px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
-                    Cliente
-                    {sortColumn === 'Company' ? (sortDirection === 'desc' ? <ArrowUpIcon className="h-3 w-3 inline ml-1" /> : <ArrowDownIcon className="h-3 w-3 inline ml-1" />) : null}
+                  <br /> Cliente
+                    {sortColumn === 'Company'? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.Company}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('Company')}
-                      className="mt-5 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
+                      className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
                       placeholder=""
                     />
                   </th>
                   <th scope="col" className=" mb-1w-1/8 px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
-                    Tipo Cliente
-                    {sortColumn === 'clienttype' ? (sortDirection === 'desc' ? <ArrowUpIcon className="h-3 w-3 inline ml-1" /> : <ArrowDownIcon className="h-3 w-3 inline ml-1" />) : null}
+                    Tipo  <br /> Cliente
+                    {sortColumn === 'clienttype'? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.clienttype}
@@ -446,32 +448,39 @@ export default function Example({ permissions }) {
                     />
                   </th>
                   <th scope="col" className="w-1/8 px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
-                    Incarico
-                    {sortColumn === 'assignment' ? (sortDirection === 'desc' ? <ArrowUpIcon className="h-3 w-3 inline ml-1" /> : <ArrowDownIcon className="h-3 w-3 inline ml-1" />) : null}
+                  <br /> Incarico
+                    {sortColumn === 'assignment'? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.assignment}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('assignment')}
-                      className="mt-5 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
-                      placeholder=""
-                    />
-                  </th>
-                  <th scope="col" className="w-1/8 px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
-                    Tipo Progetto
-                    {sortColumn === 'projecttype' ? (sortDirection === 'desc' ? <ArrowUpIcon className="h-3 w-3 inline ml-1" /> : <ArrowDownIcon className="h-3 w-3 inline ml-1" />) : null}
-                    <br />
-                    <input
-                      value={searchQueries.projecttype}
-                      onClick={(e) => e.stopPropagation()}
-                      onChange={handleSearchInputChange('projecttype')}
                       className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
                       placeholder=""
                     />
                   </th>
                   <th scope="col" className="w-1/8 px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
-                    Area Tecnica
-                    {sortColumn === 'technicalarea' ? (sortDirection === 'desc' ? <ArrowUpIcon className="h-3 w-3 inline ml-1" /> : <ArrowDownIcon className="h-3 w-3 inline ml-1" />) : null}
+                    Tipo  <br />
+                    Progetto
+                    {sortColumn === 'projecttype' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
+                    <br />
+                    <input
+                      value={searchQueries.projecttype}
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={handleSearchInputChange('projecttype')}
+                      className="mt-1 px-1 py-0.5  w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
+                      placeholder=""
+                    />
+                  </th>
+                  <th scope="col" className="w-1/8 px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
+                    Area  <br /> Tecnica
+                    {sortColumn === 'technicalarea'? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.technicalarea}
@@ -483,50 +492,58 @@ export default function Example({ permissions }) {
                   </th>
                   
                   <th scope="col" className="w-1/4 px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('description')}>
-                     Descrizione
-                    {sortColumn === 'description' ? (sortDirection === 'desc' ? <ArrowUpIcon className="h-3 w-3 inline ml-1" /> : <ArrowDownIcon className="h-3 w-3 inline ml-1" />) : null}
+                  <br />Descrizione
+                    {sortColumn === 'description' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.description}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('description')}
-                      className="mt-5 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
+                      className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
                       placeholder=""
                     />
                   </th>
                   <th scope="col" className="w-1/8 px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
-                    Creazione
-                    {sortColumn === 'data' ? (sortDirection === 'desc' ? <ArrowUpIcon className="h-3 w-3 inline ml-1" /> : <ArrowDownIcon className="h-3 w-3 inline ml-1" />) : null}
+                  <br />Creazione
+                    {sortColumn === 'data' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.data}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('data')}
-                      className="mt-5 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
+                      className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
                       placeholder=""
                     />
                   </th>
                   <th scope="col" className="w-1/8 px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
-                    Stato
-                    {sortColumn === 'status' ? (sortDirection === 'desc' ? <ArrowUpIcon className="h-3 w-3 inline ml-1" /> : <ArrowDownIcon className="h-3 w-3 inline ml-1" />) : null}
+                  <br />Stato
+                    {sortColumn === 'status' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.status}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('status')}
-                      className="mt-5 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
+                      className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
                       placeholder=""
                     />
                   </th>
                   <th scope="col" className="w-1/8 px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
-                    Creata da
-                    {sortColumn === 'createdByUser' ? (sortDirection === 'desc' ? <ArrowUpIcon className="h-3 w-3 inline ml-1" /> : <ArrowDownIcon className="h-3 w-3 inline ml-1" />) : null}
+                  <br /> Creata da
+                    {sortColumn === 'createdByUser' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.createdByUser}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('createdByUser')}
-                      className="mt-5 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
+                      className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
                       placeholder=""
                     />
                   </th>
@@ -559,23 +576,23 @@ export default function Example({ permissions }) {
                     <td className="text-xs text-gray-500 px-2 py-2 max-w-[160px] whitespace-nowrap overflow-hidden text-ellipsis">
                     {quotationrequest.Company?.name}
                     </td>
-                    <td className="text-xs text-center text-center text-gray-500 px-2 py-2 max-w-[100px] whitespace-nowrap overflow-hidden text-ellipsis">
+                    <td className="text-xs text-left text-gray-500 px-2 py-2 max-w-[100px] whitespace-nowrap overflow-hidden text-ellipsis">
                        {quotationrequest.companytype}
                     </td>
 
                   
-                    <td className="text-xs text-gray-500 text-center  px-2 py-2 max-w-[90px]  whitespace-nowrap overflow-hidden text-ellipsis">
+                    <td className="text-xs text-gray-500 text-left  px-2 py-2 max-w-[90px]  whitespace-nowrap overflow-hidden text-ellipsis">
                     {quotationrequest.Assignment?.code}
                     </td>
-                    <td className="text-xs text-gray-500 text-center px-2 py-2 max-w-[90px] whitespace-nowrap overflow-hidden text-ellipsis">
+                    <td className="text-xs text-gray-500 text-left px-2 py-2 max-w-[90px] whitespace-nowrap overflow-hidden text-ellipsis">
                     {quotationrequest.ProjectType?.code}
                     </td>
-                    <td className="text-xs text-gray-500 text-center  px-2 py-2 max-w-[90px] whitespace-nowrap overflow-hidden text-ellipsis">
+                    <td className="text-xs text-gray-500 text-left  px-2 py-2 max-w-[90px] whitespace-nowrap overflow-hidden text-ellipsis">
                     {quotationrequest.TechnicalArea.code}
                     </td>
 
                       <td className="text-xs text-gray-500 px-2 py-2 min-w-[170px] whitespace-nowrap overflow-hidden text-ellipsis">
-                      {quotationrequest.description.split(" ").slice(0, 2).join(" ") + (quotationrequest.description.split(" ").length > 2 ? "..." : "")}
+                      {quotationrequest.description.split(" ").slice(0, 10).join(" ") + (quotationrequest.description.split(" ").length > 2 ? "..." : "")}
                     </td>
                     
                     <td className="text-xs text-gray-500 px-2 py-2 max-w-[100px] whitespace-nowrap overflow-hidden text-ellipsis">
@@ -593,6 +610,9 @@ export default function Example({ permissions }) {
                       ) : quotationrequest.status === 'Rifiutata' ? (
                         <span className="px-1.5 py-0.5 inline-flex text-xs leading-4 font-medium rounded-full bg-gray-100 text-red-600">
                           Rifiutata
+                        </span>   ) : quotationrequest.status === 'Utilizzata' ? (
+                        <span className="px-1.5 py-0.5 inline-flex text-xs leading-4 font-medium rounded-full bg-gray-100 text-blue-600">
+                          Utilizzata
                         </span>
                       ) : quotationrequest.status === 'Scaduta' ? (
                         <span className="px-1.5 py-0.5 inline-flex text-xs leading-4 font-medium rounded-full bg-gray-100 text-red-600">
@@ -613,7 +633,7 @@ export default function Example({ permissions }) {
                           type="button"
                           className="inline-flex items-center rounded bg-white px-1.5 py-0.5 text-xs font-medium text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
                           onClick={() => Accept(quotationrequest.id_quotationrequest)}
-                          disabled={['Approvata', 'Rifiutata', 'Scaduta'].includes(quotationrequest.status)}
+                          disabled={['Approvata', 'Rifiutata', 'Scaduta', 'Utilizzata'].includes(quotationrequest.status)}
                         >
                           <CheckIcon className="h-4 w-3 text-gray-500" />
                         </button>
@@ -621,7 +641,7 @@ export default function Example({ permissions }) {
                           type="button"
                           className="inline-flex items-center rounded bg-white px-1.5 py-0.5 text-xs font-medium text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
                           onClick={() => Refuse(quotationrequest.id_quotationrequest)}
-                          disabled={['Approvata', 'Rifiutata', 'Scaduta'].includes(quotationrequest.status)}
+                          disabled={['Approvata', 'Rifiutata', 'Scaduta', 'Utilizzata'].includes(quotationrequest.status)}
                         >
                           <XMarkIcon className="h-4 w-3 text-gray-500" />
                         </button>

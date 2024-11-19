@@ -15,85 +15,98 @@ export default function UserCreateForm() {
   const [selectedTechnicalArea, setSelectedTechnicalArea] = useState(null);
   const [externalCode, setExternalCode] = useState('');
 
-  useEffect(() => {
-    // Fetch data for companies, project types, assignments, and technical areas
-    axios.get(`${process.env.REACT_APP_API_URL}/company/read`, { params: { filter: 'client' } })
-      .then((response) => {
-        setCompany(response.data.value.map((item) => ({
-          value: item.id_company,
-          label: item.name,
-        })));
-      })
-      .catch((error) => console.error('Error fetching company data:', error));
+ 
 
-    axios.get(`${process.env.REACT_APP_API_URL}/projecttype/read`)
-      .then((response) => {
-        setProjecttype(response.data.projectypes.map((item) => ({
-          value: item.id_projecttype,
-          label: item.description,
-        })));
-      })
-      .catch((error) => console.error('Error fetching projecttype data:', error));
 
-    axios.get(`${process.env.REACT_APP_API_URL}/assignment/read`)
-      .then((response) => {
-        setAssignment(response.data.assignments.map((item) => ({
-          value: item.id_assignment,
-          label: item.description,
-        })));
-      })
-      .catch((error) => console.error('Error fetching assignments data:', error));
+useEffect(() => {
+  // Fetch data for companies, project types, assignments, and technical areas
+  axios.get(`${process.env.REACT_APP_API_URL}/company/read`, { params: { filter: 'client' } })
+    .then((response) => {
+      setCompany(response.data.value.map((item) => ({
+        value: item.id_company,
+        label:  `${item.name} `,
+      })));
+    })
+    .catch((error) => console.error('Error fetching company data:', error));
 
-    axios.get(`${process.env.REACT_APP_API_URL}/technicalarea/read`)
-      .then((response) => {
-        setTechnicalArea(response.data.technicalareas.map((item) => ({
-          value: item.id_technicalarea,
-          label: item.name,
-        })));
-      })
-      .catch((error) => console.error('Error fetching technical area data:', error));
-  }, []);
+  axios.get(`${process.env.REACT_APP_API_URL}/projecttype/read`)
+    .then((response) => {
+      setProjecttype(response.data.projectypes.map((item) => ({
+        value: item.id_projecttype,
+        label: `${item.description} - ${item.code}`,
+      })));
+    })
+    .catch((error) => console.error('Error fetching projecttype data:', error));
 
-  const createQuotationRequest = (event) => {
-    event.preventDefault();
+  axios.get(`${process.env.REACT_APP_API_URL}/assignment/read`)
+    .then((response) => {
+      setAssignment(response.data.assignments.map((item) => ({
+        value: item.id_assignment,
+        label: `${item.description} - ${item.code}`,
+      })));
+    })
+    .catch((error) => console.error('Error fetching assignments data:', error));
 
-    const form = document.forms.createquotationrequest;
-    const formData = new FormData(form);
+  axios.get(`${process.env.REACT_APP_API_URL}/technicalarea/read`)
+    .then((response) => {
+      setTechnicalArea(response.data.technicalareas.map((item) => ({
+        value: item.id_technicalarea,
+        label: `${item.name} - ${item.code}`,
+      })));
+    })
+    .catch((error) => console.error('Error fetching technical area data:', error));
+}, []);
 
-    // Set the project type to 'Cluster' if multiple companies are selected
-    if (selectedCompanies?.length > 1) {
-      formData.set('projecttype', '2'); // Assuming 'Cluster' has id_projecttype = 2
-      setSelectedProjecttype(projecttype.find((pt) => pt.value === '2'));
-    } else {
-      formData.set('projecttype', selectedProjecttype?.value || '');
-    }
+const createQuotationRequest = async (event) => {
+  event.preventDefault();
 
-    if (selectedProjecttype?.value === '5') { 
-      formData.set('externalcode', externalCode);
-    }
+  const form = document.forms.createquotationrequest;
+  const formData = new FormData(form);
 
-    formData.set('assignment', selectedAssignment?.value || '');
-    formData.set('technicalarea', selectedTechnicalArea?.value || '');
-    formData.set('description', form.description.value || '');
+  // Set the project type to 'Cluster' if multiple companies are selected
+  if (selectedCompanies?.length > 1) {
+    formData.set('projecttype', '2'); // Assuming 'Cluster' has id_projecttype = 2
+    setSelectedProjecttype(projecttype.find((pt) => pt.value === '2'));
+  } else {
+    formData.set('projecttype', selectedProjecttype?.value || '');
+  }
 
+  if (selectedProjecttype?.value === '5') { 
+    formData.set('externalcode', externalCode);
+  }
+
+  formData.set('assignment', selectedAssignment?.value || '');
+  formData.set('technicalarea', selectedTechnicalArea?.value || '');
+  formData.set('description', form.description.value || '');
+
+  // Create an array to store promises for each request
+  const requests = selectedCompanies.map(async (company) => {
     const jsonObject = {};
     formData.forEach((value, key) => {
       jsonObject[key] = value;
     });
+    
+    jsonObject.companies = [company.value]; // Passing each company in the array
+    jsonObject.name = `RDO_${company.label}_${Date.now()}`; // Optional: Add company-specific identifier
 
-    // Send separate requests for each selected company
-    selectedCompanies.forEach((company) => {
-      jsonObject.company = company.value;
-      toast.promise(
-        axios.post(`${process.env.REACT_APP_API_URL}/quotationrequest/create`, jsonObject),
-        {
-          loading: `Creating request for ${company.label}...`,
-          success: `Request for ${company.label} created successfully!`,
-          error: `Error creating request for ${company.label}`,
-        }
-      ).catch((error) => console.error(error));
-    });
-  };
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/quotationrequest/create`, 
+        jsonObject
+      );
+      
+      toast.success(`Richiesta di offerta per ${company.label} creata!`);
+      return response.data;
+    } catch (error) {
+      toast.error(`Errore creazione RDO per ${company.label}`);
+      console.error(error);
+      throw error;
+    }
+  });
+
+  // Wait for all requests to be processed
+  await Promise.all(requests);
+};
 
   return (
     <form name="createquotationrequest">
@@ -105,8 +118,9 @@ export default function UserCreateForm() {
             Ricorda, i dati inseriti ora saranno quelli che verranno utilizzati per creare poi l'offerta
           </p>
 
-          <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+          <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6" >
             <div className="col-span-full">
+           
               <label htmlFor="company" className="block text-sm font-medium leading-6 text-gray-900">
                 Cliente
               </label>
@@ -121,14 +135,16 @@ export default function UserCreateForm() {
                   isMultiple
                   isSearchable
                 />
+             
               </div>
             </div>
 
-            <div className="sm:col-span-2">
-              <label htmlFor="projecttype" className="block text-sm font-medium leading-6 text-gray-900">
-                Tipo Progetto
-              </label>
-              <div className="mt-2">
+            <div className="col-span-full">
+              <div className="grid grid-cols-5 items-center gap-4">
+                <label htmlFor="company" className="text-sm font-medium leading-6 text-gray-900">
+                  Tipo Progetto
+                </label>
+                <div className="col-span-4">
                 <Select
                   id="projecttype"
                   name="projecttype"
@@ -138,14 +154,17 @@ export default function UserCreateForm() {
                   placeholder={selectedCompanies?.length > 1 ? 'CLUSTER' : 'Seleziona tipo progetto'}
                   isSearchable
                   isDisabled={selectedCompanies?.length > 1}
+                  
                 />
               </div>
+              </div>
             </div>
-            <div className="sm:col-span-2">
-              <label htmlFor="assignment" className="block text-sm font-medium leading-6 text-gray-900">
-                Tipo Incarico
-              </label>
-              <div className="mt-2">
+            <div className="col-span-full">
+              <div className="grid grid-cols-5 items-center gap-4">
+                <label htmlFor="company" className="text-sm font-medium leading-6 text-gray-900">
+                  Tipo Incarico
+                </label>
+                <div className="col-span-4">
                 <Select
                   id="assignment"
                   name="assignment"
@@ -156,13 +175,15 @@ export default function UserCreateForm() {
                   isSearchable
                 />
               </div>
+              </div>
             </div>
 
-            <div className="sm:col-span-2">
-              <label htmlFor="technicalarea" className="block text-sm font-medium leading-6 text-gray-900">
-                Area Tecnica
-              </label>
-              <div className="mt-2">
+            <div className="col-span-full">
+              <div className="grid grid-cols-5 items-center gap-4">
+                <label htmlFor="company" className="text-sm font-medium leading-6 text-gray-900">
+                  Area Tecnica
+                </label>
+                <div className="col-span-4">
                 <Select
                   id="technicalarea"
                   name="technicalarea"
@@ -172,6 +193,7 @@ export default function UserCreateForm() {
                   placeholder="Seleziona area tecnica"
                   isSearchable
                 />
+                </div>
               </div>
             </div>
 

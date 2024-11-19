@@ -5,6 +5,7 @@ import Cookies from 'js-cookie';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+import { XMarkIcon, TrashIcon ,PencilSquareIcon, ArrowRightStartOnRectangleIcon } from '@heroicons/react/20/solid'
 import { Dialog } from '@headlessui/react';
 
 function classNames(...classes) {
@@ -20,6 +21,10 @@ export default function ClientTypeTable() {
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [newClientTypeName, setNewClientTypeName] = useState('');
   const [newClientTypeCode, setNewClientTypeCode] = useState('');
+  const [update, setUpdate] = useState(false);
+  const [ClientTypeName, setClientTypeName] = useState('');
+  const [ClientTypeCode, setClientTypeCode] = useState('');
+  const [ClientTypeID, setClientTypeID] = useState('');
   const tableRef = useRef(null);
 
   const [searchQueries, setSearchQueries] = useState({
@@ -55,6 +60,54 @@ export default function ClientTypeTable() {
     }
   }, [isModalOpen]);
 
+  
+  
+  const deleteItem = async (ClientTypeID) => {
+    try {
+      const response = await axios.delete(
+        `${process.env.REACT_APP_API_URL}/clienttype/delete/${ClientTypeID}`
+      );
+  
+      // Mostra una notifica di successo
+      toast.success('Tipo progetto cancellato');
+      console.log('Deleted:', response.data);
+  
+      // Aggiorna la lista locale (se gestita in stato)
+      setClientTypes((prevsubs) =>
+        prevsubs.filter((sub) => sub.id !== ClientTypeID)
+      );
+    } catch (error) {
+      console.error('Errore nella cancellazione: ', error.response?.data || error.message);
+  
+      // Mostra una notifica di errore
+      toast.error('Fallimento');
+    }
+    
+  };
+  
+  const handleUpdateClientType = () => {
+    axios
+      .put(
+        `${process.env.REACT_APP_API_URL}/clienttype/update`, 
+        { id: ClientTypeID, description: ClientTypeName, code: ClientTypeCode }
+      )
+      .then((response) => {
+        setClientTypes([...clienttypes, response.data.clienttypes]);
+        setClientTypeName('');
+        setClientTypeCode('');
+        setUpdate(false);
+  
+        // Mostra la notifica di successo
+        toast.success('Nuovo tipo modificato con successo!');
+      })
+      .catch((error) => {
+        console.error('Errore durante la modifica del tipo progetto:', error);
+        
+        // Mostra la notifica di errore
+        toast.error('Modifica del tipo progetto fallita.');
+      });
+  };
+
   const handleSort = (columnName) => {
     if (sortColumn === columnName) {
       if (sortDirection === 'asc') {
@@ -89,7 +142,7 @@ export default function ClientTypeTable() {
 
   const filteredClientTypes = clienttypes?.filter((item) => {
     return (
-      (searchQueries?.id_clienttype === '' || item.id_clienttype.toString().includes(searchQueries?.id_clienttype.toString())) &&
+      (searchQueries?.id_clienttype === '' || item.id_clienttype?.toString().includes(searchQueries?.id_clienttype?.toString())) &&
       (searchQueries?.name === '' || item.description.toLowerCase().includes(searchQueries?.name.toLowerCase())) &&
       (searchQueries?.code === '' || item.code.toLowerCase().includes(searchQueries?.code.toLowerCase()))
     );
@@ -112,7 +165,7 @@ export default function ClientTypeTable() {
       'data:text/csv;charset=utf-8,' +
       ['ID,Name'].concat(
         sortedClientTypes?.map((clienttype) =>
-          [clienttype.id_clienttype, clienttype.name].join(',')
+          [clienttype?.id_clienttype, clienttype?.name].join(',')
         )
       ).join('\n');
 
@@ -252,10 +305,48 @@ export default function ClientTypeTable() {
                   </thead>
                   <tbody className="divide-y divide-gray-200">
                     {sortedClientTypes?.map((clienttype) => (
-                      <tr key={clienttype.id_clienttype}>
+                      <tr key={clienttype?.id_clienttype}>
                         <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{clienttype?.id_clienttype}</td>
                         <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{clienttype?.code}</td>
-                        <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{clienttype.description}</td>
+                        <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{clienttype?.description}</td>
+                        <td className="whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
+                        <div className="flex items-center space-x-2">
+                          
+                          <button 
+                            type="button" 
+                            className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
+                            onClick={() => {
+                              setUpdate(true);
+                              setClientTypeCode(clienttype?.code);
+                              setClientTypeName(clienttype?.description);
+                              setClientTypeID(clienttype?.id_clienttype);
+                            }}
+                          >
+            
+                            <PencilSquareIcon className="h-5 w-4 text-gray-500" />
+                          </button>
+                         
+                          
+                        </div>
+                      </td>
+                      <td className="whitespace-nowrap py-2 pl-3 pr-4 text-left text-sm font-medium sm:pr-3">
+                        <div className="flex items-right space-x-2">
+                          
+                          <button 
+                            type="button" 
+                            className="inline-flex items-right rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
+                            onClick={() => {
+                              deleteItem(clienttype?.id_clienttype);
+                            }}
+                          >
+            
+                            <TrashIcon className="h-5 w-4 text-gray-500" />
+                          </button>
+                         
+                          
+                        </div>
+                      </td>
+
                       </tr>
                     ))}
                   </tbody>
@@ -265,6 +356,46 @@ export default function ClientTypeTable() {
           </div>
         </div>
       </div>
+      
+<Dialog open={update} onClose={() => setUpdate(false)} className="relative z-50">
+        <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+        <div className="fixed inset-0 flex items-center justify-center p-4">
+          <Dialog.Panel className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
+            <Dialog.Title className="text-lg font-semibold text-gray-900">Modifica un Tipo Cliente</Dialog.Title>
+            <div className="mt-4">
+              <input
+                type="text"
+                placeholder="Nome di Tipo Cliente"
+                value={ClientTypeName}
+                onChange={(e) => setClientTypeName(e.target.value)}
+                className="w-full mt-2 p-2 border border-gray-300 rounded-md focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+              />
+              <input
+                type="text"
+                placeholder="Codice Tipo Cliente"
+                value={ClientTypeCode}
+                onChange={(e) => setClientTypeCode(e.target.value)}
+                className="w-full mt-4 p-2 border border-gray-300 rounded-md focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+              />
+            </div>
+            <div className="mt-6 flex justify-end space-x-3">
+           
+              <button
+                onClick={() => setUpdate(false)}
+                className="rounded-md bg-[#A7D0EB] px-3 py-2 text-sm font-bold text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+              >
+                Cancella
+              </button>
+              <button
+                onClick={handleUpdateClientType}
+                className="rounded-md bg-[#A7D0EB] px-3 py-2 text-sm font-bold text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+              >
+                Modifica
+              </button>
+            </div>
+          </Dialog.Panel>
+        </div>
+      </Dialog>
 
       {isModalOpen && (
   <Dialog id="clienttype-modal" as="div" open={isModalOpen} onClose={() => setIsModalOpen(false)} className="relative z-50">

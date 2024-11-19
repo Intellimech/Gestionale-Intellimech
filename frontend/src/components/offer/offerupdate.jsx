@@ -12,17 +12,19 @@ export default function UpdateForm({offer}) {
   const [selectedTeam, setSelectedTeam] = useState([]);
   const [selectedQuotationRequest, setSelectedQuotationRequest] = useState({
     value: offer?.quotationrequest,
-    label:`${ offer?.quotationRequest?.name} - ${ offer?.quotationRequest?.Company?.name}`,
+    label:`${ offer?.QuotationRequest?.name} - ${ offer?.QuotationRequest?.Company?.name}`,
   });
   const [tasks, setTasks] = useState(offer?.tasks || [{ name: '', hour: 0, value: 0, assignedTo: '', children: [] }]);
   const [estimatedStartDate, setEstimatedStartDate] = useState(offer?.estimatedstart || new Date().toISOString().split('T')[0]);
   const [estimatedEndDate, setEstimatedEndDate] = useState(offer?.estimatedend || new Date().toISOString().split('T')[0]);
   const [quotationRequest, setQuotationRequest] = useState([]);
+  const [quotationRequestDescri, setQuotationRequestDescri] = useState(offer?.QuotationRequest?.description);
   const [amount, setAmount] = useState(offer?.amount || '');
   const [hour, setHour] = useState(offer?.hour || '');
   const [users, setUsers] = useState([]);
   const [totalHours, setTotalHours] = useState(0);
   const [totalValue, setTotalValue] = useState(0);
+  console.log("Questa è l'offerta" , offer)
   
 const [commercialoffers, setCommercialOffers] = useState(() => {
   if (offer?.CommercialOffers?.length > 0) {
@@ -187,9 +189,6 @@ const [commercialoffers, setCommercialOffers] = useState(() => {
     fetchData();
   }, []);
   
-  const stampa= ()=>{
-    console.log("PANICO"+ tasks)
-   };
 
   useEffect(() => {
     const fetchQuotationRequests = async () => {
@@ -236,8 +235,8 @@ const [commercialoffers, setCommercialOffers] = useState(() => {
   
 
   const handleQuotationRequestChange = (value) => {
-    setSelectedQuotationRequest(value);
-    handleInputChange('quotationrequest', value);
+    setQuotationRequestDescri(value);
+    handleInputChange('quotationrequestdescription', value);
   };
 
 
@@ -340,9 +339,10 @@ const createOffer = async (event) => {
   jsonObject.estimatedend = estimatedEndDate;
   jsonObject.amount=totalCommercialAmount;
   jsonObject.team = selectedTeam?.map((team) => team.value);
-  jsonObject.quotationrequest = selectedQuotationRequest?.value;
+  jsonObject.quotationrequest = offer?.QuotationRequest?.id_quotationrequest;
   jsonObject.name= offer?.name;
   jsonObject.revision = (offer.revision + 1)
+  jsonObject.quotationrequestdescription = quotationRequestDescri;
   // Aggiungi i dati delle commercial offers
   jsonObject.commercialoffers = commercialoffers.map(offer => ({
     linkedTask: offer.linkedTask?.value || null,
@@ -382,9 +382,9 @@ const createOffer = async (event) => {
 
   function FunselectedQuotationRequest(){
     let valueRight = selectedQuotationRequest;
-   
+   console.log("miao, " ,`${ offer?.QuotationRequest?.name} - ${ offer?.QuotationRequest?.Company?.name}`,);
     
-    return valueRight;
+    return valueRight?.label;
   }
   
 
@@ -431,25 +431,30 @@ const createOffer = async (event) => {
                 Richiesta di offerta
               </label>
               <div className="mt-2">
-              <Select
+              <input
                 id="quotationrequest"
                 name="quotationrequest"
-                className="mt-1"
+                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
                 value={FunselectedQuotationRequest()}
-                onChange={handleQuotationRequestChange}
-                options={quotationRequest
-                  .filter((item) => item.status === "Approvata")
-                  .map((item) => ({
-                    value: item.id_quotationrequest,
-                    label: `${item.name} - ${item.Company?.name}`
-                  }))}
-               
-                isClearable
-                isSearchable
+               readOnly
               />
+               
                   </div>
             </div>
-            {/* Ore */}
+            <div className="sm:col-span-2"> {/* Larghezza 1 colonna */}
+                    <label htmlFor="quotationdescriptiondescription" className="block text-sm font-medium text-gray-700">Descrizione RDO</label>
+                    <input
+                    id="quotationdescriptiondescription"
+                    name="quotationdescriptiondescription"
+                    
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
+                    value={quotationRequestDescri}
+                    onChange={(e) => setQuotationRequestDescri(e.target.value)}
+                    />
+                </div>
+                <br/>
+          
+            
             <div className="sm:col-span-1"> {/* Larghezza 1 colonna */}
                     <label htmlFor="hour" className="block text-sm font-medium text-gray-700">Ore</label>
                     <input
@@ -483,6 +488,8 @@ const createOffer = async (event) => {
                         <span className="text-gray-500 sm:text-sm" id="price-currency">EUR</span>
                     </div>
                     </div>
+
+
                 </div>
                     
             <div className="sm:col-span-3">

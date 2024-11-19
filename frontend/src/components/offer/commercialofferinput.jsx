@@ -50,12 +50,11 @@ export default function CommercialOfferForm({
   };
 
   const getRowLabel = () => {
-    const labels = ['I', 'II', 'III', 'IV', 'V', 'VI'];
+    const labels = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
     return labels[index] || '';
   };
 
   const isFirstRow = index === 0;
-  const isLastRow = index === 5;
 
   return (
     <div className="flex items-center space-x-4 mb-4 p-4 bg-white rounded-lg shadow">
@@ -66,9 +65,7 @@ export default function CommercialOfferForm({
       <div className="flex-1">
         {isFirstRow ? (
           <div className="font-medium">Accettazione Offerta</div>
-        ) : isLastRow ? (
-          <div className="font-medium">Fine Attività</div>
-        ) : (
+        )  : (
           <Select
             value={commercialOffer?.linkedTask}
             onChange={handleTaskSelection}
@@ -101,7 +98,7 @@ export default function CommercialOfferForm({
         <span className="text-sm text-gray-500">+ IVA</span>
       </div>
 
-      {!isFirstRow && !isLastRow && (
+      {!isFirstRow && (
         <button
           type="button"
           onClick={onRemove}

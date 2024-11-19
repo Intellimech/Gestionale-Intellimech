@@ -1,7 +1,6 @@
 import { Fragment, useState, useRef, useEffect, useContext } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 
-import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/20/solid';
 import { XMarkIcon, CheckIcon, PaperAirplaneIcon, EyeIcon, ArrowPathIcon, PencilSquareIcon } from '@heroicons/react/24/outline'
 import axios from 'axios';
 import Cookies from 'js-cookie';
@@ -37,7 +36,7 @@ export default function Example({ permissions }) {
   const [selectedArea, setSelectedArea] = useState('');
   const [selectedProjectType, setSelectedProjectType] = useState('');
   const [sortColumn, setSortColumn] = useState('name');
-  const [sortDirection, setSortDirection] = useState('asc');
+  const [sortDirection, setSortDirection] = useState('desc');
   const [filterType, setFilterType] = useState('name');
   const [showUpdate, setShowUpdate] = useState(false);
   const [showRevision, setShowRevision] = useState(false);
@@ -126,10 +125,10 @@ export default function Example({ permissions }) {
     (searchQueries.clienttype === '' || item.QuotationRequest?.companytype.toLowerCase().includes(searchQueries.clienttype.toLowerCase())) &&
     (searchQueries.Company === '' || item.QuotationRequest?.Company?.name.toLowerCase().includes(searchQueries.Company.toLowerCase())) &&
     (searchQueries.projecttype === '' || 
-      [item.QuotationRequest.ProjectType?.code].some(value => value?.toLowerCase().includes(searchQueries.projecttype.toLowerCase()))
+      [item.QuotationRequest?.ProjectType?.code].some(value => value?.toLowerCase().includes(searchQueries.projecttype.toLowerCase()))
     ) &&
-    (searchQueries.assignment === '' || item.QuotationRequest.Assignment?.code.toLowerCase().includes(searchQueries.assignment.toLowerCase())) &&
-    (searchQueries.technicalarea === '' || item.QuotationRequest.TechnicalArea?.code.toLowerCase().includes(searchQueries.technicalarea.toLowerCase())) &&
+    (searchQueries.assignment === '' || item.QuotationRequest?.Assignment?.code.toLowerCase().includes(searchQueries.assignment.toLowerCase())) &&
+    (searchQueries.technicalarea === '' || item.QuotationRequest?.TechnicalArea?.code.toLowerCase().includes(searchQueries.technicalarea.toLowerCase())) &&
     (searchQueries.status === '' || item.status.toLowerCase().includes(searchQueries.status.toLowerCase())) &&
     
     (searchQueries.hour=== '' || item.hour.toString().includes(searchQueries.hour.toString())) &&
@@ -339,6 +338,13 @@ export default function Example({ permissions }) {
   function handleStatusSelectChange(event) {
     setSelectedStatus(event.target.value);
   }
+  // Funzione per aggiungere il punto sopra come separatore delle migliaia
+const formatNumberWithDotAbove = (number) => {
+  return number
+    .toString()
+    .replace(/\B(?=(\d{3})+(?!\d))/g, '\u0307'); // Aggiungi il punto sopra come separatore
+};
+
 
 
 
@@ -568,8 +574,10 @@ export default function Example({ permissions }) {
                 <tr>
                   {/* Example for setting column width; add this to each <th> as needed */}
                   <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
-                    Ordine
-                    {sortColumn === 'name' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    <br/>Ordine
+                    {sortColumn === 'name' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.name}
@@ -581,8 +589,10 @@ export default function Example({ permissions }) {
                     />
                   </th>
                   <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer ellipsis" onClick={() => handleSort('description')}>
-                    Descrizione
-                    {sortColumn === 'description' ? (sortDirection === 'desc' ? <ArrowUpIcon className="h-3 w-3 inline ml-1" /> : <ArrowDownIcon className="h-3 w-3 inline ml-1" />) : null}
+                  <br/>Descrizione
+                    {sortColumn === 'description' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.description}
@@ -593,8 +603,10 @@ export default function Example({ permissions }) {
                     />
                   </th>
                   <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('Company')}>
-                    Cliente
-                    {sortColumn === 'Company' ? (sortDirection === 'desc' ? <ArrowUpIcon className="h-3 w-3 inline ml-1" /> : <ArrowDownIcon className="h-3 w-3 inline ml-1" />) : null}
+                  <br/>Cliente
+                    {sortColumn === 'Company'? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.Company}
@@ -605,8 +617,10 @@ export default function Example({ permissions }) {
                     />
                   </th>
                   <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('clienttype')}>
-                    Tipo Cliente
-                    {sortColumn === 'clienttype' ? (sortDirection === 'desc' ? <ArrowUpIcon className="h-3 w-3 inline ml-1" /> : <ArrowDownIcon className="h-3 w-3 inline ml-1" />) : null}
+                    Tipo  <br/>Cliente
+                    {sortColumn === 'clienttype'? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.clienttype}
@@ -616,22 +630,12 @@ export default function Example({ permissions }) {
                       placeholder=""
                     />
                   </th>
+                
                   <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('clienttype')}>
-                    Revisione
-                    {sortColumn === 'revision' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                    <br />
-                    <input
-                      value={searchQueries.revision}
-                      onClick={(e) => e.stopPropagation()}
-                      onChange={handleSearchInputChange('revision')}
-                      className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
-                      placeholder=""
-                      rows={1}
-                    />
-                  </th>
-                  <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('clienttype')}>
-                     Ore
-                    {sortColumn === 'hour' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                  <br/>Ore
+                    {sortColumn === 'hour' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.hour}
@@ -642,22 +646,32 @@ export default function Example({ permissions }) {
                       rows={1}
                     />
                   </th>
+                  <th
+                      scope="col"
+                      className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer"
+                      onClick={() => handleSort('clienttype')}
+                    >
+                       <br/>Valore
+                      {sortColumn === 'amount' ? (
+                        sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                      ) : null}
+                      <br />
+                      <input
+                        value={searchQueries.amount}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={handleSearchInputChange('amount')}
+                        className="mt-1 px-1 py-0.5 w-24 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
+                        placeholder=""
+                        rows={1}
+                      />
+                   
+                    </th>
+
                   <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('clienttype')}>
-                     Valore
-                    {sortColumn === 'amount' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                    <br />
-                    <input
-                      value={searchQueries.amount}
-                      onClick={(e) => e.stopPropagation()}
-                      onChange={handleSearchInputChange('amount')}
-                      className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
-                      placeholder=""
-                      rows={1}
-                    />
-                  </th>
-                  <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('clienttype')}>
-                     Progetto
-                    {sortColumn === 'projecttype' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                     Tipo  <br/>Progetto
+                    {sortColumn === 'projecttype' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.projecttype}
@@ -669,8 +683,10 @@ export default function Example({ permissions }) {
                     />
                   </th>
                   <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('clienttype')}>
-                    Area Tecnica
-                    {sortColumn === 'technicalarea' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    Area  <br/> Tecnica
+                    {sortColumn === 'technicalarea' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.technicalarea}
@@ -682,8 +698,10 @@ export default function Example({ permissions }) {
                     />
                   </th>
                   <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('clienttype')}>
-                     Inizio Stimato
-                    {sortColumn === 'estimatedstart' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                     Inizio <br/> Stimato
+                    {sortColumn === 'estimatedstart'? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.estimatedstart}
@@ -695,8 +713,10 @@ export default function Example({ permissions }) {
                     />
                   </th>
                   <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('clienttype')}>
-                    Fine Stimata
-                    {sortColumn === 'estimatedend' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    Fine  <br/>Stimata
+                    {sortColumn === 'estimatedend' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.estimatedend}
@@ -708,8 +728,10 @@ export default function Example({ permissions }) {
                     />
                   </th>
                   <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('clienttype')}>
-                     Scadenza
-                    {sortColumn === 'deadline' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                  <br/> Scadenza
+                    {sortColumn === 'deadline' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.deadline}
@@ -721,8 +743,10 @@ export default function Example({ permissions }) {
                     />
                   </th>
                   <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('clienttype')}>
-                    Stato
-                    {sortColumn === 'status' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                  <br/> Stato
+                    {sortColumn === 'status' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.status}
@@ -734,8 +758,10 @@ export default function Example({ permissions }) {
                     />
                   </th>
                   <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('clienttype')}>
-                  Creata da
-                    {sortColumn === 'createdByUser' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                  <br/>Creata da
+                  {sortColumn === 'createdByUser' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.createdByUser}
@@ -782,14 +808,12 @@ export default function Example({ permissions }) {
                         <td className="whitespace-normal max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
                           {offer?.QuotationRequest?.companytype}
                         </td>
-                        <td className="whitespace-normal max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
-                        {offer?.revision}
-                        </td>
-                        <td className="whitespace-normal max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
+                       
+                        <td className="whitespace-normal text-right max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
                          {`${offer.hour} h`}
                         </td>
-                        <td className="whitespace-normal max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
-                        {`${offer.amount} €`}
+                        <td className="whitespace-normal text-right max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
+                        {formatNumberWithDotAbove(`${offer.amount} €`)}
                         </td>
                         <td className="whitespace-normal max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
                         {offer.QuotationRequest?.ProjectType?.code}
@@ -893,7 +917,7 @@ export default function Example({ permissions }) {
                                      
                                       title="Revisione"
                                     >
-                                      <ArrowPathIcon className="h-5 w-4 text-gray-500" />
+                                       <PencilSquareIcon className="h-5 w-4 text-gray-500" />
                                     </button>
                                   </>
                                 )}

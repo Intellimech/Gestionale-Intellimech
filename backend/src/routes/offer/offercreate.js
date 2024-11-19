@@ -46,6 +46,23 @@ router.post("/create", async (req, res) => {
       quotationrequest: quotationrequest,
       createdBy: user.id_user,
     });
+    
+    try {
+      const [updatedRows] = await QuotationRequest.update(
+        { status: "Utilizzata" },
+        { where: { id_quotationrequest: quotationrequest } }
+      );
+    
+      console.log("Updating QuotationRequest with ID:", quotationrequest);
+      console.log("Number of rows updated:", updatedRows);
+    
+      if (updatedRows === 0) {
+        console.warn("No rows were updated. Check if the ID exists or is valid.");
+      }
+    } catch (error) {
+      console.error("Error during update:", error);
+    }
+    
 
     await offer.addTeam(team);
 
@@ -119,7 +136,7 @@ router.post("/create", async (req, res) => {
 });
 
 router.post("/create/rev", async (req, res) => {
-    let { amount, hour, estimatedstart, name, revision, estimatedend, quotationrequest, team, tasks, commercialoffers } = req.body;
+    let { amount, hour, estimatedstart, name, revision, quotationrequestdescription, estimatedend, quotationrequest, team, tasks, commercialoffers } = req.body;
     const user = req.user;
   
     console.log("Received data:", { name, amount, hour, estimatedstart, estimatedend, quotationrequest, team, tasks, commercialoffers });
@@ -158,8 +175,31 @@ router.post("/create/rev", async (req, res) => {
         estimatedstart: new Date(estimatedstart),
         estimatedend: new Date(estimatedend),
         quotationrequest: quotationrequest,
+        
         createdBy: user.id_user,
       });
+  
+    
+      try {
+        const [updatedRows] = await QuotationRequest.update(
+          { description: quotationrequestdescription },
+          { where: { id_quotationrequest: quotationrequest } }
+        );
+      
+        console.log("Updating QuotationRequest with ID:", quotationrequest);
+        console.log("Number of rows updated:", updatedRows);
+      
+        if (updatedRows === 0) {
+          console.warn("No rows were updated. Check if the ID exists or is valid.");
+        }
+      } catch (error) {
+        console.error("Error during update:", error);
+      }
+  
+      // Aggiunge il team collegato
+      if (team && team.length > 0) {
+        await newOffer.addTeam(team);
+      }
   
       await offer.addTeam(team);
   

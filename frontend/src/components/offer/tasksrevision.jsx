@@ -1,7 +1,7 @@
 import React, { useMemo, useEffect, useState } from 'react';
 import Select from 'react-tailwindcss-select';
 
-const TaskRevision = ({ task, users, assignedto, onChange, onAddChild, onRemove, level = 1 }) => {
+const TaskRevision = ({ task, users, assignedTo, onChange, onAddChild, onRemove, level = 1 }) => {
   console.log(`Rendering TaskRevision at level ${level} with task:`, task);
 
   if (!task) {

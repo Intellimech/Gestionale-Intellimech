@@ -5,7 +5,7 @@ import { existsSync } from "fs";
 const router = express.Router();
 
 router.post('/update', async (req, res) => {
-  const { name, revision, amount, hour, estimatedstart, estimatedend, quotationrequest, team, tasks, commercialoffers } = req.body;
+  const { name, revision, amount, hour, estimatedstart, estimatedend, quotationrequest, team, quotationrequestdescription, tasks, commercialoffers } = req.body;
   const user = req.user;
 
   const Offer = sequelize.models.Offer;
@@ -41,6 +41,23 @@ router.post('/update', async (req, res) => {
       quotationrequest,
       createdBy: user.id_user,
     });
+
+    
+    try {
+      const [updatedRows] = await QuotationRequest.update(
+        { description: quotationrequestdescription },
+        { where: { id_quotationrequest: quotationrequest } }
+      );
+    
+      console.log("Updating QuotationRequest with ID:", quotationrequest);
+      console.log("Number of rows updated:", updatedRows);
+    
+      if (updatedRows === 0) {
+        console.warn("No rows were updated. Check if the ID exists or is valid.");
+      }
+    } catch (error) {
+      console.error("Error during update:", error);
+    }
 
     // Aggiunge il team collegato
     if (team && team.length > 0) {

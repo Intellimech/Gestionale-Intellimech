@@ -100,6 +100,7 @@ export default function Example({ open, setOpen }) {
         { name: 'Categorie', href: '/app/category' },
         { name: 'Sottocategorie', href: '/app/subcategory' },
         { name: 'Aree Tecniche', href: '/app/technicalarea' },
+        { name: 'Tipo Progetto', href: '/app/projecttype' },
       ]},
       { showedname: "Management", options: [
         { name: 'Users', href: '/app/users' },

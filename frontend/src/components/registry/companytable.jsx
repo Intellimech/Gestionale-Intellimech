@@ -280,11 +280,9 @@ export default function Company({ companytype }) {
                       onClick={() => handleSort('Code')}
                     >
                       Codice
-                      {sortColumn === 'Code' && sortDirection && (
-                        sortDirection === 'asc' ? 
-                          <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : 
-                          <ArrowDownIcon className="h-5 w-5 inline ml-2" />
-                      )}
+                      {sortColumn === 'Code' && sortDirection ? (
+                      sortDirection === 'asc' ? null : null 
+                    ) : null}
                       <br />
                       <input
                         value={searchQueries.Code}
@@ -302,11 +300,9 @@ export default function Company({ companytype }) {
                       onClick={() => handleSort('type')}
                     >
                       Tipo Cliente
-                      {sortColumn === 'type' && sortDirection && (
-                        sortDirection === 'asc' ? 
-                          <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : 
-                          <ArrowDownIcon className="h-5 w-5 inline ml-2" />
-                      )}
+                      {sortColumn === 'type' ? (
+                      sortDirection === 'asc' ? null : null 
+                    ) : null}
                       <br />
                       <input
                         value={searchQueries.type}
@@ -326,11 +322,9 @@ export default function Company({ companytype }) {
                       onClick={() => handleSort('Name')}
                     >
                       Nome
-                      {sortColumn === 'Name' && sortDirection && (
-                        sortDirection === 'asc' ? 
-                          <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : 
-                          <ArrowDownIcon className="h-5 w-5 inline ml-2" />
-                      )}
+                      {sortColumn === 'Name' && sortDirection ? (
+                      sortDirection === 'asc' ? null : null 
+                    ) : null}
                       <br />
                       <input
                         value={searchQueries.Name}
@@ -348,11 +342,9 @@ export default function Company({ companytype }) {
                       onClick={() => handleSort('VAT')}
                     >
                       VAT
-                      {sortColumn === 'VAT' && sortDirection && (
-                        sortDirection === 'asc' ? 
-                          <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : 
-                          <ArrowDownIcon className="h-5 w-5 inline ml-2" />
-                      )}
+                      {sortColumn === 'VAT' && sortDirection? (
+                      sortDirection === 'asc' ? null : null 
+                    ) : null}
                       <br />
                       <input
                         value={searchQueries.VAT}
@@ -370,11 +362,9 @@ export default function Company({ companytype }) {
                       onClick={() => handleSort('Fiscal_Code')}
                     >
                       Codice Fiscale
-                      {sortColumn === 'Fiscal_Code' && sortDirection && (
-                        sortDirection === 'asc' ? 
-                          <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : 
-                          <ArrowDownIcon className="h-5 w-5 inline ml-2" />
-                      )}
+                      {sortColumn === 'Fiscal_Code'  ? (
+                      sortDirection === 'asc' ? null : null 
+                    ) : null}
                       <br />
                       <input
                         value={searchQueries.Fiscal_Code}

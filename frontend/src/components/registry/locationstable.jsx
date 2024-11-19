@@ -164,7 +164,9 @@ export default function LocationTable() {
                     <tr>
                       <th className="px-0 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('id_location')}>
                         ID
-                        {sortColumn === 'id_location' && (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />)}
+                        {sortColumn === 'id_location'  ? (
+                      sortDirection === 'asc' ? null : null 
+                    ) : null}
                         <br />
                         <input
                           value={searchQueries.id_location}
@@ -175,7 +177,9 @@ export default function LocationTable() {
                       </th>
                       <th className="px-1.5 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
                         Name
-                        {sortColumn === 'name' && (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />)}
+                        {sortColumn === 'name' ? (
+                      sortDirection === 'asc' ? null : null 
+                    ) : null}
                         <br />
                         <input
                           value={searchQueries.name}
@@ -186,7 +190,9 @@ export default function LocationTable() {
                       </th>
                       <th className="px-1.5 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('hours')}>
                         Hours
-                        {sortColumn === 'hours' && (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />)}
+                        {sortColumn === 'hours'? (
+                      sortDirection === 'asc' ? null : null 
+                    ) : null}
                         <br />
                         <input
                           value={searchQueries.hours}

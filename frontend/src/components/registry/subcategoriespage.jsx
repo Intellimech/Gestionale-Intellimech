@@ -110,10 +110,10 @@ export default function SubcategoryTable() {
         toast.success('Categoria creata con successo!');
       })
       .catch((error) => {
-        console.error('Errore durante la creazione della categoria:', error);
+        console.error('Errore durante la modifica della categoria:', error);
         
         // Mostra la notifica di errore
-        toast.error('Creazione della categoria fallita.');
+        toast.error('Modifica della categoria fallita.');
       });
   };
 
@@ -479,7 +479,7 @@ export default function SubcategoryTable() {
                 onClick={handleUpdateSubcategory}
                 className="rounded-md bg-[#A7D0EB] px-3 py-2 text-sm font-bold text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
               >
-                Crea
+                Modifica
               </button>
             </div>
           </Dialog.Panel>

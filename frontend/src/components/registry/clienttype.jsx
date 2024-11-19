@@ -209,7 +209,7 @@ export default function ClientTypeTable() {
                     <tr>
                       <th scope="col" className="px-0 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('id_clienttype')}>
                         ID
-                        {sortColumn === 'id_clienttype' && sortDirection !== '' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                        {sortColumn === 'id_clienttype' && sortDirection !== '' ? (sortDirection === 'asc' ? null : null) : null}
                         <br />
                         <input
                           value={searchQueries?.id_clienttype}
@@ -222,7 +222,7 @@ export default function ClientTypeTable() {
                       </th>
                       <th scope="col" className="px-0 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('code')}>
                         Codice
-                        {sortColumn === 'code' && sortDirection !== '' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                        {sortColumn === 'code' && sortDirection !== '' ? (sortDirection === 'asc' ? null : null) : null}
                         <br />
                         <input
                           value={searchQueries?.code}
@@ -236,7 +236,7 @@ export default function ClientTypeTable() {
 
                       <th scope="col" className="px-1.5 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
                         Nome
-                        {sortColumn === 'name' && sortDirection !== '' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                        {sortColumn === 'name' && sortDirection !== '' ? (sortDirection === 'asc' ? null : null) : null}
                         <br />
                         <input
                           value={searchQueries?.name}

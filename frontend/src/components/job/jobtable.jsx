@@ -27,7 +27,7 @@ export default function Example({ permissions, user }) {
   const [selectedJob, setSelectedJob] = useState({});
 
   const [sortColumn, setSortColumn] = useState('name');
-  const [sortDirection, setSortDirection] = useState('asc');
+  const [sortDirection, setSortDirection] = useState('desc');
   const [filterType, setFilterType] = useState('name');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setselectedStatus] = useState('');
@@ -198,7 +198,7 @@ export default function Example({ permissions, user }) {
 
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8">
+    <div className="px-2 sm:px-6 lg:px-8">
       <Transition.Root show={showInfo} as={Fragment}>
         <Dialog className="relative z-50" onClose={setShowInfo}>
           <div className="fixed inset-0" />
@@ -319,126 +319,144 @@ export default function Example({ permissions, user }) {
       </div>
 
 
-      <div className="mt-8 flow-root">
+      <div className="mt-4 flow-root">
         <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">          
-          <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div className="inline-block min-w-full py-2 align-middle sm:px-4 lg:px-6">
             <div className="relative">
               <table className="min-w-full table-fixed divide-y divide-gray-300">
-              <thead>
-                <tr>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
+                <thead>
+                  <tr>
+                  <th scope="col" className="px-2 py-2 text-left text-xs font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
                     Commessa
-                    {sortColumn === 'name' && sortDirection !== '' ? (sortDirection === 'asc' ?  <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'name' && sortDirection !== '' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.name}
                       onClick={(e) => e.stopPropagation()} 
                       onChange={handleSearchInputChange('name')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                    className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
                       placeholder=""
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Company')}>
+                  <th scope="col"  className="px-2 py-2 text-left text-xs font-semibold text-gray-900 cursor-pointer"onClick={() => handleSort('Company')}>
                     Azienda
-                    {sortColumn === 'Company' && sortDirection !== '' ? (sortDirection === 'asc' ?  <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'Company' && sortDirection !== '' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.Company}
                       onClick={(e) => e.stopPropagation()} 
                       onChange={handleSearchInputChange('Company')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
                       placeholder=""
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('SaleOrder')}>
+                  <th scope="col"  className="px-2 py-2 text-left text-xs font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('SaleOrder')}>
                     Ordine di Vendita
-                    {sortColumn === 'SaleOrder' && sortDirection !== '' ? (sortDirection === 'asc' ?  <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'SaleOrder' && sortDirection !== '' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.SaleOrder}
                       onClick={(e) => e.stopPropagation()} 
                       onChange={handleSearchInputChange('SaleOrder')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
                       placeholder=""
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('offertotal')}>
+                  <th scope="col"  className="px-2 py-2 text-left text-xs font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('offertotal')}>
                     Valore Contrattuale
-                    {sortColumn === 'offertotal' && sortDirection !== '' ? (sortDirection === 'asc' ?  <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'offertotal' && sortDirection !== '' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.offertotal}
                       onClick={(e) => e.stopPropagation()} 
                       onChange={handleSearchInputChange('offertotal')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                       className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
                       placeholder=""
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('offerhour')}>
+                  <th scope="col"  className="px-2 py-2 text-left text-xs font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('offerhour')}>
                     Ore Stimate
-                    {sortColumn === 'offerhour' && sortDirection !== '' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'offerhour' && sortDirection !== '' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.offerhour}
                       onClick={(e) => e.stopPropagation()} 
                       onChange={handleSearchInputChange('offerhour')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
                       placeholder=""
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('total')}>
+                  <th scope="col"  className="px-2 py-2 text-left text-xs font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('total')}>
                     Valore Reale
-                    {sortColumn === 'total'&& sortDirection !== '' ? (sortDirection === 'asc' ?  <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'total'&& sortDirection !== ''? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.total}
                       onClick={(e) => e.stopPropagation()} 
                       onChange={handleSearchInputChange('total')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                       className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
                       placeholder=""
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('reportedhour')}>
+                  <th scope="col"  className="px-2 py-2 text-left text-xs font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('reportedhour')}>
                     Ore Lavorate
-                    {sortColumn === 'reportedhour' && sortDirection !== '' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'reportedhour' && sortDirection !== '' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.reportedhour}
                       onClick={(e) => e.stopPropagation()} 
                       onChange={handleSearchInputChange('reportedhour')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                       className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
                       placeholder=""
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('status')}>
+                  <th scope="col"  className="px-2 py-2 text-left text-xs font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('status')}>
                     Stato
-                    {sortColumn === 'status' && sortDirection !== '' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'status' && sortDirection !== '' ? (
+                      sortDirection === 'asc' ? null : null 
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.status}
                       onClick={(e) => e.stopPropagation()} 
                       onChange={handleSearchInputChange('status')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                       className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
                       placeholder=""
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('createdByUser')}>
+                  <th scope="col"  className="px-2 py-2 text-left text-xs font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('createdByUser')}>
                     Creata da
-                    {sortColumn === 'createdByUser' && sortDirection !== '' ? (sortDirection === 'asc' ?  <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'createdByUser' && sortDirection !== '' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.createdByUser}
                       onClick={(e) => e.stopPropagation()} 
                       onChange={handleSearchInputChange('createdByUser')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                       className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
                       placeholder=""
                       rows={1}
                     />
@@ -446,11 +464,10 @@ export default function Example({ permissions, user }) {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
-                    {Array.isArray(sortedJob) && sortedJob.length > 0 ? (
+                  {Array.isArray(sortedJob) && sortedJob.length > 0 ? (
                     sortedJob.map((job) => (
-                      <tr key={job.id_user}
-                        className={selectedJobs.includes(job) ? 'bg-gray-50' : undefined}>
-                        <td
+                      <tr key={job.id_user} className={selectedJobs.includes(job) ? 'bg-gray-50' : undefined}>
+                              <td
                           className={classNames(
                             'whitespace-nowrap px-3 py-4 pr-3 text-sm font-medium',
                             selectedJobs.includes(job) ? 'text-[#7fb7d4]' : 'text-gray-700'
@@ -466,40 +483,45 @@ export default function Example({ permissions, user }) {
                         >
                           {job.name}
                         </td>
+                        <td className="whitespace-normal overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
+                          {
+                            job?.SalesOrders.length > 1 ? job.SalesOrders[0].Offer?.QuotationRequest?.Company?.name + '...' + " (" + job.SalesOrders.length + ")" : job.SalesOrders[0]?.Offer?.QuotationRequest?.Company?.name
+                          }
+                        </td>
                         <td className={classNames(
-                            'whitespace-nowrap px-3 py-4 pr-3 text-sm ',
+                           "whitespace-normal overflow-hidden text-xs text-gray-500 px-2 py-2 break-words",
                             selectedJobs.includes(job) ? 'text-[#7fb7d4]' : 'text-gray-700'
                           )}>
                           {
                             job?.SalesOrders.length > 1 ? job.SalesOrders[0].Offer?.QuotationRequest?.Company?.name + '...' + " (" + job.SalesOrders.length + ")" : job.SalesOrders[0]?.Offer?.QuotationRequest?.Company?.name
                           }
                         </td>
-                        <td className="px-3 py-4 text-sm text-gray-700">
+                        <td className="whitespace-normal overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
                           {
                             job.SalesOrders.length > 1 ? job.SalesOrders[0].name + '...' + " (" + job?.SalesOrders?.length + ")" : job?.SalesOrders[0]?.name
                           }
                         </td>
-                        <td className="px-3 py-4 text-sm text-gray-700">
+                        <td className="whitespace-normal overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
                           {
                             job.SalesOrders.reduce((total, order) => total + parseFloat(order?.Offer?.amount), 0).toFixed(2) + ' €'
                           }
                         </td>
-                        <td className="px-3 py-4 text-sm text-gray-700">
+                        <td className="whitespace-normal overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
                           {
                             job.SalesOrders.reduce((total, order) => total + parseFloat(order?.Offer?.hour), 0) + ' h'
                           }
                         </td>
-                        <td className="px-3 py-4 text-sm text-gray-700">
+                        <td className="whitespace-normal overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
                           {
                             (job.Reportings.reduce((total, reported) => total + reported.hour, 0) * (job.SalesOrders.reduce((total, order) => total + parseFloat(order?.Offer?.amount), 0).toFixed(2) / job?.SalesOrders?.reduce((total, order) => total + parseFloat(order?.Offer?.hour), 0).toFixed(2))).toFixed(2) + '€'
                           }
                         </td>
-                        <td className="px-3 py-4 text-sm text-gray-700">
+                        <td className="whitespace-normal overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
                           {
                             job.Reportings.reduce((total, reported) => total + reported.hour, 0) + ' h'
                           }
                         </td> 
-                        <td className="px-3 py-4 text-sm text-gray-700">
+                        <td className="whitespace-normal overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
                         {
                             // Use a ternary operator to determine the status class
                             job.status === 'Aperta' ? (
@@ -521,7 +543,7 @@ export default function Example({ permissions, user }) {
                             )
                           }                 
                         </td>
-                        <td className="px-3 py-4 text-sm text-gray-700">
+                        <td className="whitespace-normal overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
                           {job.createdByUser?.name.slice(0, 2).toUpperCase() + job.createdByUser?.surname.slice(0, 2).toUpperCase()}
                         </td>
                       </tr>

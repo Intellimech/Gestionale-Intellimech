@@ -93,7 +93,7 @@ export default function CategoryTable() {
         console.error('Errore durante la modifica della categoria:', error);
         
         // Mostra la notifica di errore
-        toast.error('Creazione della categoria fallita.');
+        toast.error('Modifica della categoria fallita.');
       });
   };
 

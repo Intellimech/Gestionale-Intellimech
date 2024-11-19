@@ -223,12 +223,8 @@ export default function HolidaysLeavesManagement({ permissions }) {
                         >
                           {label}
                           {sortColumn === key ? (
-                            sortDirection === 'asc' ? (
-                              <ArrowUpIcon className="h-5 w-5 inline ml-2" />
-                            ) : (
-                              <ArrowDownIcon className="h-5 w-5 inline ml-2" />
-                            )
-                          ) : null}
+                      sortDirection === 'asc' ? null : null 
+                    ) : null}
                           <br />
                           <input
                             value={searchQueries[key]}

@@ -60,7 +60,7 @@ export default function Example({ open, setOpen }) {
         id: job.id_job,
         name: job.name,
         category: 'Projects',
-        url: '/app/job/',
+        url: '/app/job/' + job.id_job,
       }));
       setProjects(projectsdata);
     })
@@ -232,22 +232,6 @@ export default function Example({ open, setOpen }) {
                     </ul>
                   </li>
                 )}
-                
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
               </ComboboxOptions>
             )}

@@ -109,7 +109,7 @@ router.get("/verify", async (req, res) => {
                 message: "Unauthorized",
             });
         }
-
+        
         const respuser = {
             id_user: user.id_user,
             name: user.name,
@@ -122,7 +122,7 @@ router.get("/verify", async (req, res) => {
             subgroup: user.Subgroup.name,
             notification: user.receiverUser,
             changepass: user.changepass,
-            location: user.ownedCalendars[0] ? user.ownedCalendars[0].Location.name : "Non dichiarata",
+            location: user.ownedCalendars[0] ? user.ownedCalendars[0].Location.name : null,
         };
 
         return res.status(200).json({

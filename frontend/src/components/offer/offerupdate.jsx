@@ -3,7 +3,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { CheckBadgeIcon, XCircleIcon , PencilIcon} from '@heroicons/react/20/solid';
 import Select from 'react-tailwindcss-select';
-import TaskUpdate from './taskupdate';
+// import TaskUpdate from './taskupdate';
 import toast, { Toaster } from 'react-hot-toast';
 
 export default function UpdateForm({offer}) {
@@ -424,7 +424,7 @@ export default function UpdateForm({offer}) {
         <div className="border-b border-gray-900/10 pb-4">
           <h2 className="text-base font-semibold leading-7 text-gray-900">Attività</h2>
           <div>
-            {tasks.map((task, index) => (
+            {/* {tasks.map((task, index) => (
               <TaskUpdate
                 key={index}
                 task={task}
@@ -447,7 +447,7 @@ export default function UpdateForm({offer}) {
                 }}
                 users={users}
               />
-            ))}
+            ))} */}
             <button
               type="button"
               onClick={() => setTasks([...tasks, { name: '', hours: 0, value: 0, assignedTo: '', children: [] }])}

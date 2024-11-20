@@ -562,9 +562,9 @@ export default function Example({ permissions }) {
                           {quotationrequest.createdAt ? new Date(quotationrequest.createdAt).toLocaleDateString() : ''}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {quotationrequest.status === 'In Approvazione' ? (
+                          {quotationrequest.status === 'In Attesa' ? (
                             <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-yellow-500">
-                              In Approvazione
+                              In Attesa
                             </span>
                           ) : quotationrequest.status === 'Approvata' ? (
                             <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-green-600">

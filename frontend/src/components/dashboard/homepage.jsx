@@ -48,7 +48,7 @@ export default function Homepage() {
                 Adesso sei in:
               </p>
               <p className="text-xl font-bold text-gray-900 sm:text-2xl">
-                {user?.location}
+                {user?.location ? user.location : 'Non dichiarato'}
               </p>
               <p className="text-sm font-medium text-gray-600">{new Date().toLocaleDateString()}</p>
             </div>

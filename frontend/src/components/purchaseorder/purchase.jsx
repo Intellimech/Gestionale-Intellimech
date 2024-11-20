@@ -22,7 +22,7 @@ export default function Example({ permissions }) {
   const [items, setItems] = useState([]);
   const [showCreate, setShowCreate] = useState(false);
   const [sortColumn, setSortColumn] = useState('name'); // Imposta 'name' come colonna di ordinamento predefinita
-  const [sortDirection, setSortDirection] = useState('asc');
+  const [sortDirection, setSortDirection] = useState('desc');
   
   const [filterType, setFilterType] = useState('name');
   const [showInfo, setShowInfo] = useState(false);
@@ -301,7 +301,9 @@ export default function Example({ permissions }) {
                 <tr>
                   <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
                     Ordine
-                    {sortColumn === 'name' && sortDirection !== '' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'name' && sortDirection !== '' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.name}
@@ -314,7 +316,9 @@ export default function Example({ permissions }) {
                   </th>
                   <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('id_company')}>
                     Cliente
-                    {sortColumn === 'id_company'  && sortDirection !== '' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'id_company'  && sortDirection !== '' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.id_company}
@@ -327,7 +331,9 @@ export default function Example({ permissions }) {
                   </th>
                   <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('category')}>
                     Categoria
-                    {sortColumn === 'category'  && sortDirection !== '' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'category'  && sortDirection !== '' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.category}
@@ -340,7 +346,9 @@ export default function Example({ permissions }) {
                   </th>
                   <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('subcategory')}>
                     Sottocategoria
-                    {sortColumn === 'subcategory'  && sortDirection !== '' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'subcategory'  && sortDirection !== '' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.subcategory}
@@ -353,7 +361,9 @@ export default function Example({ permissions }) {
                   </th>
                   <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('payment_method')}>
                     Metodo di Pagamento
-                    {sortColumn === 'payment_method' && sortDirection !== '' ? (sortDirection === 'asc' ?  <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'payment_method' && sortDirection !== '' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.payment_method}
@@ -366,7 +376,9 @@ export default function Example({ permissions }) {
                   </th>
                   <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('total')}>
                     Totale
-                    {sortColumn === 'total'  && sortDirection !== '' ? (sortDirection === 'asc' ?  <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'total'  && sortDirection !== '' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.total}
@@ -379,7 +391,9 @@ export default function Example({ permissions }) {
                   </th>
                   <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('IVA')}>
                     IVA
-                    {sortColumn === 'IVA' && sortDirection !== '' ? (sortDirection === 'asc' ?  <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'IVA' && sortDirection !== '' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.IVA}
@@ -392,7 +406,9 @@ export default function Example({ permissions }) {
                   </th>
                   <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('status')}>
                     Stato
-                    {sortColumn === 'status'  && sortDirection !== '' ? (sortDirection === 'asc' ?  <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'status'  && sortDirection !== '' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.status}
@@ -405,7 +421,9 @@ export default function Example({ permissions }) {
                   </th>
                   <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('createdByUser')}>
                     Creata da
-                    {sortColumn === 'createdByUser'  && sortDirection !== '' ? (sortDirection === 'asc' ?  <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                    {sortColumn === 'createdByUser'  && sortDirection !== '' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                     <br />
                     <input
                       value={searchQueries.createdByUser}

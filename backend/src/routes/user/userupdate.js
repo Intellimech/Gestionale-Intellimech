@@ -83,4 +83,40 @@ router.put("/update", async (req, res) => {
     }
 });
 
+
+router.delete('/delete/:id', async (req, res) => {
+    const { id } = req.params; // ID dell'elemento da eliminare
+  
+    try {
+      // Assicuriamoci che il modello sia caricato
+      const User = sequelize.models.User;
+      if (!User) {
+        throw new Error('User model is not loaded');
+      }
+  
+      // Trova l'elemento da eliminare
+      const user = await User.findByPk(id);
+      if (!user) {
+        return res.status(404).json({
+          message: `User with ID ${id} not found`,
+        });
+      }
+  
+      // Elimina l'elemento
+      await user.destroy();
+  
+      res.status(200).json({
+        message: 'User deleted successfully',
+      });
+    } catch (error) {
+      Logger('error', error);
+  
+      res.status(500).json({
+        message: 'Internal server error',
+        error: error.message,
+      });
+    }
+  });
+  
+
 export default router;

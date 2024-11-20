@@ -28,7 +28,7 @@ router.get("/read/", (req, res) => {
                 company.findAll({
                     where: {
                         isSuppliers: true
-                    }
+                    },
                 })
                 .then((companies) => {
                     result = companies;
@@ -58,7 +58,16 @@ router.get("/read/", (req, res) => {
                 company.findAll({
                     where: {
                         isClient: true
-                    }
+                    },
+                
+                    include: [
+                        {
+                            model: sequelize.models.ClientType,
+                            attributes: ["id_clienttype", "code", "description"],
+
+                        },
+
+                    ]
                 })
                 .then((companies) => {
                     result = companies;
@@ -69,7 +78,17 @@ router.get("/read/", (req, res) => {
                 });
                 break;
             default:
-                company.findAll()
+                company.findAll({
+                  
+                    include: [
+                        {
+                            model: sequelize.models.ClientType,
+                            attributes: ["id_clienttype", "code", "description"],
+
+                        },
+
+                    ]
+                })
                 .then((companies) => {
                     result = companies;
                     sendResponse(result, res);

@@ -41,7 +41,10 @@ import task from './tasks/taskrouter.js';
 // import product from './product/productrouter.js';
 import notification from './notification/notificationrouter.js';
 import contracttype from './contracttype/contracttyperouter.js'
+import assignment from './assignment/assignmentrouter.js'
+import clienttype from './clienttype/clienttyperouter.js';
 import calendar from './calendar/calendarrouter.js';
+import projecttype from './projecttype/projecttyperouter.js';
 import holidaysleaves from './holidays-leaves/holidaysleavesrouter.js';
 
 router.use((req, res, next) => {
@@ -55,6 +58,7 @@ router.use('/', user);
 router.use('/', company);
 router.use('/', invoices);
 router.use('/', roles);
+router.use('/', assignment);
 router.use('/', subgroup);
 router.use('/', group);
 router.use('/', quotationrequest);
@@ -68,6 +72,8 @@ router.use('/', salesorder);
 router.use('/', workingsite);
 router.use('/', job);
 router.use('/', contracttype);
+router.use('/', clienttype);
+router.use('/', projecttype);
 // router.use('/', reporting);
 router.use('/', task);
 // router.use('/', product);

@@ -21,7 +21,16 @@ router.get("/read/", (req, res) => {
 
     const Subcategory = sequelize.models.Subcategory;
 
-    Subcategory.findAll()
+    const Category = sequelize.models.Category;
+    Subcategory.findAll({
+        
+        include: [
+            {
+                model: Category,
+                attributes: ["name", "id_category"],
+            },
+        ],
+    })
     .then((subcategories) => {
         res.status(200).json({
             message: "Subcategories found",

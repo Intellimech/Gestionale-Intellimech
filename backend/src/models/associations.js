@@ -27,6 +27,9 @@ import PurchaseRow from './purchaserow.js';
 import Calendar from './calendar.js';
 import Locations from './locations.js';
 import CommercialOffer from './commercialoffer.js';
+import ClientType from './clienttype.js';
+import ProjectType from './projecttype.js';
+import Assignment from './assignment.js';
 
 // Define associations
 User.belongsTo(Role, { foreignKey: 'role' });
@@ -81,6 +84,12 @@ Subcategory.hasMany(QuotationRequest, { foreignKey: 'subcategory' });
 //QuotationRequest is associated with TechnicalArea
 QuotationRequest.belongsTo(TechnicalArea, { foreignKey: 'technicalarea' });
 TechnicalArea.hasMany(QuotationRequest, { foreignKey: 'technicalarea' });
+
+QuotationRequest.belongsTo(ProjectType, { foreignKey: 'projecttype' });
+ProjectType.hasMany(QuotationRequest, { foreignKey: 'projecttype' });
+
+QuotationRequest.belongsTo(Assignment, { foreignKey: 'assignment' });
+Assignment.hasMany(QuotationRequest, { foreignKey: 'assignment' });
 
 //QuotationRequest is associated with Company
 QuotationRequest.belongsTo(Company, { foreignKey: 'company' });
@@ -144,7 +153,9 @@ Job.hasMany(Reporting, { foreignKey: 'job' });
 Reporting.belongsTo(Tasks, { foreignKey: 'task' });
 Tasks.hasMany(Reporting, { foreignKey: 'task' });
 
+Company.belongsTo(ClientType, { foreignKey: 'companytype' });
 
+ClientType.hasMany(Company, { foreignKey: 'companytype' });
 
 //reporting is associated with User in the createdBy, updatedBy, and deletedBy fields
 Reporting.belongsTo(User, { foreignKey: 'createdBy', as: 'createdByUser' });
@@ -240,6 +251,8 @@ export default {
     Subcategory,
     TechnicalArea,
     QuotationRequest,
+    ClientType,
+    ProjectType,
     Offer,
     SalesOrder,
     JobSalesOrder,
@@ -252,5 +265,6 @@ export default {
     Notification,
     Purchase,
     PurchaseRow,
-    Calendar
+    Calendar,
+    Assignment
   };

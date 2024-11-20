@@ -23,10 +23,10 @@ import Offer from './components/offer/offertable';
 import Salesorder from './components/salesorder/salesordertable.jsx';
 import Job from './components/job/jobtable';
 
-
+import ProjectType from './components/registry/projecttype';
 import Invoicetable from './components/invoices/invoicetable.jsx';
 import Company from './components/registry/companytable';
-
+import Assignment from './components/registry/assignment.jsx';
 import Profile from './components/registry/userinfo.jsx';
 import Permissions from './components/registry/permissionstable.jsx'
 import Purchase from  './components/purchaseorder/purchase.jsx';
@@ -43,6 +43,8 @@ import OfferInfo from './components/offer/offerdetail.jsx';
 import SettingsPage from './components/system/settings.jsx';
 import SalesOrderDetail from './components/salesorder/salesorderdetail.jsx';
 import QuotationrequestDetail from './components/quotationrequest/quotationrequestdetail.jsx';
+import ClientType from './components/registry/clienttype.jsx';
+
 
 
 const Logo = './assets/intellimech.svg'
@@ -97,6 +99,10 @@ const App = () => {
             <Route path="roles" element={<PrivateRoute element={<UsersTable />} />} />
             <Route path="employees-consultants" element={<PrivateRoute element={<EmployeesConsultant />} />} />
             <Route path="category" element={<PrivateRoute element={<CategoriesPage />} />} />
+            
+            <Route path="clienttype" element={<PrivateRoute element={<ClientType />} />} />
+            <Route path="projecttype" element={<PrivateRoute element={<ProjectType />} />} />
+            <Route path="assignment" element={<PrivateRoute element={<Assignment />} />} />
             <Route path="subcategory" element={<PrivateRoute element={<SubcategoriesPage />} />} />
             <Route path="technicalarea" element={<PrivateRoute element={<TechnicalAreaPage />} />} />
             <Route path="locations" element={<PrivateRoute element={<Locations />} />} />

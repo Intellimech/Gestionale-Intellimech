@@ -14,6 +14,10 @@ Company.init(
     Code: {
       type: DataTypes.STRING(10), // Changed to match VARCHAR(10) in the SQL query
     },
+    
+    companytype: {
+      type: DataTypes.INTEGER, 
+    },
     name: {
       type: DataTypes.STRING(255)
     },

@@ -1,95 +1,95 @@
-import { PaperClipIcon } from '@heroicons/react/20/solid';
-import { jsPDF } from 'jspdf';
-import logo from '../../images/logo.jpg';
-import 'jspdf-autotable';
+import React from 'react';
 
-export default function Example({ quotationrequest }) {
-    console.log("ecco qua cosa mi arriva"+quotationrequest)
+export default function QuotationDetails({ quotationrequest }) {
+  const formatDate = (date) => {
+    if (!date) return 'N/A';
+    return new Date(date).toLocaleString('it-IT', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const formatPM = (user) => {
+    if (!user) return 'N/A';
+    return `${user.name.slice(0, 2).toUpperCase()}${user.surname.slice(0, 2).toUpperCase()} (${user.name} ${user.surname})`;
+  };
+
   return (
-    <div>
-      <div className="px-4 sm:px-0">
-        <h3 className="text-base font-semibold leading-7 text-gray-900">Dettagli sulla richiesta di offerta</h3>
-        <p className="mt-1 max-w-2xl text-sm leading-6 text-gray-500">Informazioni dettagliate sulla richiesta di offerta</p>
+    <div className="w-full bg-white rounded-lg shadow-lg p-4 space-y-4">
+      {/* Header */}
+      <div className="border-b border-gray-200 pb-2">
+        <h1 className="text-lg font-bold text-gray-800">
+          Dettagli Richiesta di Offerta
+        </h1>
+        <p className="text-sm text-gray-600 mt-1">
+          {quotationrequest?.Company?.name}
+        </p>
       </div>
-      <div className="mt-6">
-        <dl className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5">
-          {/* Codice Richiesta */}
-          <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-gray-900">Codice Richiesta</dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{quotationrequest?.name}</dd>
-          </div>
 
-          {/* Descrizione */}
-          <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-2 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-gray-900">Descrizione</dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{quotationrequest?.description}</dd>
+      {/* Informazioni Generali */}
+      <div className="space-y-1">
+        <h2 className="text-sm font-semibold text-gray-700">
+          Informazioni Generali
+        </h2>
+        <div className="bg-white rounded-lg border border-gray-200">
+          <div className="divide-y divide-gray-200">
+            <TableRow label="Codice Richiesta" value={quotationrequest?.name} />
+            <TableRow label="Codice Progetto" value={quotationrequest?.externalcode} />
+            <TableRow label="Cliente" value={quotationrequest?.Company?.name} />
+            <TableRow label="Descrizione" value={quotationrequest?.description} />
           </div>
+        </div>
+      </div>
 
-          {/* Cliente */}
-          <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-gray-900">Cliente</dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{quotationrequest?.Company?.name}</dd>
+      {/* Dettagli Tecnici */}
+      <div className="space-y-1">
+        <h2 className="text-sm font-semibold text-gray-700">
+          Dettagli Tecnici
+        </h2>
+        <div className="bg-white rounded-lg border border-gray-200">
+          <div className="divide-y divide-gray-200">
+            <TableRow label="Tipo Progetto" value={quotationrequest?.ProjectType?.description} />
+            <TableRow label="Incarico" value={quotationrequest?.Assignment?.description} />
+            <TableRow label="Area Tecnica" value={quotationrequest?.TechnicalArea?.name} />
           </div>
+        </div>
+      </div>
 
-          {/* Categoria */}
-          <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-gray-900">Categoria</dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{quotationrequest?.Category?.name}</dd>
+      {/* Date e Stato */}
+      <div className="space-y-1">
+        <h2 className="text-sm font-semibold text-gray-700">
+          Date e Stato
+        </h2>
+        <div className="bg-white rounded-lg border border-gray-200">
+          <div className="divide-y divide-gray-200">
+            <TableRow label="Data di Creazione" value={formatDate(quotationrequest?.createdAt)} />
+            <TableRow label="Data di Aggiornamento" value={formatDate(quotationrequest?.updatedAt)} />
+            <TableRow label="Project Manager" value={formatPM(quotationrequest?.createdByUser)} />
+            <TableRow
+              label="Stato della Richiesta"
+              value={quotationrequest?.status}
+              valueClass={`font-medium ${
+                quotationrequest?.status === 'Approvata' ? 'text-green-600' : 
+                quotationrequest?.status === 'In approvazione' ? 'text-yellow-600' : 
+                quotationrequest?.status === 'Rifiutata' ? 'text-red-600' : 
+                'text-gray-900'
+              }`}
+            />
           </div>
-
-          {/* Sottocategoria */}
-          <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-gray-900">Sottocategoria</dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{quotationrequest?.Subcategory?.name}</dd>
-          </div>
-
-          {/* Area Tecnica */}
-          <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-gray-900">Area Tecnica</dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{quotationrequest?.TechnicalArea?.name}</dd>
-          </div>
-
-          {/* Data di Creazione */}
-          <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-gray-900">Data di Creazione</dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
-              {new Date(quotationrequest?.createdAt).toLocaleDateString()} {new Date(quotationrequest?.createdAt).toLocaleTimeString()}
-            </dd>
-          </div>
-
-          {/* Data di Aggiornamento */}
-          <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-gray-900">Data di Aggiornamento</dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
-              {quotationrequest?.updatedAt
-                ? new Date(quotationrequest?.updatedAt).toLocaleDateString() +
-                  ' ' +
-                  new Date(quotationrequest?.updatedAt).toLocaleTimeString()
-                : 'N/A'}
-            </dd>
-          </div>
-
-          {/* Project Manager */}
-          <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-gray-900">Project Manager</dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
-              {quotationrequest?.createdByUser?.name.slice(0, 2).toUpperCase() +
-                quotationrequest?.createdByUser?.surname.slice(0, 2).toUpperCase() +
-                ' (' +
-                quotationrequest?.createdByUser?.name +
-                ' ' +
-                quotationrequest?.createdByUser?.surname +
-                ')'}
-            </dd>
-          </div>
-
-          {/* Stato della Richiesta */}
-          <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-1 sm:px-0">
-            <dt className="text-sm font-medium leading-6 text-gray-900">Stato della Richiesta</dt>
-            <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{quotationrequest?.status}</dd>
-          </div>
-        </dl>
+        </div>
       </div>
     </div>
   );
 }
+
+const TableRow = ({ label, value, valueClass = "text-gray-900" }) => (
+  <div className="p-2 hover:bg-gray-50 transition-colors duration-150 flex flex-col sm:flex-row sm:items-center">
+    <dt className="text-xs font-medium text-gray-500 w-1/3">{label}</dt>
+    <dd className={`mt-1 sm:mt-0 text-xs ${valueClass} w-2/3`}>
+      {value || 'N/A'}
+    </dd>
+  </div>
+);

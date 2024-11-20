@@ -66,7 +66,7 @@ export default function UserCreateForm() {
 
   // Update the commercial offer handlers
   const addCommercialOffer = () => {
-    if (commercialoffers.length < 6) {
+   
       const newOffer = {
         linkedTask: null,
         date: new Date().toISOString().split('T')[0],
@@ -74,7 +74,7 @@ export default function UserCreateForm() {
         index: commercialoffers.length
       };
       setCommercialOffers([...commercialoffers, newOffer]);
-    }
+    
   };
 
   const updateCommercialOffer = (index, updatedOffer) => {
@@ -161,7 +161,7 @@ export default function UserCreateForm() {
       totalHours += task.hours || 0;
       totalValue += task.value || 0;
   
-      task.children.forEach((child) => calculate(child));
+      task?.children.forEach((child) => calculate(child));
     };
   
     tasks.forEach(calculate);
@@ -268,6 +268,7 @@ export default function UserCreateForm() {
     jsonObject.estimatedstart = estimatedStartDate;
     jsonObject.estimatedend = estimatedEndDate;
     jsonObject.amount=totalCommercialAmount;
+    jsonObject.hour=totalHours;
     jsonObject.team = selectedTeam?.map((team) => team.value);
     jsonObject.quotationrequest = selectedQuotationRequest?.value;
   
@@ -308,39 +309,34 @@ export default function UserCreateForm() {
   
   
   return (
-    <form name="createoffer" className="max-w-7xl mx-auto">
-      <Toaster />
-      
-      <div className="space-y-4">
-        <div className="border-b border-gray-900/10 pb-4">
-          <h2 className="text-base font-semibold leading-7 text-gray-900">Informazioni</h2>
-          <p className="mt-1 text-sm leading-6 text-gray-600">Crea una nuova offerta</p>
-          
-          <div className="mt-4 grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-6">
-            <div className="sm:col-span-3">
-              <label htmlFor="quotationrequest" className="block text-sm font-medium text-gray-700">
-                Richiesta di offerta
-              </label>
-              <Select
-                id="quotationrequest"
-                name="quotationrequest"
-                className="mt-1"
-                value={selectedQuotationRequest}
-                onChange={handleQuotationRequestChange}
-                options={quotationRequest
-                  .filter((item) => item.status === "Approvata")
-                  .map((item) => ({
-                    value: item.id_quotationrequest,
-                    label: `${item.name} - ${item.Company.name}`,
-                  }))}
-                placeholder="Select..."
-                isClearable
-              />
-            </div>
+    <form name="createoffer" className="max-w-7xl mx-auto p-4 bg-white shadow-md rounded-lg">
+    <Toaster />
     
-            <div className="sm:col-span-1">
-              <label htmlFor="hour" className="block text-sm font-medium text-gray-700">Ore</label>
-              <input
+    <table className="w-full mb-4">
+      <tbody>
+        <tr>
+          <td className="w-1/3 p-2 text-left font-medium">Richiesta di offerta</td>
+          <td className="w-2/3 p-2">
+            <Select
+              id="quotationrequest"
+              name="quotationrequest"
+              value={selectedQuotationRequest}
+              onChange={handleQuotationRequestChange}
+              options={quotationRequest
+                .filter((item) => item.status === "Approvata")
+                .map((item) => ({
+                  value: item.id_quotationrequest,
+                  label: `${item.name} - ${item.Company.name}`,
+                }))}
+              placeholder="Select..."
+              isClearable
+            />
+          </td>
+        </tr>
+        <tr>
+          <td className="w-1/3 p-2 text-left font-medium">Ore</td>
+          <td className="w-2/3 p-2">
+          <input
                 id="hour"
                 name="hour"
                 type="number"
@@ -348,131 +344,116 @@ export default function UserCreateForm() {
                 value={totalHours}
                 readOnly
               />
-            </div>
-    
-         
-            <div className="sm:col-span-2">
-              <label htmlFor="commercialAmount" className="block text-sm font-medium text-gray-700">
-                Valore Totale Offerte Commerciali
-              </label>
-              <div className="mt-1 relative rounded-md shadow-sm">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <span className="text-gray-500 sm:text-sm">€</span>
-                </div>
-                <input
-                  type="text"
-                  name="commercialAmount"
-                  id="commercialAmount"
-                  className="block w-full pl-7 pr-12 rounded-md border-gray-300 focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
-                  value={totalCommercialAmount.toFixed(2)}
-                  readOnly
-                />
-                <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                  <span className="text-gray-500 sm:text-sm">EUR</span>
-                </div>
+          </td>
+        </tr>
+        <tr>
+          <td className="w-1/3 p-2 text-left font-medium">Valore Totale Offerte Commerciali</td>
+          <td className="w-2/3 p-2">
+            <div className="relative rounded-md shadow-sm">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <span className="text-gray-500 sm:text-sm">€</span>
               </div>
-            </div>
-
-
-            <div className="sm:col-span-3">
-              <label htmlFor="estimatedstart" className="block text-sm font-medium text-gray-700">
-                Data di inizio stimata
-              </label>
               <input
-                id="estimatedstart"
-                name="estimatedstart"
-                type="date"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
-                value={estimatedStartDate}
+                type="text"
+                className="block w-full pl-7 pr-12 rounded-md border-gray-300 focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
+                value={totalCommercialAmount.toFixed(2)}
                 readOnly
               />
+            
             </div>
-    
-            <div className="sm:col-span-3">
-              <label htmlFor="estimatedend" className="block text-sm font-medium text-gray-700">
-                Data di fine stimata
-              </label>
-              <input
-                id="estimatedend"
-                name="estimatedend"
-                type="date"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
-                value={estimatedEndDate}
-                readOnly
-              />
-            </div>
-    
-            <div className="sm:col-span-6">
-              <label htmlFor="description" className="block text-sm font-medium text-gray-700">Descrizione</label>
-              <textarea
-                id="description"
-                name="description"
-                commercialoffs={3}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
-              />
-            </div>
-          </div>
-        </div>
-    
-        <div>
-          <h3 className="text-lg font-medium leading-6 text-gray-900 mb-2">Tasks</h3>
-          {tasks.map((task, index) => (
-            <TaskForm
-              key={index}
-              task={task}
-              onChange={(updatedTask) => updateTask(index, updatedTask)}
-              onAddChild={() => addTask(index)}
-              onRemove={() => removeTask(index)}
-              users={users}
+          </td>
+        </tr>
+        <tr>
+          <td className="w-1/3 p-2 text-left font-medium">Data di inizio stimata</td>
+          <td className="w-2/3 p-2">
+            <input
+              type="date"
+              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
+              value={estimatedStartDate}
+              readOnly
             />
-          ))}
-          <button
-            type="button"
-            onClick={() => addTask()}
-            className="mt-2 rounded-md bg-[#7fb7d4] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#6ca7c4]"
-          >
-            Aggiungi Task
-        </button>
-      </div>
+          </td>
+        </tr>
+        <tr>
+          <td className="w-1/3 p-2 text-left font-medium">Data di fine stimata</td>
+          <td className="w-2/3 p-2">
+            <input
+              type="date"
+              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
+              value={estimatedEndDate}
+              readOnly
+            />
+          </td>
+        </tr>
+        <tr>
+          <td className="w-1/3 p-2 text-left font-medium">Descrizione</td>
+          <td className="w-2/3 p-2">
+            <textarea
+              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
+              rows={3}
+            />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div>
+      <h3 className="text-lg font-medium leading-6 text-gray-900 mb-2">Tasks</h3>
+      {tasks.map((task, index) => (
+        <TaskForm
+          key={index}
+          task={task}
+          onChange={(updatedTask) => updateTask(index, updatedTask)}
+          onAddChild={() => addTask(index)}
+          onRemove={() => removeTask(index)}
+          users={users}
+        />
+      ))}
+      <button
+        type="button"
+        onClick={() => addTask()}
+        className="mt-2 rounded-md bg-[#7fb7d4] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#6ca7c4]"
+      >
+        Aggiungi Task
+      </button>
+    </div>
+    
+    <div>
+      <h3 className="text-lg font-medium mt-3 leading-6 text-gray-900 mb-2">
+        Tabella di Pianificazione
+      </h3>
       
-      <div>
-          <h3 className="text-lg font-medium leading-6 text-gray-900 mb-2">
-            Tabella di Pianificazione
-          </h3>
-          
-          {commercialoffers.map((offer, index) => (
-            <CommercialOfferForm
-              key={index}
-              commercialOffer={offer}
-              onChange={(updatedOffer) => updateCommercialOffer(index, updatedOffer)}
-              onRemove={() => removeCommercialOffer(index)}
-              tasks={tasks}
-              index={index}
-            />
-          ))}
-          
-          {commercialoffers.length < 6 && (
-            <button
-              type="button"
-              onClick={addCommercialOffer}
-              className="mt-2 rounded-md bg-[#7fb7d4] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#6ca7c4]"
-            >
-              Aggiungi CommercialOffer
-            </button>
-          )}
-        </div>
-  
-      <div className="flex justify-end mt-4">
-        <button 
-          type="submit" 
-          onClick={createOffer} 
-          className="rounded-md bg-[#7fb7d4] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#6ca7c4]"
+      {commercialoffers.map((offer, index) => (
+        <CommercialOfferForm
+          key={index}
+          commercialOffer={offer}
+          onChange={(updatedOffer) => updateCommercialOffer(index, updatedOffer)}
+          onRemove={() => removeCommercialOffer(index)}
+          tasks={tasks}
+          index={index}
+        />
+      ))}
+      
+    
+        <button
+          type="button"
+          onClick={addCommercialOffer}
+          className="mt-2 rounded-md bg-[#7fb7d4] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#6ca7c4]"
         >
-          Crea
+          Aggiungi 
         </button>
-      </div>
+      
+    </div>
+
+    <div className="flex justify-end mt-4">
+      <button 
+        type="submit" 
+        onClick={createOffer} 
+        className="rounded-md bg-[#7fb7d4] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#6ca7c4]"
+      >
+        Crea
+      </button>
     </div>
   </form>
-  
   );
 }

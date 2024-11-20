@@ -25,8 +25,8 @@ export default function Example({ permissions }) {
   const [showPopup, setShowPopup] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setselectedStatus] = useState('');
-  const [sortColumn, setSortColumn] = useState('');
-  const [sortDirection, setSortDirection] = useState('asc');
+  const [sortColumn, setSortColumn] = useState('name');
+  const [sortDirection, setSortDirection] = useState('desc');
   const [filterType, setFilterType] = useState('name');
 
   const [showInfo, setShowInfo] = useState(false);
@@ -311,12 +311,12 @@ const sortedSaleOrder = filteredSaleOrder.sort((a, b) => {
       </Dialog>
     </Transition.Root>
    
-        <div className="px-4 sm:px-6 lg:px-8 py-4">
+        <div className="px-2 sm:px-6 lg:px-2 py-4">
           {/* Contenitore principale con Flexbox */}
-          <div className="flex items-center justify-between">
+          <div className="flex items-left justify-between">
             {/* Titolo e descrizione */}
-            <div className="sm:flex-auto">
-              <h1 className="text-base font-semibold leading-6 text-gray-900">Ordini di vendita</h1>
+            <div className="sm:flex-auto text-left">
+              <h1 className="text-base text-left font-semibold leading-6 text-gray-900">Ordini di vendita</h1>
               <p className="mt-2 text-sm text-gray-700">Lista offerte presenti a sistema</p>
             </div>
 
@@ -335,94 +335,107 @@ const sortedSaleOrder = filteredSaleOrder.sort((a, b) => {
 
 
 
-        <div className="mt-8 flow-root">
-        <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">          
+        <div className="mt-4 flow-root">
+        <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-            <div className="relative">
-              <table className="min-w-full table-fixed divide-y divide-gray-300">
-                <thead>
+          <div className="relative">
+            {/* Updated table style */}
+            <table className="min-w-full table-fixed divide-y divide-gray-200">
+              <thead>
                   <tr>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
+                  <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer"  onClick={() => handleSort('name')}>
                       Ordine
-                      {sortColumn === 'name' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      {sortColumn === 'name'? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                       <br></br>
                       <input
                         type="text"
                         value={searchQueries.name}
                         onClick={(e) => e.stopPropagation()}
                         onChange={handleSearchInputChange('name')}
-                       className="mt-1 px-2 py-1       w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                     className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
                         placeholder=""
                         rows= {1}
                       />
                     </th>
-                    <th scope="col" className="px-2 py-3 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Company')}>
+                    <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer ellipsis" onClick={() => handleSort('Company')}>
                       Cliente
-                      {sortColumn === 'Company' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      {sortColumn === 'Company' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                       <br></br>
                       <input
                         type="input"
                         value={searchQueries.Company}
                         onClick={(e) => e.stopPropagation()}
                         onChange={handleSearchInputChange('Company')}
-                        className="mt-1       w-20 px-2 py-1 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                        className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
                         placeholder=""
                         rows= {1}
 
                       />
                     </th>
-                    <th scope="col" className="px-2 py-3 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('offer')}>
+                    <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('offer')}>
                       Offerta
-                      {sortColumn === 'offer' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      {sortColumn === 'offer' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                       <br></br>
                       <input
                         type="text"
                         value={searchQueries.offer}
                         onClick={(e) => e.stopPropagation()}
                         onChange={handleSearchInputChange('offer')}
-                        className="mt-1 px-2 py-1       w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                       className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
                         placeholder=""
                         rows= {1}
                       />
-                    </th>
-                    <th scope="col" className="px-2 py-3 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('description')}>
+                      </th>
+                     <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('description')}>
                       Descrizione
-                      {sortColumn === 'description' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      {sortColumn === 'description'? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                       <br></br>
                       <input
                         type="text"
                         value={searchQueries.description}
                         onClick={(e) => e.stopPropagation()}
                         onChange={handleSearchInputChange('description')}
-                       className="mt-1 px-2 py-1       w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                       className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
                         placeholder=""
                         rows= {1}
                       />
                     </th>
-                    <th scope="col" className="px-2 py-3 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('status')}>
+                    <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer"  onClick={() => handleSort('status')}>
                       Stato
-                      {sortColumn === 'status' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      {sortColumn === 'status' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                       <br></br>
                       <input
                         type="text"
                         value={searchQueries.status}
                         onClick={(e) => e.stopPropagation()}
                         onChange={handleSearchInputChange('status')}
-                       className="mt-1 px-2 py-1       w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                       className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
                         placeholder=""
                         rows= {1}
                       />
                     </th>
-                    <th scope="col" className="px-16 py-3 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('createdByUser')}>
+                    <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('createdByUser')}>
                       Creata da
-                      {sortColumn === 'createdByUser' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      {sortColumn === 'createdByUser' ?  (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
                       <br></br>
                       <input
                         type="text"
                         value={searchQueries.createdByUser}
                         onClick={(e) => e.stopPropagation()}
                         onChange={handleSearchInputChange('createdByUser')}
-                       className="mt-1 px-2 py-1       w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                        className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
                         placeholder=""
                         rows= {1}
                       />
@@ -431,62 +444,63 @@ const sortedSaleOrder = filteredSaleOrder.sort((a, b) => {
                     </th>
                   </tr>
                 </thead>
+               
                 <tbody className="divide-y divide-gray-200 bg-white">
-                  {Array.isArray(sortedSaleOrder) && sortedSaleOrder.length > 0 ? (
-                    sortedSaleOrder.map((salesorder) => (
-                      <tr
-                        key={salesorder.id}
-                      
-                        onClick={(event) => {
-                          // ctrl + click per aprire un nuovo tab
-                          if (event.ctrlKey) {
-                            handlectrlClick(salesorder);
-                          } else {
-                            console.log("Ecco: "+ salesorder)
-                            handleClick(salesorder); // Mostra il form nella stessa finestra
-                          }
-                        }}
-                      >
-                        <td className="whitespace-nowrap px-2 py-4 text-sm font-medium text-gray-900">
-                          {salesorder.name}
-                        </td>
-                        <td className="whitespace-nowrap px-2 py-4 text-sm text-gray-500">
-                          {salesorder.Offer?.QuotationRequest.Company.name}
-                        </td>
-                        <td className="whitespace-nowrap px-2 py-4 text-sm text-gray-500">
-                          <a href={`/offer/${salesorder.Offer?.id_offer}`} className="truncate">{salesorder.Offer?.name}</a>
-                        </td>
-                        <td className="whitespace-nowrap px-2 py-4 text-sm text-gray-500">
-                          <span className="truncate">{salesorder.Offer?.description || salesorder.Offer?.QuotationRequest.description}</span>
-                        </td>
-                        <td className="whitespace-nowrap px-2 py-4 text-sm text-gray-500">
-                          {salesorder.status === 'Da Fatturare' ? (
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-yellow-600">
-                              Da fatturare
-                            </span>
-                          ) : salesorder.status === 'Fatturata' ? (
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-green-800">
-                              Fatturata
-                            </span>
-                          ) : (
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                              Nessuno
-                            </span>
-                          )}
-                        </td>
-                        <td className="whitespace-nowrap px-16 py-4 text-sm text-gray-500">
-                          {salesorder.createdByUser?.name.slice(0, 2).toUpperCase() + salesorder.createdByUser?.surname.slice(0, 2).toUpperCase()}
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="6" className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
-                        Non ci sono ordini di vendita
+                {Array.isArray(sortedSaleOrder) && sortedSaleOrder.length > 0 ? (
+                  sortedSaleOrder.map((salesorder) => (
+                    <tr
+                      key={salesorder.id}
+                      onClick={(event) => {
+                        // ctrl + click per aprire un nuovo tab
+                        if (event.ctrlKey) {
+                          handlectrlClick(salesorder);
+                        } else {
+                          console.log("Ecco: "+ salesorder)
+                          handleClick(salesorder); // Mostra il form nella stessa finestra
+                        }
+                      }}
+                    >
+                      <td className="whitespace-normal overflow-hidden font-medium text-xs text-gray-900 px-2 py-2 break-words">
+                        {salesorder.name}
+                      </td>
+                      <td className="whitespace-normal overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
+                        {salesorder.Offer?.QuotationRequest.Company.name}
+                      </td>
+                      <td className="whitespace-normal overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
+                        <a href={`/offer/${salesorder.Offer?.id_offer}`} className="truncate">{salesorder.Offer?.name}</a>
+                      </td>
+                      <td className="whitespace-normal overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
+                        <span className="truncate">{salesorder.Offer?.description || salesorder.Offer?.QuotationRequest.description}</span>
+                      </td>
+                      <td className="whitespace-normal overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
+                        {salesorder.status === 'Da Fatturare' ? (
+                          <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-yellow-600">
+                            Da fatturare
+                          </span>
+                        ) : salesorder.status === 'Fatturata' ? (
+                          <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-green-800">
+                            Fatturata
+                          </span>
+                        ) : (
+                          <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                            Nessuno
+                          </span>
+                        )}
+                      </td>
+                      <td className="whitespace-nowrap px-6 py-3 text-xs text-gray-500 text-left">
+                        {salesorder.createdByUser?.name.slice(0, 2).toUpperCase() + salesorder.createdByUser?.surname.slice(0, 2).toUpperCase()}
                       </td>
                     </tr>
-                  )}
-                </tbody>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="6" className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                      Non ci sono ordini di vendita
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+
               </table>
 
             </div>

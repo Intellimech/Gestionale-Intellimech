@@ -46,6 +46,23 @@ router.post("/create", async (req, res) => {
       quotationrequest: quotationrequest,
       createdBy: user.id_user,
     });
+    
+    try {
+      const [updatedRows] = await QuotationRequest.update(
+        { status: "Utilizzata" },
+        { where: { id_quotationrequest: quotationrequest } }
+      );
+    
+      console.log("Updating QuotationRequest with ID:", quotationrequest);
+      console.log("Number of rows updated:", updatedRows);
+    
+      if (updatedRows === 0) {
+        console.warn("No rows were updated. Check if the ID exists or is valid.");
+      }
+    } catch (error) {
+      console.error("Error during update:", error);
+    }
+    
 
     await offer.addTeam(team);
 
@@ -60,16 +77,16 @@ router.post("/create", async (req, res) => {
           ? `${parentPrefix}.${taskCounter}`
           : taskCounter.toString();
 
-        const newTask = await Tasks.create({
-          name: taskName,
-          hour: task?.hours,
-          value: task.value || 0,
-          estimatedstart: new Date(task?.estimatedstart),
-          estimatedend: new Date(task?.estimatedend),
-          description: task.description,
-          percentage: percentage || 0,
-          assignedTo: task.assignedTo || null,
-          parentTask: parentId || null,
+          const newTask = await Tasks.create({
+            name: taskName,
+            hour: task?.hours,
+            value: task.value || 0,
+            estimatedstart: new Date(task?.estimatedstart),
+            estimatedend: new Date(task?.estimatedend),
+            description: task.description,
+            percentage: percentage || 0,
+            assignedTo: task.assignedTo || null,
+            parentTask: parentId || null,
           createdBy: user.id_user,
           id_offer: offer.id_offer
         });
@@ -93,7 +110,7 @@ router.post("/create", async (req, res) => {
         const taskName = offerData.linkedTask ? taskMap.get(offerData.linkedTask) : null;
 
         await CommercialOffer.create({
-          linkedTask: offerData.linkedTask || null,
+          linkedTask: offerData?.linkedTask || "Accettazione dell'offerta",
           taskName: taskName, // Aggiungi il nome della task collegata
           date: new Date(offerData.date),
           amount: offerData.amount || 0,
@@ -119,16 +136,12 @@ router.post("/create", async (req, res) => {
 });
 
 router.post("/create/rev", async (req, res) => {
-    let { amount, hour, estimatedstart, estimatedend, quotationrequest, team, tasks, commercialoffers } = req.body;
+    let { amount, hour, estimatedstart, name, revision, quotationrequestdescription, estimatedend, quotationrequest, team, tasks, commercialoffers } = req.body;
     const user = req.user;
   
-    console.log("Received data:", { amount, hour, estimatedstart, estimatedend, quotationrequest, team, tasks, commercialoffers });
+    console.log("Received data:", { name, amount, hour, estimatedstart, estimatedend, quotationrequest, team, tasks, commercialoffers });
   
-    if (isNaN(Date.parse(estimatedstart)) || isNaN(Date.parse(estimatedend))) {
-      return res.status(400).json({
-        message: "Invalid date format for estimatedstart or estimatedend",
-      });
-    }
+  
   
     const Offer = sequelize.models.Offer;
     const Tasks = sequelize.models.Tasks;
@@ -150,18 +163,43 @@ router.post("/create/rev", async (req, res) => {
   
     let trimmedName = name ? name.slice(0, -2) : ''; 
 
-    let offerName = `${trimmedName}_R${revision}`;
+    let offerName = `${trimmedName}R${revision}`;
 
   
       const offer = await Offer.create({
+        
         name: offerName,
         amount: amount,
         hour: hour,
+        revision: revision,
         estimatedstart: new Date(estimatedstart),
         estimatedend: new Date(estimatedend),
         quotationrequest: quotationrequest,
+        
         createdBy: user.id_user,
       });
+  
+    
+      try {
+        const [updatedRows] = await QuotationRequest.update(
+          { description: quotationrequestdescription },
+          { where: { id_quotationrequest: quotationrequest } }
+        );
+      
+        console.log("Updating QuotationRequest with ID:", quotationrequest);
+        console.log("Number of rows updated:", updatedRows);
+      
+        if (updatedRows === 0) {
+          console.warn("No rows were updated. Check if the ID exists or is valid.");
+        }
+      } catch (error) {
+        console.error("Error during update:", error);
+      }
+  
+      // Aggiunge il team collegato
+      if (team && team.length > 0) {
+        await newOffer.addTeam(team);
+      }
   
       await offer.addTeam(team);
   
@@ -178,13 +216,13 @@ router.post("/create/rev", async (req, res) => {
   
           const newTask = await Tasks.create({
             name: taskName,
-            hour: task?.hours,
+            hour: task?.hour,
             value: task.value || 0,
             estimatedstart: new Date(task?.estimatedstart),
             estimatedend: new Date(task?.estimatedend),
             description: task.description,
             percentage: percentage || 0,
-            assignedTo: task.assignedTo || null,
+            assignedTo: task.assignedTo || 2,
             parentTask: parentId || null,
             createdBy: user.id_user,
             id_offer: offer.id_offer
@@ -209,7 +247,7 @@ router.post("/create/rev", async (req, res) => {
           const taskName = offerData.linkedTask ? taskMap.get(offerData.linkedTask) : null;
   
           await CommercialOffer.create({
-            linkedTask: offerData.linkedTask || null,
+            linkedTask: offerData?.linkedTask || "Accettazione dell'offerta",
             taskName: taskName, // Aggiungi il nome della task collegata
             date: new Date(offerData.date),
             amount: offerData.amount || 0,
@@ -234,5 +272,34 @@ router.post("/create/rev", async (req, res) => {
     }
   });
   
-  // Rest of the router code remains the same...
+router.post('/updaterev', async (req, res) => {
+  
+  let { id } = req.body;
+    const Offer = sequelize.models.Offer;
+    
+    console.log("Updating offer with ID:", id);
+    console.log("Request body:", req.body);  // Added this log
+    
+    try {
+      const result = await Offer.update(
+        { status: "Annullata" },
+        { where: { id_offer: id } }
+      );
+      
+      console.log("Update result:", result);  // Added this log
+      
+   
+      
+      res.status(200).json({
+        message: 'Offerta annullata con successo'
+      });
+      
+    } catch (error) {
+      console.error('Error canceling offer:', error);
+      res.status(500).json({
+        message: 'Errore durante l\'annullamento dell\'offerta',
+        error: error.message
+      });
+    }
+  });
 export default router;

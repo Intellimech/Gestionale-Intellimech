@@ -30,12 +30,24 @@ QuotationRequest.init(
     technicalarea: {
       type: DataTypes.INTEGER,
       allowNull: true
+    },  
+    assignment: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
+      projecttype: {
+      type: DataTypes.INTEGER,
+      allowNull: true
     },
     status: {
       type: DataTypes.INTEGER,
       allowNull: true
     },
     company: {
+      type: DataTypes.STRING,
+      allowNull: true
+    },
+    companytype: {
       type: DataTypes.INTEGER,
       allowNull: true
     },

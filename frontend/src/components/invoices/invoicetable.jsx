@@ -130,8 +130,10 @@ export default function InvoiceTable({ invoicetype }) {
                   <tr>
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Number')}>
                       N° Fattura
-                      {sortColumn === 'Number' && sortDirection !== '' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
-                      <br />
+                      {sortColumn === 'Number' && sortDirection !== '' ? (
+                      sortDirection === 'asc' ? null : null 
+                    ) : null}
+                    <br />
                       <input
                         onClick={(e) => e.stopPropagation()}
                         value={searchQueries.Number}
@@ -142,7 +144,9 @@ export default function InvoiceTable({ invoicetype }) {
                     </th>
                     <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Company')}>
                       Azienda
-                      {sortColumn === 'Company' && sortDirection !== '' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      {sortColumn === 'Company' && sortDirection !== '' ? (
+                      sortDirection === 'asc' ? null : null 
+                    ) : null}
                       <br />
                       <input
                         onClick={(e) => e.stopPropagation()}
@@ -154,7 +158,9 @@ export default function InvoiceTable({ invoicetype }) {
                     </th>
                     <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('DocumentType')}>
                       Tipo di Documento
-                      {sortColumn === 'DocumentType' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      {sortColumn === 'DocumentType' ? (
+                      sortDirection === 'asc' ? null : null 
+                    ) : null}
                       <br />
                       <input
                         type="text"
@@ -167,7 +173,9 @@ export default function InvoiceTable({ invoicetype }) {
                     </th>
                     <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Date')}>
                       Data
-                      {sortColumn === 'Date' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      {sortColumn === 'Date' ? (
+                      sortDirection === 'asc' ? null : null 
+                    ) : null}
                       <br />
                       <input
                         type="text"
@@ -180,7 +188,9 @@ export default function InvoiceTable({ invoicetype }) {
                     </th>
                     <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('InvoiceType')}>
                       Tipo Fattura
-                      {sortColumn === 'InvoiceType' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      {sortColumn === 'InvoiceType' ? (
+                      sortDirection === 'asc' ? null : null 
+                    ) : null}
                       <br />
                       <input
                         type="text"
@@ -193,7 +203,9 @@ export default function InvoiceTable({ invoicetype }) {
                     </th>
                     <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Lines')}>
                       Numero Righe
-                      {sortColumn === 'Lines' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      {sortColumn === 'Lines' ? (
+                      sortDirection === 'asc' ? null : null 
+                    ) : null}
                       <br />
                       <input
                         type="text"
@@ -206,7 +218,9 @@ export default function InvoiceTable({ invoicetype }) {
                     </th>
                     <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('Amount')}>
                       Valore
-                      {sortColumn === 'Amount' ? (sortDirection === 'asc' ? <ArrowUpIcon className="h-5 w-5 inline ml-2" /> : <ArrowDownIcon className="h-5 w-5 inline ml-2" />) : null}
+                      {sortColumn === 'Amount' ? (
+                      sortDirection === 'asc' ? null : null 
+                    ) : null}
                       <br />
                       <input
                         type="text"

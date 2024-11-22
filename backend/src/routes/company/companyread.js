@@ -16,12 +16,42 @@ const router = express.Router();
 // __dirname
 const __dirname = path.resolve();
 
-router.get("/read/", (req, res) => {
-    //get from the db all the companies
-    const user = req.user;  // Assuming req.user is populated by the authentication middleware
+// Funzione per formattare i nomi
+function formatName(name) {
+    return name
+        .toLowerCase()
+        .split(" ")
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+}
 
+// Funzione per inviare la risposta formattando i nomi
+function sendResponse(result, res) {
+    if (Array.isArray(result)) {
+        result = result.map(item => {
+            if (item.name) {
+                item.name = formatName(item.name);
+            }
+            return item;
+        });
+    } else if (result && typeof result === "object") {
+        if (result.name) {
+            result.name = formatName(result.name);
+        }
+    }
+
+    res.status(200).json({
+        message: "Result found",
+        value: result
+    });
+}
+
+// Rotte
+router.get("/read/", (req, res) => {
+    const user = req.user;  // Assuming req.user is populated by the authentication middleware
     const company = sequelize.models.Company;
     let result = [];
+
     try {
         switch (req.query.filter) {
             case "Suppliers":
@@ -53,20 +83,17 @@ router.get("/read/", (req, res) => {
                     throw new Error(err);
                 });
                 break;
+
             case "Customers":
-                //return only the companies that isClient is true
                 company.findAll({
                     where: {
                         isClient: true
                     },
-                
                     include: [
                         {
                             model: sequelize.models.ClientType,
                             attributes: ["id_clienttype", "code", "description"],
-
                         },
-
                     ]
                 })
                 .then((companies) => {
@@ -77,16 +104,14 @@ router.get("/read/", (req, res) => {
                     throw new Error(err);
                 });
                 break;
+
             default:
                 company.findAll({
-                  
                     include: [
                         {
                             model: sequelize.models.ClientType,
                             attributes: ["id_clienttype", "code", "description"],
-
                         },
-
                     ]
                 })
                 .then((companies) => {
@@ -96,7 +121,7 @@ router.get("/read/", (req, res) => {
                 .catch((err) => {
                     throw new Error(err);
                 });
-                break; 
+                break;
         }
     } catch (err) {
         Logger("error", err, null, "companyread");
@@ -107,11 +132,10 @@ router.get("/read/", (req, res) => {
 });
 
 router.get("/read/:id", (req, res) => {
-    //get from the db the company with the id specified in the url
     const company = sequelize.models.Company;
     let result = [];
+
     try {
-        //the id is the code of the company
         company.findAll({
             where: {
                 Code: req.params.id
@@ -133,12 +157,11 @@ router.get("/read/:id", (req, res) => {
 });
 
 router.get("/read/:id/invoices", (req, res) => {
-    //get from the db the invoices of the company with the id specified in the url
     const company = sequelize.models.Company;
     const invoice = sequelize.models.Invoices;
     let result = [];
+
     try {
-        //the id is the code of the company
         company.findAll({
             where: {
                 Code: req.params.id
@@ -153,7 +176,7 @@ router.get("/read/:id/invoices", (req, res) => {
                     }
                 })
                 .then((invoices) => {
-                    result = {company: companies, invoice: invoices };
+                    result = { company: companies, invoice: invoices };
                     sendResponse(result, res);
                 })
                 .catch((err) => {
@@ -173,12 +196,5 @@ router.get("/read/:id/invoices", (req, res) => {
         });
     }
 });
-
-function sendResponse(result, res) {
-    res.status(200).json({
-        message: "Result found",
-        value: result
-    });
-}
 
 export default router;

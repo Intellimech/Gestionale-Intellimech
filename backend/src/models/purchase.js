@@ -39,6 +39,7 @@ Purchase.init(
       allowNull: true,
       defaultValue: "In Approvazione"
     },
+    //Add owner field - Who asked for the purchase
     createdBy: {
       type: DataTypes.INTEGER,
       allowNull: true

@@ -432,6 +432,15 @@ export default function Example({ purchase: initialPurchase }) {
                                         Descrizione
                                     </th>
                                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        Ammortamento
+                                    </th>
+                                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        Anni di Ammortamento
+                                    </th>
+                                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        Asset
+                                    </th>
+                                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                                         Quantità
                                     </th>
                                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
@@ -456,6 +465,15 @@ export default function Example({ purchase: initialPurchase }) {
                                         </td>
                                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                             {product.description}
+                                        </td>
+                                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                            {product.depreciation ? <CheckIcon className="h-5 w-5 text-green-500" aria-hidden="true" /> : <XMarkIcon className="h-5 w-5 text-red-500" aria-hidden="true" />}
+                                        </td>
+                                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                            {product.depreciation_years ? product.depreciation_years : 'N/A'}
+                                        </td>
+                                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                            {product.asset ? <CheckIcon className="h-5 w-5 text-green-500" aria-hidden="true" /> : <XMarkIcon className="h-5 w-5 text-red-500" aria-hidden="true" />}
                                         </td>
                                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                                             {product.quantity}

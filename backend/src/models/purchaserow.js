@@ -18,6 +18,18 @@ PurchaseRow.init(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
+    depreciation: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true
+    },
+    depreciation_years: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
+    asset: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true
+    },
     description: {
       type: DataTypes.STRING(255),
       allowNull: true,

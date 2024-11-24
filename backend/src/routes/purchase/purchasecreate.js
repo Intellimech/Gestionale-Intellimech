@@ -50,6 +50,13 @@ router.post("/create", async (req, res) => {
       const product = products[i];
       let PurchaseRowName = `${namePurchase}_${(i + 1) * 10}`;
 
+      // Validate depreciation_years if depreciation is true
+      if (product.depreciation && (!product.depreciation_years || product.depreciation_years <= 0)) {
+        return res.status(400).json({
+          message: "Depreciation years must be a positive number when depreciation is enabled",
+        });
+      }
+
       await PurchaseRow.create({
         id_purchase: purchaseId,
         name: PurchaseRowName,
@@ -59,6 +66,9 @@ router.post("/create", async (req, res) => {
         unit_price: product.unit_price,
         quantity: product.quantity,
         totalprice: product.total,
+        depreciation: product.depreciation || false,
+        depreciation_years: product.depreciation ? product.depreciation_years : null,
+        asset: product.asset || false
       });
     }
 

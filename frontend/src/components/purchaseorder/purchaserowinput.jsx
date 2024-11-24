@@ -65,7 +65,7 @@ export default function PurchaseRowInput({
       </td>
 
       <td className="px-4 py-1 whitespace-nowrap">
-        <label htmlFor={`description-${index}`} className="block text-sm font-medium text-gray-700 ">
+        <label htmlFor={`description-${index}`} className="block text-sm font-medium text-gray-700">
           Descrizione
         </label>
         <textarea
@@ -105,6 +105,49 @@ export default function PurchaseRowInput({
           value={product.quantity}
           onChange={(e) => onChange({ ...product, quantity: e.target.value })}
           className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
+        />
+      </td>
+
+      <td className="px-4 py-2 whitespace-nowrap">
+        <label htmlFor={`asset-${index}`} className="block text-sm font-medium text-gray-700">
+          Asset
+        </label>
+        <input
+          type="checkbox"
+          id={`asset-${index}`}
+          name={`asset-${index}`}
+          checked={product.asset || false}
+          onChange={(e) => onChange({ ...product, asset: e.target.checked })}
+          className="h-4 w-4 rounded border-gray-300 text-[#7fb7d4] focus:ring-[#7fb7d4]"
+        />
+      </td>
+
+      <td className="px-4 py-2 whitespace-nowrap">
+        <label htmlFor={`depreciation-${index}`} className="block text-sm font-medium text-gray-700">
+          Ammortamento
+        </label>
+        <input
+          type="checkbox"
+          id={`depreciation-${index}`}
+          name={`depreciation-${index}`}
+          checked={product.depreciation || false}
+          onChange={(e) => onChange({ ...product, depreciation: e.target.checked })}
+          className="h-4 w-4 rounded border-gray-300 text-[#7fb7d4] focus:ring-[#7fb7d4]"
+        />
+      </td>
+
+      <td className="px-4 py-2 whitespace-nowrap">
+        <label htmlFor={`depreciation_years-${index}`} className="block text-sm font-medium text-gray-700">
+          Anni Ammortamento
+        </label>
+        <input
+          type="number"
+          id={`depreciation_years-${index}`}
+          name={`depreciation_years-${index}`}
+          value={product.depreciation_years || ''}
+          onChange={(e) => onChange({ ...product, depreciation_years: e.target.value })}
+          disabled={!product.depreciation}
+          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm disabled:bg-gray-100 disabled:cursor-not-allowed"
         />
       </td>
 

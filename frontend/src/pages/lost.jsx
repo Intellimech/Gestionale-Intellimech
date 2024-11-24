@@ -6,7 +6,7 @@ export default function Lost() {
             <body className="h-full">
                 <main className="grid min-h-full place-items-center bg-white px-6 py-24 sm:py-32 lg:px-8">
                     <div className="text-center">
-                        <p className="text-base font-semibold text-red-600">404</p>
+                        <p className="text-base font-semibold text-[#7fb7d4]">404</p>
                         <h1 className="mt-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-5xl">Pagina non trovata</h1>
                         <p className="mt-6 text-base leading-7 text-gray-600" aria-hidden="true">
                             La pagina che stai cercando non esiste.
@@ -14,7 +14,7 @@ export default function Lost() {
                         <div className="mt-10 flex items-center justify-center gap-x-6">
                             <a
                                 href="/app"
-                                className="rounded-md bg-red-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+                                className="rounded-md bg-[#A7D0EB] px-3.5 py-2.5 text-sm font-semibold text-black shadow-sm hover:bg-[#7fb7d4] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
                             >
                                 Torna alla Home
                             </a>

@@ -57,7 +57,7 @@ export default function CommercialOfferForm({
   const isFirstRow = index === 0;
 
   return (
-    <div className="flex items-center space-x-4 mb-4 p-4 bg-white rounded-lg shadow">
+    <div className="flex items-center space-x-4 mb-4 p-4 bg-white rounded-lg">
       <div className="w-16 font-semibold">
         {getRowLabel()}
       </div>

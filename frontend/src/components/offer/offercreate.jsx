@@ -309,7 +309,7 @@ export default function UserCreateForm() {
   
   
   return (
-    <form name="createoffer" className="max-w-7xl mx-auto p-4 bg-white shadow-md rounded-lg">
+    <form name="createoffer" className="max-w-7xl mx-auto p-4 bg-white  rounded-lg">
     <Toaster />
     
     <table className="w-full mb-4">

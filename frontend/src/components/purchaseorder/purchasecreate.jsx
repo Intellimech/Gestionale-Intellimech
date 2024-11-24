@@ -20,7 +20,17 @@ export default function PurchaseCreateForm() {
   const [selectedTeam, setSelectedTeam] = useState(null);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
-  const [products, setProducts] = useState([{ category: '', subcategory: '', unit_price: '', quantity: 1, description: '', subcategories: [] }]);
+  const [products, setProducts] = useState([{
+    category: '',
+    subcategory: '',
+    unit_price: '',
+    quantity: 1,
+    description: '',
+    subcategories: [],
+    depreciation: false,
+    depreciation_years: '',
+    asset: false
+  }]);
   const [currency, setCurrency] = useState('EUR');
   const currencies = ['EUR', 'USD', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'SEK', 'NZD'];
   const paymentMethods = ['Bank Transfer', 'Cash', 'Credit Card Floreani', 'Credit Card Fasanotti', 'Credit Card Ierace', 'Paypal']; // Payment methods options
@@ -36,20 +46,17 @@ export default function PurchaseCreateForm() {
     const fetchData = async () => {
       try {
         const [
-          { data: { quotationrequest } },
           { data: { categories } },
           { data: { technicalareas } },
           { data: { users } },
           { data: { value: companies } },
         ] = await Promise.all([
-          axios.get(`${process.env.REACT_APP_API_URL}/quotationrequest/read/free`,),
           axios.get(`${process.env.REACT_APP_API_URL}/category/read`, ),
           axios.get(`${process.env.REACT_APP_API_URL}/technicalarea/read`, ),
           axios.get(`${process.env.REACT_APP_API_URL}/user/read`, ),
           axios.get(`${process.env.REACT_APP_API_URL}/company/read`),
         ]);
 
-        setQuotationRequests(quotationrequest);
         setCategories(categories);
         setTechnicalAreas(technicalareas);
         setUsers(users.map(({ id_user, name, surname }) => ({ value: id_user, label: `${name} ${surname}` })));
@@ -99,6 +106,9 @@ export default function PurchaseCreateForm() {
         description: product.description || '',
         unit_price: parseFloat(product.unit_price),
         quantity: parseInt(product.quantity, 10),
+        depreciation: product.depreciation || false,
+        depreciation_years: product.depreciation ? parseInt(product.depreciation_years, 10) : null,
+        asset: product.asset || false
       }))
     };
   

@@ -28,7 +28,7 @@ import Invoicetable from './components/invoices/invoicetable.jsx';
 import Company from './components/registry/companytable';
 import Assignment from './components/registry/assignment.jsx';
 import Profile from './components/registry/userinfo.jsx';
-import Permissions from './components/registry/permissionstable.jsx'
+import Permission from './components/registry/permissionstable.jsx'
 import Purchase from  './components/purchaseorder/purchase.jsx';
 import PurchaseDetail from './components/purchaseorder/purchasedetail.jsx';
 import UsersTable from './components/registry/userstable';
@@ -108,7 +108,7 @@ const App = () => {
             <Route path="subcategory" element={<PrivateRoute element={<SubcategoriesPage />} />} />
             <Route path="technicalarea" element={<PrivateRoute element={<TechnicalAreaPage />} />} />
             <Route path="locations" element={<PrivateRoute element={<Locations />} />} />
-            <Route path="permissions" element={<PrivateRoute element={<Permissions />} />} />
+            <Route path="permission" element={<PrivateRoute element={<Permission />} />} />
             <Route path="settings" element={<PrivateRoute element={<SettingsPage />} />} />
           </Route>
           <Route path="*" element={<Lost />} />

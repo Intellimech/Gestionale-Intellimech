@@ -104,8 +104,8 @@ export default function Example({ open, setOpen }) {
       ]},
       { showedname: "Management", options: [
         { name: 'Users', href: '/app/users' },
-        { name: 'Role', href: '7app/roles' },
-        { name: 'Permissionss', href: 'app/permissions' },
+        { name: 'Role', href: '/app/roles' },
+        { name: 'Permissions', href: 'app/permission' },
         
         { name: 'Settings', href: '/app/settings' },
       ]},

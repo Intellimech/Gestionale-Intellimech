@@ -1,17 +1,93 @@
 import express from "express";
 import sequelize from "../../utils/db.js";
+import { Mutex } from 'async-mutex';
+import { Op } from 'sequelize';
 
 // Setup the express router
 const router = express.Router();
+const mutex = new Mutex();
 
 // Modelli Sequelize
 const Company = sequelize.models.Company;
-const ClientType = sequelize.models.ClientType; // Correzione: "ClintType" in "ClientType"
+const ClientType = sequelize.models.ClientType;
 const User = sequelize.models.User;
 const QuotationRequest = sequelize.models.QuotationRequest;
 
 // Middleware per il parsing del JSON
-router.use(express.json());router.post("/create/", async (req, res) => {
+router.use(express.json());
+
+async function generateQuotationRequestName(transaction) {
+  const currentYear = new Date().getFullYear().toString().substr(-2);
+  const prefix = `RDO${currentYear}_`;
+
+  // Trova l'ultima richiesta per l'anno corrente
+  const lastRequest = await QuotationRequest.findOne({
+    where: {
+      name: {
+        [Op.like]: `${prefix}%`,
+      },
+    },
+    order: [['name', 'DESC']],
+    transaction, // Usa la transazione per garantire coerenza
+  });
+
+  let nextNumber = 1;
+  if (lastRequest && lastRequest.name) {
+    const lastNumber = parseInt(lastRequest.name.split('_')[1], 10);
+    nextNumber = isNaN(lastNumber) ? 1 : lastNumber + 1;
+  }
+
+  return `${prefix}${nextNumber.toString().padStart(5, '0')}`;
+}
+
+async function createSingleQuotationRequest(companyId, requestData, user) {
+  // Inizia una transazione
+  const transaction = await sequelize.transaction();
+  try {
+    const { description, externalcode, assignment, projecttype, technicalarea } = requestData;
+
+    // Fetch dati azienda
+    const companyData = await Company.findOne({
+      where: { id_company: companyId },
+      include: [{
+        model: ClientType,
+        attributes: ["id_clienttype", "code", "description"],
+      }],
+      transaction, // Include la transazione
+    });
+
+    if (!companyData) {
+      throw new Error(`Company with ID ${companyId} not found`);
+    }
+
+    // Genera un nome univoco usando la transazione
+    const requestName = await generateQuotationRequestName(transaction);
+
+    // Crea la richiesta di preventivo
+    const newRequest = await QuotationRequest.create({
+      name: requestName,
+      description,
+      technicalarea,
+      projecttype,
+      externalcode: externalcode || "",
+      assignment: assignment,
+      company: companyData.id_company,
+      companytype: companyData?.ClientType?.code || "",
+      createdBy: user.id_user,
+      status: "In Attesa",
+    }, { transaction });
+
+    // Conferma la transazione
+    await transaction.commit();
+    return newRequest;
+  } catch (error) {
+    // Rollback in caso di errore
+    await transaction.rollback();
+    throw error;
+  }
+}
+
+router.post("/create/", async (req, res) => {
   try {
     const {
       description,
@@ -19,15 +95,13 @@ router.use(express.json());router.post("/create/", async (req, res) => {
       assignment,
       projecttype,
       technicalarea,
-      companies, // Lista di aziende
+      companies,
     } = req.body;
 
     const user = req.user;
 
-    // Validazione dei campi obbligatori
     const requiredFields = {
       description,
-      assignment,
       projecttype,
       technicalarea,
       companies,
@@ -49,58 +123,18 @@ router.use(express.json());router.post("/create/", async (req, res) => {
       });
     }
 
-    // Otteniamo l'ultimo contatore sequenziale esistente
-    const lastRequest = await QuotationRequest.findOne({
-      order: [["createdAt", "DESC"]],
-    });
-
-    let baseSequentialCount = lastRequest
-      ? parseInt(lastRequest.name.split("_")[1]) // Estrae l'ultimo numero sequenziale
-      : 0;
-
     const createdRequests = [];
-
     for (const companyId of companies) {
-      // Fetch dati azienda
-      const companyData = await Company.findOne({
-        where: { id_company: companyId },
-        include: [
-          {
-            model: ClientType,
-            attributes: ["id_clienttype", "code", "description"],
-          },
-        ],
+      await mutex.runExclusive(async () => {
+        const quotationRequest = await createSingleQuotationRequest(
+          companyId,
+          { description, externalcode, assignment, projecttype, technicalarea },
+          user
+        );
+        createdRequests.push(quotationRequest);
       });
-
-      if (!companyData) {
-        return res.status(404).json({
-          message: `Company with ID ${companyId} not found`,
-        });
-      }
-
-      // Incrementa il contatore locale
-      baseSequentialCount++;
-
-      // Genera un nome univoco
-      const currentYear = new Date().getFullYear().toString().substr(-2);
-      const requestName = `RDO${currentYear}_${baseSequentialCount.toString().padStart(5, "0")}`;
-
-      // Crea la richiesta di offerta
-      const quotationRequest = await QuotationRequest.create({
-        name: requestName,
-        description,
-        technicalarea,
-        projecttype,
-        externalcode: externalcode || "",
-        assignment,
-        company: companyData.id_company,
-        companytype: companyData?.ClientType?.code || "",
-        createdBy: user.id_user,
-        status: "In Attesa",
-      });
-
-      createdRequests.push(quotationRequest);
     }
+    
 
     res.status(200).json({
       message: "Quotation Requests created successfully",
@@ -110,6 +144,7 @@ router.use(express.json());router.post("/create/", async (req, res) => {
     console.error("Error creating Quotation Requests:", error);
     res.status(500).json({
       message: "Internal server error",
+      error: error.message,
     });
   }
 });

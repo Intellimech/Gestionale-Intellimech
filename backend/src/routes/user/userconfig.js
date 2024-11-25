@@ -78,7 +78,8 @@ const userNavigation = [
     { 
       showedname: "Acquisti", 
       options: [
-        { name: 'Acquisti', href: '/app/purchase', icon: 'ShoppingCartIcon', current: false, permissions: 'acquisti' },
+        { name: 'Ordini di Acquisti', href: '/app/purchase', icon: 'ShoppingCartIcon', current: false, permissions: 'acquisti' },
+        { name: 'Contratti', href: '/app/contract', icon: 'PencilSquareIcon', current: false, permissions: 'contratti' },
       ], 
     },
     { 

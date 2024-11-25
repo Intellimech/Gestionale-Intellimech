@@ -46,6 +46,7 @@ import clienttype from './clienttype/clienttyperouter.js';
 import calendar from './calendar/calendarrouter.js';
 import projecttype from './projecttype/projecttyperouter.js';
 import holidaysleaves from './holidays-leaves/holidaysleavesrouter.js';
+import contract from './contract/contractrouter.js';
 
 router.use((req, res, next) => {
     logger('debug', `Request: ${req.method} ${req.originalUrl} | From: ${(req.ip == '::1') ? 'localhost' : req.ip}`, req, 'mainrouter');
@@ -80,5 +81,6 @@ router.use('/', task);
 router.use('/', notification);
 router.use('/', calendar);
 router.use('/', holidaysleaves);
+router.use('/', contract);
 
 export default router;

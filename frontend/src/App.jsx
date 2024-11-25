@@ -44,6 +44,7 @@ import SettingsPage from './components/system/settings.jsx';
 import SalesOrderDetail from './components/salesorder/salesorderdetail.jsx';
 import QuotationrequestDetail from './components/quotationrequest/quotationrequestdetail.jsx';
 import ClientType from './components/registry/clienttype.jsx';
+import Contract from './components/contracts/contract.jsx';
 
 
 
@@ -83,6 +84,7 @@ const App = () => {
            
             <Route path="purchase" element={<PrivateRoute element={<Purchase />} />} />
             <Route path="purchase/:id_purchase" element={<PrivateRoute element={<PurchaseDetail />} />} />
+            <Route path="contract" element={<PrivateRoute element={<Contract />} />} />
             <Route path="profile" element={<PrivateRoute element={<Profile />} />} />
             <Route path="job" element={<PrivateRoute element={<Job />} />} />
             <Route path="job/:id_job" element={<PrivateRoute element={<JobInfo />} />} />

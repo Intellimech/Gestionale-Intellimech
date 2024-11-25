@@ -30,6 +30,7 @@ import CommercialOffer from './commercialoffer.js';
 import ClientType from './clienttype.js';
 import ProjectType from './projecttype.js';
 import Assignment from './assignment.js';
+import Contract from './contract.js';
 
 // Define associations
 User.belongsTo(Role, { foreignKey: 'role' });
@@ -234,6 +235,12 @@ User.hasMany(Calendar, { foreignKey: 'createdBy', as: 'createdCalendars' });
 User.hasMany(Calendar, { foreignKey: 'updatedBy', as: 'updatedCalendars' });
 User.hasMany(Calendar, { foreignKey: 'deletedBy', as: 'deletedCalendars' });
 
+Contract.belongsTo(User, { foreignKey: 'createdBy', as: 'createdByUser' });
+Contract.belongsTo(User, { foreignKey: 'updatedBy', as: 'updatedByUser' });
+Contract.belongsTo(User, { foreignKey: 'deletedBy', as: 'deletedByUser' });
+
+Contract.belongsTo(Company, { foreignKey: 'id_company' });
+Company.hasMany(Contract, { foreignKey: 'id_company' });
 
 export default {
     User,

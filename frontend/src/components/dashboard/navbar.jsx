@@ -3,7 +3,7 @@ import { Dialog, Menu, Transition, Disclosure } from '@headlessui/react'
 import { ChevronRightIcon } from '@heroicons/react/20/solid'
 import axios from 'axios'
 import Cookies from 'js-cookie'
-import { GlobeEuropeAfricaIcon, WrenchScrewdriverIcon, MegaphoneIcon, SwatchIcon, ShieldCheckIcon, Cog6ToothIcon, HomeIcon, ClipboardIcon, ShoppingBagIcon, CalendarIcon, ArchiveBoxIcon, FolderIcon, DocumentDuplicateIcon, ChartPieIcon, UsersIcon, TagIcon, CheckBadgeIcon, ClockIcon, CalendarDaysIcon, DocumentTextIcon, Squares2X2Icon, BanknotesIcon, DocumentPlusIcon, DocumentMinusIcon } from '@heroicons/react/24/outline';
+import { PencilSquareIcon, GlobeEuropeAfricaIcon, WrenchScrewdriverIcon, MegaphoneIcon, SwatchIcon, ShieldCheckIcon, Cog6ToothIcon, HomeIcon, ClipboardIcon, ShoppingBagIcon, CalendarIcon, ArchiveBoxIcon, FolderIcon, DocumentDuplicateIcon, ChartPieIcon, UsersIcon, TagIcon, CheckBadgeIcon, ClockIcon, CalendarDaysIcon, DocumentTextIcon, Squares2X2Icon, BanknotesIcon, DocumentPlusIcon, DocumentMinusIcon } from '@heroicons/react/24/outline';
 
 
 function classNames(...classes) {
@@ -46,7 +46,8 @@ export default function Navbar() {
             SwatchIcon,
             WrenchScrewdriverIcon,
             MegaphoneIcon,
-            GlobeEuropeAfricaIcon
+            GlobeEuropeAfricaIcon,
+            PencilSquareIcon
           };
           
           const updatedNavigationData = navigationData.map(item => ({

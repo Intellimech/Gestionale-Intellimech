@@ -2,9 +2,9 @@ import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/20/solid';
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import { ToastContainer, toast } from 'react-toastify';
 import { XMarkIcon, TrashIcon ,PencilSquareIcon, ArrowRightStartOnRectangleIcon } from '@heroicons/react/20/solid'
 import 'react-toastify/dist/ReactToastify.css';
+import toast, { Toaster } from 'react-hot-toast';
 
 import { Dialog } from '@headlessui/react';
 
@@ -22,7 +22,10 @@ export default function CategoryTable() {
   const [CategoryName, setCategoryName] = useState('');
   const [CategoryCode, setCategoryCode] = useState('');
   const [CategoryID, setCategoryID] = useState('');
+  const [deletedItem, setDeleteItem] = useState('');
   
+  const [isConfirmDeleteModalOpen, setIsConfirmDeleteModalOpen] = useState(false);
+  const [isConfirmUpdateModalOpen, setIsConfirmUpdateModalOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [newCategoryName, setNewCategoryName] = useState('');
   const tableRef = useRef(null);
@@ -73,7 +76,7 @@ export default function CategoryTable() {
     }
   };
   
-  const handleUpdateCategory = () => {
+  const confirmUpdateCategory = () => {
     axios
       .put(
         `${process.env.REACT_APP_API_URL}/category/update`, 
@@ -153,11 +156,14 @@ export default function CategoryTable() {
   const handleCreateCategory = () => {
     setIsConfirmModalOpen(true);
   };
-    
-  const deleteItem = async (CategoryID) => {
+  const handleUpdateCategory = () => {
+    setIsConfirmUpdateModalOpen(true);
+  };
+
+  const handleDeleteCategory =  ()=> {
     try {
-      const response = await axios.delete(
-        `${process.env.REACT_APP_API_URL}/category/delete/${CategoryID}`
+      const response = axios.delete(
+        `${process.env.REACT_APP_API_URL}/category/delete/${deletedItem}`
       );
   
       // Mostra una notifica di successo
@@ -166,7 +172,7 @@ export default function CategoryTable() {
   
       // Aggiorna la lista locale (se gestita in stato)
       setCategories((prevsubs) =>
-        prevsubs.filter((sub) => sub.id !== CategoryID)
+        prevsubs.filter((sub) => sub.id !== deletedItem)
       );
     } catch (error) {
       console.error('Errore nella cancellazione: ', error.response?.data || error.message);
@@ -174,7 +180,13 @@ export default function CategoryTable() {
       // Mostra una notifica di errore
       toast.error('Fallimento');
     }
+    setIsConfirmDeleteModalOpen(false);
+  }
+  
     
+  const deleteItem = async (CategoryID) => {
+   setDeleteItem(CategoryID);
+  setIsConfirmDeleteModalOpen(true);
   };
 
   const confirmCreateCategory = () => {
@@ -190,29 +202,13 @@ export default function CategoryTable() {
         setIsConfirmModalOpen(false);
         
         // Notifica di successo
-        toast.success('Categoria creata con successo!', {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
+        toast.success('Categoria creata con successo!', );
       })
       .catch((error) => {
         console.error('Error creating category:', error);
         
         // Notifica di errore
-        toast.error('Errore durante la creazione della categoria!', {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
+        toast.error('Errore durante la creazione della categoria!', );
       });
   };
   
@@ -221,10 +217,19 @@ export default function CategoryTable() {
     setIsConfirmModalOpen(false);
   };
 
+  const cancelUpdateCategory = () => {
+    setIsConfirmUpdateModalOpen(false);
+  };
+
+  const cancelDeleteCategory = () => {
+    setIsConfirmDeleteModalOpen(false);
+  };
+
+
   return (
     <>
       <div className="px-4 sm:px-6 lg:px-8">
-      <ToastContainer />
+      <Toaster />
         <div className="flex items-center justify-between">
           <div className="sm:flex-auto">
             <h1 className="text-base font-semibold leading-6 text-gray-900">Categorie</h1>
@@ -396,12 +401,54 @@ export default function CategoryTable() {
                 onClick={handleUpdateCategory}
                 className="rounded-md bg-[#A7D0EB] px-3 py-2 text-sm font-bold text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
               >
-                Crea
+                Modifica
               </button>
             </div>
           </Dialog.Panel>
         </div>
       </Dialog>
+      
+
+      {isConfirmUpdateModalOpen && (
+        <Dialog as="div" open={isConfirmUpdateModalOpen} onClose={() => setIsConfirmUpdateModalOpen(false)} className="relative z-50">
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <Dialog.Panel className="max-w-sm mx-auto bg-white rounded shadow-lg p-6">
+              <Dialog.Title className="text-lg font-semibold mb-4">Conferma Modifica</Dialog.Title>
+              <p>Sei sicuro di voler modificare questo elemento?</p>
+              <div className="flex justify-end mt-4">
+                <button onClick={confirmUpdateCategory} className="block mr-2 rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+        >
+                Conferma</button>
+                <button onClick={cancelUpdateCategory} className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+        >Annulla</button>
+              </div>
+            </Dialog.Panel>
+          </div>
+        </Dialog>
+      )}
+
+      
+
+{isConfirmDeleteModalOpen && (
+        <Dialog as="div" open={isConfirmDeleteModalOpen} onClose={() => setIsConfirmDeleteModalOpen(false)} className="relative z-50">
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <Dialog.Panel className="max-w-sm mx-auto bg-white rounded shadow-lg p-6">
+              <Dialog.Title className="text-lg font-semibold mb-4">Conferma Eliminazione</Dialog.Title>
+              <p>Sei sicuro di voler eliminare questo elemento?</p>
+              <div className="flex justify-end mt-4">
+                <button onClick={handleDeleteCategory} className="block mr-2 rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+        >
+                Conferma</button>
+                <button onClick={cancelDeleteCategory} className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+        >Annulla</button>
+              </div>
+            </Dialog.Panel>
+          </div>
+        </Dialog>
+      )}
+
 
 
       {isConfirmModalOpen && (
@@ -412,10 +459,10 @@ export default function CategoryTable() {
               <Dialog.Title className="text-lg font-semibold mb-4">Conferma Creazione</Dialog.Title>
               <p>Sei sicuro di voler creare questa categoria?</p>
               <div className="flex justify-end mt-4">
-                <button onClick={confirmCreateCategory} className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+                <button onClick={confirmCreateCategory} className="block mr-2 rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
         >
                 Conferma</button>
-                <button onClick={cancelCreateCategory} cclassName="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+                <button onClick={cancelCreateCategory} className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
         >Annulla</button>
               </div>
             </Dialog.Panel>

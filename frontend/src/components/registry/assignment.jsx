@@ -2,7 +2,8 @@ import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/20/solid';
 import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import { ToastContainer, toast } from 'react-toastify';
+import toast, { Toaster } from 'react-hot-toast';
+
 import 'react-toastify/dist/ReactToastify.css';
 import { XMarkIcon, TrashIcon ,PencilSquareIcon, ArrowRightStartOnRectangleIcon } from '@heroicons/react/20/solid'
 
@@ -18,6 +19,7 @@ export default function AssignmentTable() {
   const [sortColumn, setSortColumn] = useState('');
   const [sortDirection, setSortDirection] = useState('asc');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isConfirmUpdateModalOpen, setIsConfirmUpdateModalOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [newAssignmentName, setNewAssignmentName] = useState('');
   const [newAssignmentCode, setNewAssignmentCode] = useState('');
@@ -26,6 +28,10 @@ export default function AssignmentTable() {
   const [AssignmentName, setAssignmentName] = useState('');
   const [AssignmentCode, setAssignmentCode] = useState('');
   const [AssignmentID, setAssignmentID] = useState('');
+  const [deletedItem, setDeleteItem] = useState('');
+  
+  const [isConfirmDeleteModalOpen, setIsConfirmDeleteModalOpen] = useState(false);
+  
 
   const [searchQueries, setSearchQueries] = useState({
     name: '',
@@ -75,10 +81,13 @@ export default function AssignmentTable() {
   };
   
   
-  const deleteItem = async (AssignmentID) => {
+  const handleDeleteAssignment =  (
+
+  ) => {
+    setIsConfirmDeleteModalOpen(false);
     try {
-      const response = await axios.delete(
-        `${process.env.REACT_APP_API_URL}/assignment/delete/${AssignmentID}`
+      const response =  axios.delete(
+        `${process.env.REACT_APP_API_URL}/assignment/delete/${deletedItem}`
       );
   
       // Mostra una notifica di successo
@@ -87,7 +96,7 @@ export default function AssignmentTable() {
   
       // Aggiorna la lista locale (se gestita in stato)
       setAssignments((prevsubs) =>
-        prevsubs.filter((sub) => sub.id !== AssignmentID)
+        prevsubs.filter((sub) => sub.id !== deletedItem)
       );
     } catch (error) {
       console.error('Errore nella cancellazione: ', error.response?.data || error.message);
@@ -98,7 +107,7 @@ export default function AssignmentTable() {
     
   };
   
-  const handleUpdateAssignment = () => {
+  const confirmUpdateAssignment = () => {
     axios
       .put(
         `${process.env.REACT_APP_API_URL}/assignment/update`, 
@@ -180,6 +189,10 @@ export default function AssignmentTable() {
     setIsConfirmModalOpen(true);
   };
 
+  const handleUpdateAssignment = () => {
+    setIsConfirmUpdateModalOpen(true);
+  };
+
   const confirmCreateAssignment = () => {
     axios
       .post(`${process.env.REACT_APP_API_URL}/assignment/create`, 
@@ -195,29 +208,13 @@ export default function AssignmentTable() {
         setIsConfirmModalOpen(false);
         
         // Notifica di successo
-        toast.success('Incarico creata con successo!', {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
+        toast.success('Incarico creata con successo!', );
       })
       .catch((error) => {
         console.error('Error creating assignment:', error);
         
         // Notifica di errore
-        toast.error('Errore durante la creazione di incarico!', {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
+        toast.error('Errore durante la creazione di incarico!', );
       });
   };
   
@@ -225,11 +222,25 @@ export default function AssignmentTable() {
   const cancelCreateAssignment = () => {
     setIsConfirmModalOpen(false);
   };
+  const cancelUpdateAssignment = () => {
+    setIsConfirmUpdateModalOpen(false);
+  };
+
+  const cancelDeleteAssignment = () => {
+    setIsConfirmDeleteModalOpen(false);
+  };
+
+     
+  const deleteItem = async (AssignmentID) => {
+    setDeleteItem(AssignmentID);
+   setIsConfirmDeleteModalOpen(true);
+   };
+ 
 
   return (
     <>
       <div className="px-4 sm:px-6 lg:px-8">
-      <ToastContainer />
+      <Toaster />
         <div className="flex items-center justify-between">
           <div className="sm:flex-auto">
             <h1 className="text-base font-semibold leading-6 text-gray-900">Incarichi</h1>
@@ -443,10 +454,49 @@ export default function AssignmentTable() {
               <Dialog.Title className="text-lg font-semibold mb-4">Conferma Creazione</Dialog.Title>
               <p>Sei sicuro di voler creare questo incarico?</p>
               <div className="flex justify-end mt-4">
-                <button onClick={confirmCreateAssignment} className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+                <button onClick={confirmCreateAssignment} className="block mr-2 rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
         >
                 Conferma</button>
-                <button onClick={cancelCreateAssignment} cclassName="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+                <button onClick={cancelCreateAssignment} className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+        >Annulla</button>
+              </div>
+            </Dialog.Panel>
+          </div>
+        </Dialog>
+      )}
+
+      
+{isConfirmDeleteModalOpen && (
+        <Dialog as="div" open={isConfirmDeleteModalOpen} onClose={() => setIsConfirmDeleteModalOpen(false)} className="relative z-50">
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <Dialog.Panel className="max-w-sm mx-auto bg-white rounded shadow-lg p-6">
+              <Dialog.Title className="text-lg font-semibold mb-4">Conferma Eliminazione</Dialog.Title>
+              <p>Sei sicuro di voler eliminare questo elemento?</p>
+              <div className="flex justify-end mt-4">
+                <button onClick={handleDeleteAssignment} className="block mr-2 rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+        >
+                Conferma</button>
+                <button onClick={cancelDeleteAssignment} className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+        >Annulla</button>
+              </div>
+            </Dialog.Panel>
+          </div>
+        </Dialog>
+      )}
+
+{isConfirmUpdateModalOpen && (
+        <Dialog as="div" open={isConfirmUpdateModalOpen} onClose={() => setIsConfirmModalOpen(false)} className="relative z-50">
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <Dialog.Panel className="max-w-sm mx-auto bg-white rounded shadow-lg p-6">
+              <Dialog.Title className="text-lg font-semibold mb-4">Conferma Modifica</Dialog.Title>
+              <p>Sei sicuro di voler modificare questo incarico?</p>
+              <div className="flex justify-end mt-4">
+                <button onClick={confirmUpdateAssignment} className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+        >
+                Conferma</button>
+                <button onClick={cancelUpdateAssignment} className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
         >Annulla</button>
               </div>
             </Dialog.Panel>

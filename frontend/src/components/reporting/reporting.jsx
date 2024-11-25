@@ -6,7 +6,8 @@ import 'rc-slider/assets/index.css';
 import Select from "react-tailwindcss-select";
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import { ToastContainer, toast } from 'react-toastify';  // Importa ToastContainer e toast
+import toast, { Toaster } from 'react-hot-toast';
+
 import 'react-toastify/dist/ReactToastify.css';  // Importa i file CSS di react-toastify
 
 export default function Reporting() {
@@ -88,7 +89,7 @@ export default function Reporting() {
 
   return (
     <main className="">
-      <ToastContainer /> {/* Posiziona il ToastContainer qui */}
+      <Toaster /> 
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="sm:flex-auto">
           <h1 className="text-base font-semibold leading-6 text-gray-900">Rendicontazione</h1>

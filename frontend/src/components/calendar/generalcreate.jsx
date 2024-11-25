@@ -3,7 +3,8 @@ import React, { useState, useEffect } from 'react';
 import Select from 'react-tailwindcss-select'; // Assuming this supports multi-select
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { ToastContainer, toast } from 'react-toastify';
+import toast, { Toaster } from 'react-hot-toast';
+
 import 'react-toastify/dist/ReactToastify.css';
 
 export default function HolidayCreateForm() {
@@ -245,7 +246,7 @@ export default function HolidayCreateForm() {
                 </button>
             </div>
 
-            <ToastContainer />
+            <Toaster />
         </form>
     );
 }

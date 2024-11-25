@@ -4,7 +4,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import Select from "react-tailwindcss-select";
 import { Dialog } from '@headlessui/react';
-import { ToastContainer } from 'react-toastify';
+
 import { XMarkIcon, TrashIcon ,PencilSquareIcon, ArrowRightStartOnRectangleIcon } from '@heroicons/react/20/solid'
 import toast, { Toaster } from 'react-hot-toast';
 
@@ -26,7 +26,12 @@ export default function SubcategoryTable() {
   const [SubCategoryCode, setSubCategoryCode] = useState('');
   const [SubCategoryID, setSubCategoryID] = useState('');
   
+  const [deletedItem, setDeleteItem] = useState('');
+  
+  const [isConfirmDeleteModalOpen, setIsConfirmDeleteModalOpen] = useState(false);
+  
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [isConfirmUpdateModalOpen, setIsConfirmUpdateModalOpen] = useState(false);
   const [newSubcategory, setNewSubcategory] = useState({ name: '', category: '' });
   const [searchQueries, setSearchQueries] = useState({ name: '', id_subcategory: '', category: '' });
 
@@ -70,10 +75,12 @@ export default function SubcategoryTable() {
   }, [isModalOpen]);
 
   
-  const deleteItem = async (SubCategoryID) => {
+  const handleDeleteSubcategory = () => {
+    
+    setIsConfirmDeleteModalOpen(false);
     try {
-      const response = await axios.delete(
-        `${process.env.REACT_APP_API_URL}/subcategory/delete/${SubCategoryID}`
+      const response = axios.delete(
+        `${process.env.REACT_APP_API_URL}/subcategory/delete/${deletedItem}`
       );
   
       // Mostra una notifica di successo
@@ -82,7 +89,7 @@ export default function SubcategoryTable() {
   
       // Aggiorna la lista locale (se gestita in stato)
       setSubcategories((prevsubs) =>
-        prevsubs.filter((sub) => sub.id !== SubCategoryID)
+        prevsubs.filter((sub) => sub.id !== deletedItem)
       );
     } catch (error) {
       console.error('Errore nella cancellazione: ', error.response?.data || error.message);
@@ -93,7 +100,7 @@ export default function SubcategoryTable() {
     
   };
   
-  const handleUpdateSubcategory = () => {
+  const confirmUpdateSubcategory = () => {
     axios
       .put(
         `${process.env.REACT_APP_API_URL}/subcategory/update`, 
@@ -107,13 +114,13 @@ export default function SubcategoryTable() {
         setIsConfirmModalOpen(false); // Chiude la modale di conferma
   
         // Mostra la notifica di successo
-        toast.success('Categoria creata con successo!');
+        toast.success('Sottocategoria creata con successo!');
       })
       .catch((error) => {
-        console.error('Errore durante la modifica della categoria:', error);
+        console.error('Errore durante la modifica della sottocategoria:', error);
         
         // Mostra la notifica di errore
-        toast.error('Modifica della categoria fallita.');
+        toast.error('Modifica della sottocategoria fallita.');
       });
   };
 
@@ -182,10 +189,7 @@ export default function SubcategoryTable() {
     link.click();
     document.body.removeChild(link);
   };
-
-  const handleCreateSubcategory = () => {
-    setIsModalOpen(true); // Show the creation modal
-  };
+ 
 
   const handleSubmitNewSubcategory = (event) => {
     event.preventDefault();
@@ -228,6 +232,22 @@ export default function SubcategoryTable() {
   //     progress: undefined,
   //   });
   // });
+  const cancelUpdateSubcategory = () => {
+    setIsConfirmUpdateModalOpen(false);
+  };
+
+
+  const cancelDeleteSubcategory = () => {
+    setIsConfirmDeleteModalOpen(false);
+  };
+
+
+  const handleCreateSubcategory = () => {
+    setIsConfirmModalOpen(true);
+  };
+  const handleUpdateSubcategory = () => {
+    setIsConfirmUpdateModalOpen(true);
+  };
 
   const submitNewSubcategory = () => {
     axios
@@ -265,6 +285,10 @@ export default function SubcategoryTable() {
   });
 };
 
+const deleteItem = async (SubCategoryID) => {
+  setDeleteItem(SubCategoryID);
+ setIsConfirmDeleteModalOpen(true);
+ };
   return (
     <>
       <div className="px-4 sm:px-6 lg:px-8">
@@ -432,7 +456,7 @@ export default function SubcategoryTable() {
             </button>
             <button
               type="submit"
-              onClick={() => setIsModalOpen(false)}
+              onClick={() => handleCreateSubcategory(false)}
               className="block w-full mt-4 rounded-md bg-white px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-white"
             >
               Annulla
@@ -486,7 +510,46 @@ export default function SubcategoryTable() {
         </div>
       </Dialog>
 
+      
+{isConfirmDeleteModalOpen && (
+        <Dialog as="div" open={isConfirmDeleteModalOpen} onClose={() => setIsConfirmDeleteModalOpen(false)} className="relative z-50">
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <Dialog.Panel className="max-w-sm mx-auto bg-white rounded shadow-lg p-6">
+              <Dialog.Title className="text-lg font-semibold mb-4">Conferma Eliminazione</Dialog.Title>
+              <p>Sei sicuro di voler eliminare questo elemento?</p>
+              <div className="flex justify-end mt-4">
+                <button onClick={handleDeleteSubcategory} className="block mr-2 rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+        >
+                Conferma</button>
+                <button onClick={cancelDeleteSubcategory} className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+        >Annulla</button>
+              </div>
+            </Dialog.Panel>
+          </div>
+        </Dialog>
+      )}
 
+
+      
+      {isConfirmUpdateModalOpen && (
+        <Dialog as="div" open={isConfirmUpdateModalOpen} onClose={() => setIsConfirmUpdateModalOpen(false)} className="relative z-50">
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <Dialog.Panel className="max-w-sm mx-auto bg-white rounded shadow-lg p-6">
+              <Dialog.Title className="text-lg font-semibold mb-4">Conferma Modifica</Dialog.Title>
+              <p>Sei sicuro di voler modificare questo elemento?</p>
+              <div className="flex justify-end mt-4">
+                <button onClick={confirmUpdateSubcategory} className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+        >
+                Conferma</button>
+                <button onClick={cancelUpdateSubcategory} className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+        >Annulla</button>
+              </div>
+            </Dialog.Panel>
+          </div>
+        </Dialog>
+      )}
 
 
         {/* Modal di conferma */}

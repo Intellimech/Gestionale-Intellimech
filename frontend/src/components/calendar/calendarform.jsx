@@ -4,7 +4,8 @@ import Select from 'react-tailwindcss-select';
 import DatePicker from 'react-datepicker';
 import Cookies from 'js-cookie';
 import 'react-datepicker/dist/react-datepicker.css';
-import { ToastContainer, toast } from 'react-toastify';
+import toast, { Toaster } from 'react-hot-toast';
+
 import 'react-toastify/dist/ReactToastify.css';
 
 // const Locations = [
@@ -354,7 +355,7 @@ export default function Example({ date, setOpen }) {
 
         </table>
       
-      <ToastContainer />
+      <Toaster />
     </form>
   );
 }

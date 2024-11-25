@@ -5,7 +5,8 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import UpdateForm from './peopleupdate';
 import 'react-toastify/dist/ReactToastify.css'
-import { ToastContainer, toast } from 'react-toastify';
+import toast, { Toaster } from 'react-hot-toast';
+
 
 import {  PencilSquareIcon, ArrowRightStartOnRectangleIcon } from '@heroicons/react/20/solid'
 
@@ -228,7 +229,7 @@ export default function Example() {
 
 
 <div className="py-4">
-        <ToastContainer/>
+        <Toaster/>
       </div>
 
       <div className="flex items-center justify-between">

@@ -222,7 +222,7 @@ router.post("/create/rev", async (req, res) => {
             estimatedend: new Date(task?.estimatedend),
             description: task.description,
             percentage: percentage || 0,
-            assignedTo: task.assignedTo || 2,
+            assignedTo: task.assignedTo,
             parentTask: parentId || null,
             createdBy: user.id_user,
             id_offer: offer.id_offer

@@ -6,7 +6,6 @@ import { XMarkIcon, TrashIcon ,PencilSquareIcon, ArrowRightStartOnRectangleIcon 
 import Cookies from 'js-cookie';
 import { Dialog } from '@headlessui/react';
 
-import { ToastContainer } from 'react-toastify';
 import toast, { Toaster } from 'react-hot-toast';
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -22,7 +21,7 @@ export default function TechnicalAreaTable() {
   const [newTechnicalAreaName, setNewTechnicalAreaName] = useState('');
   const [newTechnicalAreaCode, setNewTechnicalAreaCode] = useState('');
   const [TechnicalAreaID, setTechnicalAreaID] = useState('');
-  
+  const [isConfirmUpdateModalOpen, setIsConfirmUpdateModalOpen] = useState(false);
   const [TechnicalAreaName, setTechnicalAreaName] = useState('');
   const [TechnicalAreaCode, setTechnicalAreaCode] = useState('');
   const [selected, setSelected] = useState({});
@@ -132,6 +131,9 @@ export default function TechnicalAreaTable() {
     }
   });
 
+  const cancelUpdateTechnicalArea = () => {
+    setIsConfirmUpdateModalOpen(false);
+  };
 
   const exportTechnicalAreas = () => {
     const csvContent =
@@ -154,7 +156,10 @@ export default function TechnicalAreaTable() {
   const handleCreateTechnicalArea = () => {
     setIsConfirmModalOpen(true); // Show the confirmation modal
   };
-
+  const handleUpdateTechnicalArea = () => {
+    setIsConfirmUpdateModalOpen(true);
+  };
+    
   const confirmCreateTechnicalArea = () => {
     axios
       .post(
@@ -179,7 +184,7 @@ export default function TechnicalAreaTable() {
       });
   };
 
-  const handleUpdateTechnicalArea = () => {
+  const confirmUpdateTechnicalArea = () => {
     axios
       .put(
         `${process.env.REACT_APP_API_URL}/technicalarea/update`, 
@@ -437,6 +442,27 @@ export default function TechnicalAreaTable() {
           </Dialog.Panel>
         </div>
       </Dialog>
+
+      
+      {isConfirmUpdateModalOpen && (
+        <Dialog as="div" open={isConfirmUpdateModalOpen} onClose={() => setIsConfirmUpdateModalOpen(false)} className="relative z-50">
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <Dialog.Panel className="max-w-sm mx-auto bg-white rounded shadow-lg p-6">
+              <Dialog.Title className="text-lg font-semibold mb-4">Conferma Modifica</Dialog.Title>
+              <p>Sei sicuro di voler modificare questo elemento?</p>
+              <div className="flex justify-end mt-4">
+                <button onClick={confirmUpdateTechnicalArea} className="block mr-2 rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+        >
+                Conferma</button>
+                <button onClick={cancelUpdateTechnicalArea} className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+        >Annulla</button>
+              </div>
+            </Dialog.Panel>
+          </div>
+        </Dialog>
+      )}
+
 
 
       {/* Confirm Creation Modal */}

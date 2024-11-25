@@ -24,8 +24,8 @@ export default function ContractCreateForm() {
   const [total, setTotal] = useState(0);
 
   const currencies = ['EUR', 'USD', 'GBP'];
-  const recurrences = ['monthly', 'yearly', 'quarterly', 'biannual'];
-  const paymentMethods = ['Bank Transfer', 'Cash', 'Credit Card', 'Paypal'];
+  const recurrences = ['Mensile', 'Bimestrale', 'Trimestrale', 'Annuale', 'Biannuale'];
+  const paymentMethods = ['Bonifico Bancario', 'Carta di Credito_Floreani', 'Carta di Credito_Fasanotti', 'Carta di Credito_Ierace', 'Paypal'];
 
   const fetchCompanies = async () => {
     try {
@@ -80,7 +80,7 @@ export default function ContractCreateForm() {
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div className="sm:col-span-3">
               <label htmlFor="company" className="block text-sm font-medium text-gray-900">
-                Company
+                Fornitore
               </label>
               <Select
                 id="company"
@@ -94,7 +94,7 @@ export default function ContractCreateForm() {
 
             <div className="sm:col-span-2">
               <label htmlFor="paymentMethod" className="block text-sm font-medium text-gray-900">
-                Payment Method
+                Metodo di Pagamento
               </label>
               <Select
                 id="paymentMethod"
@@ -121,7 +121,7 @@ export default function ContractCreateForm() {
 
             <div className="sm:col-span-1">
               <label htmlFor="currency" className="block text-sm font-medium text-gray-900">
-                Currency
+                Valuta
               </label>
               <Select
                 id="currency"
@@ -134,7 +134,7 @@ export default function ContractCreateForm() {
 
             <div className="sm:col-span-2">
               <label htmlFor="recurrence" className="block text-sm font-medium text-gray-900">
-                Recurrence
+                Ricorrenza
               </label>
               <Select
                 id="recurrence"
@@ -147,7 +147,7 @@ export default function ContractCreateForm() {
 
             <div className="sm:col-span-2">
               <label htmlFor="startDate" className="block text-sm font-medium text-gray-900">
-                Start Date
+                Data di inizio
               </label>
               <input
                 type="date"
@@ -160,7 +160,7 @@ export default function ContractCreateForm() {
 
             <div className="sm:col-span-2">
               <label htmlFor="endDate" className="block text-sm font-medium text-gray-900">
-                End Date
+                Data di fine
               </label>
               <input
                 type="date"
@@ -192,7 +192,7 @@ export default function ContractCreateForm() {
           type="submit"
           className="rounded-md bg-[#7fb7d4] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#639fb8] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#639fb8]"
         >
-          Create Contract
+          Crea
         </button>
       </div>
     </form>

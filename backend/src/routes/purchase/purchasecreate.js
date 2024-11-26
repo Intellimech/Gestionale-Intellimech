@@ -27,6 +27,7 @@ router.post("/create", async (req, res) => {
     // Sum all the prices of the products
     products.forEach((product) => {
       product.total = product.unit_price * product.quantity;
+      product.taxed_totalprice = product.taxed_unit_price * product.quantity;
     });
 
     // Calculate the total price of the purchase
@@ -57,6 +58,8 @@ router.post("/create", async (req, res) => {
         });
       }
 
+      console.log(product);
+
       await PurchaseRow.create({
         id_purchase: purchaseId,
         name: PurchaseRowName,
@@ -64,8 +67,11 @@ router.post("/create", async (req, res) => {
         category: product.category,
         subcategory: product.subcategory,
         unit_price: product.unit_price,
+        taxed_unit_price: product.taxed_unit_price,
         quantity: product.quantity,
+        vat: parseFloat(product.vat) || 0,
         totalprice: product.total,
+        taxed_totalprice: product.taxed_totalprice,
         depreciation: product.depreciation || false,
         depreciation_years: product.depreciation ? product.depreciation_years : null,
         asset: product.asset || false

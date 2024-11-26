@@ -18,7 +18,6 @@ const PurchaseDetails = () => {
 
         // Assicurati di confrontare gli ID come stringhe
         const purchaseData = response.data.purchases.find(purchase => purchase.id_purchase.toString() === id_purchase); // Modificato per forzare il confronto come stringhe
-
         setPurchase(purchaseData);
       } catch (error) {
         console.error('Fetch error:', error); // Log dell'errore per il debug

@@ -75,6 +75,10 @@ export default function Example({ purchase: initialPurchase }) {
 
   }, [id, initialPurchase]);
 
+  useEffect(() => {
+    console.log('Purchase:', purchase);
+  }, [purchase]);
+
   const formatCurrency = (amount) => {
     return `${amount} ${purchase?.currency}`;
   };
@@ -447,13 +451,16 @@ export default function Example({ purchase: initialPurchase }) {
                                         Prezzo Unitario
                                     </th>
                                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        Prezzo Unitario IVA Esclusa
+                                    </th>
+                                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                                         IVA
                                     </th>
                                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                                         Totale
                                     </th>
                                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                        Stato
+                                        Totale IVA Esclusa
                                     </th>
                                 </tr>
                             </thead>
@@ -482,13 +489,16 @@ export default function Example({ purchase: initialPurchase }) {
                                             {formatCurrency(product.unit_price)}
                                         </td>
                                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                            {product.VAT}
+                                            {formatCurrency(product.taxed_unit_price)}
                                         </td>
                                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                            {formatCurrency(product.unit_price * product.quantity)}
+                                            {product.vat} %
                                         </td>
                                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                            {product.status}
+                                            {formatCurrency(product.totalprice)}
+                                        </td>
+                                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                            {formatCurrency(product.taxed_totalprice)}
                                         </td>
                                     </tr>
                                 ))}

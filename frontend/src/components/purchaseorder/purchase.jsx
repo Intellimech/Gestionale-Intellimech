@@ -229,7 +229,7 @@ export default function Example({ permissions }) {
                     leaveFrom="translate-x-0"
                     leaveTo="translate-x-full"
                   >
-                    <Dialog.Panel className="pointer-events-auto w-screen max-w-7xl">
+                    <Dialog.Panel className="pointer-events-auto w-screen max-w-8xl">
                       <div className="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
                         <div className="px-4 sm:px-6">
                           <div className="flex items-start justify-between">

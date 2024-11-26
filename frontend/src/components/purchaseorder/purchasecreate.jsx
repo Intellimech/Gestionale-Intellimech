@@ -94,7 +94,7 @@ export default function PurchaseCreateForm() {
     event.preventDefault();
     const form = new FormData(event.target);
     const formDataObject = Object.fromEntries(form.entries());
-  
+
     const jsonObject = {
       id_company: selectedCompany.value,
       payment: selectedPaymentMethod.value,
@@ -105,12 +105,16 @@ export default function PurchaseCreateForm() {
         subcategory: product.subcategory,
         description: product.description || '',
         unit_price: parseFloat(product.unit_price),
+        taxed_unit_price: parseFloat(product.taxed_unit_price),
         quantity: parseInt(product.quantity, 10),
+        vat: product.vat || 0,
         depreciation: product.depreciation || false,
         depreciation_years: product.depreciation ? parseInt(product.depreciation_years, 10) : null,
         asset: product.asset || false
       }))
     };
+
+    console.log('jsonObject:', jsonObject);
   
     toast.promise(
       axios.post(`${process.env.REACT_APP_API_URL}/purchase/create`, jsonObject), // 

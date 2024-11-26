@@ -38,11 +38,23 @@ PurchaseRow.init(
       type: DataTypes.DOUBLE,
       allowNull: false,
     },
+    taxed_unit_price: {
+      type: DataTypes.DOUBLE,
+      allowNull: false,
+    },
     quantity: {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
+    vat: {
+      type: DataTypes.DOUBLE,
+      allowNull: false,
+    },
     totalprice: {
+      type: DataTypes.DOUBLE,
+      allowNull: false,
+    },
+    taxed_totalprice: {
       type: DataTypes.DOUBLE,
       allowNull: false,
     },

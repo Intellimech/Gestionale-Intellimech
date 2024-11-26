@@ -588,7 +588,7 @@ const sortedRequest = filteredRequest.sort((a, b) => {
                     {quotationrequest.ProjectType?.code}
                     </td>
                     <td className="text-xs text-gray-500 text-left  px-2 py-2 max-w-[90px] whitespace-nowrap overflow-hidden text-ellipsis">
-                    {quotationrequest.TechnicalArea.code}
+                    {quotationrequest.TechnicalArea?.code}
                     </td>
 
                       <td className="text-xs text-gray-500 px-2 py-2 min-w-[170px] whitespace-nowrap overflow-hidden text-ellipsis">

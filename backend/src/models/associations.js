@@ -31,6 +31,9 @@ import ClientType from './clienttype.js';
 import ProjectType from './projecttype.js';
 import Assignment from './assignment.js';
 import Contract from './contract.js';
+import PaymentMethod from './paymentmethod.js';
+import Currency from './currency.js';
+import Subsubcategory from './subsubcategory.js';
 
 // Define associations
 User.belongsTo(Role, { foreignKey: 'role' });
@@ -38,6 +41,8 @@ Role.hasMany(User, { foreignKey: 'role' });
 
 Role.belongsToMany(Permissions, { through: RolePermissions, foreignKey: 'id_role' });
 Permissions.belongsToMany(Role, { through: RolePermissions, foreignKey: 'id_permissions' });
+
+
 
 //User is associated with Group
 User.belongsTo(Group, { foreignKey: 'group' });
@@ -73,6 +78,10 @@ WorkingSite.hasMany(User, { foreignKey: 'workingsite' });
 //Category is associated with Subcategory
 Category.hasMany(Subcategory, { foreignKey: 'category' });
 Subcategory.belongsTo(Category, { foreignKey: 'category' });
+
+
+Subcategory.hasMany(Subsubcategory, { foreignKey: 'subcategory' });
+Subsubcategory.belongsTo(Subcategory, { foreignKey: 'subcategory' });
 
 //QuotationRequest is associated with Category
 QuotationRequest.belongsTo(Category, { foreignKey: 'category' });
@@ -273,5 +282,8 @@ export default {
     Purchase,
     PurchaseRow,
     Calendar,
-    Assignment
+    Assignment,
+    PaymentMethod,
+    Currency,
+    Subsubcategory,
   };

@@ -21,8 +21,11 @@ router.get("/read/", (req, res) => {
 
     const user = req.user;  // Assuming req.user is populated by the authentication middleware
 
-    Permission.findAll({})
+    Permission.findAll({  
+       })
     .then((permissions) => {
+
+      
         if (permissions) {
             res.status(200).json({
                 message: "Permissions found",
@@ -37,6 +40,42 @@ router.get("/read/", (req, res) => {
     .catch((err) => {
         res.status(500).json({
             message: "Internal server error",
+        });
+    });
+});
+
+
+// Rotta per ottenere i permessi di un ruolo specifico
+router.get("/role/:roleId", (req, res) => {
+    const roleId = req.params.roleId;  // Ottieni l'ID del ruolo dalla richiesta
+
+    // Get the role from the database
+    const Role = sequelize.models.Role;
+    Role.findAll({
+        where: { id_role: roleId }, // Filtro per il ruolo
+        include: {
+            model: sequelize.models.Permission, 
+            attributes: ['id_permission', 'module', 'description', 'route'] // Seleziona le colonne necessarie
+        }
+    })
+    .then((permissions) => {
+        if (permissions && permissions.length > 0) {
+            // Rispondi con i permessi
+            res.status(200).json({
+                message: "Permessi trovati",
+                permissions: permissions,
+            });
+        } else {
+            // Se non ci sono permessi per il ruolo
+            res.status(404).json({
+                message: "Nessun permesso trovato per questo ruolo",
+            });
+        }
+    })
+    .catch((err) => {
+        console.error(err);
+        res.status(500).json({
+            message: "Errore interno del server",
         });
     });
 });

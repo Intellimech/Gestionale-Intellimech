@@ -2,28 +2,24 @@
 import { DataTypes, Model } from 'sequelize';
 import db from '../utils/db.js';
 
-class Subcategory extends Model {}
+class Currency extends Model {}
 
-Subcategory.init(
+Currency.init(
   {
-    id_subcategory: {
+    id_currency: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
       },
     name: {
         type: DataTypes.STRING,
-      },
-    category: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
       }
   },
   {
     sequelize: db,
-    modelName: 'Subcategory',
-    tableName: 'subcategory', // Make sure it matches your table name
+    modelName: 'Currency',
+    tableName: 'currency', // Make sure it matches your table name
   }
 );
 
-export default Subcategory;
+export default Currency;

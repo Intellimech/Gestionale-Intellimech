@@ -5,12 +5,11 @@ import jwt from 'jsonwebtoken';
 const router = express.Router();
 
 // Routes
-import permissionread from './permissionread.js';
-
+import purchaserowread from './purchaserowread.js';
 
 import Protect from '../../middleware/authmiddleware.js'; 
 router.use(Protect);
 
-router.use('/permission', permissionread);
+router.use('/purchaserow', purchaserowread);
 
 export default router;

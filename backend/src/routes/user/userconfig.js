@@ -79,6 +79,7 @@ const userNavigation = [
       showedname: "Acquisti", 
       options: [
         { name: 'Ordini di Acquisti', href: '/app/purchase', icon: 'ShoppingCartIcon', current: false, permissions: 'acquisti' },
+        { name: 'Righe di Acquisti', href: '/app/purchaserow', icon: 'DocumentTextIcon', current: false, permissions: 'righeacquisti' },
         { name: 'Contratti', href: '/app/contract', icon: 'PencilSquareIcon', current: false, permissions: 'contratti' },
       ], 
     },
@@ -104,11 +105,15 @@ const userNavigation = [
         { name: 'Personale', href: '/app/employees-consultants', icon: 'DocumentDuplicateIcon', current: false },
         { name: 'Categorie', href: '/app/category', icon: 'TagIcon', current: false},
         { name: 'Sotto categorie', href: '/app/subcategory', icon: 'SwatchIcon', current: false},
+        { name: 'Sotto Sotto Categorie', href: '/app/subsubcategory', icon: 'TagIcon', current: false},
         { name: 'Aree Tecniche', href: '/app/technicalarea', icon: 'WrenchScrewdriverIcon', current: false},
         { name: 'Locations', href: '/app/locations', icon: 'HomeIcon', current: false},
         { name: 'Incarichi', href: '/app/assignment', icon: 'TagIcon', current: false},
         { name: 'Tipo Progetto', href: '/app/projecttype', icon: 'TagIcon', current: false},
         { name: 'Tipo Cliente', href: '/app/clienttype', icon: 'TagIcon', current: false},
+        { name: 'Valute', href: '/app/currency', icon: 'TagIcon', current: false},
+        { name: 'Ricorrenze', href: '/app/recurrence', icon: 'TagIcon', current: false},
+        { name: 'Tipo Pagamento', href: '/app/paymentmethod', icon: 'TagIcon', current: false},
        
       ], 
     },

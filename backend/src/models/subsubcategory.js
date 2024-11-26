@@ -2,11 +2,11 @@
 import { DataTypes, Model } from 'sequelize';
 import db from '../utils/db.js';
 
-class Subcategory extends Model {}
+class Subsubcategory extends Model {}
 
-Subcategory.init(
+Subsubcategory.init(
   {
-    id_subcategory: {
+    id_subsubcategory: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true
@@ -14,16 +14,16 @@ Subcategory.init(
     name: {
         type: DataTypes.STRING,
       },
-    category: {
+    subcategory: {
         type: DataTypes.INTEGER,
         allowNull: false,
       }
   },
   {
     sequelize: db,
-    modelName: 'Subcategory',
-    tableName: 'subcategory', // Make sure it matches your table name
+    modelName: 'Subsubcategory',
+    tableName: 'subsubcategory', // Make sure it matches your table name
   }
 );
 
-export default Subcategory;
+export default Subsubcategory;

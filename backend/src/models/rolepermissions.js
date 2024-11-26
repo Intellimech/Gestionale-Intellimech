@@ -6,7 +6,7 @@ class rolepermissions extends Model {}
 
 rolepermissions.init(
   {
-    id_rolepermission: {
+    id_rolePermission: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true

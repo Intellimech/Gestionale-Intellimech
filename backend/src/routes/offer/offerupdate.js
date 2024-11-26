@@ -17,32 +17,26 @@ router.post('/update', async (req, res) => {
 
   try {
     // Cerca l'offerta esistente basandosi su `name` e `revision`
+    
+
+
+
+    // Trova l'offerta esistente
     const existingOffer = await Offer.findOne({ where: { name } });
-    console.log (existingOffer);
-    const id_offer= existingOffer.id_offer;
-    console.log("questo è l'id : " + id_offer)
 
-
-    // Elimina tutte le task e le commercial offer collegate
-    await Tasks.destroy({ where: { id_offer: existingOffer.id_offer } });
-    await CommercialOffer.destroy({ where: { id_offer: existingOffer.id_offer } });
-
-    // Elimina l'offerta stessa
-    await Offer.destroy({ where: { id_offer: existingOffer.id_offer } });
-
-    // Crea una nuova offerta mantenendo lo stesso nome e aggiornando la revisione
-    const newOffer = await Offer.create({
-      name,  // Mantieni lo stesso nome dell'offerta precedente
-      revision,
-      amount,
-      hour,
+        console.log (existingOffer);
+        const id_offer= existingOffer.id_offer;
+        console.log("questo è l'id : " + id_offer)
+    // Aggiorna l'offerta esistente invece di distruggerla
+    await existingOffer.update({
+      revision: revision,
+      amount: amount,
+      hour: hour,
       estimatedstart: new Date(estimatedstart),
       estimatedend: new Date(estimatedend),
-      quotationrequest,
-      createdBy: user.id_user,
+      // Mantieni altri campi esistenti non modificati
     });
-
-    
+      
     try {
       const [updatedRows] = await QuotationRequest.update(
         { description: quotationrequestdescription },
@@ -52,9 +46,6 @@ router.post('/update', async (req, res) => {
       console.log("Updating QuotationRequest with ID:", quotationrequest);
       console.log("Number of rows updated:", updatedRows);
     
-      if (updatedRows === 0) {
-        console.warn("No rows were updated. Check if the ID exists or is valid.");
-      }
     } catch (error) {
       console.error("Error during update:", error);
     }
@@ -67,59 +58,34 @@ router.post('/update', async (req, res) => {
     // Mappa per tenere traccia delle task create e dei loro nomi
     const taskMap = new Map();
 
-    const recreateTasks = async (parentId, tasks, parentPrefix = "") => {
-      let taskCounter = 1;
-
+    // Aggiorna o crea nuovi tasks mantenendo quelli esistenti
+    const updateOrCreateTasks = async (tasks, parentId = null) => {
       for (const task of tasks) {
-        const taskName = parentPrefix 
-          ? `${parentPrefix}.${taskCounter}`
-          : taskCounter.toString();
-
-        const newTask = await Tasks.create({
-          name: taskName,
-          hour: task.hour,
-          value: task.value || 0,
-          estimatedstart: new Date(task.estimatedstart),
-          estimatedend: new Date(task.estimatedend),
-          description: task.description,
-          percentage: task.percentage || 0,
-          assignedTo: task.assignedTo || 2,
-          parentTask: parentId || null,
-          createdBy: user.id_user,
-          id_offer: newOffer.id_offer,
-        });
-
-        // Salva l'id della nuova task nella mappa per collegamenti futuri
-        taskMap.set(newTask.id_task, taskName);
-
-        if (task.children && task.children.length > 0) {
-          await recreateTasks(newTask.id_task, task.children, taskName);
-        }
-
-        taskCounter++;
+        // Se il task ha un ID, aggiornalo
+        if (task.id_task) {
+          await Tasks.update({
+            hour: task.hour,
+            value: task.value,
+            description: task.description,
+            // altri campi
+          }, { where: { id_task: task.id_task } });
+        } 
       }
     };
 
     await recreateTasks(null, tasks);
-
-    const recreateCommercialOffers = async (offers) => {
-      for (const offerData of offers) {
-        const taskName = offerData.linkedTask ? taskMap.get(offerData.linkedTask) : null;
-
-        await CommercialOffer.create({
-          linkedTask: offerData.linkedTask || "Accettazione dell'offerta",
-          taskName,
-          date: new Date(offerData.date),
-          amount: offerData.amount || 0,
-          id_offer: newOffer.id_offer,
-        });
+    const updateOrCreateCommercialOffers = async (offers) => {
+      for (const offer of offers) {
+        if (offer.id) {
+          await CommercialOffer.update({
+            amount: offer.amount,
+            date: new Date(offer.date)
+          }, { where: { id: offer.id } });
+        }
       }
     };
 
-    if (commercialoffers && commercialoffers.length > 0) {
-      await recreateCommercialOffers(commercialoffers);
-    }
-
+  
     res.status(200).json({
       message: 'Offerta annullata e ricreata con successo',
       offer: newOffer,

@@ -65,6 +65,7 @@ router.get("/read/", async (req, res) => {
                 {
                   model: Tasks,
                   attributes: ["id_task", "name", "hour","description", "percentage", "assignedTo", "estimatedend", "estimatedstart"],
+                  
                 },
                 { model: sequelize.models.User,  as:'team', attributes: ['id_user', 'name', 'surname'] },
                 { model: sequelize.models.User, as: 'createdByUser', attributes: ['id_user', 'name', 'surname'] },

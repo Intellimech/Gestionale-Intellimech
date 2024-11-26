@@ -47,6 +47,10 @@ import calendar from './calendar/calendarrouter.js';
 import projecttype from './projecttype/projecttyperouter.js';
 import holidaysleaves from './holidays-leaves/holidaysleavesrouter.js';
 import contract from './contract/contractrouter.js';
+import paymentmethod from './paymentmethod/paymentmethodrouter.js';
+import currency from './currency/currencyrouter.js';
+import purchaserow from './purchaserow/purchaserowrouter.js';
+import subsubcategory from './subsubcategory/subsubcategoryrouter.js'
 
 router.use((req, res, next) => {
     logger('debug', `Request: ${req.method} ${req.originalUrl} | From: ${(req.ip == '::1') ? 'localhost' : req.ip}`, req, 'mainrouter');
@@ -75,6 +79,9 @@ router.use('/', job);
 router.use('/', contracttype);
 router.use('/', clienttype);
 router.use('/', projecttype);
+router.use('/', paymentmethod);
+// router.use('/', reporting);
+router.use('/', currency);
 // router.use('/', reporting);
 router.use('/', task);
 // router.use('/', product);
@@ -82,5 +89,7 @@ router.use('/', notification);
 router.use('/', calendar);
 router.use('/', holidaysleaves);
 router.use('/', contract);
+router.use('/', purchaserow);
+router.use('/', subsubcategory);
 
 export default router;

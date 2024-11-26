@@ -122,6 +122,78 @@ router.get("/read/", (req, res) => {
     });
 });
 
+// Rotta per ottenere gli utenti con un determinato ruolo
+router.get("/:roleId/role", (req, res) => {
+    const roleId = req.params.roleId;  // Ottieni l'ID del ruolo dalla richiesta
+    const User = sequelize.models.User; // Modello degli utenti
+    const Role = sequelize.models.Role; // Modello dei ruoli
+  
+    // Trova gli utenti che hanno il ruolo specificato
+    User.findAll({
+      where: { roleId: roleId },  // Filtra per roleId (l'ID del ruolo)
+      include: {
+        model: Role, // Unisci con la tabella dei ruoli
+        as: 'role',  // Usa l'alias definito nell'associazione
+        attributes: ['id_role', 'name'],  // Seleziona le colonne necessarie dal ruolo
+      },
+      attributes: ['id_user', 'name', 'email'], // Seleziona le colonne necessarie per l'utente
+    })
+      .then((users) => {
+        if (users && users.length > 0) {
+          // Se ci sono utenti con questo ruolo
+          res.status(200).json({
+            message: "Utenti trovati",
+            users: users,  // Restituisci gli utenti
+          });
+        } else {
+          // Se non ci sono utenti con questo ruolo
+          res.status(404).json({
+            message: "Nessun utente trovato per questo ruolo",
+          });
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        res.status(500).json({
+          message: "Errore interno del server",
+        });
+      });
+  });
+
+  router.get("/role/:roleId", async (req, res) => {
+    const roleId = req.params.roleId; // Ottieni l'ID del ruolo dalla richiesta
+
+    const User = sequelize.models.User;
+    User.findAll({
+        where: { role: roleId }, // Filtro per il ruolo
+      
+    })
+    .then((users) => {
+        if (users && users.length > 0) {
+            // Rispondi con i permessi
+            res.status(200).json({
+                message: "Utenti trovati",
+                users: users,
+            });
+        } else {
+            // Se non ci sono permessi per il ruolo
+            res.status(404).json({
+                message: "Nessun utente trovato per questo ruolo",
+            });
+        }
+    })
+    .catch((err) => {
+        console.error(err);
+        res.status(500).json({
+            message: "Errore interno del server",
+        });
+    });
+});
+
+
+
+  
+
 // router.get("/group/", (req, res) => {
 //     // Get the user from the token and return the group name that is a relation
 //     const token = req.headers["authorization"]?.split(" ")[1] || "";

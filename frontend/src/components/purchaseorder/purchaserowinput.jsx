@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import Select from 'react-tailwindcss-select';
 import { TrashIcon } from '@heroicons/react/20/solid';
 
@@ -20,7 +20,25 @@ export default function PurchaseRowInput({
 
   const Vat = ['22', '10', '4', '0'];
 
-  
+  useEffect(() => {
+    if (product.taxed_unit_price && product.vat) {
+      // Converto i valori in numeri per essere sicuro di fare calcoli corretti
+      const taxedUnitPrice = parseFloat(product.taxed_unit_price);
+      const vatRate = parseFloat(product.vat);
+      
+      // Calcolo del prezzo IVA inclusa
+      const unitPriceWithVat = taxedUnitPrice * (1 + vatRate / 100);
+      
+      // Aggiorno il prezzo unitario IVA inclusa
+      onChange({
+        ...product,
+        unit_price: unitPriceWithVat.toFixed(2),
+        // Aggiorno anche il totale IVA inclusa
+        total: (unitPriceWithVat * (parseFloat(product.quantity) || 0)).toFixed(2)
+      });
+    }
+  }, [product.taxed_unit_price, product.vat, product.quantity]);
+
   // Calculate totals
   const calculatedTotalTassato = useMemo(() => {
     const taxedUnitPrice = parseFloat(product.taxed_unit_price || 0);
@@ -144,7 +162,10 @@ export default function PurchaseRowInput({
           id={`vat-${index}`}
           name={`vat-${index}`}
           value={product.vat ? { value: product.vat, label: product.vat } : null}
-          onChange={(option) => onChange({ ...product, vat: option.value })}
+          onChange={(option) => {
+            // Quando cambia l'aliquota, l'useEffect si occuperà di ricalcolare i prezzi
+            onChange({ ...product, vat: option.value })
+          }}
           options={Vat.map(v => ({ value: v, label: v }))}
           placeholder="Seleziona l'IVA"
           className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4] sm:max-w-xs sm:text-sm sm:leading-6"

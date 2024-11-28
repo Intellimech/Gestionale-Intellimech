@@ -67,8 +67,8 @@ PurchaseRow.init(
       allowNull: false,
     },
     subsubcategory: {
-      type: DataTypes.STRING(50),
-      allowNull: false,
+      type: DataTypes.INTEGER(50),
+      allowNull: true,
     },
   },
   {

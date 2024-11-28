@@ -13,6 +13,7 @@ export default function PurchaseCreateForm() {
   const [categories, setCategories] = useState([]);
   const [description, setDescription] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
+  const [subsubcategories, setSubsubcategories] = useState([]);
   const [users, setUsers] = useState([]);
   const [technicalAreas, setTechnicalAreas] = useState([]);
   const [companies, setCompanies] = useState([]);
@@ -23,10 +24,12 @@ export default function PurchaseCreateForm() {
   const [products, setProducts] = useState([{
     category: '',
     subcategory: '',
+    subsubcategory: '',
     unit_price: '',
     quantity: 1,
     description: '',
     subcategories: [],
+    subsubcategories: [],
     depreciation: false,
     depreciation_years: '',
     asset: false
@@ -72,21 +75,34 @@ export default function PurchaseCreateForm() {
   }, []);
 
   const handleCategoryChange = async (event, index) => {
-    
     const updatedProducts = [...products];
     updatedProducts[index].category = event.target.value;
   
     try {
       const { data: { subcategories } } = await axios.get(`${process.env.REACT_APP_API_URL}/subcategory/read/${event.target.value}`,);
       updatedProducts[index].subcategories = subcategories;
-      updatedProducts[index].subcategory = '';
       setProducts(updatedProducts);
     } catch (error) {
       console.error('Error fetching subcategory data:', error);
     }
-  };  
+  };
 
-  const addProduct = () => setProducts([...products, { category: '', subcategory: '',  unit_price: '', quantity: 1, description: '', subcategories: [] }]);
+  const handleSubcategoryChange = async (event, index) => {
+    const updatedProducts = [...products];
+    updatedProducts[index].subcategory = event.target.value;
+  
+    try {
+      const { data: { subsubcategories } } = await axios.get(`${process.env.REACT_APP_API_URL}/subsubcategory/read/${event.target.value}`,);
+      updatedProducts[index].subsubcategories = subsubcategories;
+      updatedProducts[index].subsubcategory = '';
+      setProducts(updatedProducts);
+      console.log(subsubcategories);
+    } catch (error) {
+      console.error('Error fetching subsubcategory data:', error);
+    }
+  };
+
+  const addProduct = () => setProducts([...products, { category: '', subcategory: '',  subsubcategory: '', unit_price: '', quantity: 1, description: '', subcategories: [] }]);
   const removeProduct = (index) => setProducts(products.filter((_, i) => i !== index));
   const updateProduct = (index, updatedProduct) => setProducts(products.map((product, i) => (i === index ? updatedProduct : product)));
 
@@ -103,9 +119,11 @@ export default function PurchaseCreateForm() {
       products: products.map((product) => ({
         category: product.category,
         subcategory: product.subcategory,
+        subsubcategory: product.subsubcategory,
         description: product.description || '',
         unit_price: parseFloat(product.unit_price),
         taxed_unit_price: parseFloat(product.taxed_unit_price),
+        taxed_totalprice: product.total,
         quantity: parseInt(product.quantity, 10),
         vat: product.vat || 0,
         depreciation: product.depreciation || false,
@@ -120,8 +138,8 @@ export default function PurchaseCreateForm() {
       axios.post(`${process.env.REACT_APP_API_URL}/purchase/create`, jsonObject), // 
       {
         loading: 'Invio in corso...',
-        success: 'Richiesta di acquisto creata con successo!',
-        error: 'Errore durante la creazione della richiesta di acquisto',
+        success: 'ODA creato con successo!',
+        error: 'Errore durante la creazione dell?Ordine di Acquisto',
       }
     )
       .then((response) => {
@@ -231,7 +249,10 @@ export default function PurchaseCreateForm() {
                 onRemove={() => removeProduct(index)}
                 categories={categories}
                 subcategories={product.subcategories}
+                
+                subsubcategories={product.subsubcategories}
                 handleCategoryChange={(e) => handleCategoryChange(e, index)}
+                handleSubcategoryChange={(e) => handleSubcategoryChange(e, index)}
                 currencies={currencies}
                 currency={currency}
                 setCurrency={setCurrency}

@@ -22,7 +22,7 @@ router.post("/create", async (req, res) => {
     const purchaseCount = await Purchase.count({ distinct: "name" });
 
     // Generate a unique purchase name
-    let namePurchase = `ODA${new Date().getFullYear().toString().substr(-2)}_${(purchaseCount + 1).toString().padStart(5, "0")}`;
+    let namePurchase = `ODA${new Date().getFullYear().toString().substr(-2)}_${(purchaseCount + 1).toString().padStart(5, "0")}_R0`;
 
     // Sum all the prices of the products
     products.forEach((product) => {
@@ -49,7 +49,7 @@ router.post("/create", async (req, res) => {
     // Create the associated purchase rows
     for (let i = 0; i < products.length; i++) {
       const product = products[i];
-      let PurchaseRowName = `${namePurchase}_${(i + 1) * 10}`;
+      let PurchaseRowName = `${namePurchase}_${(i + 1) * 10}_R0`;
 
       // Validate depreciation_years if depreciation is true
       if (product.depreciation && (!product.depreciation_years || product.depreciation_years <= 0)) {

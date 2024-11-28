@@ -234,6 +234,10 @@ Category.hasMany(PurchaseRow, { foreignKey: 'category' });
 PurchaseRow.belongsTo(Subcategory, { foreignKey: 'subcategory' });
 Subcategory.hasMany(PurchaseRow, { foreignKey: 'subcategory' });
 
+
+PurchaseRow.belongsTo(Subsubcategory, { foreignKey: 'subsubcategory' });
+Subsubcategory.hasMany(PurchaseRow, { foreignKey: 'subsubcategory' });
+
 Calendar.belongsTo(User, { foreignKey: 'owner', as: 'ownerUser' });
 Calendar.belongsTo(User, { foreignKey: 'createdBy', as: 'createdByUser' });
 Calendar.belongsTo(User, { foreignKey: 'updatedBy', as: 'updatedByUser' });

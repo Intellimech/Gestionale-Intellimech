@@ -31,6 +31,10 @@ router.get("/read/", (req, res) => {
               model: sequelize.models.Subcategory,
               attributes: ["name"],
             },
+            {
+                model: sequelize.models.Subsubcategory,
+                attributes: ["name"],
+              },
           ]
     })
     .then((purchaserows) => {

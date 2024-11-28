@@ -1,12 +1,13 @@
 import { Fragment, useState, useRef, useEffect, useContext } from 'react';
 import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/20/solid';
 import { Dialog, Transition } from '@headlessui/react';
-import { XMarkIcon, CheckIcon, PaperAirplaneIcon, EyeIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, CheckIcon, PaperAirplaneIcon, EyeIcon, ArrowPathIcon, PencilSquareIcon } from '@heroicons/react/24/outline'
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { UserContext } from '../../module/userContext';
 import PurchaseCreateForm from './purchasecreate';
 import PurchaseInfo from './purchaseinfo';
+import PurchaseUpdateForm from './purchaseupdate';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -20,6 +21,9 @@ export default function Example({ permissions }) {
   const [selectedItems, setSelectedItems] = useState([]);
   const [purchaseOrder, setPurchaseOrder] = useState([]);
   const [items, setItems] = useState([]);
+  
+  const [selectedUpdate, setSelectedUpdate] = useState({});
+  const [showUpdate, setShowUpdate] = useState(false);
   const [showCreate, setShowCreate] = useState(false);
   const [sortColumn, setSortColumn] = useState('name'); // Imposta 'name' come colonna di ordinamento predefinita
   const [sortDirection, setSortDirection] = useState('desc');
@@ -33,6 +37,7 @@ export default function Example({ permissions }) {
     id_company: '',
     category: '',
     subcategory: '',
+    subsubcategory: '',
     payment_method: '',
     total: '',
     IVA: '',
@@ -64,6 +69,7 @@ export default function Example({ permissions }) {
     axios
       .get(`${process.env.REACT_APP_API_URL}/purchase/read`, )
       .then((response) => {
+        console.log(response.data)
         setPurchaseOrder(Array.isArray(response.data.purchases) ? response.data.purchases : []);
         setItems(Array.isArray(response.data.purchases) ? response.data.purchases : []);
       })
@@ -101,6 +107,7 @@ export default function Example({ permissions }) {
       (searchQueries.id_company === '' || item.Company?.name.toLowerCase().includes(searchQueries.id_company.toLowerCase())) &&
       (searchQueries.category === '' || item.category?.name.toLowerCase().includes(searchQueries.category.toLowerCase())) &&
       (searchQueries.subcategory === '' || item.subcategory?.name.toLowerCase().includes(searchQueries.subcategory.toLowerCase())) &&
+      (searchQueries.subsubcategory === '' || item.subsubcategory?.name.toLowerCase().includes(searchQueries.subsubcategory.toLowerCase())) &&
       (searchQueries.payment_method === '' || item.payment_method.toLowerCase().includes(searchQueries.payment_method.toLowerCase())) &&
       (searchQueries.total === '' || item.total.toString().includes(searchQueries.total)) &&
       (searchQueries.IVA === '' || item.IVA.toLowerCase().includes(searchQueries.IVA.toLowerCase())) &&
@@ -189,7 +196,7 @@ export default function Example({ permissions }) {
                       <div className="px-4 sm:px-6">
                         <div className="flex items-start justify-between">
                           <Dialog.Title className="text-base font-semibold leading-6 text-gray-900">
-                            {selectedItemInfo.name + ' - ' + selectedItemInfo.description}
+                            {selectedItemInfo.name }
                           </Dialog.Title>
                           <div className="ml-3 flex h-7 items-center">
                             <button
@@ -213,6 +220,54 @@ export default function Example({ permissions }) {
           </div>
         </Dialog>
       </Transition.Root>
+
+      
+      <Transition.Root show={showUpdate} as={Fragment}>
+        <Dialog className="relative z-50" onClose={setShowUpdate}>
+          <div className="fixed inset-0" />
+
+          <div className="fixed inset-0 overflow-hidden">
+            <div className="absolute inset-0 overflow-hidden">
+              <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-16">
+                <Transition.Child
+                  as={Fragment}
+                  enter="transform transition ease-in-out duration-500 sm:duration-700"
+                  enterFrom="translate-x-full"
+                  enterTo="translate-x-0"
+                  leave="transform transition ease-in-out duration-500 sm:duration-700"
+                  leaveFrom="translate-x-0"
+                  leaveTo="translate-x-full"
+                >
+                  <Dialog.Panel className="pointer-events-auto w-screen max-w-7xl">
+                    <div className="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
+                      <div className="px-4 sm:px-6">
+                        <div className="flex items-start justify-between">
+                          <Dialog.Title className="text-base font-semibold leading-6 text-gray-900">
+                          {selectedUpdate.name }
+                          </Dialog.Title>
+                          <div className="ml-3 flex h-7 items-center">
+                            <button
+                              type="button"
+                              className="relative rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#7fb7d4] focus:ring-offset-2"
+                              onClick={() => setShowUpdate(false)}
+                            >
+                              <span className="absolute -inset-2.5" />
+                              <span className="sr-only">Close panel</span>
+                              <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="relative mt-6 flex-1 px-4 sm:px-6">{ <PurchaseUpdateForm purchase={selectedUpdate} /> }</div>
+                    </div>
+                  </Dialog.Panel>
+                </Transition.Child>
+              </div>
+            </div>
+          </div>
+        </Dialog>
+      </Transition.Root> 
+
 
       <Transition.Root show={showCreate} as={Fragment}>
         <Dialog className="relative z-50" onClose={setShowCreate}>
@@ -263,7 +318,7 @@ export default function Example({ permissions }) {
         </Dialog>
       </Transition.Root>
 
-      <div className="px-4 sm:px-6 lg:px-8 py-4">
+      <div className="px-4 sm:px-6 lg:px-3 py-4">
         {/* Contenitore principale con Flexbox */}
         <div className="flex items-center justify-between">
           {/* Titolo e descrizione */}
@@ -299,8 +354,8 @@ export default function Example({ permissions }) {
               <table className="min-w-full table-fixed divide-y divide-gray-300">
               <thead>
                 <tr>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
-                    Ordine
+                  <th scope="col" className="px-2 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
+                    Codice <br/>Ordine
                     {sortColumn === 'name' && sortDirection !== '' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
                     ) : null}
@@ -315,7 +370,7 @@ export default function Example({ permissions }) {
                     />
                   </th>
                   <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('id_company')}>
-                    Cliente
+                  <br/> Fornitore
                     {sortColumn === 'id_company'  && sortDirection !== '' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
                     ) : null}
@@ -324,43 +379,14 @@ export default function Example({ permissions }) {
                       value={searchQueries.id_company}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('id_company')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      className="mt-1 px-3 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                       placeholder=""
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('category')}>
-                    Categoria
-                    {sortColumn === 'category'  && sortDirection !== '' ? (
-                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
-                    ) : null}
-                    <br />
-                    <input
-                      value={searchQueries.category}
-                      onClick={(e) => e.stopPropagation()}
-                      onChange={handleSearchInputChange('category')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                      placeholder=""
-                      rows={1}
-                    />
-                  </th>
-                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('subcategory')}>
-                    Sottocategoria
-                    {sortColumn === 'subcategory'  && sortDirection !== '' ? (
-                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
-                    ) : null}
-                    <br />
-                    <input
-                      value={searchQueries.subcategory}
-                      onClick={(e) => e.stopPropagation()}
-                      onChange={handleSearchInputChange('subcategory')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                      placeholder=""
-                      rows={1}
-                    />
-                  </th>
+                 
                   <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('payment_method')}>
-                    Metodo di Pagamento
+                    Metodo di <br/>Pagamento
                     {sortColumn === 'payment_method' && sortDirection !== '' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
                     ) : null}
@@ -463,12 +489,7 @@ export default function Example({ permissions }) {
                       <td className="whitespace-normal max-w-[200px] overflow-hidden text-sm text-gray-700 px-3 py-4 break-words">
                           {item.Company?.name}
                         </td>
-                        <td className="whitespace-normal max-w-[200px] overflow-hidden text-sm text-gray-700 px-3 py-4 break-words">
-                          {item.category?.name}
-                        </td>
-                        <td className="whitespace-normal max-w-[200px] overflow-hidden text-sm text-gray-700 px-3 py-4 break-words">
-                          {item.subcategory?.name}
-                        </td>
+                      
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
                           {item.payment_method}
                         </td>
@@ -512,6 +533,35 @@ export default function Example({ permissions }) {
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
                           {item.createdByUser?.name.slice(0, 2).toUpperCase() + item.createdByUser?.surname.slice(0, 2).toUpperCase()}
+                        </td>
+
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          <div className="flex items-center space-x-2">
+                            {true && (
+                              <>
+                                {//item.status != 'Approvato' && (
+                                  <>
+                                  <button
+                                      type="button"
+                                      className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
+                                      onClick={(event) => {
+                                       
+                                        setShowUpdate(true);
+                                        setSelectedUpdate(item);
+                                        
+                                    }}
+                                      title="Modifica"
+                                    >
+                                      <PencilSquareIcon className="h-5 w-4 text-gray-500" />
+                                    </button>
+                                  
+                                  </>
+                                //)
+                                }
+                             
+                              </>
+                            )}
+                          </div>
                         </td>
                      
                     </tr>

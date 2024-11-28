@@ -304,54 +304,7 @@ export default function Example({ purchase: initialPurchase }) {
 
   return (
     <div>
-        <Transition.Root show={showUpdate} as={Fragment}>
-          <Dialog as="div" className="relative z-50" onClose={() => setShowUpdate(false)}>
-            <div className="fixed inset-0" aria-hidden="true" />
-
-            <div className="fixed inset-0 overflow-hidden">
-              <div className="absolute inset-0 overflow-hidden">
-                <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-16">
-                  <Transition.Child
-                    as={Fragment}
-                    enter="transform transition ease-in-out duration-500 sm:duration-700"
-                    enterFrom="translate-x-full"
-                    enterTo="translate-x-0"
-                    leave="transform transition ease-in-out duration-500 sm:duration-700"
-                    leaveFrom="translate-x-0"
-                    leaveTo="translate-x-full"
-                  >
-                    <Dialog.Panel className="pointer-events-auto w-screen max-w-7xl">
-                      <div className="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
-                        <div className="px-4 sm:px-6">
-                          <div className="flex items-start justify-between">
-                            <Dialog.Title className="text-base font-semibold leading-6 text-gray-900">
-                              Modifica l'ordine di acquisto
-                            </Dialog.Title>
-                            <div className="ml-3 flex h-7 items-center">
-                              <button
-                                type="button"
-                                className="relative rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                                onClick={() => setShowUpdate(false)}
-                              >
-                                <span className="absolute -inset-2.5" />
-                                <span className="sr-only">Chiudi pannello</span>
-                                <XMarkIcon className="h-6 w-6" aria-hidden="true" />
-                              </button>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="relative mt-6 flex-1 px-4 sm:px-6">
-                          {/* Passa 'purchase' come prop */}
-                          <PurchaseUpdateForm purchase={purchase} />
-                        </div>
-                      </div>
-                    </Dialog.Panel>
-                  </Transition.Child>
-                </div>
-              </div>
-            </div>
-          </Dialog>
-        </Transition.Root>
+       
 
 
     
@@ -368,34 +321,7 @@ export default function Example({ purchase: initialPurchase }) {
             </span>
           </h3>
         </div>
-        <div className="flex items-center space-x-2">
-          {isEditing ? (
-            <>
-              <button
-                type="button"
-                onClick={handleSaveClick}
-                className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-              >
-                Salva
-              </button>
-              <button
-                type="button"
-                onClick={handleCancelClick}
-                className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-              >
-                Annulla
-              </button>
-            </>
-          ) : (
-            <button
-            type="button"
-            onClick={() => setShowUpdate(true)}
-            className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
-          >
-            Modifica
-          </button>
-          )}
-        </div>
+       
       </div>
       <div className="mt-6">
         <dl className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6">

@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo,useEffect } from 'react';
 import Select from 'react-tailwindcss-select';
 import { TrashIcon } from '@heroicons/react/20/solid';
 
@@ -7,9 +7,11 @@ export default function PurchaseRowInput({
   index,
   categories,
   subcategories,
+  subsubcategories,
   onChange,
   onRemove,
-  handleCategoryChange
+  handleCategoryChange,
+  handleSubcategoryChange
 }) {
   const handleDeleteClick = () => {
     const confirmed = window.confirm('Sei sicuro di voler eliminare questo prodotto?');
@@ -17,8 +19,11 @@ export default function PurchaseRowInput({
       onRemove(index);
     }
   };
-
+  
+console.log(subsubcategories)
   const Vat = ['22', '10', '4', '0'];
+
+
 
   useEffect(() => {
     if (product.taxed_unit_price && product.vat) {
@@ -39,6 +44,7 @@ export default function PurchaseRowInput({
     }
   }, [product.taxed_unit_price, product.vat, product.quantity]);
 
+  
   // Calculate totals
   const calculatedTotalTassato = useMemo(() => {
     const taxedUnitPrice = parseFloat(product.taxed_unit_price || 0);
@@ -56,7 +62,7 @@ export default function PurchaseRowInput({
     <tr key={index}>
       <td className="px-4 py-2 whitespace-nowrap">
         <label htmlFor={`category-${index}`} className="block text-sm font-medium text-gray-700">
-          Categoria
+          Macro Categoria
         </label>
         <Select
           id={`category-${index}`}
@@ -71,7 +77,7 @@ export default function PurchaseRowInput({
             handleCategoryChange({ target: { value: option.value } });
             onChange({ ...product, category: option.value });
           }}
-          options={categories.map(c => ({ value: c.id_category, label: c.name }))}
+          options={categories?.map(c => ({ value: c?.id_category, label: c?.name }))}
           className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4] sm:max-w-xs sm:text-sm sm:leading-6"
           primaryColor='[#7fb7d4]'
         />
@@ -79,7 +85,7 @@ export default function PurchaseRowInput({
 
       <td className="px-4 py-2 whitespace-nowrap">
         <label htmlFor={`subcategory-${index}`} className="block text-sm font-medium text-gray-700">
-          Sottocategoria
+          Categoria
         </label>
         <Select
           id={`subcategory-${index}`}
@@ -89,8 +95,31 @@ export default function PurchaseRowInput({
               ? { value: product.subcategory, label: subcategories.find(s => s.id_subcategory === product.subcategory)?.name }
               : null
           }
-          onChange={(option) => onChange({ ...product, subcategory: option.value })}
-          options={subcategories.map(s => ({ value: s.id_subcategory, label: s.name }))}
+          onChange={(option) => {
+            handleSubcategoryChange({ target: { value: option.value } });
+            onChange({ ...product, subcategory: option.value });
+          }}
+          options={subcategories?.map(s => ({ value: s.id_subcategory, label: s.name }))}
+          placeholder="Seleziona una sottocategoria"
+          className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4] sm:max-w-xs sm:text-sm sm:leading-6"
+          isDisabled={subcategories.length === 0}
+          primaryColor='[#7fb7d4]'
+        />
+      </td>
+      <td className="px-4 py-2 whitespace-nowrap">
+        <label htmlFor={`subsubcategory-${index}`} className="block text-sm font-medium text-gray-700">
+          Sottocategoria
+        </label>
+        <Select
+          id={`subsubcategory-${index}`}
+          name={`subsubcategory-${index}`}
+          value={
+            product.subcategory
+              ? { value: product.subsubcategory, label: subsubcategories.find(s => s.id_subsubcategory === product.subsubcategory)?.name }
+              : null
+          }
+          onChange={(option) => onChange({ ...product, subsubcategory: option.value })}
+          options={subsubcategories?.map(s => ({ value: s.id_subsubcategory, label: s.name }))}
           placeholder="Seleziona una sottocategoria"
           className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4] sm:max-w-xs sm:text-sm sm:leading-6"
           isDisabled={subcategories.length === 0}

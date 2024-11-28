@@ -15,7 +15,7 @@ router.get('/read', async (req, res) => {
       include: [
         {
           model: PurchaseRow,
-          attributes: ["id_purchaserow", "name", "description", "depreciation", "depreciation_years", "asset", "category", "subcategory", "unit_price", "quantity", "vat", "totalprice", "taxed_unit_price", "taxed_totalprice"],
+          attributes: ["id_purchaserow", "name", "description", "depreciation", "depreciation_years", "asset", "category", "subcategory", "subsubcategory", "unit_price", "quantity", "vat", "totalprice", "taxed_unit_price", "taxed_totalprice"],
           include: [
             {
               model: sequelize.models.Category,
@@ -24,6 +24,12 @@ router.get('/read', async (req, res) => {
             {
               model: sequelize.models.Subcategory,
               attributes: ["name"],
+           
+            },
+            {
+              model: sequelize.models.Subsubcategory,
+              attributes: ["name"],
+           
             },
           ]
         },

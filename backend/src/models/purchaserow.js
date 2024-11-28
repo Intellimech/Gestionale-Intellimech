@@ -66,6 +66,10 @@ PurchaseRow.init(
       type: DataTypes.STRING(50),
       allowNull: false,
     },
+    subsubcategory: {
+      type: DataTypes.STRING(50),
+      allowNull: false,
+    },
   },
   {
     sequelize: db,

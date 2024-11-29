@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
+
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
@@ -8,6 +9,7 @@ function classNames(...classes) {
 export default function Example() {
   const [permission, setPermissions] = useState([]);
   const [searchQueries, setSearchQueries] = useState({
+    id_permission: '',
     description: '',
     module: '',
     route: '',
@@ -49,6 +51,7 @@ export default function Example() {
   // Filtro dei permessi in base alle query di ricerca per ogni colonna
   const filteredPermission = permission.filter((perm) => {
     return (
+      perm.id_permission?.toString().includes(searchQueries.id_permission.toString()) &&
       perm.description?.toLowerCase().includes(searchQueries.description.toLowerCase()) &&
       perm.module?.toLowerCase().includes(searchQueries.module.toLowerCase()) &&
       perm.route?.toLowerCase().includes(searchQueries.route.toLowerCase()) &&
@@ -67,6 +70,23 @@ export default function Example() {
         <table className="min-w-full table-fixed divide-y divide-gray-300">
           <thead>
             <tr>
+            <th
+                scope="col"
+                className="px-1 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
+                onClick={() => handleSort('id_permission')}
+              >
+                ID
+                {sortColumn === 'description' && sortDirection !== '' ? (
+                  sortDirection === 'asc' ? null : null) : null}
+                <br />
+                <input
+                  value={searchQueries.id_permission}
+                  onClick={(e) => e.stopPropagation()} // Stop click propagation to prevent sorting
+                  onChange={handleSearchInputChange('id_permission')}
+                  className="mt-1 px-2 py-1 w-12 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                  rows={1}
+                />
+              </th>
               <th
                 scope="col"
                 className="px-1 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer"
@@ -143,6 +163,7 @@ export default function Example() {
           <tbody className="divide-y divide-gray-200 bg-white">
             {filteredPermission.map((permission) => (
               <tr key={permission.id_user}>
+                <td className="whitespace-nowrap py-4 text-sm text-gray-500">{permission.id_permission}</td>
                 <td className="whitespace-nowrap py-4 text-sm text-gray-500">{permission.description}</td>
                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{permission.module}</td>
                 <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{permission.route}</td>

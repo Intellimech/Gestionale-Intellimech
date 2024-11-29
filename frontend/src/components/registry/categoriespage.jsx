@@ -90,13 +90,13 @@ export default function CategoryTable() {
         setIsConfirmModalOpen(false); // Chiude la modale di conferma
   
         // Mostra la notifica di successo
-        toast.success('Categoria modificata con successo!');
+        toast.success('Macro categoria modificata con successo!');
       })
       .catch((error) => {
-        console.error('Errore durante la modifica della categoria:', error);
+        console.error('Errore durante la modifica della macro categoria:', error);
         
         // Mostra la notifica di errore
-        toast.error('Modifica della categoria fallita.');
+        toast.error('Modifica della macro categoria fallita.');
       });
   };
 
@@ -167,7 +167,7 @@ export default function CategoryTable() {
       );
   
       // Mostra una notifica di successo
-      toast.success('Categoria cancellata');
+      toast.success('Macro Categoria cancellata');
       console.log('Deleted:', response.data);
   
       // Aggiorna la lista locale (se gestita in stato)
@@ -202,13 +202,13 @@ export default function CategoryTable() {
         setIsConfirmModalOpen(false);
         
         // Notifica di successo
-        toast.success('Categoria creata con successo!', );
+        toast.success('Macro Categoria creata con successo!', );
       })
       .catch((error) => {
         console.error('Error creating category:', error);
         
         // Notifica di errore
-        toast.error('Errore durante la creazione della categoria!', );
+        toast.error('Errore durante la creazione della macro categoria!', );
       });
   };
   
@@ -232,8 +232,8 @@ export default function CategoryTable() {
       <Toaster />
         <div className="flex items-center justify-between">
           <div className="sm:flex-auto">
-            <h1 className="text-base font-semibold leading-6 text-gray-900">Categorie</h1>
-            <p className="mt-2 text-sm text-gray-700">Lista delle categorie</p>
+            <h1 className="text-base font-semibold leading-6 text-gray-900">Macro Categorie</h1>
+            <p className="mt-2 text-sm text-gray-700">Lista delle macro categorie</p>
           </div>
           <div className="flex items-center space-x-4">
             <button
@@ -353,7 +353,7 @@ export default function CategoryTable() {
           type="text"
           value={newCategoryName}
           onChange={(e) => setNewCategoryName(e.target.value)}
-          placeholder="Nome Categoria"
+          placeholder="Nome Macro Categoria"
           className="w-full px-3 py-2 border border-gray-300 rounded mb-4 focus:border-[#A7D0EB] focus:ring-[#A7D0EB] sm:text-sm"
         />
           <button
@@ -382,7 +382,7 @@ export default function CategoryTable() {
             <div className="mt-4">
               <input
                 type="text"
-                placeholder="Nome di Categoria"
+                placeholder="Nome di Macro Categoria"
                 value={CategoryName}
                 onChange={(e) => setCategoryName(e.target.value)}
                 className="w-full mt-2 p-2 border border-gray-300 rounded-md focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"

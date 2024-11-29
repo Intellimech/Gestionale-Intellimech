@@ -318,7 +318,7 @@ export default function Example({ permissions }) {
         </Dialog>
       </Transition.Root>
 
-      <div className="px-4 sm:px-6 lg:px-3 py-4">
+      <div className="px-2 sm:px-1 lg:px-1 py-4">
         {/* Contenitore principale con Flexbox */}
         <div className="flex items-center justify-between">
           {/* Titolo e descrizione */}
@@ -347,231 +347,203 @@ export default function Example({ permissions }) {
       </div>
 
 
-      <div className="mt-8 flow-root">
-        <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">          
-          <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+        <div className="mx-2 -my-1 overflow-x-auto sm:-mx-3 lg:-mx-4">          
+          <div className="inline-block min-w-full py-1 align-middle sm:px-3 lg:px-4">
             <div className="relative">
-              <table className="min-w-full table-fixed divide-y divide-gray-300">
-              <thead>
-                <tr>
-                  <th scope="col" className="px-2 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
-                    Codice <br/>Ordine
-                    {sortColumn === 'name' && sortDirection !== '' ? (
-                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
-                    ) : null}
+              <table className="min-w-full table-fixed divide-y divide-gray-200">
+                <thead>
+                  <tr>
+                    <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
+                     <br/> Codice Ordine
+                      <br />
+                      <input
+                        value={searchQueries.name}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={handleSearchInputChange('name')}
+                        className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+                        placeholder=""
+                        rows={1}
+                      />
+                    </th>
+                    <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('id_company')}>
+                    <br />Fornitore
+                      <br />
+                      <input
+                        value={searchQueries.id_company}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={handleSearchInputChange('id_company')}
+                        className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+                        placeholder=""
+                        rows={1}
+                      />
+                    </th>
+                    <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('payment_method')}>
+                      Metodo <br/>Pagamento
+                      <br />
+                      <input
+                        value={searchQueries.payment_method}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={handleSearchInputChange('payment_method')}
+                        className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+                        placeholder=""
+                        rows={1}
+                      />
+                    </th>
+
+                    <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('total')}>
+                       <br />Totale
+                     <br/>
+                      <input
+                        value={searchQueries.total}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={handleSearchInputChange('total')}
+                        className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+                        placeholder=""
+                        rows={1}
+                      />
+                    </th>
+                    <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('IVA')}>
+                    <br /> IVA
                     <br />
-                    <input
-                      value={searchQueries.name}
-                      onClick={(e) => e.stopPropagation()}
-                      onChange={handleSearchInputChange('name')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                      placeholder=""
-                      rows={1}
-                    />
-                  </th>
-                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('id_company')}>
-                  <br/> Fornitore
-                    {sortColumn === 'id_company'  && sortDirection !== '' ? (
-                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
-                    ) : null}
-                    <br />
-                    <input
-                      value={searchQueries.id_company}
-                      onClick={(e) => e.stopPropagation()}
-                      onChange={handleSearchInputChange('id_company')}
-                      className="mt-1 px-3 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                      placeholder=""
-                      rows={1}
-                    />
-                  </th>
+                      <input
+                        value={searchQueries.IVA}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={handleSearchInputChange('IVA')}
+                        className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+                        placeholder=""
+                        rows={1}
+                      />
+                    </th>
                  
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('payment_method')}>
-                    Metodo di <br/>Pagamento
-                    {sortColumn === 'payment_method' && sortDirection !== '' ? (
-                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
-                    ) : null}
+                    <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('status')}>
+                    <br /> Stato
                     <br />
-                    <input
-                      value={searchQueries.payment_method}
-                      onClick={(e) => e.stopPropagation()}
-                      onChange={handleSearchInputChange('payment_method')}
-                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                      placeholder=""
-                      rows={1}
-                    />
-                  </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('total')}>
-                    Totale
-                    {sortColumn === 'total'  && sortDirection !== '' ? (
-                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
-                    ) : null}
-                    <br />
-                    <input
-                      value={searchQueries.total}
-                      onClick={(e) => e.stopPropagation()}
-                      onChange={handleSearchInputChange('total')}
-                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                      placeholder=""
-                      rows={1}
-                    />
-                  </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('IVA')}>
-                    IVA
-                    {sortColumn === 'IVA' && sortDirection !== '' ? (
-                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
-                    ) : null}
-                    <br />
-                    <input
-                      value={searchQueries.IVA}
-                      onClick={(e) => e.stopPropagation()}
-                      onChange={handleSearchInputChange('IVA')}
-                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                      placeholder=""
-                      rows={1}
-                    />
-                  </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('status')}>
-                    Stato
-                    {sortColumn === 'status'  && sortDirection !== '' ? (
-                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
-                    ) : null}
-                    <br />
-                    <input
-                      value={searchQueries.status}
-                      onClick={(e) => e.stopPropagation()}
-                      onChange={handleSearchInputChange('status')}
-                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                      placeholder=""
-                      rows={1}
-                    />
-                  </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('createdByUser')}>
-                    Creata da
-                    {sortColumn === 'createdByUser'  && sortDirection !== '' ? (
-                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
-                    ) : null}
-                    <br />
-                    <input
-                      value={searchQueries.createdByUser}
-                      onClick={(e) => e.stopPropagation()}
-                      onChange={handleSearchInputChange('createdByUser')}
-                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                      placeholder=""
-                      rows={1}
-                    />
-                  </th>
-                  <th scope="col" className="relative px-3 py-3.5">
-                    <span className="sr-only">Azioni</span>
-                  </th>
+                      <input
+                        value={searchQueries.status}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={handleSearchInputChange('status')}
+                        className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+                        placeholder=""
+                        rows={1}
+                      />
+                    </th>
+                    <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('date')}>
+                    <br /> Data
+                      <br />
+                      <input
+                        value={searchQueries.date}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={handleSearchInputChange('date')}
+                        className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+                        placeholder=""
+                        rows={1}
+                      />
+                    </th>
+                    <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('createdByUser')}>
+                    <br />  Creata  da
+                      <br />
+                      <input
+                        value={searchQueries.createdByUser}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={handleSearchInputChange('createdByUser')}
+                        className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+                        placeholder=""
+                        rows={1}
+                      />
+                    </th>
+                    <th scope="col" className="relative px-1 py-1.5">
+                      <span className="sr-only">Azioni</span>
+                    </th>
                 </tr>
               </thead>
 
-                <tbody className="divide-y divide-gray-200 bg-white">
-                  {sortedPurchase.map((item) => (
-                    <tr key={item.id}>
-                      <td
-                     onClick={(event) => {
-                      // ctrl + click per aprire un nuovo tab
-                      if (event.ctrlKey) {
-                        handlectrlClick(item);
-                      } else {
-                        setShowInfo(true);
-                        setSelectedItemInfo(item); // Mostra il form nella stessa finestra
-                      }}  
-                    }
-                        className={classNames(
-                          'whitespace-nowrap px-3 py-4 pr-3 text-sm font-medium',
-                          selectedItems.includes(item) ? 'text-red-600' : 'text-gray-700'
-                        )}
-                      >
-                        {item.name}
-                      </td>
-                      <td className="whitespace-normal max-w-[200px] overflow-hidden text-sm text-gray-700 px-3 py-4 break-words">
-                          {item.Company?.name}
-                        </td>
-                      
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
-                          {item.payment_method}
-                        </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
-                          {item.total + ' ' + item.currency}
-                        </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
-                          {item.IVA}
-                        </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
-                          {item.status === 'In Approvazione' ? (
-                            
-                             <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-yellow-500">
-                             In Approvazione
-                           </span>
-                          ) : item.status === 'Approvato' ? (
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100  text-green-600">
-                              Approvato
-                            </span>
-                          ) : item.status === 'Rifiutato' ? (
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100  text-red-600">
-                              Rifiutato
-                            </span>
-                           // ): item.status === 'Scaduto' ? (
-                            // <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100  text-zinc-800">
-                            //   Scaduto
-                            // </span>
-                          // ) : item.status === 'Nuovo' ? (
-                          //   <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100   text-blue-800">
-                          //     Nuovo
-                          //   </span>
-                          ) : item.status === 'Revisionato' ? (
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100   text-purple-800">
-                              Revisionato
-                            </span> //solo se è stato approvato
-                          ) : (
-                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100   text-gray-800">
-                              Nessuno
-                            </span>
-                          )}
-                        </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
-                          {item.createdByUser?.name.slice(0, 2).toUpperCase() + item.createdByUser?.surname.slice(0, 2).toUpperCase()}
-                        </td>
+              <tbody className="divide-y divide-gray-200 bg-white">
+                {sortedPurchase.map((item) => (
+                  <tr key={item.id}>
+                    <td
+                      onClick={(event) => {
+                        if (event.ctrlKey) {
+                          handlectrlClick(item);
+                        } else {
+                          setShowInfo(true);
+                          setSelectedItemInfo(item);
+                        }
+                      }}
+                      className={classNames(
+                        'whitespace-nowrap px-1 py-1.5 text-xs font-medium',
+                        selectedItems.includes(item) ? 'text-red-600' : 'text-gray-700'
+                      )}
+                    >
+                      {item.name}
+                    </td>
+                    <td className="whitespace-normal max-w-[150px] overflow-hidden text-xs text-gray-700 px-1 py-1.5 break-words">
+                      {item.Company?.name}
+                    </td>
+                    <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
+                      {item.payment_method}
+                    </td>
+                    <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
+                      {item.total + ' ' + item.currency}
+                    </td>
+                    <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
+                      {item.IVA}
+                    </td>
+                    <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
+                      {item.status === 'In Approvazione' ? (
+                        <span className="px-1 inline-flex text-[0.6rem] leading-4 font-semibold rounded-full bg-gray-100 text-yellow-500">
+                          In Approvazione
+                        </span>
+                      ) : item.status === 'Approvato' ? (
+                        <span className="px-1 inline-flex text-[0.6rem] leading-4 font-semibold rounded-full bg-gray-100 text-green-600">
+                          Approvato
+                        </span>
+                      ) : item.status === 'Rifiutato' ? (
+                        <span className="px-1 inline-flex text-[0.6rem] leading-4 font-semibold rounded-full bg-gray-100 text-red-600">
+                          Rifiutato
+                        </span>
+                      ) : item.status === 'Revisionato' ? (
+                        <span className="px-1 inline-flex text-[0.6rem] leading-4 font-semibold rounded-full bg-gray-100 text-purple-800">
+                          Revisionato
+                        </span>
+                      ) : (
+                        <span className="px-1 inline-flex text-[0.6rem] leading-4 font-semibold rounded-full bg-gray-100 text-gray-800">
+                          Nessuno
+                        </span>
+                      )}
+                    </td>
+                    <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
+                   
+                      {new Date(item.createdAt).toLocaleDateString()}
+                    </td>
+                    <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
+                      {item.createdByUser?.name.slice(0, 2).toUpperCase() + item.createdByUser?.surname.slice(0, 2).toUpperCase()}
+                    </td>
 
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          <div className="flex items-center space-x-2">
-                            {true && (
-                              <>
-                                {//item.status != 'Approvato' && (
-                                  <>
-                                  <button
-                                      type="button"
-                                      className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
-                                      onClick={(event) => {
-                                       
-                                        setShowUpdate(true);
-                                        setSelectedUpdate(item);
-                                        
-                                    }}
-                                      title="Modifica"
-                                    >
-                                      <PencilSquareIcon className="h-5 w-4 text-gray-500" />
-                                    </button>
-                                  
-                                  </>
-                                //)
-                                }
-                             
-                              </>
-                            )}
-                          </div>
-                        </td>
-                     
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                    <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-500">
+                      <div className="flex items-center space-x-1">
+                        {true && (
+                          <button
+                            type="button"
+                            className="inline-flex items-center rounded bg-white px-1 py-0.5 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
+                            onClick={(event) => {
+                              setShowUpdate(true);
+                              setSelectedUpdate(item);
+                            }}
+                            title="Modifica"
+                          >
+                            <PencilSquareIcon className="h-4 w-4 text-gray-500" />
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
     </div>
+
   );
 }

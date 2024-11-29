@@ -49,7 +49,17 @@ router.post("/create", async (req, res) => {
     // Create the associated purchase rows
     for (let i = 0; i < products.length; i++) {
       const product = products[i];
-      let PurchaseRowName = `${namePurchase}_${(i + 1) * 10}_R0`;
+    
+      let increment = (i + 1) * 10;        // Calcolo del numero incrementale
+
+      // Dividere il nome originale nelle sue parti
+      let parts = namePurchase.split("_"); // ["ODA24", "00015", "R1"]
+
+      // Ricomporre il nome con il nuovo numero nella posizione desiderata
+      let PurchaseRowName = `${parts[0]}_${parts[1]}_${increment}_${parts[2]}`;
+
+      console.log(PurchaseRowName); // Output: ODA24_00015_10_R1
+
 
       // Validate depreciation_years if depreciation is true
       if (product.depreciation && (!product.depreciation_years || product.depreciation_years <= 0)) {

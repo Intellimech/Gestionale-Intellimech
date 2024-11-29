@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Cookies from 'js-cookie';
-import { CheckBadgeIcon, XCircleIcon } from '@heroicons/react/20/solid';
+import { CheckBadgeIcon, XCircleIcon, PlusIcon } from '@heroicons/react/20/solid';
 import Select from "react-tailwindcss-select";
 import PurchaseRowInput from './purchaserowinput.jsx';
 import toast, { Toaster } from 'react-hot-toast';
@@ -9,16 +8,9 @@ import toast, { Toaster } from 'react-hot-toast';
 export default function PurchaseCreateForm() {
   const [createSuccess, setCreateSuccess] = useState(null);
   const [errorMessages, setErrorMessages] = useState('');
-  const [quotationRequests, setQuotationRequests] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [description, setDescription] = useState([]);
-  const [subcategories, setSubcategories] = useState([]);
-  const [subsubcategories, setSubsubcategories] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [technicalAreas, setTechnicalAreas] = useState([]);
   const [companies, setCompanies] = useState([]);
   const [selectedCompany, setSelectedCompany] = useState(null);
-  const [selectedTeam, setSelectedTeam] = useState(null);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [products, setProducts] = useState([{
@@ -36,33 +28,25 @@ export default function PurchaseCreateForm() {
   }]);
   const [currency, setCurrency] = useState('EUR');
   const currencies = ['EUR', 'USD', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'SEK', 'NZD'];
-  const paymentMethods = ['Bank Transfer', 'Cash', 'Credit Card Floreani', 'Credit Card Fasanotti', 'Credit Card Ierace', 'Paypal']; // Payment methods options
- 
-  const handleTeamChange = setSelectedTeam;
+  const paymentMethods = ['Bank Transfer', 'Cash', 'Credit Card Floreani', 'Credit Card Fasanotti', 'Credit Card Ierace', 'Paypal'];
+
   const handleCompanyChange = setSelectedCompany;
   const handlePaymentMethodChange = setSelectedPaymentMethod;
   const handleCurrencyChange = setCurrency;
   const handleDateChange = (event) => setSelectedDate(event.target.value);
 
   useEffect(() => {
-    
     const fetchData = async () => {
       try {
         const [
           { data: { categories } },
-          { data: { technicalareas } },
-          { data: { users } },
           { data: { value: companies } },
         ] = await Promise.all([
-          axios.get(`${process.env.REACT_APP_API_URL}/category/read`, ),
-          axios.get(`${process.env.REACT_APP_API_URL}/technicalarea/read`, ),
-          axios.get(`${process.env.REACT_APP_API_URL}/user/read`, ),
+          axios.get(`${process.env.REACT_APP_API_URL}/category/read`),
           axios.get(`${process.env.REACT_APP_API_URL}/company/read`),
         ]);
 
         setCategories(categories);
-        setTechnicalAreas(technicalareas);
-        setUsers(users.map(({ id_user, name, surname }) => ({ value: id_user, label: `${name} ${surname}` })));
         setCompanies(companies
           .sort((a, b) => new Date(b.ReceptionDate) - new Date(a.ReceptionDate))
           .map(({ id_company, name }) => ({ value: id_company, label: name })));
@@ -79,7 +63,7 @@ export default function PurchaseCreateForm() {
     updatedProducts[index].category = event.target.value;
   
     try {
-      const { data: { subcategories } } = await axios.get(`${process.env.REACT_APP_API_URL}/subcategory/read/${event.target.value}`,);
+      const { data: { subcategories } } = await axios.get(`${process.env.REACT_APP_API_URL}/subcategory/read/${event.target.value}`);
       updatedProducts[index].subcategories = subcategories;
       setProducts(updatedProducts);
     } catch (error) {
@@ -92,17 +76,26 @@ export default function PurchaseCreateForm() {
     updatedProducts[index].subcategory = event.target.value;
   
     try {
-      const { data: { subsubcategories } } = await axios.get(`${process.env.REACT_APP_API_URL}/subsubcategory/read/${event.target.value}`,);
+      const { data: { subsubcategories } } = await axios.get(`${process.env.REACT_APP_API_URL}/subsubcategory/read/${event.target.value}`);
       updatedProducts[index].subsubcategories = subsubcategories;
       updatedProducts[index].subsubcategory = '';
       setProducts(updatedProducts);
-      console.log(subsubcategories);
     } catch (error) {
       console.error('Error fetching subsubcategory data:', error);
     }
   };
 
-  const addProduct = () => setProducts([...products, { category: '', subcategory: '',  subsubcategory: '', unit_price: '', quantity: 1, description: '', subcategories: [] }]);
+  const addProduct = () => setProducts([...products, { 
+    category: '', 
+    subcategory: '',  
+    subsubcategory: '', 
+    unit_price: '', 
+    quantity: 1, 
+    description: '', 
+    subcategories: [],
+    subsubcategories: []
+  }]);
+
   const removeProduct = (index) => setProducts(products.filter((_, i) => i !== index));
   const updateProduct = (index, updatedProduct) => setProducts(products.map((product, i) => (i === index ? updatedProduct : product)));
 
@@ -132,14 +125,12 @@ export default function PurchaseCreateForm() {
       }))
     };
 
-    console.log('jsonObject:', jsonObject);
-  
     toast.promise(
-      axios.post(`${process.env.REACT_APP_API_URL}/purchase/create`, jsonObject), // 
+      axios.post(`${process.env.REACT_APP_API_URL}/purchase/create`, jsonObject),
       {
         loading: 'Invio in corso...',
         success: 'ODA creato con successo!',
-        error: 'Errore durante la creazione dell?Ordine di Acquisto',
+        error: 'Errore durante la creazione di Ordine di Acquisto',
       }
     )
       .then((response) => {
@@ -150,97 +141,87 @@ export default function PurchaseCreateForm() {
         setCreateSuccess(false);
       });
   };
-  
-
   return (
-    <form name="createpurchaseorder" onSubmit={createPurchaseOrder}>
-      <Toaster/>
-      <div className="space-y-12">
-        <div className="border-b border-gray-900/10 pb-12">
-          <h2 className="text-base font-semibold leading-7 text-gray-900">Informazioni Ordine di Acquisto</h2>
-          <p className="mt-1 text-sm leading-6 text-gray-700">Ricorda, i dati inseriti ora saranno quelli che verranno utilizzati per creare l'ordine di acquisto</p>
-
-          <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-            <div className="sm:col-span-2">
-              <label htmlFor="azienda" className="block text-sm font-medium leading-6 text-gray-900">
-                Cliente
-              </label>
-              <div className="mt-2">
-                <Select
-                  id="azienda"
-                  name="azienda"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
-                  value={selectedCompany}
-                  onChange={handleCompanyChange}
-                  options={(companies || []).map(({ value, label }) => ({ value, label }))}
-                  primaryColor='[#7fb7d4]'
-                  isSearchable
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-2">
-              <label htmlFor="dateorder" className="block text-sm font-medium leading-6 text-gray-900">
-                Data
-              </label>
-              <div className="mt-2">
-                <input
-                  id="dateorder"
-                  name="dateorder"
-                  type="date"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:max-w-xs sm:text-sm"
-                  min={new Date().toISOString().split('T')[0]}
-                  defaultValue={new Date().toISOString().split('T')[0]}
-                  onChange={handleDateChange}
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-1">
-              <label htmlFor="paymentMethod" className="block text-sm font-medium leading-6 text-gray-900">
-                Modalità di pagamento
-              </label>
-              <div className="mt-2">
-                <Select
-                  id="paymentMethod"
-                  name="paymentMethod"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
-                  value={selectedPaymentMethod}
-                  onChange={handlePaymentMethodChange}
-                  options={paymentMethods.map((method) => ({ value: method, label: method }))}
-                  primaryColor='[#7fb7d4]'
-                  isSearchable
-                />
-              </div>
-            </div>
-            <div className="sm:col-span-1">
-              <label htmlFor="paymentMethod" className="block text-sm font-medium leading-6 text-gray-900">
-                Valuta
-              </label>
-              <div className="mt-2">
-                <Select
-                  id="currency"
-                  name="currency"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
-                  value={currency}
-                  onChange={handleCurrencyChange}
-                  options={currencies.map((currency) => ({ value: currency, label: currency }))}
-                  primaryColor='[#7fb7d4]'
-                  isSearchable
-                />
-              </div>
-            </div>
-          </div>
+    <div className="container mx-auto p-4 bg-white shadow-md rounded-lg">
+      <Toaster />
+      <form onSubmit={createPurchaseOrder} className="space-y-8">
+        {/* Informazioni Generali */}
+        <div className="border border-gray-200 rounded p-4 text-xs">
+          <h2 className="text-[15px] font-semibold text-gray-900">Informazioni Ordine di Acquisto</h2>
+          <p className="text-[11px] text-gray-600 mt-1">
+            Compila i campi sottostanti per creare un nuovo ordine di acquisto.
+          </p>
+          <table className="w-full mt-6 text-[10px]">
+            <tbody>
+              {/* Cliente */}
+              <tr>
+                <td className="block text-sm font-medium text-gray-700">Cliente</td>
+                <td>
+                  <Select
+                    value={selectedCompany}
+                    onChange={handleCompanyChange}
+                    options={(companies || []).map(({ value, label }) => ({ value, label }))}
+                    primaryColor="#7fb7d4"
+                    isSearchable
+                    placeholder="Seleziona Cliente"
+                    className="block w-full rounded border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[10px]"
+                  />
+                </td>
+              </tr>
+              {/* Data */}
+              <tr>
+                <td className="block text-sm font-medium text-gray-700">Data</td>
+                <td>
+                  <input
+                    type="date"
+                    value={selectedDate}
+                    onChange={handleDateChange}
+                    className="block w-full rounded border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[12px]"
+                    min={new Date().toISOString().split('T')[0]}
+                  />
+                </td>
+              </tr>
+              {/* Metodo di Pagamento */}
+              <tr>
+                <td className="block text-sm font-medium text-gray-700">Metodo di Pagamento</td>
+                <td>
+                  <Select
+                    value={selectedPaymentMethod}
+                    onChange={handlePaymentMethodChange}
+                    options={paymentMethods.map((method) => ({ value: method, label: method }))}
+                    primaryColor="#7fb7d4"
+                    isSearchable
+                    placeholder="Seleziona Metodo di Pagamento"
+                    className="block w-full rounded border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[10px]"
+                  />
+                </td>
+              </tr>
+              {/* Valuta */}
+              <tr>
+                <td className="block text-sm font-medium text-gray-700">Valuta</td>
+                <td>
+                  <Select
+                    value={currency}
+                    onChange={handleCurrencyChange}
+                    options={currencies.map((currency) => ({ value: currency, label: currency }))}
+                    primaryColor="#7fb7d4"
+                    isSearchable
+                    placeholder="Seleziona Valuta"
+                    className="block w-full rounded border-gray-300  shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[10px]"
+                  />
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-      </div>
-      
-      <div className="space-y-12 py-8">
-        <div className="border-b border-gray-900/10 pb-12">
-          <h2 className="text-base font-semibold leading-7 text-gray-900">Prodotti</h2>
-          <p className="mt-1 text-sm leading-6 text-gray-700">Ricorda, i dati inseriti ora saranno quelli che verranno utilizzati per creare l'ordine di acquisto</p>
-
-          <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-            <div className="col-span-full">
+  
+        {/* Prodotti */}
+        <div className="border border-gray-200 rounded p-4 text-xs">
+          <h2 className="text-[15px] font-semibold text-gray-900">Prodotti</h2>
+          <p className="text-[11px] text-gray-600 mt-1">
+            Aggiungi o modifica i prodotti associati all'ordine di acquisto.
+          </p>
+          <div className="mt-4 space-y-4">
             {products.map((product, index) => (
               <PurchaseRowInput
                 key={index}
@@ -249,7 +230,6 @@ export default function PurchaseCreateForm() {
                 onRemove={() => removeProduct(index)}
                 categories={categories}
                 subcategories={product.subcategories}
-                
                 subsubcategories={product.subsubcategories}
                 handleCategoryChange={(e) => handleCategoryChange(e, index)}
                 handleSubcategoryChange={(e) => handleSubcategoryChange(e, index)}
@@ -258,44 +238,47 @@ export default function PurchaseCreateForm() {
                 setCurrency={setCurrency}
               />
             ))}
-              <button
-                type="button"
-                onClick={addProduct}
-               className="block ml-4 rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
-              >
-                Aggiungi Prodotto
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={addProduct}
+              className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+            >
+              Aggiungi Prodotto
+            </button>
           </div>
         </div>
-      </div>
-
-      <div className="mt-6 flex items-center justify-end gap-x-6">
-        {createSuccess && (
-          <div className="mt-4 rounded-md bg-green-50 p-4">
+  
+        {/* Messaggi di Feedback */}
+        {createSuccess !== null && (
+          <div className={`mt-4 rounded-md ${createSuccess ? 'bg-green-50' : 'bg-red-50'} p-3`}>
             <div className="flex">
-              <CheckBadgeIcon className="h-5 w-5 text-green-400" aria-hidden="true" />
-              <h3 className="ml-3 text-sm font-medium text-green-800">Ordine di acquisto creato con successo</h3>
+              {createSuccess ? (
+                <CheckBadgeIcon className="h-5 w-5 text-green-400" aria-hidden="true" />
+              ) : (
+                <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
+              )}
+              <div className="ml-3 text-[10px]">
+                <h3 className={`font-medium ${createSuccess ? 'text-green-800' : 'text-red-800'}`}>
+                  {createSuccess
+                    ? 'Ordine di acquisto creato con successo!'
+                    : 'Errore durante la creazione'}
+                </h3>
+                {!createSuccess && <ul className="list-disc pl-5 space-y-1 text-red-700">{errorMessages}</ul>}
+              </div>
             </div>
           </div>
         )}
-
-        {createSuccess === false && (
-          <div className="mt-4 rounded-md bg-[#7fb7d4] p-4">
-            <div className="flex">
-              <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
-              <h3 className="ml-3 text-sm font-medium text-red-800">{errorMessages}</h3>
-            </div>
-          </div>
-        )}
-
-        <button
-          type="submit"
-         className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
-        >
-          Crea
-        </button>
-      </div>
-    </form>
+  
+        {/* Pulsante di Invio */}
+        <div className="mt-4 flex justify-end">
+          <button
+            type="submit"
+            className="rounded-md bg-[#A7D0EB] px-4 py-2 text-xs font-bold text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+          >
+            Crea Ordine di Acquisto
+          </button>
+        </div>
+      </form>
+    </div>
   );
-}
+}  

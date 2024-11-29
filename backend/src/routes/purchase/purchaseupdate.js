@@ -54,23 +54,22 @@ router.put("/update", async (req, res) => {
 
     await purchase.save();
 
-    if (products) {
-      for (const product of products) {
-        // Incrementa il suffisso nel nome
-        if (product.name) {
-          const match = product.name.match(/_R(\d+)$/); // Cerca suffisso _R0, _R1, etc.
-          if (match) {
-            const number = parseInt(match[1], 10); // Estrai il numero dal suffisso
-            product.name = product.name.replace(/_R\d+$/, `_R${number + 1}`); // Incrementa il numero
-          } else {
-            // Se non c'è suffisso, aggiungi _R1 come suffisso iniziale
-            product.name = `${product.name}_R1`;
-          }
-        }
-
+    if (products) {  // Create the associated purchase rows
+      for (let i = 0; i < products.length; i++) {
+        const product = products[i];
+      
+        // Calcolo del numero incrementale usando l'indice i
+        let increment = (i + 1) * 10;
+      
+        // Dividere il nome originale nelle sue parti
+        let parts = purchase.name.split("_"); // ["ODA24", "00015", "R1"]
+      
+        // Ricomporre il nome con il nuovo numero nella posizione desiderata
+        let PurchaseRowName = `${parts[0]}_${parts[1]}_${increment}_${parts[2]}`;
+      
         // Estrarre il nome base (senza suffisso numerico)
         const baseName = product.name.replace(/_R\d+$/, "");
-
+      
         const existingRow = await PurchaseRow.findOne({
           where: {
             id_purchase: id_purchase,
@@ -79,19 +78,20 @@ router.put("/update", async (req, res) => {
             }
           }
         });
-
+      
         if (existingRow) {
           // Se esiste, cancella la riga
           await existingRow.destroy();
         }
-
+      
         // Ora crea la nuova riga con il nuovo nome
         await PurchaseRow.create({
           id_purchase: id_purchase,
-          name: product.name,
+          name: PurchaseRowName,
           description: product.description,
           category: product.category,
           subcategory: product.subcategory,
+          subsubcategory: product.subsubcategory,
           unit_price: product.unit_price,
           vat: product.vat,
           taxed_unit_price: product.taxed_unit_price,
@@ -100,6 +100,7 @@ router.put("/update", async (req, res) => {
           totalprice: product.totalprice,
         });
       }
+      
     }
 
     res.status(200).json({ message: "Purchase updated" });

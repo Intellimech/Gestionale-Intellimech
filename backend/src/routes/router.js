@@ -51,6 +51,7 @@ import paymentmethod from './paymentmethod/paymentmethodrouter.js';
 import currency from './currency/currencyrouter.js';
 import purchaserow from './purchaserow/purchaserowrouter.js';
 import subsubcategory from './subsubcategory/subsubcategoryrouter.js'
+import recurrence from './recurrence/recurrencerouter.js'
 
 router.use((req, res, next) => {
     logger('debug', `Request: ${req.method} ${req.originalUrl} | From: ${(req.ip == '::1') ? 'localhost' : req.ip}`, req, 'mainrouter');
@@ -91,5 +92,6 @@ router.use('/', holidaysleaves);
 router.use('/', contract);
 router.use('/', purchaserow);
 router.use('/', subsubcategory);
+router.use('/', recurrence);
 
 export default router;

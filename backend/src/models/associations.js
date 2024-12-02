@@ -34,6 +34,7 @@ import Contract from './contract.js';
 import PaymentMethod from './paymentmethod.js';
 import Currency from './currency.js';
 import Subsubcategory from './subsubcategory.js';
+import Recurrence from './recurrence.js';
 
 // Define associations
 User.belongsTo(Role, { foreignKey: 'role' });
@@ -290,4 +291,5 @@ export default {
     PaymentMethod,
     Currency,
     Subsubcategory,
+    Recurrence
   };

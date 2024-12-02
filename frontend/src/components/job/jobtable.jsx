@@ -386,6 +386,21 @@ export default function Example({ permissions, user }) {
                       rows={1}
                     />
                   </th>
+                  <th scope="col"  className="px-2 py-2 text-left text-xs font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('offertotal')}>
+                    Fatturato
+                    {sortColumn === 'offertotal' && sortDirection !== '' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
+                    <br />
+                    <input
+                      value={searchQueries.offertotal}
+                      onClick={(e) => e.stopPropagation()} 
+                      onChange={handleSearchInputChange('offertotal')}
+                       className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
+                      placeholder=""
+                      rows={1}
+                    />
+                  </th>
                   <th scope="col"  className="px-2 py-2 text-left text-xs font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('offerhour')}>
                     Ore Stimate
                     {sortColumn === 'offerhour' && sortDirection !== '' ? (
@@ -402,7 +417,7 @@ export default function Example({ permissions, user }) {
                     />
                   </th>
                   <th scope="col"  className="px-2 py-2 text-left text-xs font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('total')}>
-                    Valore Reale
+                    Costo Totale
                     {sortColumn === 'total'&& sortDirection !== ''? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
                     ) : null}
@@ -488,14 +503,6 @@ export default function Example({ permissions, user }) {
                             job?.SalesOrders.length > 1 ? job.SalesOrders[0].Offer?.QuotationRequest?.Company?.name + '...' + " (" + job.SalesOrders.length + ")" : job.SalesOrders[0]?.Offer?.QuotationRequest?.Company?.name
                           }
                         </td>
-                        <td className={classNames(
-                           "whitespace-normal overflow-hidden text-xs text-gray-500 px-2 py-2 break-words",
-                            selectedJobs.includes(job) ? 'text-[#7fb7d4]' : 'text-gray-700'
-                          )}>
-                          {
-                            job?.SalesOrders.length > 1 ? job.SalesOrders[0].Offer?.QuotationRequest?.Company?.name + '...' + " (" + job.SalesOrders.length + ")" : job.SalesOrders[0]?.Offer?.QuotationRequest?.Company?.name
-                          }
-                        </td>
                         <td className="whitespace-normal overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
                           {
                             job.SalesOrders.length > 1 ? job.SalesOrders[0].name + '...' + " (" + job?.SalesOrders?.length + ")" : job?.SalesOrders[0]?.name
@@ -504,6 +511,13 @@ export default function Example({ permissions, user }) {
                         <td className="whitespace-normal overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
                           {
                             job.SalesOrders.reduce((total, order) => total + parseFloat(order?.Offer?.amount), 0).toFixed(2) + ' €'
+                          }
+                        </td>
+                        <td className="whitespace-normal overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
+                          {
+                            isNaN(job.SalesOrders.reduce((total, order) => total + parseFloat(order?.Invoices?.amount), 0)) 
+                            ? '0 €' 
+                            : job.SalesOrders.reduce((total, order) => total + parseFloat(order?.Invoices?.amount), 0).toFixed(2) + ' €'                          
                           }
                         </td>
                         <td className="whitespace-normal overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">

@@ -35,6 +35,9 @@ import PaymentMethod from './paymentmethod.js';
 import Currency from './currency.js';
 import Subsubcategory from './subsubcategory.js';
 import Recurrence from './recurrence.js';
+import MailingList from './mailinglist.js';
+import MailingListUser from './mailinglistuser.js';
+import Mail from 'nodemailer/lib/mailer/index.js';
 
 // Define associations
 User.belongsTo(Role, { foreignKey: 'role' });
@@ -256,6 +259,9 @@ Contract.belongsTo(User, { foreignKey: 'deletedBy', as: 'deletedByUser' });
 Contract.belongsTo(Company, { foreignKey: 'id_company' });
 Company.hasMany(Contract, { foreignKey: 'id_company' });
 
+MailingList.belongsToMany(User, { through: MailingListUser, foreignKey: 'mailinglist', as: 'mailinglistusers'});
+User.belongsToMany(MailingList, { through: MailingListUser, foreignKey: 'user',  });
+
 export default {
     User,
     Role,
@@ -291,5 +297,6 @@ export default {
     PaymentMethod,
     Currency,
     Subsubcategory,
-    Recurrence
+    Recurrence,
+    MailingList,
   };

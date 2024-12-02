@@ -295,9 +295,7 @@ export default function Example({ date, setOpen }) {
           Salva
         </button>
       </div>
-
-      
-       
+  
         <table className="min-w-full mt-4">
           <thead>
             <tr>

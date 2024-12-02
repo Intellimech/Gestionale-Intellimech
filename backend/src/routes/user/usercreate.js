@@ -127,8 +127,8 @@ router.post("/create", async (req, res) => {
         await mail.sendMail({
             from: process.env.SMTP_USER,
             to: email,
-            subject: "Account created",
-            text: `Your account has been created. Your username is ${username} and your password is ${password}`,
+            subject: "Account creato",
+            text: `Il tuo account è stato creato. La tua password è: ${password}`,
         });
 
         Logger("info", `Email sent to: ${email}`);

@@ -59,6 +59,8 @@ const logout = () => {
           showedname: "Costs", 
           options: [
             { name: 'Acquisti', href: '#', icon: ShoppingCartIcon, current: false, permissionss: 'acquisti' },
+            
+            { name: 'Righe Acquisti', href: '#', icon: DocumentTextIcon, current: false, permissionss: 'righeacquisti' },
           ], 
         },
         { 
@@ -70,6 +72,7 @@ const logout = () => {
             { name: 'Prodotti', href: '#', icon: DocumentDuplicateIcon, current: false, permissionss: 'prodotti' },
             { name: 'Categorie', href: '#', icon: Squares2X2Icon, current: false, permissionss: 'categorie' },
             { name: 'Sottocategorie', href: '#', icon: Squares2X2Icon, current: false, permissionss: 'sottocategorie' },
+            { name: 'Sotto sottocategorie', href: '#', icon: Squares2X2Icon, current: false, permissionss: 'sottosottocategorie' },
             { name: 'Aree Tecniche', href: '#', icon: Squares2X2Icon, current: false, permissionss: 'areetecniche' },
             { name: 'Incarichi', href: '#', icon: Squares2X2Icon, current: false, permissionss: 'assignment' },
             { name: 'Tipo Progetto', href: '#', icon: Squares2X2Icon, current: false, permissionss: 'projecttype' },

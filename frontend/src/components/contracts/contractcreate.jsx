@@ -74,8 +74,8 @@ export default function ContractCreateForm() {
       <Toaster />
       <div className="space-y-12">
         <div className="border-b border-gray-900/10 pb-12">
-          <h2 className="text-base font-semibold leading-7 text-gray-900">Contract Details</h2>
-          <p className="mt-1 text-sm leading-6 text-gray-700">Enter the details to create a new contract.</p>
+          <h2 className="text-base font-semibold leading-7 text-gray-900">Informazioni Contratto</h2>
+          <p className="mt-1 text-sm leading-6 text-gray-700">Inserisci i dettagli per la creazione di un nuovo contratto.</p>
 
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div className="sm:col-span-3">

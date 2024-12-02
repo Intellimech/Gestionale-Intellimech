@@ -14,10 +14,10 @@ import Homepage from './components/dashboard/homepage.jsx';
 
 import Reporting from './components/reporting/reporting.jsx';
 import Calendar from './components/calendar/calendar';
-
+import PurchaseRow from './components/purchaseorder/purchaserow.jsx';
 import GeneralCalendar from './components/calendar/generalcalendar.jsx';
 import Locations from './components/registry/locationstable.jsx'
-
+import Subsubcategory from './components/registry/subsubcategory.jsx'
 import Quotationrequesttable from './components/quotationrequest/quotationrequesttable';
 import Offer from './components/offer/offertable';
 import Salesorder from './components/salesorder/salesordertable.jsx';
@@ -45,9 +45,11 @@ import SalesOrderDetail from './components/salesorder/salesorderdetail.jsx';
 import QuotationrequestDetail from './components/quotationrequest/quotationrequestdetail.jsx';
 import ClientType from './components/registry/clienttype.jsx';
 import Contract from './components/contracts/contract.jsx';
-
-
-
+import Currency from './components/registry/currencytable.jsx';
+import PaymentMethod from './components/registry/paymenttable.jsx';
+import RolePage from './components/registry/rolestable.jsx';
+import PurchaseRowInput from './components/purchaseorder/purchaserowinput.jsx';
+import Recurrence from './components/registry/recurrencetable.jsx';
 const Logo = './assets/intellimech.svg'
 
 const App = () => {
@@ -83,6 +85,8 @@ const App = () => {
             <Route path="sales-order/:id_salesorder" element={<PrivateRoute element={<SalesOrderDetail/>} />} /> 
            
             <Route path="purchase" element={<PrivateRoute element={<Purchase />} />} />
+            
+            <Route path="purchaserow" element={<PrivateRoute element={<PurchaseRow />} />} />
             <Route path="purchase/:id_purchase" element={<PrivateRoute element={<PurchaseDetail />} />} />
             <Route path="contract" element={<PrivateRoute element={<Contract />} />} />
             <Route path="profile" element={<PrivateRoute element={<Profile />} />} />
@@ -98,14 +102,18 @@ const App = () => {
               <Route path="suppliers" element={<PrivateRoute element={<Company companytype={"Suppliers"}/>} />} />
             </Route>
             <Route path="users" element={<PrivateRoute element={<UsersTable />} />} />
-            <Route path="roles" element={<PrivateRoute element={<UsersTable />} />} />
+            <Route path="roles" element={<PrivateRoute element={<RolePage />} />} />
             <Route path="employees-consultants" element={<PrivateRoute element={<EmployeesConsultant />} />} />
             <Route path="category" element={<PrivateRoute element={<CategoriesPage />} />} />
             
+            <Route path="paymentmethod" element={<PrivateRoute element={<PaymentMethod />} />} />
+            <Route path="currency" element={<PrivateRoute element={<Currency />} />} />
+            <Route path="recurrence" element={<PrivateRoute element={<Recurrence />} />} />
             <Route path="clienttype" element={<PrivateRoute element={<ClientType />} />} />
             <Route path="projecttype" element={<PrivateRoute element={<ProjectType />} />} />
             <Route path="assignment" element={<PrivateRoute element={<Assignment />} />} />
             <Route path="subcategory" element={<PrivateRoute element={<SubcategoriesPage />} />} />
+            <Route path="subsubcategory" element={<PrivateRoute element={<Subsubcategory />} />} />
             <Route path="technicalarea" element={<PrivateRoute element={<TechnicalAreaPage />} />} />
             <Route path="locations" element={<PrivateRoute element={<Locations />} />} />
             <Route path="permission" element={<PrivateRoute element={<Permission />} />} />

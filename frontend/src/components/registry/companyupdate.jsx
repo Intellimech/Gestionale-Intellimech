@@ -137,7 +137,6 @@ export default function ClientUpdateForm({ company }) {
             </div>
           </div>
 
-  {/* Categoria */}
 <div className="sm:col-span-2">
   <label htmlFor="clienttype" className="block text-sm font-medium leading-6 text-gray-900">
     Tipo Cliente

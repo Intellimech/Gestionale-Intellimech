@@ -269,8 +269,8 @@ export default function Example({ permissions }) {
         <div className="flex items-center justify-between">
           {/* Titolo e descrizione */}
           <div>
-            <h1 className="text-base font-semibold leading-6 text-gray-900">Ordini di Acquisto</h1>
-            <p className="mt-2 text-sm text-gray-700">Lista degli ordini di acquisto presenti a sistema</p>
+            <h1 className="text-base font-semibold leading-6 text-gray-900">Contratti</h1>
+            <p className="mt-2 text-sm text-gray-700">Lista dei Contratti presenti a sistema</p>
           </div>
 
           {/* Contenitore Bottoni */}

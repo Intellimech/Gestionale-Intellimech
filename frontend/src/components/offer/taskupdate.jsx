@@ -1,18 +1,10 @@
 import React, { useMemo, useEffect, useState } from 'react';
 import Select from 'react-tailwindcss-select';
 
-const TaskUpdate = ({ task, users, onChange, onAddChild, onRemove, level = 1 }) => {
-  console.log(`Rendering TaskUpdate at level ${level} with task:`, task);
-
-  if (!task) {
-    console.error('Task is undefined');
-    return null;
-  } else {
-    console.log("Sono la task " + task.assignedTo);
-  }
-
+const TaskUpdate = ({ task, onChange, users, onAddChild, onRemove, level = 1 }) => {
   const [selectedUser, setSelectedUser] = useState(null);
-
+  const [newselectedUser, setNewSelectedUser] = useState(null);
+console.log("users: ",users);
   const indentStyle = {
     paddingLeft: `${level * 10}px`,
     borderLeft: level > 0 ? '2px solid #E5E7EB' : 'none',
@@ -32,7 +24,6 @@ const TaskUpdate = ({ task, users, onChange, onAddChild, onRemove, level = 1 }) 
 
   const calculatedValues = useMemo(() => {
     if (!hasChildren) return null;
-
     return task?.children.reduce((acc, child) => ({
       hour: acc.hour + parseFloat(child.hour || 0),
       value: acc.value + parseFloat(child.value || 0),
@@ -48,34 +39,46 @@ const TaskUpdate = ({ task, users, onChange, onAddChild, onRemove, level = 1 }) 
         : child.endDate,
     }), { hour: 0, value: 0, startDate: null, endDate: null });
   }, [task?.children]);
-  
+
   useEffect(() => {
-    if (task.assignedTo) {
-      const userFound = users.find((user) => user.id === task.assignedTo.id);
-      setSelectedUser(userFound || null);
+    if (task?.assignedTo) {
+      const userFound = users.find((user) => user.value === task.assignedTo);
+      console.log("userfound", task.assignedTo);
+      if (userFound) {
+        setSelectedUser({ value: userFound.value, label: userFound.label });
+        
+      } else {
+        setSelectedUser(null);
+      }
     } else {
       setSelectedUser(null);
     }
   }, [task.assignedTo, users]);
+  
 
   const handleInputChange = (field, value) => {
-    const updatedTask = { ...task, [field]: field === 'assignedTo' ? value : value };
-    onChange(updatedTask);
+    const updatedTask = { ...task, [field]: value };
+    onChange(updatedTask); // Notifica il genitore che il task è stato aggiornato
+  
+    // Se il campo è 'assignedTo', aggiorna anche selectedUser per il rendering
+    if (field === 'assignedTo') {
+      setSelectedUser(value); // Aggiorna il valore selezionato in base alla scelta dell'utente
+      console.log("Utente modificato:", value); // Debug
+    }
   };
-
+  
   const selectOptions = useMemo(() => {
     return users.map((user) => ({
-      value: user.id,
-      label: `${user.name} ${user.surname}`,
+      value: user.value, // ID univoco per identificare l'utente
+      label: user.label, // Nome da mostrare nel Select
     }));
   }, [users]);
-
-
+  
   return (
     <div className="border p-2 mb-2 rounded-lg shadow-sm bg-gray-50" style={indentStyle}>
       <div className="flex flex-wrap items-center space-x-2 text-sm">
         <textarea
-          value={task?.description }
+          value={task?.description}
           onChange={(e) => handleInputChange('description', e.target.value)}
           placeholder="Descrizione"
           className="flex-grow max-w-[400px] px-2 py-1 rounded border-gray-300 focus:border-[#7fb7d4] focus:ring-[#7fb7d4]"
@@ -102,19 +105,24 @@ const TaskUpdate = ({ task, users, onChange, onAddChild, onRemove, level = 1 }) 
           className="w-32 px-2 py-1 rounded border-gray-300 focus:border-[#7fb7d4] focus:ring-[#7fb7d4]"
           readOnly={hasChildren}
         />
-        <div className="w-40">
-        <Select
-          value={selectedUser}
-          onChange={(value) => handleInputChange('assignedTo', value)}
-          options={selectOptions}
-          classNames={{
-            menuButton: () =>
-              'flex text-sm text-gray-500 border border-gray-300 rounded shadow-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#7fb7d4] focus:border-[#7fb7d4]',
-          }}
-          primaryColor="[#7fb7d4]"
-          isSearchable
-          placeholder="Select a user"
-        />
+        <div className="flex items-center space-x-2">
+          {/* Current user label */}
+          <span className="text-sm text-gray-700">
+            {}
+          </span>
+          
+          {/* Select dropdown */}
+          <div className="w-40">
+          <Select
+            value={selectedUser}
+            onChange={(value) => handleInputChange('assignedTo', value)}
+            options={selectOptions}
+            classNames={{
+              menuButton: () =>
+                'flex text-sm text-gray-500 border border-gray-300 rounded shadow-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#7fb7d4] focus:border-[#7fb7d4]',
+            }}
+          />
+          </div>
         </div>
         <button
           type="button"
@@ -136,3 +144,4 @@ const TaskUpdate = ({ task, users, onChange, onAddChild, onRemove, level = 1 }) 
 };
 
 export default TaskUpdate;
+

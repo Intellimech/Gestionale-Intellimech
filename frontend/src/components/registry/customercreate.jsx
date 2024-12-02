@@ -139,7 +139,6 @@ export default function ClientForm() {
             </div>
           </div>
 
-          {/* Categoria */}
           <div className="sm:col-span-2 w-full">
             <label htmlFor="clienttype" className="block text-sm font-medium leading-6 text-gray-900">
               Tipo Cliente

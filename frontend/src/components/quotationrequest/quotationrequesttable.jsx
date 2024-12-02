@@ -76,7 +76,7 @@ export default function Example({ permissions }) {
       return a < b ? -1 : a > b ? 1 : 0;
     }
   };
-  const filteredRequest = quotationrequests.filter((item) => {
+  const filteredRequest = quotationrequests?.filter((item) => {
     return (
       (searchQueries?.name === '' || item?.name?.toLowerCase().includes(searchQueries?.name?.toLowerCase())) &&
       (searchQueries.description=== '' || item.description.toLowerCase().includes(searchQueries.description.toLowerCase())) &&
@@ -111,7 +111,7 @@ export default function Example({ permissions }) {
     }
   };
   
-const sortedRequest = filteredRequest.sort((a, b) => {
+const sortedRequest = filteredRequest?.sort((a, b) => {
   const getValue = (item, column) => {
     switch (column) {
       case 'Company':
@@ -555,7 +555,7 @@ const sortedRequest = filteredRequest.sort((a, b) => {
 
 
               <tbody className="divide-y divide-gray-200 bg-white">
-                {sortedRequest.map((quotationrequest) => (
+                {sortedRequest?.map((quotationrequest) => (
                   <tr key={quotationrequest.id_user} className="h-8">
                     <td
                       onClick={(event) => {
@@ -592,7 +592,7 @@ const sortedRequest = filteredRequest.sort((a, b) => {
                     </td>
 
                       <td className="text-xs text-gray-500 px-2 py-2 min-w-[170px] whitespace-nowrap overflow-hidden text-ellipsis">
-                      {quotationrequest.description.split(" ").slice(0, 10).join(" ") + (quotationrequest.description.split(" ").length > 2 ? "..." : "")}
+                      {quotationrequest.description.split(" ").slice(0, 10).join(" ") + (quotationrequest.description.split(" ")?.length > 2 ? "..." : "")}
                     </td>
                     
                     <td className="text-xs text-gray-500 px-2 py-2 max-w-[100px] whitespace-nowrap overflow-hidden text-ellipsis">

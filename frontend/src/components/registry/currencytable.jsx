@@ -13,8 +13,8 @@ function classNames(...classes) {
   return classes?.filter(Boolean).join(' ');
 }
 
-export default function ClientTypeTable() {
-  const [clienttypes, setClientTypes] = useState([]);
+export default function CurrencyTable() {
+  const [currencies, setCurrencies] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortColumn, setSortColumn] = useState('');
   const [sortDirection, setSortDirection] = useState('asc');
@@ -25,38 +25,38 @@ export default function ClientTypeTable() {
   const [isConfirmDeleteModalOpen, setIsConfirmDeleteModalOpen] = useState(false);
   const [isConfirmUpdateModalOpen, setIsConfirmUpdateModalOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-  const [newClientTypeName, setNewClientTypeName] = useState('');
-  const [newClientTypeCode, setNewClientTypeCode] = useState('');
+  const [newCurrencyName, setNewCurrencyName] = useState('');
+  const [newCurrencyCode, setNewCurrencyCode] = useState('');
   const [update, setUpdate] = useState(false);
-  const [ClientTypeName, setClientTypeName] = useState('');
-  const [ClientTypeCode, setClientTypeCode] = useState('');
-  const [ClientTypeID, setClientTypeID] = useState('');
+  const [CurrencyName, setCurrencyName] = useState('');
+  const [CurrencyCode, setCurrencyCode] = useState('');
+  const [CurrencyID, setCurrencyID] = useState('');
   const tableRef = useRef(null);
 
   const [searchQueries, setSearchQueries] = useState({
     name: '',
-    id_clienttype: '',
+    id_currency: '',
     code: '',
     description: '',
   });
 
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_API_URL}/clienttype/read`)
+      .get(`${process.env.REACT_APP_API_URL}/currency/read`)
       .then((response) => {
-        setClientTypes(response.data.clients);
+        setCurrencies(response.data.currencies);
         console.log(response.data)
         
       })
       .catch((error) => {
-        console.error('Error fetching clienttypes:', error);
+        console.error('Error fetching currencies:', error);
       });
   }, []);
 
   useEffect(() => {
     if (isModalOpen && tableRef.current) {
       const tableRect = tableRef.current.getBoundingClientRect();
-      const modal = document.querySelector('#clienttype-modal');
+      const modal = document.querySelector('#currency-modal');
       if (modal) {
         const modalRect = modal.getBoundingClientRect();
         modal.style.position = 'absolute';
@@ -68,19 +68,19 @@ export default function ClientTypeTable() {
 
   
   
-  const handleDeleteClientType =  () => {
+  const handleDeleteCurrency =  () => {
     setIsConfirmDeleteModalOpen(false);
     try {
       const response = axios.delete(
-        `${process.env.REACT_APP_API_URL}/clienttype/delete/${deletedItem}`
+        `${process.env.REACT_APP_API_URL}/currency/delete/${deletedItem}`
       );
   
       // Mostra una notifica di successo
-      toast.success('Tipo cliente cancellato');
+      toast.success('Tipo progetto cancellato');
       console.log('Deleted:', response.data);
   
       // Aggiorna la lista locale (se gestita in stato)
-      setClientTypes((prevsubs) =>
+      setCurrencies((prevsubs) =>
         prevsubs.filter((sub) => sub.id !== deletedItem)
       );
     } catch (error) {
@@ -91,29 +91,29 @@ export default function ClientTypeTable() {
     }
     
   };
-  const handleUpdateClientType = () => {
+  const handleUpdateCurrency = () => {
     setIsConfirmUpdateModalOpen(true);
   };
-  const confirmUpdateClientType = () => {
+  const confirmUpdateCurrency = () => {
     axios
       .put(
-        `${process.env.REACT_APP_API_URL}/clienttype/update`, 
-        { id: ClientTypeID, description: ClientTypeName, code: ClientTypeCode }
+        `${process.env.REACT_APP_API_URL}/currency/update`, 
+        { id: CurrencyID, description: CurrencyName, code: CurrencyCode }
       )
       .then((response) => {
-        setClientTypes([...clienttypes, response.data.clienttypes]);
-        setClientTypeName('');
-        setClientTypeCode('');
+        setCurrencies([...currencies, response.data.currencies]);
+        setCurrencyName('');
+        setCurrencyCode('');
         setUpdate(false);
   
         // Mostra la notifica di successo
         toast.success('Nuovo tipo modificato con successo!');
       })
       .catch((error) => {
-        console.error('Errore durante la modifica del tipo cliente:', error);
+        console.error('Errore durante la modifica del tipo progetto:', error);
         
         // Mostra la notifica di errore
-        toast.error('Modifica del tipo cliente fallita.');
+        toast.error('Modifica del tipo progetto fallita.');
       });
   };
 
@@ -149,15 +149,14 @@ export default function ClientTypeTable() {
     setSearchQueries({ ...searchQueries, [column]: event.target.value });
   };
 
-  const filteredClientTypes = clienttypes?.filter((item) => {
+  const filteredCurrencies = currencies?.filter((item) => {
     return (
-      (searchQueries?.id_clienttype === '' || item.id_clienttype?.toString().includes(searchQueries?.id_clienttype?.toString())) &&
-      (searchQueries?.name === '' || item.description.toLowerCase().includes(searchQueries?.name.toLowerCase())) &&
-      (searchQueries?.code === '' || item.code.toLowerCase().includes(searchQueries?.code.toLowerCase()))
-    );
+      (searchQueries?.id_currency === '' || item.id_currency?.toString().includes(searchQueries?.id_currency?.toString())) &&
+      (searchQueries?.name === '' || item.name.toLowerCase().includes(searchQueries?.name.toLowerCase()))
+          );
   });
 
-  const sortedClientTypes = filteredClientTypes?.sort((a, b) => {
+  const sortedCurrencies = filteredCurrencies?.sort((a, b) => {
     if (sortColumn) {
       if (sortDirection === 'asc') {
         return compareValues(a[sortColumn], b[sortColumn]);
@@ -165,69 +164,69 @@ export default function ClientTypeTable() {
         return compareValues(b[sortColumn], a[sortColumn]);
       }
     }
-    // Default sorting by id_clienttype
-    return a.id_clienttype - b.id_clienttype;
+    // Default sorting by id_currency
+    return a.id_currency - b.id_currency;
   });
 
-  const exportClientTypes = () => {
+  const exportCurrencies = () => {
     const csvContent =
       'data:text/csv;charset=utf-8,' +
       ['ID,Name'].concat(
-        sortedClientTypes?.map((clienttype) =>
-          [clienttype?.id_clienttype, clienttype?.name].join(',')
+        sortedCurrencies?.map((currency) =>
+          [currency?.id_currency, currency?.name].join(',')
         )
       ).join('\n');
 
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', 'clienttypes.csv');
+    link.setAttribute('download', 'currencies.csv');
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
-  const handleCreateClientType = () => {
+  const handleCreateCurrency = () => {
     setIsConfirmModalOpen(true);
   };
 
-  const confirmCreateClientType = () => {
+  const confirmCreateCurrency = () => {
     axios
-      .post(`${process.env.REACT_APP_API_URL}/clienttype/create`, 
-        { description: newClientTypeName,
-        code: newClientTypeCode,
+      .post(`${process.env.REACT_APP_API_URL}/currency/create`, 
+        { description: newCurrencyName,
+        code: newCurrencyCode,
          }, 
       
       )
       .then((response) => {
-        setClientTypes([...clienttypes, response.data.clienttype]);
-        setNewClientTypeName('');
+        setCurrencies([...currencies, response.data.currency]);
+        setNewCurrencyName('');
         setIsModalOpen(false);
         setIsConfirmModalOpen(false);
         
         // Notifica di successo
-        toast.success('Tipo cliente creato con successo!', );
+        toast.success('Valuta creata con successo!', );
       })
       .catch((error) => {
-        console.error('Error creating clienttype:', error);
+        console.error('Error creating currency:', error);
         
         // Notifica di errore);
       });
   };
-  const cancelUpdateClientType = () => {
+  const cancelUpdateCurrency = () => {
     setIsConfirmUpdateModalOpen(false);
   };
  
-  const deleteItem = async (ClientTypeID) => {
-    setDeleteItem(ClientTypeID);
+  const deleteItem = async (CurrencyID) => {
+    setDeleteItem(CurrencyID);
    setIsConfirmDeleteModalOpen(true);
    };
-  const cancelDeleteClientType = () => {
+  const cancelDeleteCurrency = () => {
     setIsConfirmDeleteModalOpen(false);
   };
 
 
-  const cancelCreateClientType = () => {
+  const cancelCreateCurrency = () => {
     setIsConfirmModalOpen(false);
   };
 
@@ -237,12 +236,12 @@ export default function ClientTypeTable() {
       <Toaster />
         <div className="flex items-center justify-between">
           <div className="sm:flex-auto">
-            <h1 className="text-base font-semibold leading-6 text-gray-900">Tipo Clienti</h1>
-            <p className="mt-2 text-sm text-gray-700">Lista dei tipi di clienti</p>
+            <h1 className="text-base font-semibold leading-6 text-gray-900">Valuta</h1>
+            <p className="mt-2 text-sm text-gray-700">Lista delle valute</p>
           </div>
           <div className="flex items-center space-x-4">
             <button
-              onClick={exportClientTypes}
+              onClick={exportCurrencies}
               className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
             >
               Esporta
@@ -263,33 +262,20 @@ export default function ClientTypeTable() {
                 <table className="min-w-full table-fixed divide-y divide-gray-300">
                   <thead>
                     <tr>
-                      <th scope="col" className="px-0 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('id_clienttype')}>
+                      <th scope="col" className="px-0 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('id_currency')}>
                         ID
-                        {sortColumn === 'id_clienttype' && sortDirection !== '' ? (sortDirection === 'asc' ? null : null) : null}
+                        {sortColumn === 'id_currency' && sortDirection !== '' ? (sortDirection === 'asc' ? null : null) : null}
                         <br />
                         <input
-                          value={searchQueries?.id_clienttype}
+                          value={searchQueries?.id_currency}
                           onClick={(e) => e.stopPropagation()} // Stop click propagation
-                          onChange={handleSearchInputChange('id_clienttype')}
+                          onChange={handleSearchInputChange('id_currency')}
                           className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                           placeholder=""
                           rows={1}
                         />
                       </th>
-                      <th scope="col" className="px-0 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('code')}>
-                        Codice
-                        {sortColumn === 'code' && sortDirection !== '' ? (sortDirection === 'asc' ? null : null) : null}
-                        <br />
-                        <input
-                          value={searchQueries?.code}
-                          onClick={(e) => e.stopPropagation()} // Stop click propagation
-                          onChange={handleSearchInputChange('code')}
-                          className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                          placeholder=""
-                          rows={1}
-                        />
-                      </th>
-
+                      
                       <th scope="col" className="px-1.5 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
                         Nome
                         {sortColumn === 'name' && sortDirection !== '' ? (sortDirection === 'asc' ? null : null) : null}
@@ -307,11 +293,10 @@ export default function ClientTypeTable() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {sortedClientTypes?.map((clienttype) => (
-                      <tr key={clienttype?.id_clienttype}>
-                        <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{clienttype?.id_clienttype}</td>
-                        <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{clienttype?.code}</td>
-                        <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{clienttype?.description}</td>
+                    {sortedCurrencies?.map((currency) => (
+                      <tr key={currency?.id_currency}>
+                        <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{currency?.id_currency}</td>
+                        <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{currency?.name}</td>
                         <td className="whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
                         <div className="flex items-center space-x-2">
                           
@@ -320,9 +305,9 @@ export default function ClientTypeTable() {
                             className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
                             onClick={() => {
                               setUpdate(true);
-                              setClientTypeCode(clienttype?.code);
-                              setClientTypeName(clienttype?.description);
-                              setClientTypeID(clienttype?.id_clienttype);
+                              setCurrencyCode(currency?.code);
+                              setCurrencyName(currency?.description);
+                              setCurrencyID(currency?.id_currency);
                             }}
                           >
             
@@ -339,7 +324,7 @@ export default function ClientTypeTable() {
                             type="button" 
                             className="inline-flex items-right rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
                             onClick={() => {
-                              deleteItem(clienttype?.id_clienttype);
+                              deleteItem(currency?.id_currency);
                             }}
                           >
             
@@ -359,7 +344,7 @@ export default function ClientTypeTable() {
           </div>
         </div>
       </div>
-      
+{/*       
 <Dialog open={update} onClose={() => setUpdate(false)} className="relative z-50">
         <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
         <div className="fixed inset-0 flex items-center justify-center p-4">
@@ -369,15 +354,15 @@ export default function ClientTypeTable() {
               <input
                 type="text"
                 placeholder="Nome di Tipo Cliente"
-                value={ClientTypeName}
-                onChange={(e) => setClientTypeName(e.target.value)}
+                value={CurrencyName}
+                onChange={(e) => setCurrencyName(e.target.value)}
                 className="w-full mt-2 p-2 border border-gray-300 rounded-md focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
               />
               <input
                 type="text"
                 placeholder="Codice Tipo Cliente"
-                value={ClientTypeCode}
-                onChange={(e) => setClientTypeCode(e.target.value)}
+                value={CurrencyCode}
+                onChange={(e) => setCurrencyCode(e.target.value)}
                 className="w-full mt-4 p-2 border border-gray-300 rounded-md focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
               />
             </div>
@@ -390,7 +375,7 @@ export default function ClientTypeTable() {
                 Cancella
               </button>
               <button
-                onClick={handleUpdateClientType}
+                onClick={handleUpdateCurrency}
                 className="rounded-md bg-[#A7D0EB] px-3 py-2 text-sm font-bold text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
               >
                 Modifica
@@ -401,27 +386,27 @@ export default function ClientTypeTable() {
       </Dialog>
 
       {isModalOpen && (
-  <Dialog id="clienttype-modal" as="div" open={isModalOpen} onClose={() => setIsModalOpen(false)} className="relative z-50">
+  <Dialog id="currency-modal" as="div" open={isModalOpen} onClose={() => setIsModalOpen(false)} className="relative z-50">
     <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <Dialog.Panel className="max-w-md bg-white rounded shadow-lg p-6" style={{ width: '800px', height: '300px' }}>
         <Dialog.Title className="text-lg font-bold mb-4">Crea Tipo Cliente</Dialog.Title>
         <input
           type="text"
-          value={newClientTypeName}
-          onChange={(e) => setNewClientTypeName(e.target.value)}
+          value={newCurrencyName}
+          onChange={(e) => setNewCurrencyName(e.target.value)}
           placeholder="Nome Tipo Cliente"
           className="w-full px-3 py-2 border border-gray-300 rounded mb-4 focus:border-[#A7D0EB] focus:ring-[#A7D0EB] sm:text-sm"
         />
         <input
           type="text"
-          value={newClientTypeCode}
-          onChange={(e) => setNewClientTypeCode(e.target.value)}
+          value={newCurrencyCode}
+          onChange={(e) => setNewCurrencyCode(e.target.value)}
           placeholder="Codice"
           className="w-full px-3 py-2 border border-gray-300 rounded mb-4 focus:border-[#A7D0EB] focus:ring-[#A7D0EB] sm:text-sm"
         />
           <button
-            onClick={handleCreateClientType}
+            onClick={handleCreateCurrency}
             className="block w-full mt-4 rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4]"
             >
             Crea
@@ -446,10 +431,10 @@ export default function ClientTypeTable() {
               <Dialog.Title className="text-lg font-semibold mb-4">Conferma Modifica</Dialog.Title>
               <p>Sei sicuro di voler modificare questo elemento?</p>
               <div className="flex justify-end mt-4">
-                <button onClick={confirmUpdateClientType} className="block mr-2  rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+                <button onClick={confirmUpdateCurrency} className="block mr-2  rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
         >
                 Conferma</button>
-                <button onClick={cancelUpdateClientType} className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+                <button onClick={cancelUpdateCurrency} className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
         >Annulla</button>
               </div>
             </Dialog.Panel>
@@ -466,10 +451,10 @@ export default function ClientTypeTable() {
               <Dialog.Title className="text-lg font-semibold mb-4">Conferma Eliminazione</Dialog.Title>
               <p>Sei sicuro di voler eliminare questo elemento?</p>
               <div className="flex justify-end mt-4">
-                <button onClick={handleDeleteClientType} className="block mr-2 rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+                <button onClick={handleDeleteCurrency} className="block mr-2 rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
         >
                 Conferma</button>
-                <button onClick={cancelDeleteClientType} className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+                <button onClick={cancelDeleteCurrency} className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
         >Annulla</button>
               </div>
             </Dialog.Panel>
@@ -486,16 +471,16 @@ export default function ClientTypeTable() {
               <Dialog.Title className="text-lg font-semibold mb-4">Conferma Creazione</Dialog.Title>
               <p>Sei sicuro di voler creare questo incarico?</p>
               <div className="flex justify-end mt-4">
-                <button onClick={confirmCreateClientType} className="block mr-2 rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+                <button onClick={confirmCreateCurrency} className="block mr-2 rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
         >
                 Conferma</button>
-                <button onClick={cancelCreateClientType} className="block rounded-md  bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+                <button onClick={cancelCreateCurrency} className="block rounded-md  bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
         >Annulla</button>
               </div>
             </Dialog.Panel>
           </div>
         </Dialog>
-      )}
+      )} */}
     </>
   );
 }

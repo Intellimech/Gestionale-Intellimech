@@ -5,58 +5,55 @@ import Cookies from 'js-cookie';
 import toast, { Toaster } from 'react-hot-toast';
 
 import 'react-toastify/dist/ReactToastify.css';
-
 import { XMarkIcon, TrashIcon ,PencilSquareIcon, ArrowRightStartOnRectangleIcon } from '@heroicons/react/20/solid'
+
 import { Dialog } from '@headlessui/react';
 
 function classNames(...classes) {
-  return classes?.filter(Boolean).join(' ');
+  return classes.filter(Boolean).join(' ');
 }
 
-export default function ClientTypeTable() {
-  const [clienttypes, setClientTypes] = useState([]);
+export default function PaymentMethodTable() {
+  const [paymentmethods, setPaymentMethods] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortColumn, setSortColumn] = useState('');
   const [sortDirection, setSortDirection] = useState('asc');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
+  const [isConfirmUpdateModalOpen, setIsConfirmUpdateModalOpen] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [newPaymentMethodName, setNewPaymentMethodName] = useState('');
+  const [newPaymentMethodCode, setNewPaymentMethodCode] = useState('');
+  const tableRef = useRef(null);
+  const [update, setUpdate] = useState(false);
+  const [PaymentMethodName, setPaymentMethodName] = useState('');
+  const [PaymentMethodCode, setPaymentMethodCode] = useState('');
+  const [PaymentMethodID, setPaymentMethodID] = useState('');
   const [deletedItem, setDeleteItem] = useState('');
   
   const [isConfirmDeleteModalOpen, setIsConfirmDeleteModalOpen] = useState(false);
-  const [isConfirmUpdateModalOpen, setIsConfirmUpdateModalOpen] = useState(false);
-  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-  const [newClientTypeName, setNewClientTypeName] = useState('');
-  const [newClientTypeCode, setNewClientTypeCode] = useState('');
-  const [update, setUpdate] = useState(false);
-  const [ClientTypeName, setClientTypeName] = useState('');
-  const [ClientTypeCode, setClientTypeCode] = useState('');
-  const [ClientTypeID, setClientTypeID] = useState('');
-  const tableRef = useRef(null);
+  
 
   const [searchQueries, setSearchQueries] = useState({
     name: '',
-    id_clienttype: '',
-    code: '',
-    description: '',
+    id_paymentmethod: '',
+    code: ''
   });
 
   useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_API_URL}/clienttype/read`)
+      .get(`${process.env.REACT_APP_API_URL}/paymentmethod/read`)
       .then((response) => {
-        setClientTypes(response.data.clients);
-        console.log(response.data)
-        
+        setPaymentMethods(response.data.paymentmethods);
       })
       .catch((error) => {
-        console.error('Error fetching clienttypes:', error);
+        console.error('Error fetching paymentmethods:', error);
       });
   }, []);
 
   useEffect(() => {
     if (isModalOpen && tableRef.current) {
       const tableRect = tableRef.current.getBoundingClientRect();
-      const modal = document.querySelector('#clienttype-modal');
+      const modal = document.querySelector('#paymentmethod-modal');
       if (modal) {
         const modalRect = modal.getBoundingClientRect();
         modal.style.position = 'absolute';
@@ -65,57 +62,6 @@ export default function ClientTypeTable() {
       }
     }
   }, [isModalOpen]);
-
-  
-  
-  const handleDeleteClientType =  () => {
-    setIsConfirmDeleteModalOpen(false);
-    try {
-      const response = axios.delete(
-        `${process.env.REACT_APP_API_URL}/clienttype/delete/${deletedItem}`
-      );
-  
-      // Mostra una notifica di successo
-      toast.success('Tipo cliente cancellato');
-      console.log('Deleted:', response.data);
-  
-      // Aggiorna la lista locale (se gestita in stato)
-      setClientTypes((prevsubs) =>
-        prevsubs.filter((sub) => sub.id !== deletedItem)
-      );
-    } catch (error) {
-      console.error('Errore nella cancellazione: ', error.response?.data || error.message);
-  
-      // Mostra una notifica di errore
-      toast.error('Fallimento');
-    }
-    
-  };
-  const handleUpdateClientType = () => {
-    setIsConfirmUpdateModalOpen(true);
-  };
-  const confirmUpdateClientType = () => {
-    axios
-      .put(
-        `${process.env.REACT_APP_API_URL}/clienttype/update`, 
-        { id: ClientTypeID, description: ClientTypeName, code: ClientTypeCode }
-      )
-      .then((response) => {
-        setClientTypes([...clienttypes, response.data.clienttypes]);
-        setClientTypeName('');
-        setClientTypeCode('');
-        setUpdate(false);
-  
-        // Mostra la notifica di successo
-        toast.success('Nuovo tipo modificato con successo!');
-      })
-      .catch((error) => {
-        console.error('Errore durante la modifica del tipo cliente:', error);
-        
-        // Mostra la notifica di errore
-        toast.error('Modifica del tipo cliente fallita.');
-      });
-  };
 
   const handleSort = (columnName) => {
     if (sortColumn === columnName) {
@@ -133,6 +79,58 @@ export default function ClientTypeTable() {
       setSortDirection('asc');
     }
   };
+  
+  
+  const handleDeletePaymentMethod =  (
+
+  ) => {
+    setIsConfirmDeleteModalOpen(false);
+    try {
+      const response =  axios.delete(
+        `${process.env.REACT_APP_API_URL}/paymentmethod/delete/${deletedItem}`
+      );
+  
+      // Mostra una notifica di successo
+      toast.success('Incarico cancellato');
+      console.log('Deleted:', response.data);
+  
+      // Aggiorna la lista locale (se gestita in stato)
+      setPaymentMethods((prevsubs) =>
+        prevsubs.filter((sub) => sub.id !== deletedItem)
+      );
+    } catch (error) {
+      console.error('Errore nella cancellazione: ', error.response?.data || error.message);
+  
+      // Mostra una notifica di errore
+      toast.error('Fallimento');
+    }
+    
+  };
+  
+  const confirmUpdatePaymentMethod = () => {
+    axios
+      .put(
+        `${process.env.REACT_APP_API_URL}/paymentmethod/update`, 
+        { id: PaymentMethodID, name: PaymentMethodName, code: PaymentMethodCode }
+      )
+      .then((response) => {
+        setPaymentMethods([...paymentmethods, response.data.paymentmethods]);
+        setPaymentMethodName('');
+        setPaymentMethodCode('');
+        setUpdate(false);
+        setIsConfirmModalOpen(false); // Chiude la modale di conferma
+  
+        // Mostra la notifica di successo
+        toast.success('Incarico modficato con successo!');
+      })
+      .catch((error) => {
+        console.error('Errore durante la modifica di incarico:', error);
+        
+        // Mostra la notifica di errore
+        toast.error('Modifica di incarico fallita.');
+      });
+  };
+
 
   const compareValues = (a, b) => {
     if (typeof a === 'string' && typeof b === 'string') {
@@ -149,15 +147,15 @@ export default function ClientTypeTable() {
     setSearchQueries({ ...searchQueries, [column]: event.target.value });
   };
 
-  const filteredClientTypes = clienttypes?.filter((item) => {
+  const filteredPaymentMethods = paymentmethods.filter((item) => {
     return (
-      (searchQueries?.id_clienttype === '' || item.id_clienttype?.toString().includes(searchQueries?.id_clienttype?.toString())) &&
-      (searchQueries?.name === '' || item.description.toLowerCase().includes(searchQueries?.name.toLowerCase())) &&
-      (searchQueries?.code === '' || item.code.toLowerCase().includes(searchQueries?.code.toLowerCase()))
+      (searchQueries.id_paymentmethod === '' || item.id_paymentmethod.toString().includes(searchQueries.id_paymentmethod.toString())) &&
+      (searchQueries.name === '' || item.name.toLowerCase().includes(searchQueries.name.toLowerCase()))  &&
+      (searchQueries.code === '' || item.code.toLowerCase().includes(searchQueries.code.toLowerCase()))
     );
   });
 
-  const sortedClientTypes = filteredClientTypes?.sort((a, b) => {
+  const sortedPaymentMethods = filteredPaymentMethods.sort((a, b) => {
     if (sortColumn) {
       if (sortDirection === 'asc') {
         return compareValues(a[sortColumn], b[sortColumn]);
@@ -165,71 +163,79 @@ export default function ClientTypeTable() {
         return compareValues(b[sortColumn], a[sortColumn]);
       }
     }
-    // Default sorting by id_clienttype
-    return a.id_clienttype - b.id_clienttype;
+    // Default sorting by id_paymentmethod
+    return a.id_paymentmethod - b.id_paymentmethod;
   });
 
-  const exportClientTypes = () => {
+  const exportPaymentMethods = () => {
     const csvContent =
       'data:text/csv;charset=utf-8,' +
       ['ID,Name'].concat(
-        sortedClientTypes?.map((clienttype) =>
-          [clienttype?.id_clienttype, clienttype?.name].join(',')
+        sortedPaymentMethods.map((paymentmethod) =>
+          [paymentmethod.id_paymentmethod, paymentmethod.name].join(',')
         )
       ).join('\n');
 
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
-    link.setAttribute('download', 'clienttypes.csv');
+    link.setAttribute('download', 'paymentmethods.csv');
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
-  const handleCreateClientType = () => {
+  const handleCreatePaymentMethod = () => {
     setIsConfirmModalOpen(true);
   };
 
-  const confirmCreateClientType = () => {
+  const handleUpdatePaymentMethod = () => {
+    setIsConfirmUpdateModalOpen(true);
+  };
+
+  const confirmCreatePaymentMethod = () => {
     axios
-      .post(`${process.env.REACT_APP_API_URL}/clienttype/create`, 
-        { description: newClientTypeName,
-        code: newClientTypeCode,
+      .post(`${process.env.REACT_APP_API_URL}/paymentmethod/create`, 
+        { description: newPaymentMethodName,
+        code: newPaymentMethodCode,
          }, 
       
       )
       .then((response) => {
-        setClientTypes([...clienttypes, response.data.clienttype]);
-        setNewClientTypeName('');
+        setPaymentMethods([...paymentmethods, response.data.paymentmethod]);
+        setNewPaymentMethodName('');
         setIsModalOpen(false);
         setIsConfirmModalOpen(false);
         
         // Notifica di successo
-        toast.success('Tipo cliente creato con successo!', );
+        toast.success('Incarico creata con successo!', );
       })
       .catch((error) => {
-        console.error('Error creating clienttype:', error);
+        console.error('Error creating paymentmethod:', error);
         
-        // Notifica di errore);
+        // Notifica di errore
+        toast.error('Errore durante la creazione di incarico!', );
       });
   };
-  const cancelUpdateClientType = () => {
+  
+
+  const cancelCreatePaymentMethod = () => {
+    setIsConfirmModalOpen(false);
+  };
+  const cancelUpdatePaymentMethod = () => {
     setIsConfirmUpdateModalOpen(false);
   };
- 
-  const deleteItem = async (ClientTypeID) => {
-    setDeleteItem(ClientTypeID);
-   setIsConfirmDeleteModalOpen(true);
-   };
-  const cancelDeleteClientType = () => {
+
+  const cancelDeletePaymentMethod = () => {
     setIsConfirmDeleteModalOpen(false);
   };
 
-
-  const cancelCreateClientType = () => {
-    setIsConfirmModalOpen(false);
-  };
+     
+  const deleteItem = async (PaymentMethodID) => {
+    setDeleteItem(PaymentMethodID);
+   setIsConfirmDeleteModalOpen(true);
+   };
+ 
 
   return (
     <>
@@ -237,12 +243,12 @@ export default function ClientTypeTable() {
       <Toaster />
         <div className="flex items-center justify-between">
           <div className="sm:flex-auto">
-            <h1 className="text-base font-semibold leading-6 text-gray-900">Tipo Clienti</h1>
-            <p className="mt-2 text-sm text-gray-700">Lista dei tipi di clienti</p>
+            <h1 className="text-base font-semibold leading-6 text-gray-900">Metodi di pagamento</h1>
+            <p className="mt-2 text-sm text-gray-700">Lista dei metodi di pagamento</p>
           </div>
           <div className="flex items-center space-x-4">
             <button
-              onClick={exportClientTypes}
+              onClick={exportPaymentMethods}
               className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
             >
               Esporta
@@ -263,39 +269,26 @@ export default function ClientTypeTable() {
                 <table className="min-w-full table-fixed divide-y divide-gray-300">
                   <thead>
                     <tr>
-                      <th scope="col" className="px-0 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('id_clienttype')}>
+                      <th scope="col" className="px-2 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('id_paymentmethod')}>
                         ID
-                        {sortColumn === 'id_clienttype' && sortDirection !== '' ? (sortDirection === 'asc' ? null : null) : null}
+                        {sortColumn === 'id_paymentmethod' && sortDirection !== '' ? (sortDirection === 'asc' ? null : null) : null}
                         <br />
                         <input
-                          value={searchQueries?.id_clienttype}
+                          value={searchQueries?.id_paymentmethod}
                           onClick={(e) => e.stopPropagation()} // Stop click propagation
-                          onChange={handleSearchInputChange('id_clienttype')}
+                          onChange={handleSearchInputChange('id_paymentmethod')}
                           className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
                           placeholder=""
                           rows={1}
                         />
                       </th>
-                      <th scope="col" className="px-0 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('code')}>
-                        Codice
-                        {sortColumn === 'code' && sortDirection !== '' ? (sortDirection === 'asc' ? null : null) : null}
-                        <br />
-                        <input
-                          value={searchQueries?.code}
-                          onClick={(e) => e.stopPropagation()} // Stop click propagation
-                          onChange={handleSearchInputChange('code')}
-                          className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                          placeholder=""
-                          rows={1}
-                        />
-                      </th>
-
+                     
                       <th scope="col" className="px-1.5 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
                         Nome
                         {sortColumn === 'name' && sortDirection !== '' ? (sortDirection === 'asc' ? null : null) : null}
                         <br />
                         <input
-                          value={searchQueries?.name}
+                          value={searchQueries.name}
                           onClick={(e) => e.stopPropagation()} // Stop click propagation
                           onChange={handleSearchInputChange('name')}
                           className="mt-1 px-2 py-1 w-28 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
@@ -307,11 +300,10 @@ export default function ClientTypeTable() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {sortedClientTypes?.map((clienttype) => (
-                      <tr key={clienttype?.id_clienttype}>
-                        <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{clienttype?.id_clienttype}</td>
-                        <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{clienttype?.code}</td>
-                        <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{clienttype?.description}</td>
+                    {sortedPaymentMethods.map((paymentmethod) => (
+                      <tr key={paymentmethod?.id_paymentmethod}>
+                        <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{paymentmethod?.id_paymentmethod}</td>
+                        <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{paymentmethod?.name}</td>
                         <td className="whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
                         <div className="flex items-center space-x-2">
                           
@@ -320,9 +312,9 @@ export default function ClientTypeTable() {
                             className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
                             onClick={() => {
                               setUpdate(true);
-                              setClientTypeCode(clienttype?.code);
-                              setClientTypeName(clienttype?.description);
-                              setClientTypeID(clienttype?.id_clienttype);
+                              setPaymentMethodCode(paymentmethod?.code);
+                              setPaymentMethodName(paymentmethod?.description);
+                              setPaymentMethodID(paymentmethod?.id_paymentmethod);
                             }}
                           >
             
@@ -339,7 +331,7 @@ export default function ClientTypeTable() {
                             type="button" 
                             className="inline-flex items-right rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
                             onClick={() => {
-                              deleteItem(clienttype?.id_clienttype);
+                              deleteItem(paymentmethod.id_paymentmethod);
                             }}
                           >
             
@@ -359,25 +351,64 @@ export default function ClientTypeTable() {
           </div>
         </div>
       </div>
-      
+
+
+{/*       
+      {isModalOpen && (
+  <Dialog id="paymentmethod-modal" as="div" open={isModalOpen} onClose={() => setIsModalOpen(false)} className="relative z-50">
+    <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <Dialog.Panel className="max-w-md bg-white rounded shadow-lg p-6" style={{ width: '800px', height: '300px' }}>
+        <Dialog.Title className="text-lg font-bold mb-4">Crea Metodo di Pagamento</Dialog.Title>
+        <input
+          type="text"
+          value={newPaymentMethodName}
+          onChange={(e) => setNewPaymentMethodName(e.target.value)}
+          placeholder="Nome Incarico"
+          className="w-full px-3 py-2 border border-gray-300 rounded mb-4 focus:border-[#A7D0EB] focus:ring-[#A7D0EB] sm:text-sm"
+        />
+        <input
+          type="text"
+          value={newPaymentMethodCode}
+          onChange={(e) => setNewPaymentMethodCode(e.target.value)}
+          placeholder="Codice"
+          className="w-full px-3 py-2 border border-gray-300 rounded mb-4 focus:border-[#A7D0EB] focus:ring-[#A7D0EB] sm:text-sm"
+        />
+          <button
+            onClick={handleCreatePaymentMethod}
+            className="block w-full mt-4 rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4]"
+            >
+            Crea
+          </button>
+          <button
+              type="submit"
+              onClick={() => setIsModalOpen(false)}
+              className="block w-full mt-4 rounded-md bg-white px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-white"
+            >
+              Annulla
+            </button>
+      </Dialog.Panel>
+    </div>
+  </Dialog>
+)}
 <Dialog open={update} onClose={() => setUpdate(false)} className="relative z-50">
         <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
         <div className="fixed inset-0 flex items-center justify-center p-4">
           <Dialog.Panel className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg">
-            <Dialog.Title className="text-lg font-semibold text-gray-900">Modifica un Tipo Cliente</Dialog.Title>
+            <Dialog.Title className="text-lg font-semibold text-gray-900">Modifica Incarico</Dialog.Title>
             <div className="mt-4">
               <input
                 type="text"
-                placeholder="Nome di Tipo Cliente"
-                value={ClientTypeName}
-                onChange={(e) => setClientTypeName(e.target.value)}
+                placeholder="Nome Incarico"
+                value={PaymentMethodName}
+                onChange={(e) => setPaymentMethodName(e.target.value)}
                 className="w-full mt-2 p-2 border border-gray-300 rounded-md focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
               />
               <input
                 type="text"
-                placeholder="Codice Tipo Cliente"
-                value={ClientTypeCode}
-                onChange={(e) => setClientTypeCode(e.target.value)}
+                placeholder="Codice"
+                value={PaymentMethodCode}
+                onChange={(e) => setPaymentMethodCode(e.target.value)}
                 className="w-full mt-4 p-2 border border-gray-300 rounded-md focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
               />
             </div>
@@ -390,7 +421,7 @@ export default function ClientTypeTable() {
                 Cancella
               </button>
               <button
-                onClick={handleUpdateClientType}
+                onClick={handleUpdatePaymentMethod}
                 className="rounded-md bg-[#A7D0EB] px-3 py-2 text-sm font-bold text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
               >
                 Modifica
@@ -401,27 +432,27 @@ export default function ClientTypeTable() {
       </Dialog>
 
       {isModalOpen && (
-  <Dialog id="clienttype-modal" as="div" open={isModalOpen} onClose={() => setIsModalOpen(false)} className="relative z-50">
+  <Dialog id="paymentmethod-modal" as="div" open={isModalOpen} onClose={() => setIsModalOpen(false)} className="relative z-50">
     <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <Dialog.Panel className="max-w-md bg-white rounded shadow-lg p-6" style={{ width: '800px', height: '300px' }}>
-        <Dialog.Title className="text-lg font-bold mb-4">Crea Tipo Cliente</Dialog.Title>
+        <Dialog.Title className="text-lg font-bold mb-4">Crea Incarico</Dialog.Title>
         <input
           type="text"
-          value={newClientTypeName}
-          onChange={(e) => setNewClientTypeName(e.target.value)}
-          placeholder="Nome Tipo Cliente"
+          value={newPaymentMethodName}
+          onChange={(e) => setNewPaymentMethodName(e.target.value)}
+          placeholder="Nome Incarico"
           className="w-full px-3 py-2 border border-gray-300 rounded mb-4 focus:border-[#A7D0EB] focus:ring-[#A7D0EB] sm:text-sm"
         />
         <input
           type="text"
-          value={newClientTypeCode}
-          onChange={(e) => setNewClientTypeCode(e.target.value)}
+          value={newPaymentMethodCode}
+          onChange={(e) => setNewPaymentMethodCode(e.target.value)}
           placeholder="Codice"
           className="w-full px-3 py-2 border border-gray-300 rounded mb-4 focus:border-[#A7D0EB] focus:ring-[#A7D0EB] sm:text-sm"
         />
           <button
-            onClick={handleCreateClientType}
+            onClick={handleCreatePaymentMethod}
             className="block w-full mt-4 rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4]"
             >
             Crea
@@ -438,46 +469,6 @@ export default function ClientTypeTable() {
   </Dialog>
 )}
 
-{isConfirmUpdateModalOpen && (
-        <Dialog as="div" open={isConfirmUpdateModalOpen} onClose={() => setIsConfirmUpdateModalOpen(false)} className="relative z-50">
-          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <Dialog.Panel className="max-w-sm mx-auto bg-white rounded shadow-lg p-6">
-              <Dialog.Title className="text-lg font-semibold mb-4">Conferma Modifica</Dialog.Title>
-              <p>Sei sicuro di voler modificare questo elemento?</p>
-              <div className="flex justify-end mt-4">
-                <button onClick={confirmUpdateClientType} className="block mr-2  rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
-        >
-                Conferma</button>
-                <button onClick={cancelUpdateClientType} className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
-        >Annulla</button>
-              </div>
-            </Dialog.Panel>
-          </div>
-        </Dialog>
-      )}
-
-
-{isConfirmDeleteModalOpen && (
-        <Dialog as="div" open={isConfirmDeleteModalOpen} onClose={() => setIsConfirmDeleteModalOpen(false)} className="relative z-50">
-          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <Dialog.Panel className="max-w-sm mx-auto bg-white rounded shadow-lg p-6">
-              <Dialog.Title className="text-lg font-semibold mb-4">Conferma Eliminazione</Dialog.Title>
-              <p>Sei sicuro di voler eliminare questo elemento?</p>
-              <div className="flex justify-end mt-4">
-                <button onClick={handleDeleteClientType} className="block mr-2 rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
-        >
-                Conferma</button>
-                <button onClick={cancelDeleteClientType} className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
-        >Annulla</button>
-              </div>
-            </Dialog.Panel>
-          </div>
-        </Dialog>
-      )}
-
-
       {isConfirmModalOpen && (
         <Dialog as="div" open={isConfirmModalOpen} onClose={() => setIsConfirmModalOpen(false)} className="relative z-50">
           <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
@@ -486,16 +477,55 @@ export default function ClientTypeTable() {
               <Dialog.Title className="text-lg font-semibold mb-4">Conferma Creazione</Dialog.Title>
               <p>Sei sicuro di voler creare questo incarico?</p>
               <div className="flex justify-end mt-4">
-                <button onClick={confirmCreateClientType} className="block mr-2 rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+                <button onClick={confirmCreatePaymentMethod} className="block mr-2 rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
         >
                 Conferma</button>
-                <button onClick={cancelCreateClientType} className="block rounded-md  bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+                <button onClick={cancelCreatePaymentMethod} className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
         >Annulla</button>
               </div>
             </Dialog.Panel>
           </div>
         </Dialog>
       )}
+
+      
+{isConfirmDeleteModalOpen && (
+        <Dialog as="div" open={isConfirmDeleteModalOpen} onClose={() => setIsConfirmDeleteModalOpen(false)} className="relative z-50">
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <Dialog.Panel className="max-w-sm mx-auto bg-white rounded shadow-lg p-6">
+              <Dialog.Title className="text-lg font-semibold mb-4">Conferma Eliminazione</Dialog.Title>
+              <p>Sei sicuro di voler eliminare questo elemento?</p>
+              <div className="flex justify-end mt-4">
+                <button onClick={handleDeletePaymentMethod} className="block mr-2 rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+        >
+                Conferma</button>
+                <button onClick={cancelDeletePaymentMethod} className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+        >Annulla</button>
+              </div>
+            </Dialog.Panel>
+          </div>
+        </Dialog>
+      )}
+
+{isConfirmUpdateModalOpen && (
+        <Dialog as="div" open={isConfirmUpdateModalOpen} onClose={() => setIsConfirmModalOpen(false)} className="relative z-50">
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <Dialog.Panel className="max-w-sm mx-auto bg-white rounded shadow-lg p-6">
+              <Dialog.Title className="text-lg font-semibold mb-4">Conferma Modifica</Dialog.Title>
+              <p>Sei sicuro di voler modificare questo incarico?</p>
+              <div className="flex justify-end mt-4">
+                <button onClick={confirmUpdatePaymentMethod} className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+        >
+                Conferma</button>
+                <button onClick={cancelUpdatePaymentMethod} className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+        >Annulla</button>
+              </div>
+            </Dialog.Panel>
+          </div>
+        </Dialog>
+      )} */}
     </>
   );
 }

@@ -6,7 +6,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 import { UserContext } from '../../module/userContext';
 import ContractCreateForm from './contractcreate';
-import contractInfo from './contractinfo';
+import ContractInfo from './contractinfo';
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
@@ -18,7 +18,7 @@ export default function Example({ permissions }) {
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
-  const [contractOrder, setcontractOrder] = useState([]);
+  const [Contract, setContract] = useState([]);
   const [items, setItems] = useState([]);
   const [showCreate, setShowCreate] = useState(false);
   const [sortColumn, setSortColumn] = useState('name'); // Imposta 'name' come colonna di ordinamento predefinita
@@ -43,7 +43,7 @@ export default function Example({ permissions }) {
   const handlectrlClick = (contract) => {
     window.open(`/app/contract/${contract.id_contract}`, '_blank'); // Apre in una nuova scheda
     
-    return <contractInfo contract={contract} />;
+    return <ContractInfo contract={contract} />;
   };
 
 
@@ -64,8 +64,7 @@ export default function Example({ permissions }) {
     axios
       .get(`${process.env.REACT_APP_API_URL}/contract/read`, )
       .then((response) => {
-        console.log(response.data.contracts);
-        setcontractOrder(Array.isArray(response.data.contracts) ? response.data.contracts : []);
+        setContract(Array.isArray(response.data.contracts) ? response.data.contracts : []);
         setItems(Array.isArray(response.data.contracts) ? response.data.contracts : []);
       })
       .catch((error) => {
@@ -96,7 +95,7 @@ export default function Example({ permissions }) {
   };
   
   
-  const filteredcontract = contractOrder.filter((item) => {
+  const filteredcontract = Contract.filter((item) => {
     return (
       (searchQueries.name === '' || item.name.toLowerCase().includes(searchQueries.name.toLowerCase())) &&
       (searchQueries.id_company === '' || item.Company?.name.toLowerCase().includes(searchQueries.id_company.toLowerCase())) &&
@@ -230,12 +229,12 @@ export default function Example({ permissions }) {
                     leaveFrom="translate-x-0"
                     leaveTo="translate-x-full"
                   >
-                    <Dialog.Panel className="pointer-events-auto w-screen max-w-7xl">
+                    <Dialog.Panel className="pointer-events-auto w-screen max-w-8xl">
                       <div className="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
                         <div className="px-4 sm:px-6">
                           <div className="flex items-start justify-between">
                             <Dialog.Title className="text-base font-semibold leading-6 text-gray-900">
-                              Crea un nuovo ordine di acquisto
+                              Crea un nuovo contratto
                             </Dialog.Title>
                             <div className="ml-3 flex h-7 items-center">
                               <button
@@ -269,8 +268,8 @@ export default function Example({ permissions }) {
         <div className="flex items-center justify-between">
           {/* Titolo e descrizione */}
           <div>
-            <h1 className="text-base font-semibold leading-6 text-gray-900">Ordini di Acquisto</h1>
-            <p className="mt-2 text-sm text-gray-700">Lista degli ordini di acquisto presenti a sistema</p>
+            <h1 className="text-base font-semibold leading-6 text-gray-900">Contratti</h1>
+            <p className="mt-2 text-sm text-gray-700">Lista dei contratti presenti a sistema</p>
           </div>
 
           {/* Contenitore Bottoni */}
@@ -331,13 +330,13 @@ export default function Example({ permissions }) {
                     />
                   </th>
                   <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('category')}>
-                    Data inizio contratto
+                    Data di Inizio
                     {sortColumn === 'category'  && sortDirection !== '' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
                     ) : null}
                     <br />
                     <input
-                      value={searchQueries.contract_start_date}
+                      value={searchQueries.category}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('category')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
@@ -346,13 +345,13 @@ export default function Example({ permissions }) {
                     />
                   </th>
                   <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('subcategory')}>
-                    Data fine contratto
+                    Data di Fine
                     {sortColumn === 'subcategory'  && sortDirection !== '' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
                     ) : null}
                     <br />
                     <input
-                      value={searchQueries.contract_end_date}
+                      value={searchQueries.subcategory}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('subcategory')}
                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
@@ -477,7 +476,7 @@ export default function Example({ permissions }) {
                           {item.total + ' ' + item.currency}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
-                          {item.IVA}
+                          {item.IVA + ' %'}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
                           {item.status === 'In Approvazione' ? (
@@ -493,10 +492,10 @@ export default function Example({ permissions }) {
                             <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100  text-red-600">
                               Rifiutato
                             </span>
-                           // ): item.status === 'Scaduto' ? (
-                            // <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100  text-zinc-800">
-                            //   Scaduto
-                            // </span>
+                          ): item.status === 'Scaduto' ? (
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100  text-zinc-800">
+                              Scaduto
+                            </span>
                           // ) : item.status === 'Nuovo' ? (
                           //   <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100   text-blue-800">
                           //     Nuovo

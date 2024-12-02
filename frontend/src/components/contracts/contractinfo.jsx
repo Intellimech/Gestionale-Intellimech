@@ -12,7 +12,7 @@ import logo from '../../images/logo.jpg'
 
 import firma from '../../images/firma.png'
 
-// import PurchaseUpdateForm from './purchaseupdate.jsx';
+import PurchaseUpdateForm from './contractupdate.jsx';
 
 export default function Example({ purchase: initialPurchase }) {
   const [purchase, setPurchase] = useState(initialPurchase);
@@ -74,6 +74,10 @@ export default function Example({ purchase: initialPurchase }) {
       fetchData();
 
   }, [id, initialPurchase]);
+
+  useEffect(() => {
+    console.log('Purchase:', purchase);
+  }, [purchase]);
 
   const formatCurrency = (amount) => {
     return `${amount} ${purchase?.currency}`;
@@ -338,7 +342,7 @@ export default function Example({ purchase: initialPurchase }) {
                         </div>
                         <div className="relative mt-6 flex-1 px-4 sm:px-6">
                           {/* Passa 'purchase' come prop */}
-                          {/* <PurchaseUpdateForm purchase={purchase} /> */}
+                          <PurchaseUpdateForm purchase={purchase} />
                         </div>
                       </div>
                     </Dialog.Panel>
@@ -447,13 +451,16 @@ export default function Example({ purchase: initialPurchase }) {
                                         Prezzo Unitario
                                     </th>
                                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                                        Prezzo Unitario IVA Esclusa
+                                    </th>
+                                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                                         IVA
                                     </th>
                                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                                         Totale
                                     </th>
                                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                                        Stato
+                                        Totale IVA Esclusa
                                     </th>
                                 </tr>
                             </thead>
@@ -482,13 +489,16 @@ export default function Example({ purchase: initialPurchase }) {
                                             {formatCurrency(product.unit_price)}
                                         </td>
                                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                            {product.VAT}
+                                            {formatCurrency(product.taxed_unit_price)}
                                         </td>
                                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                            {formatCurrency(product.unit_price * product.quantity)}
+                                            {product.vat} %
                                         </td>
                                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                                            {product.status}
+                                            {formatCurrency(product.totalprice)}
+                                        </td>
+                                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                                            {formatCurrency(product.taxed_totalprice)}
                                         </td>
                                     </tr>
                                 ))}

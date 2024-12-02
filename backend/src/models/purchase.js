@@ -65,7 +65,16 @@ Purchase.init(
     deletedAt: {
       type: DataTypes.DATE,
       allowNull: true
-    }
+    },
+    purchaserows: {
+      type: DataTypes.VIRTUAL,
+      get() {
+        if (this.PurchaseRows) {
+          return this.PurchaseRows.length;
+        }
+        return 0;
+      },
+    },
   },
   {
     sequelize: db,

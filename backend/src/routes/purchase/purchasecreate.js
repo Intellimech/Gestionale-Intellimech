@@ -6,11 +6,10 @@ const router = express.Router();
 
 const Purchase = sequelize.models.Purchase;
 const PurchaseRow = sequelize.models.PurchaseRow;
-
 router.post("/create", async (req, res) => {
   try {
     const { id_company, products, date, payment, currency } = req.body;
-    const user = req.user;  // Assuming req.user is populated by the authentication middleware
+    const user = req.user; // Assuming req.user is populated by the authentication middleware
 
     if (!id_company || !products || !date) {
       return res.status(400).json({
@@ -41,7 +40,7 @@ router.post("/create", async (req, res) => {
       date: date,
       currency: currency,
       total: purchaseTotal,
-      createdBy: user.id_user,  // Use user ID from req.user
+      createdBy: user.id_user, // Use user ID from req.user
     });
 
     const purchaseId = purchase.id_purchase;
@@ -49,8 +48,8 @@ router.post("/create", async (req, res) => {
     // Create the associated purchase rows
     for (let i = 0; i < products.length; i++) {
       const product = products[i];
-    
-      let increment = (i + 1) * 10;        // Calcolo del numero incrementale
+
+      let increment = (i + 1) * 10; // Calcolo del numero incrementale
 
       // Dividere il nome originale nelle sue parti
       let parts = namePurchase.split("_"); // ["ODA24", "00015", "R1"]
@@ -60,7 +59,6 @@ router.post("/create", async (req, res) => {
 
       console.log(PurchaseRowName); // Output: ODA24_00015_10_R1
 
-
       // Validate depreciation_years if depreciation is true
       if (product.depreciation && (!product.depreciation_years || product.depreciation_years <= 0)) {
         return res.status(400).json({
@@ -69,6 +67,11 @@ router.post("/create", async (req, res) => {
       }
 
       console.log(product);
+       // Validazione del campo subsubcategory
+  if (!product.subsubcategory || isNaN(product.subsubcategory)) {
+    product.subsubcategory = null; // Usa `null` per evitare l'errore
+  }
+
 
       await PurchaseRow.create({
         id_purchase: purchaseId,
@@ -76,21 +79,27 @@ router.post("/create", async (req, res) => {
         description: product.description,
         category: product.category,
         subcategory: product.subcategory,
-        subsubcategory: product.subsubcategory,
+        subsubcategory: product.subsubcategory || null,
         unit_price: product.taxed_unit_price,
         taxed_unit_price: product.unit_price,
         quantity: product.quantity,
         vat: parseFloat(product.vat) || 0,
-        totalprice:  product.taxed_totalprice,
-        taxed_totalprice:product.total,
+        totalprice: product.taxed_totalprice,
+        taxed_totalprice: product.total,
         depreciation: product.depreciation || false,
         depreciation_years: product.depreciation ? product.depreciation_years : null,
-        asset: product.asset || false
+        asset: product.asset || false,
       });
     }
 
+    // Recupera il purchase con il conteggio delle righe
+    const createdPurchase = await Purchase.findByPk(purchaseId, {
+      include: [{ model: PurchaseRow, as: "PurchaseRows" }],
+    });
+
     res.status(201).json({
       message: "Purchase created",
+      purchase: createdPurchase,
     });
   } catch (error) {
     console.error(error);
@@ -99,5 +108,4 @@ router.post("/create", async (req, res) => {
     });
   }
 });
-
 export default router;

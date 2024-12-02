@@ -42,7 +42,8 @@ export default function Example({ permissions }) {
     total: '',
     IVA: '',
     status: '',
-    createdByUser: ''
+    createdByUser: '',
+    purchaserows : '',
   });
 
   const handlectrlClick = (purchase) => {
@@ -112,6 +113,7 @@ export default function Example({ permissions }) {
       (searchQueries.total === '' || item.total.toString().includes(searchQueries.total)) &&
       (searchQueries.IVA === '' || item.IVA.toLowerCase().includes(searchQueries.IVA.toLowerCase())) &&
       (searchQueries.status === '' || item.status.toLowerCase().includes(searchQueries.status.toLowerCase())) &&
+      (searchQueries.purchaserows === '' || item.purchaserows.toString().includes(searchQueries.purchaserows.toString())) &&
       (searchQueries.createdByUser === '' || (item.createdByUser?.name + ' ' + item.createdByUser?.surname).toLowerCase().includes(searchQueries.createdByUser.toLowerCase()))
     );
   });
@@ -414,6 +416,19 @@ export default function Example({ permissions }) {
                         rows={1}
                       />
                     </th>
+                    <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('purchaserows')}>
+                    <br /> Nr Righe
+                    <br />
+                      <input
+                        value={searchQueries.purchaserows}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={handleSearchInputChange('purchaserows')}
+                        className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+                        placeholder=""
+                        rows={1}
+                      />
+                    </th>
+                 
                  
                     <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('status')}>
                     <br /> Stato
@@ -487,6 +502,9 @@ export default function Example({ permissions }) {
                     </td>
                     <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
                       {item.IVA}
+                    </td>
+                    <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
+                      {item.purchaserows}
                     </td>
                     <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
                       {item.status === 'In Approvazione' ? (

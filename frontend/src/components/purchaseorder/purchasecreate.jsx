@@ -16,7 +16,7 @@ export default function PurchaseCreateForm() {
   const [products, setProducts] = useState([{
     category: '',
     subcategory: '',
-    subsubcategory: '',
+    subsubcategory: null,
     unit_price: '',
     quantity: 1,
     description: '',
@@ -88,7 +88,7 @@ export default function PurchaseCreateForm() {
   const addProduct = () => setProducts([...products, { 
     category: '', 
     subcategory: '',  
-    subsubcategory: '', 
+    subsubcategory: null, 
     unit_price: '', 
     quantity: 1, 
     description: '', 

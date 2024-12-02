@@ -8,6 +8,15 @@ const Purchase = sequelize.models.Purchase;
 const PurchaseRow = sequelize.models.PurchaseRow;
 const Company = sequelize.models.Company;
 
+// Funzione per formattare i nomi
+function formatName(name) {
+  return name
+    .toLowerCase()
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
 router.get('/read', async (req, res) => {
   try {
     // Get all the purchases
@@ -15,7 +24,23 @@ router.get('/read', async (req, res) => {
       include: [
         {
           model: PurchaseRow,
-          attributes: ["id_purchaserow", "name", "description", "depreciation", "depreciation_years", "asset", "category", "subcategory", "subsubcategory", "unit_price", "quantity", "vat", "totalprice", "taxed_unit_price", "taxed_totalprice"],
+          attributes: [
+            "id_purchaserow",
+            "name",
+            "description",
+            "depreciation",
+            "depreciation_years",
+            "asset",
+            "category",
+            "subcategory",
+            "subsubcategory",
+            "unit_price",
+            "quantity",
+            "vat",
+            "totalprice",
+            "taxed_unit_price",
+            "taxed_totalprice",
+          ],
           include: [
             {
               model: sequelize.models.Category,
@@ -24,14 +49,12 @@ router.get('/read', async (req, res) => {
             {
               model: sequelize.models.Subcategory,
               attributes: ["name"],
-           
             },
             {
               model: sequelize.models.Subsubcategory,
               attributes: ["name"],
-           
             },
-          ]
+          ],
         },
         {
           model: Company,
@@ -41,12 +64,20 @@ router.get('/read', async (req, res) => {
           model: sequelize.models.User,
           as: 'createdByUser',
           attributes: ['id_user', 'name', 'surname'],
-        }
+        },
       ],
     });
 
+    // Formatta il nome della compagnia per ogni acquisto
+    const formattedPurchases = purchases.map((purchase) => {
+      if (purchase.Company && purchase.Company.name) {
+        purchase.Company.name = formatName(purchase.Company.name);
+      }
+      return purchase;
+    });
+
     res.json({
-      purchases: purchases,
+      purchases: formattedPurchases,
     });
   } catch (error) {
     console.error(error);
@@ -68,7 +99,16 @@ router.get('/read/:id', async (req, res) => {
       include: [
         {
           model: PurchaseRow,
-          attributes: ["id_purchaserow", "name", "description" , "category", "subcategory", "unit_price", "quantity", "totalprice"],
+          attributes: [
+            "id_purchaserow",
+            "name",
+            "description",
+            "category",
+            "subcategory",
+            "unit_price",
+            "quantity",
+            "totalprice",
+          ],
           include: [
             {
               model: sequelize.models.Category,
@@ -78,7 +118,7 @@ router.get('/read/:id', async (req, res) => {
               model: sequelize.models.Subcategory,
               attributes: ["name"],
             },
-          ]
+          ],
         },
         {
           model: Company,
@@ -88,7 +128,7 @@ router.get('/read/:id', async (req, res) => {
           model: sequelize.models.User,
           as: 'createdByUser',
           attributes: ['id_user', 'name', 'surname'],
-        }
+        },
       ],
     });
 
@@ -96,6 +136,11 @@ router.get('/read/:id', async (req, res) => {
       return res.status(404).json({
         message: 'Purchase not found',
       });
+    }
+
+    // Formatta il nome della compagnia
+    if (purchase.Company && purchase.Company.name) {
+      purchase.Company.name = formatName(purchase.Company.name);
     }
 
     res.json({

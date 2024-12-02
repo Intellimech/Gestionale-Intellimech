@@ -204,6 +204,7 @@ console.log(subsubcategories)
                 onChange={(e) => onChange({ ...product, unit_price: e.target.value })}
                 className="w-full text-xs rounded-md border-gray-300"
                 placeholder="Prezzo IVA"
+                disabled
               />
             </td>
           </tr>

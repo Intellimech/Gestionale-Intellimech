@@ -23,6 +23,21 @@ export default function PurchaseUpdateRow({
       onRemove(index);
     }
   };
+// Precompilazione di Aliquota e Anni se Ammortamento è abilitato
+useEffect(() => {
+  if (product.depreciation) {
+    const category = categories.find((c) => c.id_category === product.category);
+    const subcategory = subcategories.find((s) => s.id_subcategory === product.subcategory);
+    const subsubcategory = subsubcategories.find((s) => s.id_subsubcategory === product.subsubcategory);
+
+    const depreciation_aliquota = subsubcategory?.aliquota || subcategory?.aliquota || category?.aliquota || null;
+    const depreciation_years = subsubcategory?.years || subcategory?.years || category?.years || null;
+
+    if (depreciation_aliquota && depreciation_years) {
+      onChange({ ...product, depreciation_aliquota, depreciation_years });
+    }
+  }
+}, [product.depreciation, product.category, product.subcategory, product.subsubcategory]);
 
   // Calculate totals
   const calculatedTotalTassato = useMemo(() => {
@@ -110,6 +125,39 @@ export default function PurchaseUpdateRow({
 
           {/* Prezzi e Quantità */}
           <tr>
+            <td className="block text-[11px] font-medium text-gray-700">Quantità</td>
+            <td>
+              <input
+                type="number"
+                value={product.quantity || ''}
+                onChange={(e) => onChange({ ...product, quantity: e.target.value })}
+                className="w-full text-[12px] rounded border-gray-300"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td className="block text-[11px] font-medium text-gray-700">Importo Unitario IVA Esclusa</td>
+            <td>
+              <input
+                type="number"
+                value={product.taxed_unit_price || calculatedTotal}
+                onChange={(e) => onChange({ ...product, taxed_unit_price: e.target.value })}
+                className="w-full text-[12px] rounded border-gray-300"
+              />
+            </td>
+          </tr> <tr>
+            <td className="block text-[11px] font-medium text-gray-700">Importo Totale IVA Esclusa</td>
+            <td>
+              <input
+                type="number"
+                value={product.totalprice || calculatedTotal}
+                onChange={(e) => onChange({ ...product, totalprice: e.target.value })}
+                className="w-full text-[12px] rounded border-gray-300"
+              />
+            </td>
+          </tr>
+         
+         <tr>
             <td className="block text-[11px] font-medium text-gray-700">IVA</td>
             <td>
               <Select
@@ -122,19 +170,10 @@ export default function PurchaseUpdateRow({
               />
             </td>
           </tr>
-          <tr>
-            <td className="block text-[11px] font-medium text-gray-700">Prezzo IVA Esclusa</td>
-            <td>
-              <input
-                type="number"
-                value={product.taxed_unit_price || calculatedTotal}
-                onChange={(e) => onChange({ ...product, taxed_unit_price: e.target.value })}
-                className="w-full text-[12px] rounded border-gray-300"
-              />
-            </td>
-          </tr>
-          <tr>
-            <td className="block text-[11px] font-medium text-gray-700">Prezzo IVA Inclusa</td>
+
+          {/* Totali */}
+           <tr>
+            <td className="block text-[11px] font-medium text-gray-700">Importo Unitario IVA Inclusa</td>
             <td>
               <input
                 type="number"
@@ -145,31 +184,7 @@ export default function PurchaseUpdateRow({
             </td>
           </tr>
           <tr>
-            <td className="block text-[11px] font-medium text-gray-700">Quantità</td>
-            <td>
-              <input
-                type="number"
-                value={product.quantity || ''}
-                onChange={(e) => onChange({ ...product, quantity: e.target.value })}
-                className="w-full text-[12px] rounded border-gray-300"
-              />
-            </td>
-          </tr>
-
-          {/* Totali */}
-          <tr>
-            <td className="block text-[11px] font-medium text-gray-700">Totale IVA Esclusa</td>
-            <td>
-              <input
-                type="number"
-                value={product.totalprice || calculatedTotal}
-                onChange={(e) => onChange({ ...product, totalprice: e.target.value })}
-                className="w-full text-[12px] rounded border-gray-300"
-              />
-            </td>
-          </tr>
-          <tr>
-            <td className="block text-[11px] font-medium text-gray-700">Totale IVA Inclusa</td>
+            <td className="block text-[11px] font-medium text-gray-700">Importo Totale IVA Inclusa</td>
             <td>
               <input
                 type="number"
@@ -208,18 +223,37 @@ export default function PurchaseUpdateRow({
 
             </tr>
             <br/>
-            <tr>
-             <td className="block text-[11px] font-medium text-gray-700">Anni Ammortamento </td>
-             <td>
-             <input 
-                type="number"
-                value={product.depreciation_years || ''}
-                onChange={(e) => onChange({ ...product, depreciation_years: e.target.value })}
-                disabled={!product.depreciation}
-                className=" w-1/2 text-[12px] rounded border-gray-300 disabled:bg-gray-100"
-              />
-            </td>
-          </tr>
+           
+          {product.depreciation && (
+            <>
+              <tr>
+                <td className="block text-[11px] font-medium text-gray-700">Aliquota (%)</td>
+                <td className="w-3/4 p-1">
+                  <input
+                    type="number"
+                    value={product.depreciation_aliquota || ''}
+                    onChange={(e) => onChange({ ...product, depreciation_aliquota: e.target.value })}
+                    className="w-full text-xs rounded-md border-gray-300"
+                    placeholder="Aliquota"
+                  
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td className="block text-[11px] font-medium text-gray-700">Anni Ammortamento</td>
+                <td className="w-3/4 p-1">
+                  <input
+                    type="number"
+                    value={product.depreciation_years || ''}
+                    onChange={(e) => onChange({ ...product, depreciation_years: e.target.value })}
+                    className="w-full text-xs rounded-md border-gray-300"
+                    placeholder="Anni"
+                   
+                  />
+                </td>
+              </tr>
+            </>
+          )}
 
           {/* Azione Elimina */}
           <tr>

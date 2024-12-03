@@ -40,7 +40,7 @@ export default function Example({ permissions }) {
     subsubcategory: '',
     payment_method: '',
     total: '',
-    IVA: '',
+    taxed_total: '',
     status: '',
     createdByUser: '',
     purchaserows : '',
@@ -111,7 +111,7 @@ export default function Example({ permissions }) {
       (searchQueries.subsubcategory === '' || item.subsubcategory?.name.toLowerCase().includes(searchQueries.subsubcategory.toLowerCase())) &&
       (searchQueries.payment_method === '' || item.payment_method.toLowerCase().includes(searchQueries.payment_method.toLowerCase())) &&
       (searchQueries.total === '' || item.total.toString().includes(searchQueries.total)) &&
-      (searchQueries.IVA === '' || item.IVA.toLowerCase().includes(searchQueries.IVA.toLowerCase())) &&
+      (searchQueries.taxed_total === '' || item.taxed_total?.toLowerCase().includes(searchQueries.taxed_total?.toLowerCase())) &&
       (searchQueries.status === '' || item.status.toLowerCase().includes(searchQueries.status.toLowerCase())) &&
       (searchQueries.purchaserows === '' || item.purchaserows.toString().includes(searchQueries.purchaserows.toString())) &&
       (searchQueries.createdByUser === '' || (item.createdByUser?.name + ' ' + item.createdByUser?.surname).toLowerCase().includes(searchQueries.createdByUser.toLowerCase()))
@@ -393,7 +393,7 @@ export default function Example({ permissions }) {
                     </th>
 
                     <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('total')}>
-                       <br />Totale
+                    Importo Totale   <br /> IVA Esclusa
                      <br/>
                       <input
                         value={searchQueries.total}
@@ -404,13 +404,13 @@ export default function Example({ permissions }) {
                         rows={1}
                       />
                     </th>
-                    <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('IVA')}>
-                    <br /> IVA
+                    <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('taxed_total')}>
+                  Importo Totale   <br /> IVA Inclusa
                     <br />
                       <input
-                        value={searchQueries.IVA}
+                        value={searchQueries.taxed_total}
                         onClick={(e) => e.stopPropagation()}
-                        onChange={handleSearchInputChange('IVA')}
+                        onChange={handleSearchInputChange('taxed_total')}
                         className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
                         placeholder=""
                         rows={1}
@@ -498,11 +498,12 @@ export default function Example({ permissions }) {
                       {item.payment_method}
                     </td>
                     <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
-                      {item.total + ' ' + item.currency}
+                      {item.taxed_total + ' ' + item.Currency?.name}
                     </td>
                     <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
-                      {item.IVA}
+                      {item.total + ' ' + item.Currency?.name}
                     </td>
+                  
                     <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
                       {item.purchaserows}
                     </td>

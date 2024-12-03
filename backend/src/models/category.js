@@ -14,6 +14,12 @@ Category.init(
     name: {
         type: DataTypes.STRING(255),
       },
+      aliquota: {
+        type: DataTypes.DOUBLE(255),
+      },
+      years: {
+        type: DataTypes.DOUBLE(255),
+      },
   },
   {
     sequelize: db,

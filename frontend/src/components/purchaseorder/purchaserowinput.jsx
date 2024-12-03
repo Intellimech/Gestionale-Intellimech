@@ -1,4 +1,4 @@
-import React, { useMemo,useEffect } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import Select from 'react-tailwindcss-select';
 import { TrashIcon } from '@heroicons/react/20/solid';
 
@@ -11,7 +11,7 @@ export default function PurchaseRowInput({
   onChange,
   onRemove,
   handleCategoryChange,
-  handleSubcategoryChange
+  handleSubcategoryChange,
 }) {
   const handleDeleteClick = () => {
     const confirmed = window.confirm('Sei sicuro di voler eliminare questo prodotto?');
@@ -19,12 +19,6 @@ export default function PurchaseRowInput({
       onRemove(index);
     }
   };
-  
-console.log(subsubcategories)
-  const Vat = ['22', '10', '4', '0'];
-
-
-
   useEffect(() => {
     if (product.taxed_unit_price && product.vat) {
       // Converto i valori in numeri per essere sicuro di fare calcoli corretti
@@ -44,8 +38,24 @@ console.log(subsubcategories)
     }
   }, [product.taxed_unit_price, product.vat, product.quantity]);
 
-  
-  // Calculate totals
+  const Vat = ['22', '10', '4', '0'];
+
+  // Precompilazione di Aliquota e Anni se Ammortamento è abilitato
+  useEffect(() => {
+    if (product.depreciation) {
+      const category = categories.find((c) => c.id_category === product.category);
+      const subcategory = subcategories.find((s) => s.id_subcategory === product.subcategory);
+      const subsubcategory = subsubcategories.find((s) => s.id_subsubcategory === product.subsubcategory);
+
+      const depreciation_aliquota = subsubcategory?.aliquota || subcategory?.aliquota || category?.aliquota || null;
+      const depreciation_years = subsubcategory?.years || subcategory?.years || category?.years || null;
+
+      if (depreciation_aliquota && depreciation_years) {
+        onChange({ ...product, depreciation_aliquota, depreciation_years });
+      }
+    }
+  }, [product.depreciation, product.category, product.subcategory, product.subsubcategory]);
+
   const calculatedTotalTassato = useMemo(() => {
     const taxedUnitPrice = parseFloat(product.taxed_unit_price || 0);
     const quantity = parseFloat(product.quantity || 0);
@@ -57,6 +67,7 @@ console.log(subsubcategories)
     const quantity = parseFloat(product.quantity || 0);
     return (unitPrice * quantity).toFixed(2);
   }, [product.unit_price, product.quantity]);
+
   return (
     <div className="border border-gray-200 rounded p-2 text-xs">
       <table className="w-full text-left text-[10px] border-collapse">
@@ -153,21 +164,21 @@ console.log(subsubcategories)
           </tr>
   
           <tr>
-            <td className="block text-[11px] font-medium text-gray-700 p-1">Prezzo Unitario (IVA Esclusa)</td>
+            <td className="block text-[11px] font-medium text-gray-700 p-1">Importo Unitario IVA Esclusa</td>
             <td className="w-3/4 p-1">
               <input
                 type="number"
                 value={product.taxed_unit_price}
                 onChange={(e) => onChange({ ...product, taxed_unit_price: e.target.value })}
                 className="w-full text-xs rounded-md border-gray-300"
-                placeholder="Prezzo"
+                placeholder="Importo"
               />
             </td>
           </tr>
   
           {/* Totale e IVA */}
           <tr>
-            <td className="block text-[11px] font-medium text-gray-700 p-1">Totale (IVA Esclusa)</td>
+            <td className="block text-[11px] font-medium text-gray-700 p-1">Importo Totale IVA Esclusa</td>
             <td className="w-3/4 p-1">
               <input
                 type="number"
@@ -194,23 +205,23 @@ console.log(subsubcategories)
             </td>
           </tr>
   
-          {/* Prezzo IVA Inclusa e Totale IVA Inclusa */}
+          {/* Importo IVA Inclusa e Totale IVA Inclusa */}
           <tr>
-            <td className="block text-[11px] font-medium text-gray-700 p-1">Prezzo Unitario (IVA Inclusa)</td>
+            <td className="block text-[11px] font-medium text-gray-700 p-1">Importo Unitario IVA Inclusa</td>
             <td className="w-3/4 p-1">
               <input
                 type="number"
                 value={product.unit_price}
                 onChange={(e) => onChange({ ...product, unit_price: e.target.value })}
                 className="w-full text-xs rounded-md border-gray-300"
-                placeholder="Prezzo IVA"
+                placeholder="Importo IVA"
                 disabled
               />
             </td>
           </tr>
   
           <tr>
-            <td className="block text-[11px] font-medium text-gray-700 p-1">Totale (IVA Inclusa)</td>
+            <td className="block text-[11px] font-medium text-gray-700 p-1">Importo Totale IVA Inclusa</td>
             <td className="w-3/4 p-1">
               <input
                 type="number"
@@ -222,10 +233,10 @@ console.log(subsubcategories)
             </td>
           </tr>
   
-          {/* Asset e Ammortamento */}
-          <tr>
-            <td className="block text-[11px] font-medium text-gray-700 p-1">Asset</td>
-            <td className="w-3/4 p-1 flex items-center justify-between">
+      {/* Asset e Ammortamento */}
+      <tr>
+            <td className="block text-[11px] font-medium text-gray-700">Cespite</td>
+            <td>
               <input
                 type="checkbox"
                 checked={product.asset || false}
@@ -234,10 +245,9 @@ console.log(subsubcategories)
               />
             </td>
           </tr>
-  
           <tr>
-            <td className="block text-[11px] font-medium text-gray-700 p-1">Ammortamento</td>
-            <td className="w-3/4 p-1 flex items-center justify-between">
+            <td className="block text-[11px] font-medium text-gray-700">Ammortamento</td>
+            <td>
               <input
                 type="checkbox"
                 checked={product.depreciation || false}
@@ -246,21 +256,38 @@ console.log(subsubcategories)
               />
             </td>
           </tr>
-  
-          <tr>
-            <td className="block text-[11px] font-medium text-gray-700 p-1">Anni Ammortamento</td>
-            <td className="w-3/4 p-1">
-              <input
-                type="number"
-                value={product.depreciation_years || ''}
-                onChange={(e) => onChange({ ...product, depreciation_years: e.target.value })}
-                disabled={!product.depreciation}
-                className="w-1/2 text-xs rounded-md border-gray-300 disabled:bg-gray-100"
-                placeholder="Anni"
-              />
-            </td>
-          </tr>
-  
+          {/* Campi aggiuntivi per depreciation_aliquota e years ammortamento */}
+          {product.depreciation && (
+            <>
+              <tr>
+                <td className="block text-[11px] font-medium text-gray-700">Aliquota (%)</td>
+                <td className="w-3/4 p-1">
+                  <input
+                    type="number"
+                    value={product.depreciation_aliquota || ''}
+                    onChange={(e) => onChange({ ...product, depreciation_aliquota: e.target.value })}
+                    className="w-full text-xs rounded-md border-gray-300"
+                    placeholder="Aliquota"
+                    // Disabilita se depreciation_aliquota è già definita
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td className="block text-[11px] font-medium text-gray-700">Anni Ammortamento</td>
+                <td className="w-3/4 p-1">
+                  <input
+                    type="number"
+                    value={product.depreciation_years || ''}
+                    onChange={(e) => onChange({ ...product, depreciation_years: e.target.value })}
+                    className="w-full text-xs rounded-md border-gray-300"
+                    placeholder="Anni"
+                     // Disabilita se depreciation_years è già definito
+                  />
+                </td>
+              </tr>
+            </>
+          )}
+
           <tr>
             <td className="p-2 flex justify-end">
               <button
@@ -276,4 +303,4 @@ console.log(subsubcategories)
       </table>
     </div>
   );
-}  
+}

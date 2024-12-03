@@ -31,6 +31,9 @@ router.post("/create", async (req, res) => {
 
     // Calculate the total price of the purchase
     const purchaseTotal = products.reduce((acc, product) => acc + product.total, 0);
+    
+    // Calculate the total price of the purchase
+    const purchaseTotaltax = products.reduce((acc, product) => acc + product.taxed_totalprice, 0);
 
     // Create the purchase entry
     const purchase = await Purchase.create({
@@ -40,6 +43,7 @@ router.post("/create", async (req, res) => {
       date: date,
       currency: currency,
       total: purchaseTotal,
+      taxed_total: purchaseTotaltax,
       createdBy: user.id_user, // Use user ID from req.user
     });
 
@@ -88,6 +92,8 @@ router.post("/create", async (req, res) => {
         taxed_totalprice: product.total,
         depreciation: product.depreciation || false,
         depreciation_years: product.depreciation ? product.depreciation_years : null,
+        
+        depreciation_aliquota: product.depreciation ? product.depreciation_aliquota : null,
         asset: product.asset || false,
       });
     }

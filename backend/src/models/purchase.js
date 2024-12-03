@@ -29,6 +29,9 @@ Purchase.init(
     total: {
       type: DataTypes.DOUBLE,
       allowNull: true
+    }, taxed_total: {
+      type: DataTypes.DOUBLE,
+      allowNull: true
     },
     currency: {
       type: DataTypes.STRING(50),

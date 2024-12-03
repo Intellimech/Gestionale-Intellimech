@@ -29,6 +29,7 @@ router.get('/read', async (req, res) => {
             "name",
             "description",
             "depreciation",
+            "depreciation_aliquota",
             "depreciation_years",
             "asset",
             "category",
@@ -39,23 +40,28 @@ router.get('/read', async (req, res) => {
             "vat",
             "totalprice",
             "taxed_unit_price",
-            "taxed_totalprice",
+            "taxed_totalprice"
           ],
           include: [
             {
               model: sequelize.models.Category,
-              attributes: ["name"],
+              attributes: ["name","aliquota", "years"],
             },
             {
               model: sequelize.models.Subcategory,
-              attributes: ["name"],
+              attributes: ["name","aliquota", "years"],
             },
             {
               model: sequelize.models.Subsubcategory,
-              attributes: ["name"],
+              attributes: ["name", "aliquota", "years"],
             },
+            
           ],
         },
+        {
+              model: sequelize.models.Currency,
+              attributes: ["name"],
+            },
         {
           model: Company,
           attributes: ["id_company", "name"],
@@ -103,11 +109,19 @@ router.get('/read/:id', async (req, res) => {
             "id_purchaserow",
             "name",
             "description",
+            "depreciation",
+            "depreciation_aliquota",
+            "depreciation_years",
+            "asset",
             "category",
             "subcategory",
+            "subsubcategory",
             "unit_price",
             "quantity",
+            "vat",
             "totalprice",
+            "taxed_unit_price",
+            "taxed_totalprice"
           ],
           include: [
             {

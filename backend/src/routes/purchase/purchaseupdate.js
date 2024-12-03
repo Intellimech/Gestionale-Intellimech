@@ -98,6 +98,11 @@ router.put("/update", async (req, res) => {
           taxed_totalprice: product.taxed_totalprice,
           quantity: product.quantity,
           totalprice: product.totalprice,
+          
+        depreciation: product.depreciation || false,
+        depreciation_years: product.depreciation ? parseInt(product.depreciation_years, 10) : null,
+        depreciation_aliquota: product.depreciation ? product.depreciation_aliquota : null,
+        asset: product.asset || false
         });
       }
       

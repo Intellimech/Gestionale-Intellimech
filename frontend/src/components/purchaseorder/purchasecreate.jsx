@@ -17,24 +17,47 @@ export default function PurchaseCreateForm() {
     category: '',
     subcategory: '',
     subsubcategory: null,
+    subcategories: [],
+    subsubcategories: [],
     unit_price: '',
     quantity: 1,
     description: '',
-    subcategories: [],
-    subsubcategories: [],
     depreciation: false,
     depreciation_years: '',
+    depreciation_aliquota: '',
     asset: false
   }]);
   const [currency, setCurrency] = useState('EUR');
-  const currencies = ['EUR', 'USD', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'SEK', 'NZD'];
-  const paymentMethods = ['Bank Transfer', 'Cash', 'Credit Card Floreani', 'Credit Card Fasanotti', 'Credit Card Ierace', 'Paypal'];
 
+  const [currencies, setCurrencies] = useState([]);
+  const [paymentMethods, setPaymentMethods] = useState([]);
   const handleCompanyChange = setSelectedCompany;
   const handlePaymentMethodChange = setSelectedPaymentMethod;
   const handleCurrencyChange = setCurrency;
   const handleDateChange = (event) => setSelectedDate(event.target.value);
 
+  useEffect(() => {
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/currency/read`)
+      .then((response) => {
+        setCurrencies(response.data.currencies);
+        console.log(response.data)
+        
+      })
+      .catch((error) => {
+        console.error('Error fetching currencies:', error);
+      });
+  }, []);
+  useEffect(() => {
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/paymentmethod/read`)
+      .then((response) => {
+        setPaymentMethods(response.data.paymentmethods);
+      })
+      .catch((error) => {
+        console.error('Error fetching paymentmethods:', error);
+      });
+  }, []);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -121,6 +144,7 @@ export default function PurchaseCreateForm() {
         vat: product.vat || 0,
         depreciation: product.depreciation || false,
         depreciation_years: product.depreciation ? parseInt(product.depreciation_years, 10) : null,
+        depreciation_aliquota: product.depreciation ? product.depreciation_aliquota : null,
         asset: product.asset || false
       }))
     };
@@ -188,7 +212,7 @@ export default function PurchaseCreateForm() {
                   <Select
                     value={selectedPaymentMethod}
                     onChange={handlePaymentMethodChange}
-                    options={paymentMethods.map((method) => ({ value: method, label: method }))}
+                    options={paymentMethods.map((method) => ({ value: method.id_paymentmethod, label: method.name }))}
                     primaryColor="#7fb7d4"
                     isSearchable
                     placeholder="Seleziona Metodo di Pagamento"
@@ -203,7 +227,7 @@ export default function PurchaseCreateForm() {
                   <Select
                     value={currency}
                     onChange={handleCurrencyChange}
-                    options={currencies.map((currency) => ({ value: currency, label: currency }))}
+                    options={currencies.map((currency) => ({ value: currency.id_currency, label: currency.name }))}
                     primaryColor="#7fb7d4"
                     isSearchable
                     placeholder="Seleziona Valuta"

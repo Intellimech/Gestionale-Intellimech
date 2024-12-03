@@ -46,7 +46,8 @@ Role.hasMany(User, { foreignKey: 'role' });
 Role.belongsToMany(Permissions, { through: RolePermissions, foreignKey: 'id_role' });
 Permissions.belongsToMany(Role, { through: RolePermissions, foreignKey: 'id_permissions' });
 
-
+Purchase.belongsTo(Currency, { foreignKey: 'currency' });
+Currency.hasMany(Purchase, { foreignKey: 'currency' });
 
 //User is associated with Group
 User.belongsTo(Group, { foreignKey: 'group' });

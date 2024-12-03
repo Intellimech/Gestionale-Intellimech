@@ -17,7 +17,13 @@ Subcategory.init(
     category: {
         type: DataTypes.INTEGER,
         allowNull: false,
-      }
+      },
+      aliquota: {
+        type: DataTypes.DOUBLE(255),
+      },
+      years: {
+        type: DataTypes.DOUBLE(255),
+      },
   },
   {
     sequelize: db,

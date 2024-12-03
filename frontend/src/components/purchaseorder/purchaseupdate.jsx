@@ -19,7 +19,7 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
   const [selectedCompany, setSelectedCompany] = useState(initialPurchase ? { value: initialPurchase.id_company, label: initialPurchase?.Company?.name } : null);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(initialPurchase ? initialPurchase.payment_method : "Cash");
   const [selectedDate, setSelectedDate] = useState(initialPurchase.date || new Date().toISOString().split('T')[0]);
-  const [products, setProducts] = useState(initialPurchase ? initialPurchase.PurchaseRows : [{ category: '', subcategory: '', subsubcategory: '', unit_price: '', vat: '',quantity: 1, description: '', subcategories: [] }]);
+  const [products, setProducts] = useState(initialPurchase ? initialPurchase.PurchaseRows : [{ category: '', subcategory: '', subsubcategory: '', unit_price: '', vat: '',quantity: 1, depreciation: '', depreciation_aliquota: '', depreciation_years: '', description: '', subcategories: [] }]);
 
   const [categoryMap, setCategoryMap] = useState({});
   const [currency, setCurrency] = useState(initialPurchase ? initialPurchase.currency : 'EUR');
@@ -148,7 +148,12 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
         vat: parseFloat(product.vat),
         quantity: parseInt(product.quantity, 10),
         totalprice: parseFloat(product.unit_price) * parseInt(product.quantity, 10),
-        taxed_totalprice: (parseFloat(product.unit_price) * 1.22) * parseInt(product.quantity, 10)
+        taxed_totalprice: (parseFloat(product.unit_price) * 1.22) * parseInt(product.quantity, 10),
+        
+        depreciation: product.depreciation || false,
+        depreciation_years: product.depreciation ? parseInt(product.depreciation_years, 10) : null,
+        depreciation_aliquota: product.depreciation ? product.depreciation_aliquota : null,
+        asset: product.asset || false
       }))
     };
 

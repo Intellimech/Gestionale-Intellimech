@@ -182,14 +182,13 @@ export default function Example({ permissions }) {
       </div>
 
 
-      <div className="mt-8 flow-root">
-        <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">          
-          <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+      <div className="mx-2 -my-1 overflow-x-auto sm:-mx-3 lg:-mx-4">          
+          <div className="inline-block min-w-full py-1 align-middle sm:px-3 lg:px-4">
             <div className="relative">
-              <table className="min-w-full table-fixed divide-y divide-gray-300">
-              <thead>
+              <table className="min-w-full table-fixed divide-y divide-gray-200">
+                <thead>
                 <tr>
-                  <th scope="col" className="px- py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
+                  <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
                   <br/>Ordine
                     {sortColumn === 'name' && sortDirection !== '' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
@@ -199,12 +198,12 @@ export default function Example({ permissions }) {
                       value={searchQueries.name}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('name')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                      placeholder=""
+                      className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+                         placeholder=""
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('id_company')}>
+                  <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('id_company')}>
                   <br/>Descrizione
                     {sortColumn === 'id_company'  && sortDirection !== '' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
@@ -214,13 +213,13 @@ export default function Example({ permissions }) {
                       value={searchQueries.id_company}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('id_company')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                      placeholder=""
+                      className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+                        placeholder=""
                       rows={1}
                     />
                   </th>
                  
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('payment_method')}>
+                  <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('payment_method')}>
                     Prezzo Unitario
                     {sortColumn === 'payment_method' && sortDirection !== '' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
@@ -230,12 +229,12 @@ export default function Example({ permissions }) {
                       value={searchQueries.payment_method}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('payment_method')}
-                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
                       placeholder=""
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('total')}>
+                  <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('total')}>
                     Prezzo Unitario Tassato
                     {sortColumn === 'total'  && sortDirection !== '' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
@@ -245,12 +244,12 @@ export default function Example({ permissions }) {
                       value={searchQueries.total}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('total')}
-                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
                       placeholder=""
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('IVA')}>
+                  <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('IVA')}>
                   <br/>Quantità
                     {sortColumn === 'IVA' && sortDirection !== '' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
@@ -260,12 +259,12 @@ export default function Example({ permissions }) {
                       value={searchQueries.IVA}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('IVA')}
-                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
                       placeholder=""
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('status')}>
+                  <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('status')}>
                   <br/> VAT
                     {sortColumn === 'status'  && sortDirection !== '' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
@@ -275,12 +274,12 @@ export default function Example({ permissions }) {
                       value={searchQueries.status}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('status')}
-                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                      placeholder=""
+                      className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+                         placeholder=""
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('total')}>
+                  <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('total')}>
                     Prezzo Totale
                     {sortColumn === 'total'  && sortDirection !== '' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
@@ -290,12 +289,12 @@ export default function Example({ permissions }) {
                       value={searchQueries.total}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('total')}
-                       className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                      placeholder=""
+                      className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+                         placeholder=""
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('IVA')}>
+                  <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('IVA')}>
                     Prezzo Totale Tassato
                     {sortColumn === 'IVA' && sortDirection !== '' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
@@ -305,12 +304,12 @@ export default function Example({ permissions }) {
                       value={searchQueries.IVA}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('IVA')}
-                       className="mt- px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
-                      placeholder=""
+                      className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+                        placeholder=""
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('category')}>
+                  <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('category')}>
                   Macro<br/>Categoria
                     {sortColumn === 'category'  && sortDirection !== '' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
@@ -320,12 +319,12 @@ export default function Example({ permissions }) {
                       value={searchQueries.category}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('category')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
                       placeholder=""
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('subcategory')}>
+                  <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('subcategory')}>
                   <br/>Categoria
                     {sortColumn === 'subcategory'  && sortDirection !== '' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
@@ -335,12 +334,12 @@ export default function Example({ permissions }) {
                       value={searchQueries.subcategory}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('subcategory')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
                       placeholder=""
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('subsubcategory')}>
+                  <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('subsubcategory')}>
                   <br/>Sottocategoria
                     {sortColumn === 'subsubcategory'  && sortDirection !== '' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
@@ -350,7 +349,7 @@ export default function Example({ permissions }) {
                       value={searchQueries.subsubcategory}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('subsubcategory')}
-                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
                       placeholder=""
                       rows={1}
                     />
@@ -377,40 +376,40 @@ export default function Example({ permissions }) {
                       }}  
                     }
                         className={classNames(
-                          'whitespace-nowrap px-1 py-4 pr-3 text-sm font-medium',
+                         'whitespace-nowrap px-1 py-1.5 text-xs font-medium',
                           selectedItems.includes(item) ? 'text-red-600' : 'text-gray-700'
                         )}
                       >
                         {item.name}
                       </td>
-                      <td className="whitespace-normal max-w-[200px] overflow-hidden text-sm text-gray-700 px-4 py-4 break-words">
+                      <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
                           {item.description}
                         </td>
-                        <td className="whitespace-normal max-w-[200px] overflow-hidden text-sm text-gray-700 px-3 py-4 break-words">
+                        <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
                           {item.unit_price}
                         </td>
-                        <td className="whitespace-normal max-w-[200px] overflow-hidden text-sm text-gray-700 px-3 py-4 break-words">
+                        <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
                           {item.taxed_unit_price}
                         </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
+                        <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
                           {item.quantity}
                         </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
+                        <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
                           {item.vat}
                         </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
+                        <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
                           {item.totalprice}
                         </td>
-                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-700">
+                        <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
                           {item.taxed_totalprice}
                         </td>
-                        <td className="whitespace-normal max-w-[200px] overflow-hidden text-sm text-gray-700 px-4 py-4 break-words">
+                        <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
                           {item.Category?.name}
                         </td>
-                        <td className="whitespace-normal max-w-[200px] overflow-hidden text-sm text-gray-700 px-4 py-4 break-words">
+                        <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
                           {item.Subcategory?.name}
                         </td>
-                        <td className="whitespace-normal max-w-[200px] overflow-hidden text-sm text-gray-700 px-4 py-4 break-words">
+                        <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
                           {item.Subsubcategory?.name}
                         </td>
                      
@@ -420,7 +419,6 @@ export default function Example({ permissions }) {
               </table>
             </div>
           </div>
-        </div>
       </div>
     </div>
   );

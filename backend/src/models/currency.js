@@ -11,7 +11,13 @@ Currency.init(
         primaryKey: true,
         autoIncrement: true
       },
-    name: {
+      name: {
+        type: DataTypes.STRING,
+      },
+      code: {
+        type: DataTypes.STRING,
+      },
+      symbol: {
         type: DataTypes.STRING,
       }
   },

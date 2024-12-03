@@ -37,7 +37,7 @@ export default function CurrencyTable() {
     name: '',
     id_currency: '',
     code: '',
-    description: '',
+    symbol: '',
   });
 
   useEffect(() => {
@@ -152,8 +152,11 @@ export default function CurrencyTable() {
   const filteredCurrencies = currencies?.filter((item) => {
     return (
       (searchQueries?.id_currency === '' || item.id_currency?.toString().includes(searchQueries?.id_currency?.toString())) &&
-      (searchQueries?.name === '' || item.name.toLowerCase().includes(searchQueries?.name.toLowerCase()))
-          );
+      (searchQueries?.name === '' || item.name.toLowerCase().includes(searchQueries?.name.toLowerCase())) &&
+      (searchQueries?.code === '' || item.code.toLowerCase().includes(searchQueries?.code.toLowerCase())) &&
+      (searchQueries?.symbol === '' || item.symbol.toLowerCase().includes(searchQueries?.symbol.toLowerCase()))
+       
+    );
   });
 
   const sortedCurrencies = filteredCurrencies?.sort((a, b) => {
@@ -289,6 +292,32 @@ export default function CurrencyTable() {
                           rows={1}
                         />
                       </th>
+                      <th scope="col" className="px-1.5 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('code')}>
+                        Codice
+                        {sortColumn === 'code' && sortDirection !== '' ? (sortDirection === 'asc' ? null : null) : null}
+                        <br />
+                        <input
+                          value={searchQueries?.code}
+                          onClick={(e) => e.stopPropagation()} // Stop click propagation
+                          onChange={handleSearchInputChange('code')}
+                          className="mt-1 px-2 py-1 w-28 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                          placeholder=""
+                          rows={1}
+                        />
+                      </th> 
+                      <th scope="col" className="px-1.5 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('symbol')}>
+                        Simbolo
+                        {sortColumn === 'symbol' && sortDirection !== '' ? (sortDirection === 'asc' ? null : null) : null}
+                        <br />
+                        <input
+                          value={searchQueries?.symbol}
+                          onClick={(e) => e.stopPropagation()} // Stop click propagation
+                          onChange={handleSearchInputChange('symbol')}
+                          className="mt-1 px-2 py-1 w-28 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                          placeholder=""
+                          rows={1}
+                        />
+                      </th>
 
                     </tr>
                   </thead>
@@ -297,6 +326,8 @@ export default function CurrencyTable() {
                       <tr key={currency?.id_currency}>
                         <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{currency?.id_currency}</td>
                         <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{currency?.name}</td>
+                        <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{currency?.code}</td>
+                        <td className="whitespace-nowrap px-3 py-2 text-sm text-gray-500">{currency?.symbol}</td>
                         <td className="whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-3">
                         <div className="flex items-center space-x-2">
                           

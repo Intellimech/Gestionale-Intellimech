@@ -800,13 +800,13 @@ const formatNumberWithDotAbove = (number) => {
                           {offer.name}
                         </td>
                         <td className="whitespace-normal max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
-                        {offer?.description || offer.QuotationRequest?.description}
+                          {offer?.description || offer.QuotationRequest?.description}
                         </td>
                         <td className="whitespace-normal max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
-                       {offer.QuotationRequest?.Company.name}
+                          {offer.QuotationRequest?.Company.name}
                         </td>
                         <td className="whitespace-normal max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
-                          {offer?.QuotationRequest?.companytype}
+                          {offer?.QuotationRequest?.companytype? offer.QuotationRequest?.companytype : 'EST'}
                         </td>
                        
                         <td className="whitespace-normal text-right max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">

@@ -21,7 +21,7 @@ Offer.init(
       defaultValue: 0
     },
     description: {
-      type: DataTypes.STRING(255),
+      type: DataTypes.STRING(3000),
       allowNull: true
     },
     quotationrequest: {

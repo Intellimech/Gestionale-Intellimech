@@ -1,12 +1,12 @@
 import React, { useMemo } from 'react';
 import Select from 'react-tailwindcss-select';
 
-export default function TaskForm({ task, onChange, onAddChild, onRemove, level = 1, users }) {
+export default function TaskForm({ key, task, name, onChange, onAddChild, onRemove, level = 1, users }) {
   const indentStyle = {
     paddingLeft: `${level * 10}px`,
     borderLeft: level > 0 ? '2px solid #E5E7EB' : 'none'
   };
-
+  
   const hasChildren = task.children && task.children.length > 0;
 
   const calculatedValues = useMemo(() => {
@@ -34,6 +34,7 @@ export default function TaskForm({ task, onChange, onAddChild, onRemove, level =
   return (
     <div className="border p-2 mb-2 rounded-lg shadow-sm bg-gray-50" style={indentStyle}>
       <div className="flex flex-wrap items-center space-x-2 text-sm">
+        <p className="font-semibold">{name}</p>
         <textarea
           value={task?.description || ''}
           onChange={(e) => handleInputChange('description', e.target.value)}
@@ -93,6 +94,7 @@ export default function TaskForm({ task, onChange, onAddChild, onRemove, level =
         {task?.children?.map((child, index) => (
           <TaskForm
             key={index}
+            name= {name + '.' + (index + 1)}
             task={child}
             onChange={(newChild) => {
               const newChildren = [...(task.children || [])];

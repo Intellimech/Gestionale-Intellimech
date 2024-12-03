@@ -402,6 +402,7 @@ export default function UserCreateForm() {
       {tasks.map((task, index) => (
         <TaskForm
           key={index}
+          name={`${index + 1}`}
           task={task}
           onChange={(updatedTask) => updateTask(index, updatedTask)}
           onAddChild={() => addTask(index)}
@@ -433,8 +434,6 @@ export default function UserCreateForm() {
           index={index}
         />
       ))}
-      
-    
         <button
           type="button"
           onClick={addCommercialOffer}

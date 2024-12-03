@@ -574,10 +574,10 @@ const sortedRequest = filteredRequest?.sort((a, b) => {
                       {quotationrequest?.name}
                     </td>
                     <td className="text-xs text-gray-500 px-2 py-2 max-w-[160px] whitespace-nowrap overflow-hidden text-ellipsis">
-                    {quotationrequest.Company?.name}
+                      {quotationrequest.Company?.name}
                     </td>
                     <td className="text-xs text-left text-gray-500 px-2 py-2 max-w-[100px] whitespace-nowrap overflow-hidden text-ellipsis">
-                       {quotationrequest.companytype}
+                      {quotationrequest.companytype? quotationrequest.companytype : 'EST'}
                     </td>
 
                   

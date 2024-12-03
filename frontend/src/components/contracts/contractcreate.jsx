@@ -1,28 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Cookies from 'js-cookie';
-import { CheckBadgeIcon, XCircleIcon } from '@heroicons/react/20/solid';
+import { CheckBadgeIcon, XCircleIcon, PlusIcon } from '@heroicons/react/20/solid';
 import Select from "react-tailwindcss-select";
-import PurchaseRowInput from './contractrowinput.jsx';
+import ContractRowInput from './contractrowinput.jsx';
 import toast, { Toaster } from 'react-hot-toast';
 
 export default function ContractCreateForm() {
   const [createSuccess, setCreateSuccess] = useState(null);
   const [errorMessages, setErrorMessages] = useState('');
-  const [quotationRequests, setQuotationRequests] = useState([]);
-  const [paymentMethods, setPaymentMethods] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [description, setDescription] = useState([]);
-  const [subcategories, setSubcategories] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [technicalAreas, setTechnicalAreas] = useState([]);
   const [companies, setCompanies] = useState([]);
   const [selectedCompany, setSelectedCompany] = useState(null);
-  const [selectedTeam, setSelectedTeam] = useState(null);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
   const [selectedStartDate, setSelectedStartDate] = useState(new Date().toISOString().split('T')[0]);
   const [selectedEndDate, setSelectedEndDate] = useState(new Date().toISOString().split('T')[0]);
-  const [products, setProducts] = useState([{
+  const [recurrenceNumber, setRecurrenceNumber] = useState('');
+  const [contracts, setContracts] = useState([{
+    category: '',
+    subcategory: '',
+    subsubcategory: null,
+    subcategories: [],
+    subsubcategories: [],
     description: '',
     quantity: 1,
     unit_price: '',
@@ -30,42 +27,97 @@ export default function ContractCreateForm() {
     vat: '',
     unit_price_excl_vat: '',
     total_excl_vat: '',
-    recurrence: ''
-  }]);
-
-  const [currency, setCurrency] = useState('EUR');
-  const currencies = ['EUR', 'USD', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'SEK', 'NZD'];
- 
-  const handleTeamChange = setSelectedTeam;
-  const handleCompanyChange = setSelectedCompany;
-  const handlePaymentMethodChange = setSelectedPaymentMethod;
-  const handleCurrencyChange = setCurrency;
-  const handleStartDateChange = (event) => setSelectedStartDate(event.target.value);
-  const handleEndDateChange = (event) => setSelectedEndDate(event.target.value);
-
-  useEffect(() => {
+    recurrence: '',
+    recurrence_number: '',
     
+  }]);
+  const [recurrence, setRecurrence] = useState('');
+  const [currency, setCurrency] = useState('EUR');
+  const [currencies, setCurrencies] = useState([]);
+  const [paymentMethods, setPaymentMethods] = useState([]);
+  const [recurrences, setRecurrences] = useState([]);
+
+  const [subcategories, setSubcategories] = useState([]);
+  const [categories, setCategories] = useState([]);
+  useEffect(() => {
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/paymentmethod/read`)
+      .then((response) => {
+        setPaymentMethods(response.data.paymentmethods);
+      })
+      .catch((error) => {
+        console.error('Error fetching paymentmethods:', error);
+      });
+  }, []);
+  useEffect(() => {
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/currency/read`)
+      .then((response) => {
+        setCurrencies(response.data.currencies);
+        console.log(response.data)
+        
+      })
+      .catch((error) => {
+        console.error('Error fetching currencies:', error);
+      });
+  }, []);
+  useEffect(() => {
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/recurrence/read`)
+      .then((response) => {
+        setRecurrences(response.data.recurrences);
+        console.log(response.data)
+        
+      })
+      .catch((error) => {
+        console.error('Error fetching recurrences:', error);
+      });
+  }, []);
+  useEffect(() => {
+    if (recurrence && recurrenceNumber && selectedStartDate) {
+      const start = new Date(selectedStartDate);
+      const end = new Date(start);
+  
+      switch (recurrence.label) {  // Usa recurrence.value se è un oggetto di Select
+        case 'Mensile':
+          end.setMonth(start.getMonth() + parseInt(recurrenceNumber));
+          break;
+        case 'Bimestrale':
+          end.setMonth(start.getMonth() + (parseInt(recurrenceNumber) * 2));
+          break;
+        case 'Trimestrale':
+          end.setMonth(start.getMonth() + (parseInt(recurrenceNumber) * 3));
+          break;
+        case 'Annuale':
+          end.setFullYear(start.getFullYear() + parseInt(recurrenceNumber));
+          break;
+        case 'Biannuale':
+          end.setFullYear(start.getFullYear() + (parseInt(recurrenceNumber) * 2));
+          break;
+        default:
+          return;
+      }
+      
+      // Sottrae un giorno per essere l'ultimo giorno del periodo
+      end.setDate(end.getDate() - 1);
+  
+      // Imposta direttamente la data di fine
+      setSelectedEndDate(end.toISOString().split('T')[0]);
+    }
+  }, [selectedStartDate, recurrence, recurrenceNumber]);
+  // Rest of the existing useEffect hooks remain the same...
+  useEffect(() => {
     const fetchData = async () => {
       try {
         const [
           { data: { categories } },
-          { data: { technicalareas } },
-          { data: { users } },
           { data: { value: companies } },
-          { data: { paymentmethods: paymentMethods } }
         ] = await Promise.all([
-          axios.get(`${process.env.REACT_APP_API_URL}/category/read`, ),
-          axios.get(`${process.env.REACT_APP_API_URL}/technicalarea/read`, ),
-          axios.get(`${process.env.REACT_APP_API_URL}/user/read`, ),
+          axios.get(`${process.env.REACT_APP_API_URL}/category/read`),
           axios.get(`${process.env.REACT_APP_API_URL}/company/read`),
-          axios.get(`${process.env.REACT_APP_API_URL}/paymentmethod/read`)
         ]);
 
         setCategories(categories);
-        setPaymentMethods(paymentMethods);
-        console.log('paymentMethods:', paymentMethods);
-        setTechnicalAreas(technicalareas);
-        setUsers(users.map(({ id_user, name, surname }) => ({ value: id_user, label: `${name} ${surname}` })));
         setCompanies(companies
           .sort((a, b) => new Date(b.ReceptionDate) - new Date(a.ReceptionDate))
           .map(({ id_company, name }) => ({ value: id_company, label: name })));
@@ -78,28 +130,53 @@ export default function ContractCreateForm() {
   }, []);
 
   const handleCategoryChange = async (event, index) => {
-    
-    const updatedProducts = [...products];
-    updatedProducts[index].category = event.target.value;
+    const updatedContracts = [...contracts];
+    updatedContracts[index].category = event.target.value;
   
     try {
-      const { data: { subcategories } } = await axios.get(`${process.env.REACT_APP_API_URL}/subcategory/read/${event.target.value}`,);
-      updatedProducts[index].subcategories = subcategories;
-      updatedProducts[index].subcategory = '';
-      setProducts(updatedProducts);
+      const { data: { subcategories } } = await axios.get(`${process.env.REACT_APP_API_URL}/subcategory/read/${event.target.value}`);
+      updatedContracts[index].subcategories = subcategories;
+      setContracts(updatedContracts);
     } catch (error) {
       console.error('Error fetching subcategory data:', error);
     }
-  };  
+  };
 
-  const addProduct = () => setProducts([...products, { description: '', quantity: 1, unit_price: '', total_price: '', vat: '', unit_price_excl_vat: '', total_excl_vat: '', recurrence: '' }]);
-  const removeProduct = (index) => setProducts(products.filter((_, i) => i !== index));
-  const updateProduct = (index, updatedProduct) => setProducts(products.map((product, i) => (i === index ? updatedProduct : product)));
+  const handleSubcategoryChange = async (event, index) => {
+    const updatedContracts = [...contracts];
+    updatedContracts[index].subcategory = event.target.value;
+  
+    try {
+      const { data: { subsubcategories } } = await axios.get(`${process.env.REACT_APP_API_URL}/subsubcategory/read/${event.target.value}`);
+      updatedContracts[index].subsubcategories = subsubcategories;
+      updatedContracts[index].subsubcategory = '';
+      setContracts(updatedContracts);
+    } catch (error) {
+      console.error('Error fetching subsubcategory data:', error);
+    }
+  };
+  const handleCompanyChange = setSelectedCompany;
+  const handlePaymentMethodChange = setSelectedPaymentMethod;
+  const handleCurrencyChange = setCurrency;
+  const handleStartDateChange = (event) => setSelectedStartDate(event.target.value);
 
-  const createPurchaseOrder = async (event) => {
+  const addContract = () => setContracts([...contracts, { 
+    description: '',
+    quantity: 1,
+    unit_price: '',
+    total_price: '',
+    vat: '',
+    unit_price_excl_vat: '',
+    total_excl_vat: '',
+    recurrence: '',
+    recurrence_number: ''
+  }]);
+
+  const removeContract = (index) => setContracts(contracts.filter((_, i) => i !== index));
+  const updateContract = (index, updatedContract) => setContracts(contracts.map((contract, i) => (i === index ? updatedContract : contract)));
+
+  const createContract = async (event) => {
     event.preventDefault();
-    const form = new FormData(event.target);
-    const formDataObject = Object.fromEntries(form.entries());
 
     const jsonObject = {
       id_company: selectedCompany.value,
@@ -107,193 +184,231 @@ export default function ContractCreateForm() {
       date_start: selectedStartDate,
       date_end: selectedEndDate,
       currency: currency.value,
-      products: products.map((product) => ({
-        description: product.description || '',
-        unit_price_vat: parseFloat(product.unit_price),
-        unit_price: parseFloat(product.unit_price_excl_vat),
-        total_price_vat: parseFloat(product.total_price),
-        total_price: parseFloat(product.total_excl_vat),
-        quantity: parseInt(product.quantity, 10),
-        vat: product.vat || 0,
-        recurrence: product.recurrence || ''
+      recurrence_number: recurrenceNumber,
+      contracts: contracts.map((contract) => ({
+        description: contract.description || '',
+        unit_price_vat: parseFloat(contract.unit_price),
+        unit_price: parseFloat(contract.unit_price_excl_vat),
+        total_price_vat: parseFloat(contract.total_price),
+        total_price: parseFloat(contract.total_excl_vat),
+        quantity: parseInt(contract.quantity, 10),
+        vat: contract.vat || 0,
+        recurrence: contract.recurrence || '',
+        recurrence_number: contract.recurrence_number || ''
       }))
     };
 
-    console.log('jsonObject:', jsonObject);
-  
-    // toast.promise(
-    //   axios.post(`${process.env.REACT_APP_API_URL}/purchase/create`, jsonObject), // 
-    //   {
-    //     loading: 'Invio in corso...',
-    //     success: 'Richiesta di acquisto creata con successo!',
-    //     error: 'Errore durante la creazione della richiesta di acquisto',
-    //   }
-    // )
-    //   .then((response) => {
-    //     setCreateSuccess(true);
-    //   })
-    //   .catch((error) => {
-    //     setErrorMessages(error.response.data.message);
-    //     setCreateSuccess(false);
-    //   });
+    toast.promise(
+      axios.post(`${process.env.REACT_APP_API_URL}/contract/create`, jsonObject),
+      {
+        loading: 'Invio in corso...',
+        success: 'Contratto creato con successo!',
+        error: 'Errore durante la creazione del Contratto',
+      }
+    )
+      .then((response) => {
+        setCreateSuccess(true);
+      })
+      .catch((error) => {
+        setErrorMessages(error.response.data.message);
+        setCreateSuccess(false);
+      });
   };
-  
+  const handleEndDateChange = (event) => setSelectedEndDate(event.target.value);
+
 
   return (
-    <form name="createpurchaseorder" onSubmit={createPurchaseOrder}>
-      <Toaster/>
-      <div className="space-y-12">
-        <div className="border-b border-gray-900/10 pb-12">
-          <h2 className="text-base font-semibold leading-7 text-gray-900">Informazioni Contratto</h2>
-          <p className="mt-1 text-sm leading-6 text-gray-700">Inserisci i dettagli per la creazione di un nuovo contratto.</p>
-
-          <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-            <div className="sm:col-span-2">
-              <label htmlFor="azienda" className="block text-sm font-medium leading-6 text-gray-900">
-                Fornitore
-              </label>
-              <div className="mt-2">
+    <div className="container mx-auto p-4 bg-white shadow-md rounded-lg">
+      <Toaster />
+      <form onSubmit={createContract} className="space-y-8">
+        {/* Informazioni Generali */}
+        <div className="border border-gray-200 rounded p-4 text-xs">
+          <h2 className="text-[15px] font-semibold text-gray-900">Informazioni Contratto</h2>
+          <p className="text-[11px] text-gray-600 mt-1">
+            Compila i campi sottostanti per creare un nuovo contratto.
+          </p>
+          <table className="w-full mt-6 text-[10px]">
+          <tbody>
+            {/* Cliente */}
+            <tr>
+              <td className="w-1/3 text-sm font-medium text-gray-700">Fornitore</td>
+              <td className="w-2/3">
                 <Select
-                  id="azienda"
-                  name="azienda"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
                   value={selectedCompany}
                   onChange={handleCompanyChange}
                   options={(companies || []).map(({ value, label }) => ({ value, label }))}
-                  primaryColor='[#7fb7d4]'
+                  primaryColor="#7fb7d4"
                   isSearchable
+                  placeholder="Seleziona Fornitore"
+                  className="block w-full rounded border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[10px]"
                 />
-              </div>
-            </div>
-
-            <div className="sm:col-span-1">
-              <label htmlFor="dateorder" className="block text-sm font-medium leading-6 text-gray-900">
-                Data di inizio contratto
-              </label>
-              <div className="mt-2">
+              </td>
+            </tr>
+            {/* Data Inizio */}
+            <tr>
+              <td className="w-1/3 text-sm font-medium text-gray-700">Data Inizio</td>
+              <td className="w-2/3">
                 <input
-                  id="dateorder"
-                  name="dateorder"
                   type="date"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:max-w-xs sm:text-sm"
-                  min={new Date().toISOString().split('T')[0]}
-                  defaultValue={new Date().toISOString().split('T')[0]}
+                  value={selectedStartDate}
                   onChange={handleStartDateChange}
-                />
-              </div>
-            </div>
-
-            <div className="sm:col-span-1">
-              <label htmlFor="dateorder" className="block text-sm font-medium leading-6 text-gray-900">
-                Data di inizio contratto
-              </label>
-              <div className="mt-2">
-                <input
-                  id="dateorder"
-                  name="dateorder"
-                  type="date"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:max-w-xs sm:text-sm"
+                  className="block w-full rounded border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[12px]"
                   min={new Date().toISOString().split('T')[0]}
-                  defaultValue={new Date().toISOString().split('T')[0]}
-                  onChange={handleEndDateChange}
                 />
-              </div>
-            </div>
-
-            <div className="sm:col-span-1">
-              <label htmlFor="paymentMethod" className="block text-sm font-medium leading-6 text-gray-900">
-                Modalità di pagamento
-              </label>
-              <div className="mt-2">
+              </td>
+            </tr>
+            {/* Data Fine */}
+            <tr>
+              <td className="w-1/3 text-sm font-medium text-gray-700">Data Fine</td>
+              <td className="w-2/3">
+              <input
+                type="date"
+                value={selectedEndDate}
+                onChange={handleEndDateChange}
+                className="block w-full rounded border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[12px]"
+                min={selectedStartDate}  // Assicura che la data di fine non sia precedente a quella di inizio
+              />
+              </td>
+            </tr>
+            {/* Metodo di Pagamento */}
+            <tr>
+              <td className="w-1/3 text-sm font-medium text-gray-700">Metodo di Pagamento</td>
+              <td className="w-2/3">
                 <Select
-                  id="paymentMethod"
-                  name="paymentMethod"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
                   value={selectedPaymentMethod}
                   onChange={handlePaymentMethodChange}
-                  options={paymentMethods.map((method) => ({ value: method.name, label: method.name }))}
-                  primaryColor='[#7fb7d4]'
+                  options={paymentMethods.map((method) => ({ value: method.id_paymentmethod, label: method.name }))}
+                  primaryColor="#7fb7d4"
                   isSearchable
+                  placeholder="Seleziona Metodo di Pagamento"
+                  className="block w-full rounded border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[10px]"
                 />
-              </div>
-            </div>
-            <div className="sm:col-span-1">
-              <label htmlFor="paymentMethod" className="block text-sm font-medium leading-6 text-gray-900">
-                Valuta
-              </label>
-              <div className="mt-2">
+              </td>
+            </tr>
+            {/* Valuta */}
+            <tr>
+              <td className="w-1/3 text-sm font-medium text-gray-700">Valuta</td>
+              <td className="w-2/3">
                 <Select
-                  id="currency"
-                  name="currency"
-                  className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
                   value={currency}
                   onChange={handleCurrencyChange}
-                  options={currencies.map((currency) => ({ value: currency, label: currency }))}
-                  primaryColor='[#7fb7d4]'
+                  options={currencies.map((currency) => ({ value: currency.id_currency, label: currency.name }))}
+                  primaryColor="#7fb7d4"
                   isSearchable
+                  placeholder="Seleziona Valuta"
+                  className="block w-full rounded border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[10px]"
                 />
+              </td>
+            </tr>
+            {/* Ricorrenza */}
+            <tr>
+            <td className="w-1/3 text-sm font-medium text-gray-700 align-middle">Ricorrenza</td>
+            <td className="w-2/3">
+              <div className="flex space-x-4">
+                <div className="flex-grow">
+                  <Select
+                    value={recurrence}
+                    onChange={(selectedRecurrence) => {
+                      const updatedContracts = contracts.map(contract => ({
+                        ...contract,
+                        recurrence: selectedRecurrence.value,
+                      }));
+                      setContracts(updatedContracts);
+                      setRecurrence(selectedRecurrence);
+                    }}
+                    options={recurrences.map((recurrence) => ({
+                      value: recurrence.id_recurrence,
+                      label: recurrence.name,
+                    }))}
+                    primaryColor="#7fb7d4"
+                    isSearchable
+                    placeholder="Seleziona Ricorrenza"
+                    className="block w-full rounded border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[10px]"
+                  />
+                </div>
+                <div className="w-1/4">
+                  <input
+                    type="number"
+                    value={recurrenceNumber}
+                    onChange={(e) => setRecurrenceNumber(e.target.value)}
+                    min="1"
+                    placeholder="N. di ricorrenze"
+                    className="block w-full rounded border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[10px]"
+                  />
+                </div>
               </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      
-      <div className="space-y-12 py-8">
-        <div className="border-b border-gray-900/10 pb-12">
-          <h2 className="text-base font-semibold leading-7 text-gray-900">Prodotti</h2>
-          <p className="mt-1 text-sm leading-6 text-gray-700">Ricorda, i dati inseriti ora saranno quelli che verranno utilizzati per creare il contratto</p>
+            </td>
+          </tr>
 
-          <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-            <div className="col-span-full">
-            {products.map((product, index) => (
-              <PurchaseRowInput
+          </tbody>
+        </table>
+
+        </div>
+  
+        {/* Prodotti */}
+        <div className="border border-gray-200 rounded p-4 text-xs">
+          <h2 className="text-[15px] font-semibold text-gray-900">Servizi</h2>
+          <p className="text-[11px] text-gray-600 mt-1">
+            Aggiungi o modifica i servizi associati al contratto.
+          </p>
+          <div className="mt-4 space-y-4">
+            {contracts.map((contract, index) => (
+              <ContractRowInput
                 key={index}
-                product={product}
-                onChange={(updatedProduct) => updateProduct(index, updatedProduct)}
-                onRemove={() => removeProduct(index)}
+                contract={contract}
+                onChange={(updatedContract) => updateContract(index, updatedContract)}
+                onRemove={() => removeContract(index)}
                 currencies={currencies}
                 currency={currency}
                 setCurrency={setCurrency}
+                categories= {categories}
+                subcatgeories= {contract.subcategories}
+                subsubcategories= {contract.subsubcategories}
+                handleCategoryChange={(e) => handleCategoryChange(e, index)}
+                handleSubcategoryChange={(e) => handleSubcategoryChange(e, index)}
               />
             ))}
-              <button
-                type="button"
-                onClick={addProduct}
-               className="block ml-4 rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
-              >
-                Aggiungi Prodotto
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={addContract}
+              className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+            >
+              Aggiungi Prodotto
+            </button>
           </div>
         </div>
-      </div>
-
-      <div className="mt-6 flex items-center justify-end gap-x-6">
-        {createSuccess && (
-          <div className="mt-4 rounded-md bg-green-50 p-4">
+  
+        {/* Messaggi di Feedback */}
+        {createSuccess !== null && (
+          <div className={`mt-4 rounded-md ${createSuccess ? 'bg-green-50' : 'bg-red-50'} p-3`}>
             <div className="flex">
-              <CheckBadgeIcon className="h-5 w-5 text-green-400" aria-hidden="true" />
-              <h3 className="ml-3 text-sm font-medium text-green-800">Contratto creato con successo</h3>
+              {createSuccess ? (
+                <CheckBadgeIcon className="h-5 w-5 text-green-400" aria-hidden="true" />
+              ) : (
+                <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
+              )}
+              <div className="ml-3 text-[10px]">
+                <h3 className={`font-medium ${createSuccess ? 'text-green-800' : 'text-red-800'}`}>
+                  {createSuccess
+                    ? 'Contratto creato con successo!'
+                    : 'Errore durante la creazione'}
+                </h3>
+                {!createSuccess && <ul className="list-disc pl-5 space-y-1 text-red-700">{errorMessages}</ul>}
+              </div>
             </div>
           </div>
         )}
-
-        {createSuccess === false && (
-          <div className="mt-4 rounded-md bg-[#7fb7d4] p-4">
-            <div className="flex">
-              <XCircleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
-              <h3 className="ml-3 text-sm font-medium text-red-800">{errorMessages}</h3>
-            </div>
-          </div>
-        )}
-
-        <button
-          type="submit"
-         className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
-        >
-          Crea
-        </button>
-      </div>
-    </form>
+  
+        {/* Pulsante di Invio */}
+        <div className="mt-4 flex justify-end">
+          <button
+            type="submit"
+            className="rounded-md bg-[#A7D0EB] px-4 py-2 text-xs font-bold text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+          >
+            Crea Contratto
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }

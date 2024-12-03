@@ -81,6 +81,7 @@ const userNavigation = [
         { name: 'Ordini di Acquisto', href: '/app/purchase', icon: 'ShoppingCartIcon', current: false, permissions: 'acquisti' },
         { name: 'Righe Ordini di Acquisto', href: '/app/purchaserow', icon: 'DocumentTextIcon', current: false, permissions: 'righeacquisti' },
         { name: 'Contratti', href: '/app/contract', icon: 'PencilSquareIcon', current: false, permissions: 'contratti' },
+        { name: 'Righe Contratti', href: '/app/contractrow', icon: 'DocumentTextIcon', current: false, permissions: 'righecontratti' },
       ], 
     },
     { 
@@ -115,6 +116,7 @@ const userNavigation = [
         { name: 'Ricorrenze', href: '/app/recurrence', icon: 'TagIcon', current: false},
         { name: 'Tipo Pagamento', href: '/app/paymentmethod', icon: 'TagIcon', current: false},
        
+        { name: 'Bilancio', href: '/app/balance', icon: 'TagIcon', current: false},
       ], 
     },
     { 

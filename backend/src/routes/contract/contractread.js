@@ -6,6 +6,15 @@ const router = express.Router();
 const Contract = sequelize.models.Contract;
 const Company = sequelize.models.Company;
 
+// Funzione per formattare i nomi
+function formatName(name) {
+  return name
+    .toLowerCase()
+    .split(" ")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
 router.get('/read', async (req, res) => {
   try {
     // Get all contracts
@@ -22,20 +31,6 @@ router.get('/read', async (req, res) => {
           foreignKey: 'createdBy'
         }
       ],
-      attributes: [
-        'id_contract',
-        'name',
-        'payment_method',
-        'IVA',
-        'total',
-        'currency',
-        'recurrence',
-        'contract_start_date',
-        'contract_end_date',
-        'status',
-        'createdAt',
-        'updatedAt'
-      ]
     });
 
     res.json({

@@ -15,6 +15,7 @@ import Homepage from './components/dashboard/homepage.jsx';
 import Reporting from './components/reporting/reporting.jsx';
 import Calendar from './components/calendar/calendar';
 import PurchaseRow from './components/purchaseorder/purchaserow.jsx';
+import ContractRow from './components/contracts/contractrow.jsx';
 import GeneralCalendar from './components/calendar/generalcalendar.jsx';
 import Locations from './components/registry/locationstable.jsx'
 import Subsubcategory from './components/registry/subsubcategory.jsx'
@@ -50,6 +51,7 @@ import PaymentMethod from './components/registry/paymenttable.jsx';
 import RolePage from './components/registry/rolestable.jsx';
 import PurchaseRowInput from './components/purchaseorder/purchaserowinput.jsx';
 import Recurrence from './components/registry/recurrencetable.jsx';
+import Balance from './components/balance/balancetable.jsx'
 const Logo = './assets/intellimech.svg'
 
 const App = () => {
@@ -87,6 +89,7 @@ const App = () => {
             <Route path="purchase" element={<PrivateRoute element={<Purchase />} />} />
             
             <Route path="purchaserow" element={<PrivateRoute element={<PurchaseRow />} />} />
+            <Route path="contractrow" element={<PrivateRoute element={<ContractRow />} />} />
             <Route path="purchase/:id_purchase" element={<PrivateRoute element={<PurchaseDetail />} />} />
             <Route path="contract" element={<PrivateRoute element={<Contract />} />} />
             <Route path="profile" element={<PrivateRoute element={<Profile />} />} />
@@ -106,6 +109,7 @@ const App = () => {
             <Route path="employees-consultants" element={<PrivateRoute element={<EmployeesConsultant />} />} />
             <Route path="category" element={<PrivateRoute element={<CategoriesPage />} />} />
             
+            <Route path="balance" element={<PrivateRoute element={<Balance />} />} />
             <Route path="paymentmethod" element={<PrivateRoute element={<PaymentMethod />} />} />
             <Route path="currency" element={<PrivateRoute element={<Currency />} />} />
             <Route path="recurrence" element={<PrivateRoute element={<Recurrence />} />} />

@@ -37,7 +37,8 @@ export default function Example({ permissions }) {
     total: '',
     IVA: '',
     status: '',
-    createdByUser: ''
+    createdByUser: '',
+    taxed_total: ''
   });
 
   const handlectrlClick = (contract) => {
@@ -103,6 +104,7 @@ export default function Example({ permissions }) {
       (searchQueries.subcategory === '' || item.subcategory?.name.toLowerCase().includes(searchQueries.subcategory.toLowerCase())) &&
       (searchQueries.payment_method === '' || item.payment_method.toLowerCase().includes(searchQueries.payment_method.toLowerCase())) &&
       (searchQueries.total === '' || item.total.toString().includes(searchQueries.total)) &&
+      (searchQueries.taxed_total === '' || item.taxed_total.toString().includes(searchQueries.taxed_total)) &&
       (searchQueries.IVA === '' || item.IVA.toLowerCase().includes(searchQueries.IVA.toLowerCase())) &&
       (searchQueries.status === '' || item.status.toLowerCase().includes(searchQueries.status.toLowerCase())) &&
       (searchQueries.createdByUser === '' || (item.createdByUser?.name + ' ' + item.createdByUser?.surname).toLowerCase().includes(searchQueries.createdByUser.toLowerCase()))
@@ -263,7 +265,7 @@ export default function Example({ permissions }) {
         </Dialog>
       </Transition.Root>
 
-      <div className="px-4 sm:px-6 lg:px-8 py-4">
+      <div className="  py-4">
         {/* Contenitore principale con Flexbox */}
         <div className="flex items-center justify-between">
           {/* Titolo e descrizione */}
@@ -299,7 +301,7 @@ export default function Example({ permissions }) {
                 <thead>
                 <tr>
                   <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
-                    Ordine
+                    <br/>Ordine
                     {sortColumn === 'name' && sortDirection !== '' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
                     ) : null}
@@ -314,7 +316,7 @@ export default function Example({ permissions }) {
                     />
                   </th>
                   <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('id_company')}>
-                    Cliente
+                  <br/>Cliente
                     {sortColumn === 'id_company'  && sortDirection !== '' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
                     ) : null}
@@ -329,7 +331,7 @@ export default function Example({ permissions }) {
                     />
                   </th>
                   <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('category')}>
-                    Data di Inizio
+                    Data <br/> Inizio
                     {sortColumn === 'category'  && sortDirection !== '' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
                     ) : null}
@@ -344,7 +346,7 @@ export default function Example({ permissions }) {
                     />
                   </th>
                   <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('subcategory')}>
-                    Data di Fine
+                    Data <br/> Fine
                     {sortColumn === 'subcategory'  && sortDirection !== '' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
                     ) : null}
@@ -359,7 +361,7 @@ export default function Example({ permissions }) {
                     />
                   </th>
                   <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('payment_method')}>
-                    Metodo di Pagamento
+                    Metodo di<br/> Pagamento
                     {sortColumn === 'payment_method' && sortDirection !== '' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
                     ) : null}
@@ -374,7 +376,7 @@ export default function Example({ permissions }) {
                     />
                   </th>
                   <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('total')}>
-                    Totale
+                 Importo <br/>  IVA esclusa 
                     {sortColumn === 'total'  && sortDirection !== '' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
                     ) : null}
@@ -388,9 +390,24 @@ export default function Example({ permissions }) {
                       rows={1}
                     />
                   </th>
+                  <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('taxed_total')}>
+                  Importo <br/>  IVA inclusa 
+                    {sortColumn === 'taxed_total'  && sortDirection !== '' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
+                    <br />
+                    <input
+                      value={searchQueries.taxed_total}
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={handleSearchInputChange('taxed_total')}
+                      className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+                      placeholder=""
+                      rows={1}
+                    />
+                  </th>
               
                   <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('status')}>
-                    Stato
+                  <br/>Stato
                     {sortColumn === 'status'  && sortDirection !== '' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
                     ) : null}
@@ -405,7 +422,7 @@ export default function Example({ permissions }) {
                     />
                   </th>
                   <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('createdByUser')}>
-                    Creata da
+                    Creata <br/>da
                     {sortColumn === 'createdByUser'  && sortDirection !== '' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
                     ) : null}
@@ -459,6 +476,9 @@ export default function Example({ permissions }) {
                         </td>
                         <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
                           {item.total + ' ' + item.currency}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
+                          {item.taxed_total + ' ' + item.currency}
                         </td>
                         
                         <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">

@@ -28,7 +28,10 @@ Contract.init(
     },
     total: {
       type: DataTypes.DOUBLE,
-      allowNull: true
+      allowNull: false
+    },taxed_total: {
+      type: DataTypes.DOUBLE,
+      allowNull: false
     },
     currency: {
       type: DataTypes.STRING(50),

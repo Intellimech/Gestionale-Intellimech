@@ -9,7 +9,7 @@ const ContractRow = sequelize.models.ContractRow;
 
 router.post("/create", async (req, res) => {
   try {
-    const { id_company, contracts, total, date_start, date_end, payment, currency, recurrence, recurrence_number } = req.body;
+    const { id_company, contracts, total, taxed_total, date_start, date_end, payment, currency, recurrence, recurrence_number } = req.body;
     const user = req.user;  // Assuming req.user is populated by the authentication middleware
 
     if (!id_company || !contracts || !date_start || !date_end) {
@@ -42,10 +42,11 @@ router.post("/create", async (req, res) => {
       id_company: id_company,
       name: nameContract,
       payment_method: payment,
-      date_start: date_start,
-      date_end: date_end,
+      contract_start_date: date_start,
+      contract_end_date: date_end,
       currency: currency,
       total: total,
+      taxed_total: taxed_total,
       recurrence: recurrence,
       recurrence_number: recurrence_number,
       createdBy: user.id_user,  // Use user ID from req.user

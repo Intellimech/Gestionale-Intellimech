@@ -40,9 +40,12 @@ export default function ContractCreateForm() {
   const [recurrences, setRecurrences] = useState([]);
   const calculateTotalSum = () => {
     
+    return contracts.reduce((sum, contract) => sum + (parseFloat(contract.taxed_unit_price*recurrenceNumber) || 0), 0);
+  };
+  const calculateTotalTaxed = () => {
+    
     return contracts.reduce((sum, contract) => sum + (parseFloat(contract.unit_price*recurrenceNumber) || 0), 0);
   };
-  
   const [categories, setCategories] = useState([]);
   useEffect(() => {
     axios
@@ -198,6 +201,7 @@ export default function ContractCreateForm() {
       recurrence: recurrence.value,
       recurrence_number: recurrenceNumber,
       total: calculateTotalSum(),
+      taxed_total:calculateTotalTaxed(),
       contracts: contracts.map((contract) => ({
         
         category: contract.category,
@@ -420,9 +424,9 @@ console.log(jsonObject);
         )}
         {/* Totale Somma */}
       <div className="border-t border-gray-200 pt-4 text-right text-sm font-medium text-gray-700">
-        Totale Complessivo: 
+        Totale Complessivo IVA inclusa: 
         <span className="ml-2 text-lg font-bold text-gray-900">
-          {calculateTotalSum().toFixed(2)} {currency?.label || 'EUR'}
+          {calculateTotalTaxed().toFixed(2)} {currency?.label || 'EUR'}
         </span>
       </div>
 

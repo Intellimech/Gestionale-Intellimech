@@ -26,33 +26,33 @@ ContractRow.init(
       type: DataTypes.DOUBLE,
       allowNull: false,
     },
-    unit_price_vat: {
+   taxed_unit_price: {
       type: DataTypes.DOUBLE,
       allowNull: false,
     },
     quantity: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
     },
     vat: {
       type: DataTypes.DOUBLE,
       allowNull: false,
     },
-    total_price: {
+    totalprice: {
       type: DataTypes.DOUBLE,
       allowNull: false,
     },
-    total_price_vat: {
+    taxed_totalprice: {
       type: DataTypes.DOUBLE,
       allowNull: false,
     },
   },
   {
     sequelize: db,
-    modelName: 'PurchaseRow',  
-    tableName: 'purchaserow',  
+    modelName: 'ContractRow',  
+    tableName: 'contractrow',  
     timestamps: false // Disabilita i timestamp automatici
   }
 );
 
-export default PurchaseRow;
+export default ContractRow;

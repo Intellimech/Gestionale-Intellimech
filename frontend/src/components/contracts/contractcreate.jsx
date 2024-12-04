@@ -13,7 +13,7 @@ export default function ContractCreateForm() {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
   const [selectedStartDate, setSelectedStartDate] = useState(new Date().toISOString().split('T')[0]);
   const [selectedEndDate, setSelectedEndDate] = useState(new Date().toISOString().split('T')[0]);
-  const [recurrenceNumber, setRecurrenceNumber] = useState('');
+  const [recurrenceNumber, setRecurrenceNumber] = useState();
   const [contracts, setContracts] = useState([{
     category: '',
     subcategory: '',
@@ -24,6 +24,8 @@ export default function ContractCreateForm() {
     quantity: 1,
     unit_price: '',
     total_price: '',
+    total: '',
+    taxedtotal: '',
     vat: '',
     unit_price_excl_vat: '',
     total_excl_vat: '',
@@ -36,8 +38,11 @@ export default function ContractCreateForm() {
   const [currencies, setCurrencies] = useState([]);
   const [paymentMethods, setPaymentMethods] = useState([]);
   const [recurrences, setRecurrences] = useState([]);
-
-  const [subcategories, setSubcategories] = useState([]);
+  const calculateTotalSum = () => {
+    
+    return contracts.reduce((sum, contract) => sum + (parseFloat(contract.unit_price*recurrenceNumber) || 0), 0);
+  };
+  
   const [categories, setCategories] = useState([]);
   useEffect(() => {
     axios
@@ -161,15 +166,21 @@ export default function ContractCreateForm() {
   const handleStartDateChange = (event) => setSelectedStartDate(event.target.value);
 
   const addContract = () => setContracts([...contracts, { 
+    category: '', 
+    subcategory: '',  
+    subsubcategory: null, 
     description: '',
     quantity: 1,
     unit_price: '',
-    total_price: '',
+    total: '',
+    taxedtotal: '',
     vat: '',
     unit_price_excl_vat: '',
     total_excl_vat: '',
     recurrence: '',
-    recurrence_number: ''
+    recurrence_number: '', 
+    subcategories: [],
+    subsubcategories: []
   }]);
 
   const removeContract = (index) => setContracts(contracts.filter((_, i) => i !== index));
@@ -179,25 +190,33 @@ export default function ContractCreateForm() {
     event.preventDefault();
 
     const jsonObject = {
-      id_company: selectedCompany.value,
+      id_company: selectedCompany?.value,
       payment: selectedPaymentMethod.value,
       date_start: selectedStartDate,
       date_end: selectedEndDate,
       currency: currency.value,
+      recurrence: recurrence.value,
       recurrence_number: recurrenceNumber,
+      total: calculateTotalSum(),
       contracts: contracts.map((contract) => ({
+        
+        category: contract.category,
+        total: contract.total,
+        taxedtotal: contract.taxedtotal,
+        subcategory: contract.subcategory,
+        subsubcategory: contract.subsubcategory,
         description: contract.description || '',
-        unit_price_vat: parseFloat(contract.unit_price),
-        unit_price: parseFloat(contract.unit_price_excl_vat),
-        total_price_vat: parseFloat(contract.total_price),
-        total_price: parseFloat(contract.total_excl_vat),
-        quantity: parseInt(contract.quantity, 10),
+        unit_price: parseFloat(contract.unit_price),
+        taxed_unit_price: parseFloat(contract.taxed_unit_price),
+        taxed_totalprice: parseFloat( (contract.taxed_unit_price * recurrenceNumber).toFixed(2)),
+        totalprice: parseFloat(contract.unit_price * recurrenceNumber).toFixed(2),
+        // quantity: parseInt(contract.quantity, 10),
         vat: contract.vat || 0,
-        recurrence: contract.recurrence || '',
-        recurrence_number: contract.recurrence_number || ''
+        // recurrence: contract.recurrence || '',
+        // recurrence_number: contract.recurrence_number || ''
       }))
     };
-
+console.log(jsonObject);
     toast.promise(
       axios.post(`${process.env.REACT_APP_API_URL}/contract/create`, jsonObject),
       {
@@ -361,8 +380,9 @@ export default function ContractCreateForm() {
                 currencies={currencies}
                 currency={currency}
                 setCurrency={setCurrency}
+                recurrenceNumber= {recurrenceNumber}
                 categories= {categories}
-                subcatgeories= {contract.subcategories}
+                subcategories= {contract.subcategories}
                 subsubcategories= {contract.subsubcategories}
                 handleCategoryChange={(e) => handleCategoryChange(e, index)}
                 handleSubcategoryChange={(e) => handleSubcategoryChange(e, index)}
@@ -398,7 +418,14 @@ export default function ContractCreateForm() {
             </div>
           </div>
         )}
-  
+        {/* Totale Somma */}
+      <div className="border-t border-gray-200 pt-4 text-right text-sm font-medium text-gray-700">
+        Totale Complessivo: 
+        <span className="ml-2 text-lg font-bold text-gray-900">
+          {calculateTotalSum().toFixed(2)} {currency?.label || 'EUR'}
+        </span>
+      </div>
+
         {/* Pulsante di Invio */}
         <div className="mt-4 flex justify-end">
           <button

@@ -39,6 +39,10 @@ Contract.init(
       type: DataTypes.ENUM('monthly', 'yearly', 'quarterly', 'biannual'),
       allowNull: true,
     },
+    recurrence_number: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
     contract_start_date: {
       type: DataTypes.DATE,
       allowNull: true,

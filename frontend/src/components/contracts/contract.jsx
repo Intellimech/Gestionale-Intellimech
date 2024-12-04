@@ -388,21 +388,7 @@ export default function Example({ permissions }) {
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('IVA')}>
-                    IVA
-                    {sortColumn === 'IVA' && sortDirection !== '' ? (
-                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
-                    ) : null}
-                    <br />
-                    <input
-                      value={searchQueries.IVA}
-                      onClick={(e) => e.stopPropagation()}
-                      onChange={handleSearchInputChange('IVA')}
-                      className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
-                      placeholder=""
-                      rows={1}
-                    />
-                  </th>
+              
                   <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('status')}>
                     Stato
                     {sortColumn === 'status'  && sortDirection !== '' ? (
@@ -474,9 +460,7 @@ export default function Example({ permissions }) {
                         <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
                           {item.total + ' ' + item.currency}
                         </td>
-                        <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
-                          {item.IVA + ' %'}
-                        </td>
+                        
                         <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
                           {item.status === 'In Approvazione' ? (
                             

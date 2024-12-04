@@ -5,6 +5,7 @@ import RolePermissions from './rolepermissions.js';
 import Group from './group.js';
 import Subgroup from './subgroup.js';
 import ContractType from './contracttype.js';
+import ContractRow from './contractrow.js'
 import Invoice from './invoice.js';
 import Company from './company.js';
 import WorkingSite from './workingsite.js';
@@ -300,4 +301,5 @@ export default {
     Subsubcategory,
     Recurrence,
     MailingList,
+    ContractRow
   };

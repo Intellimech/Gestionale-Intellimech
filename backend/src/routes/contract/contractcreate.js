@@ -9,10 +9,10 @@ const ContractRow = sequelize.models.ContractRow;
 
 router.post("/create", async (req, res) => {
   try {
-    const { id_company, products, date_start, date_end, payment, currency } = req.body;
+    const { id_company, contracts, total, date_start, date_end, payment, currency, recurrence, recurrence_number } = req.body;
     const user = req.user;  // Assuming req.user is populated by the authentication middleware
 
-    if (!id_company || !products || !date_start || !date_end) {
+    if (!id_company || !contracts || !date_start || !date_end) {
       return res.status(400).json({
         message: "Bad request, missing required fields",
       });
@@ -22,21 +22,20 @@ router.post("/create", async (req, res) => {
     const contractCount = await Contract.count({ distinct: "name" });
 
     // Generate a unique contract name
-    let nameContract = `ODA${new Date().getFullYear().toString().substr(-2)}_${(contractCount + 1).toString().padStart(5, "0")}_R0`;
-
-    // Process products and calculate totals
-    products.forEach((product) => {
+    let nameContract = `CON${new Date().getFullYear().toString().substr(-2)}_${(contractCount + 1).toString().padStart(5, "0")}`;
+    // Process contracts and calculate totals
+    contracts.forEach((contract) => {
       // Calculate unit price with VAT
-      const vatRate = parseFloat(product.vat) / 100 || 0;
-      const unitPriceWithVat = product.unit_price * (1 + vatRate);
+      const vatRate = parseFloat(contract.vat) / 100 || 0;
+      const unitPriceWithVat = contract.unit_price * (1 + vatRate);
       
-      product.unit_price_vat = unitPriceWithVat;
-      product.total_price = product.unit_price * product.quantity;
-      product.total_price_vat = unitPriceWithVat * product.quantity;
+      contract.unit_price_vat = unitPriceWithVat;
+      contract.total_price = contract.unit_price * contract.quantity;
+      contract.total_price_vat = unitPriceWithVat * contract.quantity;
     });
 
     // Calculate the total price of the contract
-    const contractTotal = products.reduce((acc, product) => acc + product.total_price, 0);
+    const contractTotal = contracts.reduce((acc, contract) => acc + contract.total_price, 0);
 
     // Create the contract entry
     const contract = await Contract.create({
@@ -46,15 +45,17 @@ router.post("/create", async (req, res) => {
       date_start: date_start,
       date_end: date_end,
       currency: currency,
-      total: contractTotal,
+      total: total,
+      recurrence: recurrence,
+      recurrence_number: recurrence_number,
       createdBy: user.id_user,  // Use user ID from req.user
     });
 
     const contractId = contract.id_contract;
 
     // Create the associated contract rows
-    for (let i = 0; i < products.length; i++) {
-      const product = products[i];
+    for (let i = 0; i < contracts.length; i++) {
+      const contract = contracts[i];
     
       let increment = (i + 1) * 10;
       let parts = nameContract.split("_");
@@ -63,13 +64,16 @@ router.post("/create", async (req, res) => {
       await ContractRow.create({
         id_contract: contractId,
         name: ContractRowName,
-        description: product.description,
-        unit_price: product.unit_price,
-        unit_price_vat: product.unit_price_vat,
-        quantity: product.quantity,
-        vat: parseFloat(product.vat) || 0,
-        total_price: product.total_price,
-        total_price_vat: product.total_price_vat
+        category: contract.category,
+        subcategory: contract.subcategory,
+        subsubcategory: contract.subsubcategory || null,
+        description: contract.description,
+        unit_price: contract.unit_price,
+        taxed_unit_price: contract.unit_price_vat,
+        totalprice: contract.totalprice,
+        taxed_totalprice: contract.taxed_totalprice,
+        quantity: contract.quantity,
+        vat: parseFloat(contract.vat) || 0,
       });
     }
 

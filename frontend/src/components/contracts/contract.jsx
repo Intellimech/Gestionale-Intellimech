@@ -168,6 +168,17 @@ export default function Example({ permissions }) {
     link.click();
   }
 
+  function capitalizeAfterPeriodAndFirstLetter(str) {
+    if (!str) return ""; // Handle empty or undefined strings
+    return str
+        .trim() // Remove leading/trailing spaces
+        .replace(/(^|\.\s+)(\w+)/g, (match, prefix, word) => {
+            // Prefix is the character(s) before the word (e.g., a period and space)
+            // Word is the actual word to capitalize
+            return prefix + word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+        });
+  }
+
   return (
     <div className="px-4 sm:px-6 lg:px-8">
       <Transition.Root show={showInfo} as={Fragment}>
@@ -422,6 +433,21 @@ export default function Example({ permissions }) {
                     />
                   </th>
                   <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('createdByUser')}>
+                    Stato di <br/> Fatturazione
+                    {sortColumn === 'invoices'  && sortDirection !== '' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
+                    <br />
+                    <input
+                      value={searchQueries.createdByUser}
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={handleSearchInputChange('invoices')}
+                      className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+                      placeholder=""
+                      rows={1}
+                    />
+                  </th>
+                  <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('createdByUser')}>
                     Creata <br/>da
                     {sortColumn === 'createdByUser'  && sortDirection !== '' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
@@ -463,7 +489,7 @@ export default function Example({ permissions }) {
                         {item.name}
                       </td>
                       <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
-                          {item.Company?.name}
+                          {capitalizeAfterPeriodAndFirstLetter(item.Company?.name)}
                         </td>
                         <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
                           {item.contract_start_date}
@@ -510,6 +536,17 @@ export default function Example({ permissions }) {
                           ) : (
                             <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100   text-gray-800">
                               Nessuno
+                            </span>
+                          )}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
+                          {item?.Invoices?.length > 0 ? (
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                              Fatturato
+                            </span>
+                          ) : (
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                              Non Fatturato
                             </span>
                           )}
                         </td>

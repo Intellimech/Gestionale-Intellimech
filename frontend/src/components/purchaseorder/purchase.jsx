@@ -442,6 +442,18 @@ export default function Example({ permissions }) {
                         rows={1}
                       />
                     </th>
+                    <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('Company')}>
+                    <br /> Fatturato
+                    <br />
+                      <input
+                        value={searchQueries.Invoices}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={handleSearchInputChange('Invoices')}
+                        className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+                        placeholder=""
+                        rows={1}
+                      />
+                    </th>
                     <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('date')}>
                     <br /> Data
                       <br />
@@ -498,7 +510,7 @@ export default function Example({ permissions }) {
                       {item.payment_method}
                     </td>
                     <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
-                      {item.taxed_total + ' ' + item.Currency?.name}
+                      {item.taxed_total + ' ' + item.Currency?.code }
                     </td>
                     <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
                       {item.total + ' ' + item.Currency?.name}
@@ -529,6 +541,17 @@ export default function Example({ permissions }) {
                           Nessuno
                         </span>
                       )}
+                    </td>
+                    <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
+                          {item?.Invoices?.length > 0 ? (
+                            <span className="px-1 inline-flex text-[0.6rem] leading-4 font-semibold rounded-full bg-gray-100 text-green-500">
+                              Fatturato
+                            </span>
+                          ) : (
+                            <span className="px-1 inline-flex text-[0.6rem] leading-4 font-semibold rounded-full bg-gray-100 text-black-500">
+                              Non Fatturato
+                            </span>
+                          )}
                     </td>
                     <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
                    

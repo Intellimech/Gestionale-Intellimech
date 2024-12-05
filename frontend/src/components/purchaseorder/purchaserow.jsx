@@ -291,7 +291,23 @@ export default function CompactPurchaseTable({ permissions }) {
                       rows={1}
                     />
                   </th>
-                 
+
+                  <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('createdByUser')}>
+                    <br/> <br/>Stato di <br/>Fatturazione
+                    {sortColumn === 'status'  && sortDirection !== '' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
+                    <br />
+                    <input
+                      value={searchQueries.status}
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={handleSearchInputChange('status')}
+                      width="100px"
+                      className="mt-1 px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      placeholder=""
+                      rows={1}
+                    />        
+                  </th>        
                  
                   <th scope="col" className="relative px-2 py-3.5">
                     <span className="sr-only">Azioni</span>
@@ -320,7 +336,17 @@ export default function CompactPurchaseTable({ permissions }) {
                 <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">{item.Category?.name}</td>
                 <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">{item.Subcategory?.name}</td>
                 <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">{item.Subsubcategory?.name}</td>
-              </tr>
+                    <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
+                          {item?.Invoices?.length > 0 ? (
+                            <span className="px-1 inline-flex text-[0.6rem] leading-4 font-semibold rounded-full bg-gray-100 text-green-500">
+                              Fatturato
+                            </span>
+                          ) : (
+                            <span className="px-1 inline-flex text-[0.6rem] leading-4 font-semibold rounded-full bg-gray-100 text-black-500">
+                              Non Fatturato
+                            </span>
+                          )}
+                    </td>              </tr>
             ))}
           </tbody>
         </table>

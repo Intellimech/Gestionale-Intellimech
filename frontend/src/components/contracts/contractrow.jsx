@@ -16,7 +16,7 @@ export default function Example({ permissions }) {
   const [checked, setChecked] = useState(false);
   const [indeterminate, setIndeterminate] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
-  const [purchaseOrder, setPurchaseOrder] = useState([]);
+  const [contractOrder, setContractOrder] = useState([]);
   const [items, setItems] = useState([]);
   const [showCreate, setShowCreate] = useState(false);
   const [sortColumn, setSortColumn] = useState('name'); // Imposta 'name' come colonna di ordinamento predefinita
@@ -39,10 +39,10 @@ export default function Example({ permissions }) {
     createdByUser: ''
   });
 
-  const handlectrlClick = (purchase) => {
-    window.open(`/app/purchase/${purchase.id_purchase}`, '_blank'); // Apre in una nuova scheda
+  const handlectrlClick = (contract) => {
+    window.open(`/app/contract/${contract.id_contract}`, '_blank'); // Apre in una nuova scheda
     
-    return <PurchaseInfo purchase={purchase} />;
+    return <ContractInfo contract={contract} />;
   };
 
 
@@ -61,11 +61,11 @@ export default function Example({ permissions }) {
 
   const fetchOrders = () => {
     axios
-      .get(`${process.env.REACT_APP_API_URL}/purchaserow/read`, )
+      .get(`${process.env.REACT_APP_API_URL}/contractrow/read`, )
       .then((response) => {
-        setPurchaseOrder(Array.isArray(response.data.purchaserows) ? response.data.purchaserows : []);
-        console.log(response.data.purchaserows);
-        setItems(Array.isArray(response.data.purchaserows) ? response.data.purchaserows : []);
+        setContractOrder(Array.isArray(response.data.contractrows) ? response.data.contractrows : []);
+        console.log(response.data.contractrows);
+        setItems(Array.isArray(response.data.contractrows) ? response.data.contractrows : []);
       })
       .catch((error) => {
       });
@@ -95,7 +95,7 @@ export default function Example({ permissions }) {
   };
   
   
-  const filteredPurchase = purchaseOrder.filter((item) => {
+  const filteredContract = contractOrder.filter((item) => {
     return (
       (searchQueries.name === '' || item.name.toLowerCase().includes(searchQueries.name.toLowerCase())) &&
       (searchQueries.id_company === '' || item.Company?.name.toLowerCase().includes(searchQueries.id_company.toLowerCase())) &&
@@ -128,7 +128,7 @@ export default function Example({ permissions }) {
     }
   };
 
-  const sortedPurchase = filteredPurchase.sort((a, b) => {
+  const sortedContract = filteredContract.sort((a, b) => {
     // Se sortColumn è vuota, ordina per id per impostazione predefinita
     if (!sortColumn) {
       setSortColumn('name');
@@ -363,7 +363,7 @@ export default function Example({ permissions }) {
               </thead>
 
                 <tbody className="divide-y divide-gray-200 bg-white">
-                  {sortedPurchase.map((item) => (
+                  {sortedContract.map((item) => (
                     <tr key={item.id}>
                       <td
                      onClick={(event) => {

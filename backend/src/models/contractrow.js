@@ -46,6 +46,18 @@ ContractRow.init(
       type: DataTypes.DOUBLE,
       allowNull: false,
     },
+    category: {
+      type: DataTypes.INTEGER(50),
+      allowNull: false,
+    },
+    subcategory: {
+      type: DataTypes.INTEGER(50),
+      allowNull: false,
+    },
+    subsubcategory: {
+      type: DataTypes.INTEGER(50),
+      allowNull: true,
+    },
   },
   {
     sequelize: db,

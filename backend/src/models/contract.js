@@ -39,7 +39,7 @@ Contract.init(
     },
     // New fields for contract
     recurrence: {
-      type: DataTypes.ENUM('monthly', 'yearly', 'quarterly', 'biannual'),
+      type: DataTypes.INTEGER,
       allowNull: true,
     },
     recurrence_number: {

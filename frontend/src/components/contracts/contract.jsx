@@ -1,11 +1,12 @@
 import { Fragment, useState, useRef, useEffect, useContext } from 'react';
 import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/20/solid';
 import { Dialog, Transition } from '@headlessui/react';
-import { XMarkIcon, CheckIcon, PaperAirplaneIcon, EyeIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, CheckIcon, PaperAirplaneIcon, EyeIcon, ArrowPathIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { UserContext } from '../../module/userContext';
 import ContractCreateForm from './contractcreate';
+import ContractUpdateForm from './contractupdate';
 import ContractInfo from './contractinfo';
 
 function classNames(...classes) {
@@ -24,6 +25,8 @@ export default function Example({ permissions }) {
   const [sortColumn, setSortColumn] = useState('name'); // Imposta 'name' come colonna di ordinamento predefinita
   const [sortDirection, setSortDirection] = useState('desc');
   
+  const [selectedUpdate, setSelectedUpdate] = useState({});
+  const [showUpdate, setShowUpdate] = useState(false);
   const [filterType, setFilterType] = useState('name');
   const [showInfo, setShowInfo] = useState(false);
   const [selectedItemInfo, setSelectedItemInfo] = useState({});
@@ -215,6 +218,51 @@ export default function Example({ permissions }) {
           </div>
         </Dialog>
       </Transition.Root>
+      <Transition.Root show={showUpdate} as={Fragment}>
+        <Dialog className="relative z-50" onClose={setShowUpdate}>
+          <div className="fixed inset-0" />
+
+          <div className="fixed inset-0 overflow-hidden">
+            <div className="absolute inset-0 overflow-hidden">
+              <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-16">
+                <Transition.Child
+                  as={Fragment}
+                  enter="transform transition ease-in-out duration-500 sm:duration-700"
+                  enterFrom="translate-x-full"
+                  enterTo="translate-x-0"
+                  leave="transform transition ease-in-out duration-500 sm:duration-700"
+                  leaveFrom="translate-x-0"
+                  leaveTo="translate-x-full"
+                >
+                  <Dialog.Panel className="pointer-events-auto w-screen max-w-7xl">
+                    <div className="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
+                      <div className="px-4 sm:px-6">
+                        <div className="flex items-start justify-between">
+                          <Dialog.Title className="text-base font-semibold leading-6 text-gray-900">
+                          {selectedUpdate.name }
+                          </Dialog.Title>
+                          <div className="ml-3 flex h-7 items-center">
+                            <button
+                              type="button"
+                              className="relative rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#7fb7d4] focus:ring-offset-2"
+                              onClick={() => setShowUpdate(false)}
+                            >
+                              <span className="absolute -inset-2.5" />
+                              <span className="sr-only">Close panel</span>
+                              <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="relative mt-6 flex-1 px-4 sm:px-6">{ <ContractUpdateForm contract={selectedUpdate} /> }</div>
+                    </div>
+                  </Dialog.Panel>
+                </Transition.Child>
+              </div>
+            </div>
+          </div>
+        </Dialog>
+      </Transition.Root> 
 
       <Transition.Root show={showCreate} as={Fragment}>
         <Dialog className="relative z-50" onClose={setShowCreate}>
@@ -301,7 +349,7 @@ export default function Example({ permissions }) {
                 <thead>
                 <tr>
                   <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('name')}>
-                    <br/>Ordine
+                    Codice<br/>Contratto
                     {sortColumn === 'name' && sortDirection !== '' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
                     ) : null}
@@ -316,7 +364,7 @@ export default function Example({ permissions }) {
                     />
                   </th>
                   <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('id_company')}>
-                  <br/>Cliente
+                  <br/>Fornitore
                     {sortColumn === 'id_company'  && sortDirection !== '' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
                     ) : null}
@@ -422,7 +470,7 @@ export default function Example({ permissions }) {
                     />
                   </th>
                   <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('createdByUser')}>
-                    Creata <br/>da
+                <br/> Referente
                     {sortColumn === 'createdByUser'  && sortDirection !== '' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
                     ) : null}
@@ -472,13 +520,13 @@ export default function Example({ permissions }) {
                           {item.contract_end_date}
                         </td>
                         <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
-                          {item.payment_method}
+                          {item?.PaymentMethod?.name}
                         </td>
                         <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
-                          {item.total + ' ' + item.currency}
+                        {item.total + ' ' + item?.Currency?.symbol}
                         </td>
                         <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
-                          {item.taxed_total + ' ' + item.currency}
+                          {item.taxed_total + ' ' + item?.Currency?.symbol}
                         </td>
                         
                         <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
@@ -517,6 +565,23 @@ export default function Example({ permissions }) {
                           {item.createdByUser?.name.slice(0, 2).toUpperCase() + item.createdByUser?.surname.slice(0, 2).toUpperCase()}
                         </td>
                      
+                    <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-500">
+                      <div className="flex items-center space-x-1">
+                        {true && (
+                          <button
+                            type="button"
+                            className="inline-flex items-center rounded bg-white px-1 py-0.5 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
+                            onClick={(event) => {
+                              setShowUpdate(true);
+                              setSelectedUpdate(item);
+                            }}
+                            title="Modifica"
+                          >
+                            <PencilSquareIcon className="h-4 w-4 text-gray-500" />
+                          </button>
+                        )}
+                      </div>
+                    </td>
                     </tr>
                   ))}
                 </tbody>

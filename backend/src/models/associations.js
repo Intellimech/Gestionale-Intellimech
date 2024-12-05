@@ -50,6 +50,14 @@ Permissions.belongsToMany(Role, { through: RolePermissions, foreignKey: 'id_perm
 Purchase.belongsTo(Currency, { foreignKey: 'currency' });
 Currency.hasMany(Purchase, { foreignKey: 'currency' });
 
+
+Contract.belongsTo(Currency, { foreignKey: 'currency' });
+Currency.hasMany(Contract, { foreignKey: 'currency' });
+
+
+
+Contract.belongsTo(PaymentMethod, { foreignKey: 'payment_method' });
+PaymentMethod.hasMany(Contract, { foreignKey: 'payment_method' });
 //User is associated with Group
 User.belongsTo(Group, { foreignKey: 'group' });
 Group.hasMany(User, { foreignKey: 'group' });
@@ -231,6 +239,10 @@ Purchase.belongsTo(User, { foreignKey: 'deletedBy', as: 'deletedByUser' });
 PurchaseRow.belongsTo(Purchase, { foreignKey: 'id_purchase' });
 Purchase.hasMany(PurchaseRow, { foreignKey: 'id_purchase' });
 
+
+ContractRow.belongsTo(Contract, { foreignKey: 'id_contract' });
+Contract.hasMany(ContractRow, { foreignKey: 'id_contract' });
+
 Purchase.belongsTo(Company, { foreignKey: 'id_company' });
 Company.hasMany(Purchase, { foreignKey: 'id_company' });
 
@@ -260,7 +272,19 @@ Contract.belongsTo(User, { foreignKey: 'deletedBy', as: 'deletedByUser' });
 
 Contract.belongsTo(Company, { foreignKey: 'id_company' });
 Company.hasMany(Contract, { foreignKey: 'id_company' });
+ContractRow.belongsTo(Category, { foreignKey: 'category' });
+Category.hasMany(ContractRow, { foreignKey: 'category' });
 
+ContractRow.belongsTo(Subcategory, { foreignKey: 'subcategory' });
+Subcategory.hasMany(ContractRow, { foreignKey: 'subcategory' });
+
+
+
+ContractRow.belongsTo(Subsubcategory, { foreignKey: 'subsubcategory' });
+Subsubcategory.hasMany(ContractRow, { foreignKey: 'subsubcategory' });
+
+PurchaseRow.belongsTo(Subsubcategory, { foreignKey: 'subsubcategory' });
+Subsubcategory.hasMany(PurchaseRow, { foreignKey: 'subsubcategory' });
 MailingList.belongsToMany(User, { through: MailingListUser, foreignKey: 'mailinglist', as: 'mailinglistusers'});
 User.belongsToMany(MailingList, { through: MailingListUser, foreignKey: 'user',  });
 

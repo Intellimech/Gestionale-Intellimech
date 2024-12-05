@@ -498,7 +498,7 @@ export default function Example({ permissions }) {
                       {item.payment_method}
                     </td>
                     <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
-                      {item.taxed_total + ' ' + item.Currency?.name}
+                      {item.taxed_total + ' ' + item.currency}
                     </td>
                     <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
                       {item.total + ' ' + item.Currency?.name}

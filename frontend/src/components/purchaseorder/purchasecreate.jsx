@@ -179,7 +179,7 @@ export default function PurchaseCreateForm() {
             <tbody>
               {/* Cliente */}
               <tr>
-                <td className="block text-sm font-medium text-gray-700">Cliente</td>
+                <td className="block text-sm font-medium text-gray-700">Fornitore</td>
                 <td>
                   <Select
                     value={selectedCompany}

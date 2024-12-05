@@ -190,9 +190,9 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
           </p>
           <table className="w-full mt-6 text-[10px]">
             <tbody>
-              {/* Cliente */}
+              {/* Fornitore */}
               <tr>
-                <td className="block text-sm font-medium text-gray-700">Cliente</td>
+                <td className="block text-sm font-medium text-gray-700">Fornitore</td>
                 <td>
                   <Select
                     id="azienda"
@@ -203,7 +203,7 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
                       setSelectedCompany(value);
                       setPurchase({ ...purchase, id_company: value?.value });
                     }}
-                    placeholder="Seleziona Cliente"
+                    placeholder="Seleziona Fornitore"
                     options={companies}
                     primaryColor="#7fb7d4"
                     isSearchable

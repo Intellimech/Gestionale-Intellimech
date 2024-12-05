@@ -354,6 +354,22 @@ export default function Example({ permissions }) {
                       rows={1}
                     />
                   </th>
+
+                  <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('Invoices')}>
+                  <br/>Stato di Fatturazione
+                    {sortColumn === 'Invoices'  && sortDirection !== '' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
+                    <br />
+                    <input
+                      value={searchQueries.Invoices}
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={handleSearchInputChange('Invoices')}
+                      className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+                      placeholder=""
+                      rows={1}
+                    />
+                  </th>
                  
                  
                   <th scope="col" className="relative px-2 py-3.5">
@@ -412,7 +428,20 @@ export default function Example({ permissions }) {
                         <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
                           {item.Subsubcategory?.name}
                         </td>
-                     
+                        <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
+                          {item?.Invoices?.length > 0 ? (
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                              Fatturato
+                            </span>
+                          ) : (
+                            <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                              Non Fatturato
+                            </span>
+                          )}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
+                          {item.createdByUser?.name.slice(0, 2).toUpperCase() + item.createdByUser?.surname.slice(0, 2).toUpperCase()}
+                        </td>
                     </tr>
                   ))}
                 </tbody>

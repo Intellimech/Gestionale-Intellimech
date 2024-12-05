@@ -177,9 +177,9 @@ export default function PurchaseCreateForm() {
           </p>
           <table className="w-full mt-6 text-[10px]">
             <tbody>
-              {/* Cliente */}
+              {/* Fornitore */}
               <tr>
-                <td className="block text-sm font-medium text-gray-700">Cliente</td>
+                <td className="block text-sm font-medium text-gray-700">Fornitore</td>
                 <td>
                   <Select
                     value={selectedCompany}
@@ -187,7 +187,7 @@ export default function PurchaseCreateForm() {
                     options={(companies || []).map(({ value, label }) => ({ value, label }))}
                     primaryColor="#7fb7d4"
                     isSearchable
-                    placeholder="Seleziona Cliente"
+                    placeholder="Seleziona Fornitore"
                     className="block w-full rounded border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[10px]"
                   />
                 </td>

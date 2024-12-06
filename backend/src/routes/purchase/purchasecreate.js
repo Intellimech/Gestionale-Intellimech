@@ -8,10 +8,10 @@ const Purchase = sequelize.models.Purchase;
 const PurchaseRow = sequelize.models.PurchaseRow;
 router.post("/create", async (req, res) => {
   try {
-    const { id_company, products, date, payment, currency } = req.body;
+    const { id_company, products, date, payment, currency, referent } = req.body;
     const user = req.user; // Assuming req.user is populated by the authentication middleware
 
-    if (!id_company || !products || !date) {
+    if (!id_company || !products || !date || !payment || !currency || !referent) {
       return res.status(400).json({
         message: "Bad request, view documentation for more information",
       });
@@ -44,6 +44,7 @@ router.post("/create", async (req, res) => {
       currency: currency,
       total: purchaseTotal,
       taxed_total: purchaseTotaltax,
+      referent: referent,
       createdBy: user.id_user, // Use user ID from req.user
     });
 

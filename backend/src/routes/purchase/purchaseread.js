@@ -71,6 +71,11 @@ router.get('/read', async (req, res) => {
           as: 'createdByUser',
           attributes: ['id_user', 'name', 'surname'],
         },
+        {
+          model: sequelize.models.User,
+          as: 'referentUser',
+          attributes: ['id_user', 'name', 'surname'],
+        }
       ],
     });
 

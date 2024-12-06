@@ -28,13 +28,15 @@ export default function PurchaseCreateForm() {
     asset: false
   }]);
   const [currency, setCurrency] = useState('EUR');
-
+  const [users, setUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState(null);
   const [currencies, setCurrencies] = useState([]);
   const [paymentMethods, setPaymentMethods] = useState([]);
   const handleCompanyChange = setSelectedCompany;
   const handlePaymentMethodChange = setSelectedPaymentMethod;
   const handleCurrencyChange = setCurrency;
-  const handleDateChange = (event) => setSelectedDate(event.target.value);
+  const handleDateChange = (event) => setSelectedDate(event.target.value);7
+  const handleUserChange = setSelectedUser;
 
   useEffect(() => {
     axios
@@ -58,6 +60,22 @@ export default function PurchaseCreateForm() {
         console.error('Error fetching paymentmethods:', error);
       });
   }, []);
+  useEffect(() => {
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/user/read`)
+      .then((response) => {
+        // Map users to the format expected by react-tailwindcss-select
+        const formattedUsers = response.data.users.map(user => ({
+          value: user.id_user, // Assuming there's an id_user field
+          label: `${user.name} ${user.surname}` // Adjust based on your user object structure
+        }));
+        setUsers(formattedUsers);
+      })
+      .catch((error) => {
+        console.error('Error fetching users:', error);
+      });
+  }, []);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -131,6 +149,7 @@ export default function PurchaseCreateForm() {
       id_company: selectedCompany.value,
       payment: selectedPaymentMethod.value,
       date: selectedDate,
+      referent: selectedUser.value,
       currency: currency.value,
       products: products.map((product) => ({
         category: product.category,
@@ -184,10 +203,27 @@ export default function PurchaseCreateForm() {
                   <Select
                     value={selectedCompany}
                     onChange={handleCompanyChange}
-                    options={(companies || []).map(({ value, label }) => ({ value, label }))}
+                    options={(companies).map(({ value, label }) => ({ value, label }))}
                     primaryColor="#7fb7d4"
                     isSearchable
                     placeholder="Seleziona Fornitore"
+                    className="block w-full rounded border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[10px]"
+                  />
+                </td>
+              </tr>
+              {/* Fornitore */}
+              <tr>
+                <td className="block text-sm font-medium text-gray-700">Referente</td>
+                <td>
+                  <Select
+                    value={selectedUser}
+                    onChange={(selectedOption) => {
+                      setSelectedUser(selectedOption);
+                    }}
+                    options={users}
+                    primaryColor="#7fb7d4"
+                    isSearchable
+                    placeholder="Seleziona Referente"
                     className="block w-full rounded border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[10px]"
                   />
                 </td>

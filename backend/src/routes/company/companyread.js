@@ -54,7 +54,7 @@ router.get("/read/", (req, res) => {
 
     try {
         switch (req.query.filter) {
-            case "Suppliers":
+            case "suppliers":
                 company.findAll({
                     where: {
                         isSuppliers: true
@@ -84,7 +84,7 @@ router.get("/read/", (req, res) => {
                 });
                 break;
 
-            case "Customers":
+            case "client":
                 company.findAll({
                     where: {
                         isClient: true
@@ -106,6 +106,7 @@ router.get("/read/", (req, res) => {
                 break;
 
             default:
+                console.log("default")
                 company.findAll({
                     include: [
                         {

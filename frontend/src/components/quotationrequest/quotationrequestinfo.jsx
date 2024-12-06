@@ -17,6 +17,17 @@ export default function QuotationDetails({ quotationrequest }) {
     return `${user.name.slice(0, 2).toUpperCase()}${user.surname.slice(0, 2).toUpperCase()} (${user.name} ${user.surname})`;
   };
 
+  function capitalizeAfterPeriodAndFirstLetter(str) {
+    if (!str) return ""; // Handle empty or undefined strings
+    return str
+        .trim() // Remove leading/trailing spaces
+        .replace(/(^|\.\s+)(\w+)/g, (match, prefix, word) => {
+            // Prefix is the character(s) before the word (e.g., a period and space)
+            // Word is the actual word to capitalize
+            return prefix + word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+        });
+  }
+
   return (
     <div className="w-full bg-white rounded-lg shadow-lg p-4 space-y-4">
       {/* Header */}
@@ -25,7 +36,7 @@ export default function QuotationDetails({ quotationrequest }) {
           Dettagli Richiesta di Offerta
         </h1>
         <p className="text-sm text-gray-600 mt-1">
-          {quotationrequest?.Company?.name}
+          {capitalizeAfterPeriodAndFirstLetter(quotationrequest?.Company?.name)}
         </p>
       </div>
 

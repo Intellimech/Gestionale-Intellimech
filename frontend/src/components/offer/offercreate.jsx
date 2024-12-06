@@ -421,7 +421,7 @@ export default function UserCreateForm() {
     
     <div>
       <h3 className="text-lg font-medium mt-3 leading-6 text-gray-900 mb-2">
-        Tabella di Pianificazione
+        Offerta Commerciale
       </h3>
       
       {commercialoffers.map((offer, index) => (

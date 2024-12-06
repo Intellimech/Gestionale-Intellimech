@@ -21,15 +21,6 @@ const router = express.Router();
 router.use(bodyParser.json());
 router.use(cors());
 
-// Funzione per formattare i nomi
-function formatName(name) {
-  return name
-    .toLowerCase()
-    .split(" ")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-}
-
 // Route per leggere tutte le richieste di offerta
 router.get("/read/", async (req, res) => {
   try {
@@ -60,7 +51,7 @@ router.get("/read/", async (req, res) => {
     // Formatta il nome della compagnia
     const formattedQuotationRequest = quotationrequest.map((qr) => {
       if (qr.Company && qr.Company.name) {
-        qr.Company.name = formatName(qr.Company.name);
+        qr.Company.name = qr.Company.name
       }
       return qr;
     });
@@ -105,7 +96,7 @@ router.get("/read/:id", async (req, res) => {
 
     // Formatta il nome della compagnia
     if (quotationrequest.Company && quotationrequest.Company.name) {
-      quotationrequest.Company.name = formatName(quotationrequest.Company.name);
+      quotationrequest.Company.name = quotationrequest.Company.name;  // Formatta il nome della compagnia
     }
 
     // Rispondi con i dati della richiesta di offerta

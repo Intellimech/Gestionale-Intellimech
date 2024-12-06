@@ -392,8 +392,40 @@ const sortedSaleOrder = filteredSaleOrder.sort((a, b) => {
                         rows= {1}
                       />
                       </th>
-                     <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('description')}>
+                    <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('description')}>
                       Descrizione
+                      {sortColumn === 'description'? (
+                        sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                      ) : null}
+                      <br></br>
+                      <input
+                        type="text"
+                        value={searchQueries.description}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={handleSearchInputChange('description')}
+                        className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
+                        placeholder=""
+                        rows= {1}
+                      />
+                    </th>
+                    <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer"  onClick={() => handleSort('status')}>
+                      Ore Stimate <br/> in Offerta 
+                      {sortColumn === 'status' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                      ) : null}
+                      <br></br>
+                      <input
+                        type="text"
+                        value={searchQueries.status}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={handleSearchInputChange('status')}
+                        className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
+                        placeholder=""
+                        rows= {1}
+                      />
+                    </th>
+                     <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('description')}>
+                      Valore in Offerta
                       {sortColumn === 'description'? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
                     ) : null}
@@ -409,7 +441,7 @@ const sortedSaleOrder = filteredSaleOrder.sort((a, b) => {
                       />
                     </th>
                     <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer"  onClick={() => handleSort('status')}>
-                      Stato
+                      Tipo Cliente
                       {sortColumn === 'status' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
                     ) : null}
@@ -424,8 +456,88 @@ const sortedSaleOrder = filteredSaleOrder.sort((a, b) => {
                         rows= {1}
                       />
                     </th>
+                    <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('status')}>
+                      Tipo Progetto
+                      {sortColumn === 'status' ? (
+                        sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                      ) : null}
+                      <br></br>
+                      <input
+                        type="text"
+                        value={searchQueries.status}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={handleSearchInputChange('status')}
+                        className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
+                        placeholder=""
+                        rows= {1}
+                      />
+                    </th>
+                    <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('status')}>
+                      Area Tecnica
+                      {sortColumn === 'status' ? (
+                        sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                      ) : null}
+                      <br></br>
+                      <input
+                        type="text"
+                        value={searchQueries.status}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={handleSearchInputChange('status')}
+                        className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
+                        placeholder=""
+                        rows= {1}
+                      />
+                    </th>
+                    <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('status')}>
+                      Data Inizio Stimata <br /> in Offerta
+                      {sortColumn === 'status' ? (
+                        sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                      ) : null}
+                      <br></br>
+                      <input
+                        type="text"
+                        value={searchQueries.status}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={handleSearchInputChange('status')}
+                        className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
+                        placeholder=""
+                        rows= {1}
+                      />
+                    </th>
+                    <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('status')}>
+                      Data Fine Stimata <br /> in Offerta
+                      {sortColumn === 'status' ? (
+                        sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                      ) : null}
+                      <br></br>
+                      <input
+                        type="text"
+                        value={searchQueries.status}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={handleSearchInputChange('status')}
+                        className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
+                        placeholder=""
+                        rows= {1}
+                      />
+                    </th>
                     <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('createdByUser')}>
-                      Creata da
+                      Stato
+                      {sortColumn === 'createdByUser' ?  (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
+                      <br></br>
+                      <input
+                        type="text"
+                        value={searchQueries.createdByUser}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={handleSearchInputChange('createdByUser')}
+                        className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
+                        placeholder=""
+                        rows= {1}
+                      />
+                    </th>
+                    <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('createdByUser')}>
+                      Project Leader
                       {sortColumn === 'createdByUser' ?  (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
                     ) : null}
@@ -469,9 +581,31 @@ const sortedSaleOrder = filteredSaleOrder.sort((a, b) => {
                       <td className="whitespace-normal overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
                         <a href={`/offer/${salesorder.Offer?.id_offer}`} className="truncate">{salesorder.Offer?.name}</a>
                       </td>
+                      
                       <td className="whitespace-normal overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
-                        <span className="truncate">{salesorder.Offer?.description || salesorder.Offer?.QuotationRequest.description}</span>
-                      </td>
+                        <span className="truncate">{salesorder.Offer.QuotationRequest.description.split(" ").slice(0, 4).join(" ") + (salesorder.Offer.QuotationRequest.description.split(" ")?.length > 2 ? "..." : "")}</span>
+                      </td>                       
+                        <td className="whitespace-normal text-right max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words pr-6">
+                         {`${salesorder.Offer.hour} h`}
+                        </td>
+                        <td className="whitespace-normal text-right max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words pr-6">
+                        {`${Number(salesorder.Offer.amount).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`}     
+                        </td>
+                        <td className="whitespace-normal max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
+                          {salesorder.Offer?.QuotationRequest?.companytype? salesorder.Offer.QuotationRequest?.companytype : 'EST'}
+                        </td>
+                        <td className="whitespace-normal max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
+                        {salesorder.Offer.QuotationRequest?.ProjectType?.code}
+                        </td>
+                        <td className="whitespace-normal max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
+                         {salesorder.Offer?.QuotationRequest?.TechnicalArea?.code}
+                        </td>
+                        <td className="whitespace-normal max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
+                         {salesorder.Offer.estimatedstart ? new Date(salesorder.Offer.estimatedstart).toLocaleDateString() : ''}
+                        </td>
+                        <td className="whitespace-normal max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
+                        {salesorder.Offer.estimatedend ? new Date(salesorder.Offer.estimatedend).toLocaleDateString() : ''}
+                        </td>
                       <td className="whitespace-normal overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
                         {salesorder.status === 'Da Fatturare' ? (
                           <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-yellow-600">

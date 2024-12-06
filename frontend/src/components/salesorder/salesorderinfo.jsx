@@ -31,7 +31,7 @@ export default function SalesOrderInfo({ salesOrder }) {
           {/* Descrizione Ordine */}
           <tr className="hover:bg-gray-50">
             <td className="px-6 py-4 text-sm font-medium text-gray-700">Descrizione</td>
-            <td className="px-6 py-4 text-sm text-gray-900">{salesOrder?.description || 'N/A'}</td>
+            <td className="px-6 py-4 text-sm text-gray-900">{salesOrder?.Offer?.description || salesOrder?.Offer?.QuotationRequest?.description}</td>
           </tr>
 
           {/* Offerta */}
@@ -47,8 +47,62 @@ export default function SalesOrderInfo({ salesOrder }) {
           <tr className="hover:bg-gray-50">
             <td className="px-6 py-4 text-sm font-medium text-gray-700">Richiesta di Offerta</td>
             <td className="px-6 py-4 text-sm text-gray-900">
-              Codice: {salesOrder?.Offer?.QuotationRequest?.name || 'N/A'}, Stato: {salesOrder?.Offer?.QuotationRequest?.status || 'N/A'}<br />
-              Descrizione: {salesOrder?.Offer?.QuotationRequest?.description || 'N/A'}
+              Codice: <a className="font-medium" href={'/app/offer/' + salesOrder?.Offer?.QuotationRequest?.id_QuotationRequest}>{salesOrder?.Offer?.QuotationRequest?.name || 'N/A'}</a>
+            </td>
+          </tr>
+
+          {/* Offerta */}
+          <tr className="hover:bg-gray-50">
+            <td className="px-6 py-4 text-sm font-medium text-gray-700">Ore Offerta</td>
+            <td className="px-6 py-4 text-sm text-gray-900">{salesOrder?.Offer?.hour || 'N/A'} h</td>
+          </tr>
+
+          <tr className="hover:bg-gray-50">
+            <td className="px-6 py-4 text-sm font-medium text-gray-700">Importo Offerta</td>
+            <td className="px-6 py-4 text-sm text-gray-900">
+              {salesOrder?.Offer?.amount 
+                ? `${Number(salesOrder.Offer.amount).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €` 
+                : 'N/A'}
+            </td>
+          </tr>
+
+          <tr className="hover:bg-gray-50">
+            <td className="px-6 py-4 text-sm font-medium text-gray-700">Data Inizio Stimata</td>
+            <td className="px-6 py-4 text-sm text-gray-900">
+              {salesOrder?.Offer?.estimatedstart 
+                ? new Date(salesOrder.Offer.estimatedstart).toLocaleDateString() 
+                : 'N/A'}
+            </td>
+          </tr>
+
+          <tr className="hover:bg-gray-50">
+            <td className="px-6 py-4 text-sm font-medium text-gray-700">Data Fine Stimata</td>
+            <td className="px-6 py-4 text-sm text-gray-900">
+              {salesOrder?.Offer?.estimatedend 
+                ? new Date(salesOrder.Offer.estimatedend).toLocaleDateString() 
+                : 'N/A'}
+            </td>
+          </tr>
+          <tr className="hover:bg-gray-50">
+            <td className="px-6 py-4 text-sm font-medium text-gray-700">Data di Creazione</td>
+            <td className="px-6 py-4 text-sm text-gray-900">
+              {salesOrder?.createdAt
+                ? new Date(salesOrder.createdAt).toLocaleDateString()
+                : 'N/A'}
+            </td>
+          </tr>
+
+          <tr className="hover:bg-gray-50">
+            <td className="px-6 py-4 text-sm font-medium text-gray-700">Tipo Progetto</td>
+            <td className="px-6 py-4 text-sm text-gray-900">
+              {salesOrder?.Offer?.QuotationRequest?.ProjectType?.code || 'N/A'}
+            </td>
+          </tr>
+
+          <tr className="hover:bg-gray-50">
+            <td className="px-6 py-4 text-sm font-medium text-gray-700">Area Tecnica</td>
+            <td className="px-6 py-4 text-sm text-gray-900">
+              {salesOrder?.Offer?.QuotationRequest?.TechnicalArea?.code || 'N/A'}
             </td>
           </tr>
 

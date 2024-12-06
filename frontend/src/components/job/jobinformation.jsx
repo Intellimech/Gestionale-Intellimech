@@ -14,6 +14,17 @@ export default function Example({ job }) {
     return colors[status] || 'bg-gray-100 text-gray-800';
   };
 
+  function capitalizeAfterPeriodAndFirstLetter(str) {
+    if (!str) return ""; // Handle empty or undefined strings
+    return str
+        .trim() // Remove leading/trailing spaces
+        .replace(/(^|\.\s+)(\w+)/g, (match, prefix, word) => {
+            // Prefix is the character(s) before the word (e.g., a period and space)
+            // Word is the actual word to capitalize
+            return prefix + word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+        });
+  }
+
   return (
     <div className="space-y-6 px-4 py-5 sm:p-6">
       {/* Header Section */}

@@ -39,6 +39,8 @@ import Recurrence from './recurrence.js';
 import MailingList from './mailinglist.js';
 import MailingListUser from './mailinglistuser.js';
 import Mail from 'nodemailer/lib/mailer/index.js';
+import ReportingIndirect from './reportingindirect.js';
+import Event from './event.js';
 
 // Define associations
 User.belongsTo(Role, { foreignKey: 'role' });
@@ -146,8 +148,8 @@ Offer.hasMany(SalesOrder, { foreignKey: 'offer' });
 
 CommercialOffer.belongsTo(Offer, { foreignKey: 'id_offer' });
 Offer.hasMany(CommercialOffer, { foreignKey: 'id_offer' });
-Tasks.belongsTo(Offer, { foreignKey: 'task' });
-Offer.hasMany(Tasks, { foreignKey: 'task' });
+Tasks.belongsTo(Offer, { foreignKey: 'id_offer' });
+Offer.hasMany(Tasks, { foreignKey: 'id_offer' });
 
 
 Tasks.belongsTo(Offer, { foreignKey: 'id_offer' });
@@ -172,14 +174,6 @@ Job.belongsTo(User, { foreignKey: 'createdBy', as: 'createdByUser' });
 Job.belongsTo(User, { foreignKey: 'updatedBy', as: 'updatedByUser' });
 Job.belongsTo(User, { foreignKey: 'deletedBy', as: 'deletedByUser' });
 
-//reporting is associated with Job
-Reporting.belongsTo(Job, { foreignKey: 'job' });
-Job.hasMany(Reporting, { foreignKey: 'job' });
-
-//reporting is associated with Task
-Reporting.belongsTo(Tasks, { foreignKey: 'task' });
-Tasks.hasMany(Reporting, { foreignKey: 'task' });
-
 Company.belongsTo(ClientType, { foreignKey: 'companytype' });
 
 ClientType.hasMany(Company, { foreignKey: 'companytype' });
@@ -189,25 +183,10 @@ Reporting.belongsTo(User, { foreignKey: 'createdBy', as: 'createdByUser' });
 Reporting.belongsTo(User, { foreignKey: 'updatedBy', as: 'updatedByUser' });
 Reporting.belongsTo(User, { foreignKey: 'deletedBy', as: 'deletedByUser' });
 
-//reporting is associated with Tasks
-Reporting.belongsTo(Tasks, { foreignKey: 'task' });
-Tasks.hasMany(Reporting, { foreignKey: 'task' });
-
 //Tasks is associated with User in the createdBy, updatedBy, and deletedBy fields
 Tasks.belongsTo(User, { foreignKey: 'createdBy', as: 'createdByUser' });
 Tasks.belongsTo(User, { foreignKey: 'updatedBy', as: 'updatedByUser' });
 Tasks.belongsTo(User, { foreignKey: 'deletedBy', as: 'deletedByUser' });
-
-//Tasks is associated with Job
-Tasks.belongsTo(Job, {
-  foreignKey: 'job', // La chiave esterna deve essere coerente con il model Job
-  as: 'Job'
-});
-
-Job.hasMany(Tasks, {
-  foreignKey: 'job', // Devi usare la chiave esterna corretta
-  as: 'Task' // L'alias deve corrispondere a quello usato nell'inclusione
-});
 
 
 //Tasks is associated with User in the assignedTo field
@@ -238,6 +217,7 @@ User.hasMany(Notification, { foreignKey: 'deletedBy', as: 'deletedByUser' });
 Purchase.belongsTo(User, { foreignKey: 'createdBy', as: 'createdByUser' });
 Purchase.belongsTo(User, { foreignKey: 'updatedBy', as: 'updatedByUser' });
 Purchase.belongsTo(User, { foreignKey: 'deletedBy', as: 'deletedByUser' });
+Purchase.belongsTo(User, { foreignKey: 'referent', as: 'referentUser' });
 
 PurchaseRow.belongsTo(Purchase, { foreignKey: 'id_purchase' });
 Purchase.hasMany(PurchaseRow, { foreignKey: 'id_purchase' });
@@ -291,6 +271,9 @@ Subsubcategory.hasMany(PurchaseRow, { foreignKey: 'subsubcategory' });
 MailingList.belongsToMany(User, { through: MailingListUser, foreignKey: 'mailinglist', as: 'mailinglistusers'});
 User.belongsToMany(MailingList, { through: MailingListUser, foreignKey: 'user',  });
 
+ReportingIndirect.belongsTo(ReportingIndirect, { foreignKey: 'parentIndirect' });
+ReportingIndirect.hasMany(ReportingIndirect, { foreignKey: 'parentIndirect' });
+
 export default {
     User,
     Role,
@@ -328,5 +311,8 @@ export default {
     Subsubcategory,
     Recurrence,
     MailingList,
-    ContractRow
+    ContractRow,
+    CommercialOffer,
+    ReportingIndirect,
+    Event
   };

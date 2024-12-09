@@ -478,6 +478,18 @@ export default function Example({ permissions }) {
                         rows={1}
                       />
                     </th>
+                    <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('createdByUser')}>
+                    <br />  Referente Interno
+                      <br />
+                      <input
+                        value={searchQueries.createdByUser}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={handleSearchInputChange('createdByUser')}
+                        className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+                        placeholder=""
+                        rows={1}
+                      />
+                    </th>
                     <th scope="col" className="relative px-1 py-1.5">
                       <span className="sr-only">Azioni</span>
                     </th>
@@ -559,6 +571,9 @@ export default function Example({ permissions }) {
                     </td>
                     <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
                       {item.createdByUser?.name.slice(0, 2).toUpperCase() + item.createdByUser?.surname.slice(0, 2).toUpperCase()}
+                    </td>
+                    <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-500">
+                      {item.referentUser?.name.slice(0, 2).toUpperCase() + item.referentUser?.surname.slice(0, 2).toUpperCase()}
                     </td>
 
                     <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-500">

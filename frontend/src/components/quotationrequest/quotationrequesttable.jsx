@@ -53,7 +53,18 @@ export default function Example({ permissions }) {
     data: '',
     createdByUser: ''
   });
-  
+
+  function capitalizeAfterPeriodAndFirstLetter(str) {
+    if (!str) return ""; // Handle empty or undefined strings
+    return str
+        .trim() // Remove leading/trailing spaces
+        .replace(/(^|\.\s+)(\w+)/g, (match, prefix, word) => {
+            // Prefix is the character(s) before the word (e.g., a period and space)
+            // Word is the actual word to capitalize
+            return prefix + word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+        });
+  }
+
   useEffect(() => {
     const isIndeterminate = selectedQuotationRequest.length > 0 && selectedQuotationRequest.length < quotationrequests.length;
     setChecked(selectedQuotationRequest.length === quotationrequests.length);
@@ -574,7 +585,7 @@ const sortedRequest = filteredRequest?.sort((a, b) => {
                       {quotationrequest?.name}
                     </td>
                     <td className="text-xs text-gray-500 px-2 py-2 max-w-[160px] whitespace-nowrap overflow-hidden text-ellipsis">
-                      {quotationrequest.Company?.name}
+                      {capitalizeAfterPeriodAndFirstLetter(quotationrequest.Company?.name)}
                     </td>
                     <td className="text-xs text-left text-gray-500 px-2 py-2 max-w-[100px] whitespace-nowrap overflow-hidden text-ellipsis">
                       {quotationrequest.companytype? quotationrequest.companytype : 'EST'}

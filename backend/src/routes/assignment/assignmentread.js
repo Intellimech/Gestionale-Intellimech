@@ -26,7 +26,6 @@ router.get("/read/", (req, res) => {
        
     })
     .then((assignments) => {
-        console.log("Assignments Retrieved:", assignments);
         if (assignments) {
             res.status(200).json({
                 message: "Assignments found",

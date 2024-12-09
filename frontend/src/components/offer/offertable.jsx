@@ -49,6 +49,17 @@ export default function Example({ permissions }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedStatus, setselectedStatus] = useState('');
 
+  function capitalizeAfterPeriodAndFirstLetter(str) {
+    if (!str) return ""; // Handle empty or undefined strings
+    return str
+        .trim() // Remove leading/trailing spaces
+        .replace(/(^|\.\s+)(\w+)/g, (match, prefix, word) => {
+            // Prefix is the character(s) before the word (e.g., a period and space)
+            // Word is the actual word to capitalize
+            return prefix + word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+        });
+  }
+
   useEffect(() => {
     const isIndeterminate = selectedOffer.length > 0 && selectedOffer.length < offers.length;
     setChecked(selectedOffer.length === offers.length);
@@ -338,16 +349,6 @@ export default function Example({ permissions }) {
   function handleStatusSelectChange(event) {
     setSelectedStatus(event.target.value);
   }
-  // Funzione per aggiungere il punto sopra come separatore delle migliaia
-const formatNumberWithDotAbove = (number) => {
-  return number
-    .toString()
-    .replace(/\B(?=(\d{3})+(?!\d))/g, '\u0307'); // Aggiungi il punto sopra come separatore
-};
-
-
-
-
 
   return (
     <div className="px-4 sm:px-6 lg:px-8">
@@ -758,7 +759,7 @@ const formatNumberWithDotAbove = (number) => {
                     />
                   </th>
                   <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('clienttype')}>
-                  <br/>Creata da
+                  <br/>Project Leader
                   {sortColumn === 'createdByUser' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
                     ) : null}
@@ -800,21 +801,20 @@ const formatNumberWithDotAbove = (number) => {
                           {offer.name}
                         </td>
                         <td className="whitespace-normal max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
-                          {offer?.description || offer.QuotationRequest?.description}
+                          {offer.QuotationRequest.description.split(" ").slice(0, 4).join(" ") + (offer.QuotationRequest.description.split(" ")?.length > 2 ? "..." : "")}
                         </td>
                         <td className="whitespace-normal max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
-                          {offer.QuotationRequest?.Company.name}
+                          {capitalizeAfterPeriodAndFirstLetter(offer.QuotationRequest?.Company.name)}
                         </td>
                         <td className="whitespace-normal max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
                           {offer?.QuotationRequest?.companytype? offer.QuotationRequest?.companytype : 'EST'}
                         </td>
                        
-                        <td className="whitespace-normal text-right max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
+                        <td className="whitespace-normal text-right max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words pr-6">
                          {`${offer.hour} h`}
                         </td>
-                        <td className="whitespace-normal text-right max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
-                        {formatNumberWithDotAbove(`${offer.amount} €`)}
-                        </td>
+                        <td className="whitespace-normal text-right max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words pr-6">
+                        {`${Number(offer.amount).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`}                        </td>
                         <td className="whitespace-normal max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
                         {offer.QuotationRequest?.ProjectType?.code}
                         </td>

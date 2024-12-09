@@ -114,7 +114,22 @@ PEC: intellimech@legalmail.it - www.intellimech.it
         doc.save(safeFileName);
     };
     
+    const getRowLabel = (index) => {
+      const labels = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+      return labels[index] || '';
+    };
 
+    function capitalizeAfterPeriodAndFirstLetter(str) {
+      if (!str) return ""; // Handle empty or undefined strings
+      return str
+          .trim() // Remove leading/trailing spaces
+          .replace(/(^|\.\s+)(\w+)/g, (match, prefix, word) => {
+              // Prefix is the character(s) before the word (e.g., a period and space)
+              // Word is the actual word to capitalize
+              return prefix + word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+          });
+    }
+  
 
   return (
     <div>
@@ -122,34 +137,34 @@ PEC: intellimech@legalmail.it - www.intellimech.it
         <h3 className="text-base font-semibold leading-7 text-gray-900">Dettagli sull'offerta</h3>
         <p className="mt-1 max-w-2xl text-sm leading-6 text-gray-500">Informazioni dettagliate sull'offerta</p>
       </div>
-      <div className="mt-6">
+      <div className="mt-4">
          {/* Main Details Table */}
          <div className="overflow-hidden border border-gray-200 rounded-lg mb-8">
         <table className="min-w-full divide-y divide-gray-200">
           <tbody className="divide-y divide-gray-200">
             <tr className="bg-white">
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 w-1/4">Codice Offerta</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{offer?.name}</td>
+              <td className="px-6 py-1 whitespace-nowrap text-sm font-medium text-gray-900 w-1/4">Codice Offerta</td>
+              <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-500">{offer?.name}</td>
             </tr>
             <tr className="bg-gray-50">
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Cliente</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{offer?.QuotationRequest?.Company?.name}</td>
+              <td className="px-6 py-1 whitespace-nowrap text-sm font-medium text-gray-900">Cliente</td>
+              <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-500">{capitalizeAfterPeriodAndFirstLetter(offer?.QuotationRequest?.Company?.name)}</td>
             </tr>
             <tr className="bg-white">
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Ore stimate</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{offer?.hour}h</td>
+              <td className="px-6 py-1 whitespace-nowrap text-sm font-medium text-gray-900">Ore stimate</td>
+              <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-500">{offer?.hour} h</td>
             </tr>
             <tr className="bg-gray-50">
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Valore</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{offer?.amount} €</td>
+              <td className="px-6 py-1 whitespace-nowrap text-sm font-medium text-gray-900">Valore</td>
+              <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-500">{Number(offer.amount).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €</td>
             </tr>
             <tr className="bg-white">
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Costo Orario</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{(offer?.amount / offer?.hour).toFixed(2)} €</td>
+              <td className="px-6 py-1 whitespace-nowrap text-sm font-medium text-gray-900">Costo Orario</td>
+              <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-500">{Number(((offer?.amount / offer?.hour)).toFixed(2)).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €</td>
             </tr>
             <tr className="bg-gray-50">
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Data di Creazione</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+              <td className="px-6 py-1 whitespace-nowrap text-sm font-medium text-gray-900">Data di Creazione</td>
+              <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-500">
                 {new Date(offer?.createdAt).toLocaleDateString() + " " + new Date(offer?.createdAt).toLocaleTimeString()}
               </td>
             </tr>
@@ -158,76 +173,64 @@ PEC: intellimech@legalmail.it - www.intellimech.it
       </div>
 
       {/* Quotation Request Details */}
-      <h4 className="text-lg font-semibold mb-4 text-gray-900">Dettagli Richiesta di Offerta</h4>
-      <div className="overflow-hidden border border-gray-200 rounded-lg mb-8">
+      <h4 className="text-lg font-semibold text-gray-900">Dettagli Richiesta di Offerta</h4>
+      <div className="overflow-hidden border border-gray-200 rounded-lg mt-4">
         <table className="min-w-full divide-y divide-gray-200">
           <tbody className="divide-y divide-gray-200">
             <tr className="bg-white">
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 w-1/4">Nome Richiesta</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{offer?.QuotationRequest?.name}</td>
+              <td className="px-6 py-1 whitespace-nowrap text-sm font-medium text-gray-900 w-1/4">Nome Richiesta</td>
+              <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-500">{offer?.QuotationRequest?.name}</td>
             </tr>
             <tr className="bg-gray-50">
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Tipo Progetto</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{offer?.QuotationRequest?.ProjectType?.description}</td>
+              <td className="px-6 py-1 whitespace-nowrap text-sm font-medium text-gray-900">Tipo Progetto</td>
+              <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-500">{offer?.QuotationRequest?.ProjectType?.description}</td>
             </tr>
             <tr className="bg-white">
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Area Tecnica</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{offer?.QuotationRequest?.TechnicalArea?.name}</td>
+              <td className="px-6 py-1 whitespace-nowrap text-sm font-medium text-gray-900">Area Tecnica</td>
+              <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-500">{offer?.QuotationRequest?.TechnicalArea?.name}</td>
             </tr>
             <tr className="bg-gray-50">
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">Incarico</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{offer?.QuotationRequest?.Assignment?.description}</td>
+              <td className="px-6 py-1 whitespace-nowrap text-sm font-medium text-gray-900">Incarico</td>
+              <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-500">{offer?.QuotationRequest?.Assignment?.description}</td>
             </tr>
             <tr className="bg-white">
-              <td className="px-6 py-4 text-sm font-medium text-gray-900">Descrizione</td>
-              <td className="px-6 py-4 text-sm text-gray-500">{offer?.QuotationRequest?.description}</td>
+              <td className="px-6 py-1 text-sm font-medium text-gray-900">Descrizione</td>
+              <td className="px-6 py-1 text-sm text-gray-500">{offer?.QuotationRequest?.description}</td>
             </tr>
           </tbody>
         </table>
       </div>
-
-      {/* Company Details */}
-      <h4 className="text-lg font-semibold mb-4 text-gray-900">Dettagli Azienda</h4>
-      <div className="overflow-hidden border border-gray-200 rounded-lg mb-8">
-        <table className="min-w-full">
-          <tbody>
-            <tr className="bg-white">
-              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 w-1/4">Nome Azienda</td>
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{offer?.QuotationRequest?.Company?.name}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
 
       <div className="mt-6">
-    <h4 className="text-lg font-semibold leading-6 text-gray-900">Offerte Commerciali</h4>
-    <table className="min-w-[600px] divide-y divide-gray-300">
-        <thead className="bg-gray-50">
-            <tr>
-                <th className="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Descrizione</th>
-                <th className="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Importo</th>
-                <th className="px-3 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Data</th>
-                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Collegato a Task</th>
-            </tr>
-        </thead>
-        <tbody className="divide-y divide-gray-200">
-            {offer?.CommercialOffers?.length > 0 ? (
-                offer.CommercialOffers.map((comOffer) => (
-                    <tr key={comOffer.id_commercialoffer}>
-                        <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900 text-right">{comOffer.linkedtask}</td>
-                        <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900 text-right">{comOffer.amount} €</td>
-                        <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900 text-right">{new Date(comOffer.date).toLocaleDateString()}</td>
-                        <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-900 text-right">{comOffer.task}</td>
-                    </tr>
-                ))
-            ) : (
-                <tr>
-                    <td colSpan="4" className="px-3 py-4 text-sm text-gray-500 text-center">Nessuna offerta commerciale disponibile.</td>
-                </tr>
-            )}
-        </tbody>
-    </table>
+    <h4 className="text-lg font-semibold leading-6 text-gray- mb-4">Offerte Commerciali</h4>
+    <div className='overflow-hidden border border-gray-200 rounded-lg mb-8"'>
+      <table className="min-w-full divide-y divide-gray-300">
+          <thead className="bg-gray-50">
+              <tr>
+                  <th className="px-3 py-1 text-left text-sm font-medium text-gray-900">Importo totale</th>
+                  <th className="px-3 py-1 text-right text-sm font-medium text-gray-900"></th>
+                  <th className="px-3 py-1 text-right text-sm font-medium text-gray-900"></th>
+                  <th className="px-3 py-1 text-right text-sm font-medium text-gray-900">{Number(offer.amount).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €</th>
+              </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-200">
+              {offer?.CommercialOffers?.length > 0 ? (
+                  offer.CommercialOffers.map((comOffer, index) => (
+                      <tr key={comOffer.id_commercialoffer}>
+                          <td className="px-3 py-1 whitespace-nowrap text-sm text-gray-900 text-left">{getRowLabel(index)}</td>
+                          <td className="px-3 py-1 pr-8 whitespace-nowrap text-sm text-gray-900 text-left">{comOffer.linkedtask}</td>
+                          <td className="px-3 py-1 whitespace-nowrap text-sm text-gray-900 text-right">{new Date(comOffer.date).toLocaleDateString()}</td>
+                          <td className="px-3 py-1 whitespace-nowrap text-sm text-gray-900 text-right">{Number(comOffer.amount).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €</td>
+                      </tr>
+                  ))
+              ) : (
+                  <tr>
+                      <td colSpan="4" className="px-3 py-1 text-sm text-gray-500 text-center">Nessuna offerta commerciale disponibile.</td>
+                  </tr>
+              )}
+          </tbody>
+      </table>
+    </div>
 </div>
 
 
@@ -238,17 +241,17 @@ PEC: intellimech@legalmail.it - www.intellimech.it
             <ul className="mt-4 border border-gray-200 rounded-md divide-y divide-gray-200">
                 {offer?.Tasks && offer.Tasks.length > 0 ? (
                 offer.Tasks.map((task) => (
-                    <li key={task.id_task} className="flex items-center justify-between py-4 pl-4 pr-5 text-sm">
+                    <li key={task.id_task} className="flex items-center justify-between py-1 pl-4 pr-5 text-sm">
                     <div className="flex w-0 flex-1 items-center">
                         <div className="ml-4 flex min-w-0 flex-1 gap-2">
                         <span className="truncate font-medium">{task.name}</span>
-                        <span className="truncate font-medium">{task.description}</span>
-                        <span className="flex-shrink-0 text-gray-400">{task.hour}h</span>
-                        <span className="flex-shrink-0 text-gray-400">Stato: {task.percentage}%</span>
+                        <span className="truncate">{task.description}</span>
+                        <span className="flex-shrink-0 text-gray-400 text-right">{task.hour}h</span>
+                        {/* <span className="flex-shrink-0 text-gray-400">Stato: {task.percentage}%</span> */}
                         </div>
                     </div>
                     {/* Progress Bar */}
-                    <div className="relative pt-1 w-1/3">
+                    {/* <div className="relative pt-1 w-1/3">
                         <div className="flex mb-2 items-center justify-between">
                         <div>
                             <span className="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-GRAY-600 bg-[#7fb7d4]">
@@ -262,11 +265,11 @@ PEC: intellimech@legalmail.it - www.intellimech.it
                             className="flex flex-col text-center text-white bg-[#7fb7d4] rounded"
                         />
                         </div>
-                    </div>
-                    </li>
+                    </div> */}
+                  </li>
                 ))
                 ) : (
-                <li className="py-4 pl-4 pr-5 text-sm text-gray-500">Nessuna attività associata.</li>
+                <li className="py-1 pl-4 pr-5 text-sm text-gray-500">Nessuna attività associata.</li>
                 )}
             </ul>
             </div>
@@ -277,7 +280,7 @@ PEC: intellimech@legalmail.it - www.intellimech.it
                 <dt className="text-sm font-medium leading-6 text-gray-900">Documenti</dt>
                 <dd className="mt-2 text-sm text-gray-900">
                     <ul role="list" className="divide-y divide-gray-100 rounded-md border border-gray-200">
-                    <li className="flex items-center justify-between py-4 pl-4 pr-5 text-sm leading-6">
+                    <li className="flex items-center justify-between py-1 pl-4 pr-5 text-sm leading-6">
                         <div className="flex w-0 flex-1 items-center">
                         <PaperClipIcon className="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
 

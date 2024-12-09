@@ -7,12 +7,23 @@ import TaskRevision from './tasksrevision';
 import CommercialOfferRev from './commercialofferrev'
 import toast, { Toaster } from 'react-hot-toast';
 
+function capitalizeAfterPeriodAndFirstLetter(str) {
+  if (!str) return ""; // Handle empty or undefined strings
+  return str
+      .trim() // Remove leading/trailing spaces
+      .replace(/(^|\.\s+)(\w+)/g, (match, prefix, word) => {
+          // Prefix is the character(s) before the word (e.g., a period and space)
+          // Word is the actual word to capitalize
+          return prefix + word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+      });
+}
+
 export default function RevisionForm({offer}) {
   const [formData, setFormData] = useState(offer);
   const [selectedTeam, setSelectedTeam] = useState([]);
   const [selectedQuotationRequest, setSelectedQuotationRequest] = useState({
     value: offer?.quotationrequest,
-    label:`${ offer?.QuotationRequest?.name} - ${ offer?.QuotationRequest?.Company?.name}`,
+    label:`${ offer?.QuotationRequest?.name} - ${capitalizeAfterPeriodAndFirstLetter(offer?.QuotationRequest?.Company?.name)}`,
   });
   const [tasks, setTasks] = useState(offer?.tasks || [{ name: '', hour: 0, value: 0, assignedTo: '', children: [] }]);
   const [estimatedStartDate, setEstimatedStartDate] = useState(offer?.estimatedstart || new Date().toISOString().split('T')[0]);
@@ -433,190 +444,150 @@ const createOffer = async (event) => {
   
 
   return (
-    <form name="createoffer" className="max-w-7xl mx-auto" onSubmit={createOffer}>
-      <Toaster />
-      
-      <div className="space-y-4">
-        <div className="border-b border-gray-900/10 pb-4">
-          <h2 className="text-base font-semibold leading-7 text-gray-900">Informazioni</h2>
-          <p className="mt-1 text-sm leading-6 text-gray-600">Crea una nuova offerta</p>
-          
-           
-          <div className="mt-4 grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-6">
-          <div className="sm:col-span-3">
-              <label htmlFor="quotationrequest" className="block text-sm font-medium text-gray-700">
-                Richiesta di offerta
-              </label>
-              <div className="mt-2">
-              <input
-                id="quotationrequest"
-                name="quotationrequest"
-                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
-                value={FunselectedQuotationRequest()}
-                onChange={handleQuotationRequestChange}
-               readOnly
-              />
-               
-                  </div>
-            </div>
-            <div className="sm:col-span-2"> {/* Larghezza 1 colonna */}
-                    <label htmlFor="quotationdescriptiondescription" className="block text-sm font-medium text-gray-700">Descrizione RDO</label>
-                    <input
-                    id="quotationdescriptiondescription"
-                    name="quotationdescriptiondescription"
-                    
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
-                    value={quotationRequestDescri}
-                    onChange={(e) => setQuotationRequestDescri(e.target.value)}
-                    />
-                </div>
-                <br/>
-
-            {/* Ore */}
-            <div className="sm:col-span-1"> {/* Larghezza 1 colonna */}
-                    <label htmlFor="hour" className="block text-sm font-medium text-gray-700">Ore</label>
-                    <input
-                    id="hour"
-                    name="hour"
-                    type="number"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
-                    value={totalHours}
-                    readOnly
-                    />
-                </div>
-        
-                {/* Valore */}
-                <div className="sm:col-span-2"> {/* Larghezza 2 colonne */}
-                    <label htmlFor="amount" className="block text-sm font-medium text-gray-700">Valore</label>
-                    <div className="mt-1 relative rounded-md shadow-sm">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <span className="text-gray-500 sm:text-sm">€</span>
-                    </div>
-                   
-                      <input
-                        type="text"
-                        name="amount"
-                        id="amount"
-                        className="block w-full pl-7 pr-12 rounded-md border-gray-300 focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
-                        placeholder="0.00"
-                        value={totalValue.toFixed(2)}
-                        readOnly
-                      />
-                    <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                        <span className="text-gray-500 sm:text-sm" id="price-currency">EUR</span>
-                    </div>
-                    </div>
-                </div>
-                    
-            <div className="sm:col-span-3">
-              <label htmlFor="estimatedstart" className="block text-sm font-medium text-gray-700">
-                Data di inizio stimata
-              </label>
-              <input
-                id="estimatedstart"
-                name="estimatedstart"
-                type="date"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
-                value={estimatedStartDate}
-                onChange={(e) => setEstimatedStartDate(e.target.value)}
-              />
-            </div>
+    <form name="createoffer" className="max-w-7xl mx-auto p-4 bg-white  rounded-lg">
+    <Toaster />
     
-            <div className="sm:col-span-3">
-              <label htmlFor="estimatedend" className="block text-sm font-medium text-gray-700">
-                Data di fine stimata
-              </label>
-              <input
-                id="estimatedend"
-                name="estimatedend"
-                type="date"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
-                value={estimatedEndDate}
-                onChange={(e) => setEstimatedEndDate(e.target.value)}
-              />
-            </div>
-          </div>
-        </div>
-        
-        <div className="border-b border-gray-900/10 pb-4">
-          <h2 className="text-base font-semibold leading-7 text-gray-900">Attività</h2>
-          <div>
-            {tasks.map((task, index) => (
-              <TaskRevision
-                key={index}
-                task={task}
-                assignedto={task?.assignedTo}
-                onChange={(updatedTask) => {
-                  const newTasks = [...tasks];
-                  newTasks[index] = updatedTask;
-                  setTasks(newTasks);
-                }}
-                onRemove={() => {
-                  const newTasks = tasks.filter((_, i) => i !== index);
-                  setTasks(newTasks);
-                }}
-                onAddChild={() => {
-                  const newTasks = [...tasks];
-                  newTasks[index].children = [
-                    ...(newTasks[index].children || []),
-                    { name: '', hour: 0, value: 0, assignedTo: 0, children: [] }
-                  ];
-                  setTasks(newTasks);
-                }}
-                users={users}
-              />
-            ))}
-            <button
-              type="button"
-              onClick={() => setTasks([...tasks, { description: '', hour: 0, value: 0, assignedTo: '', children: [] }])}
-              className="mt-4 inline-flex justify-center rounded-md border border-transparent bg-[#7fb7d4] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#62a0bc] focus:outline-none focus:ring-2 focus:ring-[#62a0bc] focus:ring-offset-2"
-            >
-              Aggiungi Task
-            </button>
-          </div>
-        </div>
-         
-       <div>
-          <h3 className="text-lg font-medium leading-6 text-gray-900 mb-2">
-            Tabella di Pianificazione
-          </h3>
-          
-          {commercialoffers.map((offer, index) => (
-            <CommercialOfferRev
-              key={index}
-              offer={offer}  
-              onChange={(updatedOffer) => updateCommercialOffer(index, updatedOffer)}
-              onRemove={() => removeCommercialOffer(index)}
-              tasks={tasks}
-              index={index}
+    <table className="w-full mb-4">
+      <tbody>
+        <tr>
+          <td className="w-1/3 p-2 text-left font-medium">Richiesta di offerta</td>
+          <td className="w-2/3 p-2">
+            <Select
+              id="quotationrequest"
+              name="quotationrequest"
+              value={selectedQuotationRequest}
+              onChange={handleQuotationRequestChange}
+              options={quotationRequest
+                .filter((item) => item.status === "Approvata")
+                .map((item) => ({
+                  value: item.id_quotationrequest,
+                  label: `${item.name} - ${item.Company.name}`,
+                }))}
+              placeholder="Select..."
+              isClearable
             />
-          ))}
+          </td>
+        </tr>
+        <tr>
+          <td className="w-1/3 p-2 text-left font-medium">Ore</td>
+          <td className="w-2/3 p-2">
+          <input
+                id="hour"
+                name="hour"
+                type="number"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
+                value={totalHours}
+                readOnly
+              />
+          </td>
+        </tr>
+        <tr>
+          <td className="w-1/3 p-2 text-left font-medium">Valore Totale Offerte Commerciali</td>
+          <td className="w-2/3 p-2">
+            <div className="relative rounded-md shadow-sm">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <span className="text-gray-500 sm:text-sm">€</span>
+              </div>
+              <input
+                type="text"
+                className="block w-full pl-7 pr-12 rounded-md border-gray-300 focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
+                value={totalCommercialAmount.toFixed(2)}
+                readOnly
+              />
+            
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td className="w-1/3 p-2 text-left font-medium">Data di inizio stimata</td>
+          <td className="w-2/3 p-2">
+            <input
+              type="date"
+              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
+              value={estimatedStartDate}
+              readOnly
+            />
+          </td>
+        </tr>
+        <tr>
+          <td className="w-1/3 p-2 text-left font-medium">Data di fine stimata</td>
+          <td className="w-2/3 p-2">
+            <input
+              type="date"
+              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
+              value={estimatedEndDate}
+              readOnly
+            />
+          </td>
+        </tr>
+        <tr>
+          <td className="w-1/3 p-2 text-left font-medium">Descrizione</td>
+          <td className="w-2/3 p-2">
+            <textarea
+              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
+              rows={3}
+            />
+          </td>
+        </tr>
+      </tbody>
+    </table>
 
+    <div>
+      <h3 className="text-lg font-medium leading-6 text-gray-900 mb-2">Tasks</h3>
+      {tasks.map((task, index) => (
+        <TaskRevision
+          key={index}
+          name={`${index + 1}`}
+          task={task}
+          onChange={(updatedTask) => updateTask(index, updatedTask)}
+          onAddChild={() => addTask(index)}
+          onRemove={() => removeTask(index)}
+          users={users}
+        />
+      ))}
+      <button
+        type="button"
+        onClick={() => addTask()}
+        className="mt-2 rounded-md bg-[#7fb7d4] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#6ca7c4]"
+      >
+        Aggiungi Task
+      </button>
+    </div>
+    
+    <div>
+      <h3 className="text-lg font-medium mt-3 leading-6 text-gray-900 mb-2">
+        Offerta Commerciale
+      </h3>
+      
+      {commercialoffers.map((offer, index) => (
+        <CommercialOfferRev
+          key={index}
+          commercialOffer={offer}
+          onChange={(updatedOffer) => updateCommercialOffer(index, updatedOffer)}
+          onRemove={() => removeCommercialOffer(index)}
+          tasks={tasks}
+          index={index}
+        />
+      ))}
+        <button
+          type="button"
+          onClick={addCommercialOffer}
+          className="mt-2 rounded-md bg-[#7fb7d4] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#6ca7c4]"
+        >
+          Aggiungi 
+        </button>
+      
+    </div>
 
-          {commercialoffers.length < 6 && (
-            <button
-              type="button"
-              onClick={() => {
-                addCommercialOffer();
-                stampa();
-              }}
-              className="mt-2 rounded-md bg-[#7fb7d4] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#6ca7c4]"
-            >
-              Aggiungi CommercialOffer
-            </button>
-          )}
-
-        </div>
-
-        <div className="mt-6 flex justify-end">
-          <button
-            type="submit"
-            className="inline-flex justify-center rounded-md border border-transparent bg-[#7fb7d4] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#62a0bc] focus:outline-none focus:ring-2 focus:ring-[#62a0bc] focus:ring-offset-2"
-          >
-            Revisiona Offerta
-          </button>
-        </div>
-      </div>
-    </form>
+    <div className="flex justify-end mt-4">
+      <button 
+        type="submit" 
+        onClick={createOffer} 
+        className="rounded-md bg-[#7fb7d4] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#6ca7c4]"
+      >
+        Crea
+      </button>
+    </div>
+  </form>
   );
 }

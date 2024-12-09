@@ -23,20 +23,19 @@ router.get("/read/", (req, res) => {
     const SalesOrder = sequelize.models.SalesOrder;
 
     SalesOrder.findAll({
-        attributes: ["id_salesorder", "name", "status"],
         include: [
             {
                 model: sequelize.models.Offer,
-                attributes: ["id_offer", "name", "status", "description"],
                 include: [
                     {
                         model: sequelize.models.QuotationRequest,
-                        attributes: ["id_quotationrequest", "name", "status", "description"],
                         include: [
-                            {
-                                model: sequelize.models.Company,
-                                attributes: ["id_company", "name"],
-                            },
+                          { model: sequelize.models.Company, attributes: ["id_company", "name"] },
+                          { model: sequelize.models.Category, attributes: ["id_category", "name"] },
+                          { model: sequelize.models.Subcategory, attributes: ["id_subcategory", "name"] },
+                          { model: sequelize.models.Assignment, attributes: ["id_assignment", "code", "description"] },
+                          { model: sequelize.models.ProjectType, attributes: ["id_projecttype", "code", "description"] },
+                          { model: sequelize.models.TechnicalArea, attributes: ["id_technicalarea", "name", "code"] },
                         ],
                     },
                 ],
@@ -71,16 +70,16 @@ router.get("/read/:id", (req, res) => {
         include: [
             {
                 model: sequelize.models.Offer,
-                attributes: ["id_offer", "name", "status", "description"],
                 include: [
                     {
                         model: sequelize.models.QuotationRequest,
-                        attributes: ["id_quotationrequest", "name", "status", "description"],
                         include: [
-                            {
-                                model: sequelize.models.Company,
-                                attributes: ["id_company", "name"],
-                            },
+                          { model: sequelize.models.Company, attributes: ["id_company", "name"] },
+                          { model: sequelize.models.Category, attributes: ["id_category", "name"] },
+                          { model: sequelize.models.Subcategory, attributes: ["id_subcategory", "name"] },
+                          { model: sequelize.models.Assignment, attributes: ["id_assignment", "code", "description"] },
+                          { model: sequelize.models.ProjectType, attributes: ["id_projecttype", "code", "description"] },
+                          { model: sequelize.models.TechnicalArea, attributes: ["id_technicalarea", "name", "code"] },
                         ],
                     },
                 ],

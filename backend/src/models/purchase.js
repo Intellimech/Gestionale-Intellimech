@@ -46,6 +46,10 @@ Purchase.init(
       type: DataTypes.STRING(255),
       allowNull: true,
     },
+    referent: {
+      type: DataTypes.STRING(50),
+      allowNull: true
+    },
     //Add owner field - Who asked for the purchase
     createdBy: {
       type: DataTypes.INTEGER,

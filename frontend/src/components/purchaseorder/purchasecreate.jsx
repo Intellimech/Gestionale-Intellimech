@@ -13,6 +13,10 @@ export default function PurchaseCreateForm() {
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
   const [selectedBank, setSelectedBank] = useState(null);
+  const [selectedJob, setSelectedJob] = useState(null);
+  const [users, setUsers]= useState([]);
+  const [job, setJob]= useState([]);
+  const [selecteduser, setSelectedUser] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [products, setProducts] = useState([{
     category: '',
@@ -40,6 +44,7 @@ export default function PurchaseCreateForm() {
   const handleCurrencyChange = setCurrency;
   const handleDateChange = (event) => setSelectedDate(event.target.value);7
   const handleUserChange = setSelectedUser;
+  const handleJobChange = setSelectedJob;
 
   useEffect(() => {
     axios
@@ -78,7 +83,18 @@ export default function PurchaseCreateForm() {
         console.error('Error fetching users:', error);
       });
   }, []);
-
+  useEffect(() => {
+   
+      axios
+        .get(`${process.env.REACT_APP_API_URL}/job/read`)
+        .then((response) => {
+          setJob(response.data.jobs || []);
+        })
+        .catch((error) => {
+          console.error('Errore nel caricamento delle commesse:', error);
+          toast.error('Errore nel caricamento delle commesse');
+        });
+  }, []);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -153,7 +169,8 @@ export default function PurchaseCreateForm() {
       payment: selectedPaymentMethod.value,
       banktransfer: selectedBank,
       date: selectedDate,
-      referent: selectedUser.value,
+      referent: selecteduser.value,
+      job: selectedJob.value,
       currency: currency.value,
       products: products.map((product) => ({
         category: product.category,
@@ -222,7 +239,7 @@ export default function PurchaseCreateForm() {
                 <td className="block text-sm font-medium text-gray-700">Referente</td>
                 <td>
                   <Select
-                    value={selectedUser}
+                    value={selecteduser}
                     onChange={(selectedOption) => {
                       setSelectedUser(selectedOption);
                     }}
@@ -295,6 +312,23 @@ export default function PurchaseCreateForm() {
                   />
                 </td>
               </tr>
+
+              <tr>
+                <td className="block text-sm font-medium text-gray-700">Commessa</td>
+                <td>
+                <Select
+                        options={job.map((job) => ({ value: job.id_job, label: job.name }))}
+                        id="job"
+                        name="job"
+                        value={selectedJob}
+                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4] sm:text-sm sm:leading-6"
+                        onChange={handleJobChange}
+                        isSearchable
+                        placeholder="Seleziona una commessa"
+                      />
+                </td>
+              </tr>
+
             </tbody>
           </table>
         </div>

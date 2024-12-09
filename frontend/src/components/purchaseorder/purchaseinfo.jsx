@@ -124,9 +124,10 @@ export default function Example({ purchase: initialPurchase }) {
     const orderDetails = [
       ['N° Ordine di Acquisto', `${purchase.name}`],
       ['Data', `${formatDate(purchase.createdAt)}`],
-      ['Riferimento Intellimech', `${purchase?.createdByUser?.name.slice(0, 2).toUpperCase() + purchase?.createdByUser?.surname.slice(0, 2).toUpperCase() + " (" + purchase?.createdByUser.name + " " + purchase?.createdByUser.surname + ")"}`],
+      ['Riferimento Intellimech', `${purchase?.referentUser.name.slice(0, 2).toUpperCase() + purchase?.referentUser?.surname.slice(0, 2).toUpperCase() + " (" + purchase?.referentUser.name + " " + purchase?.referentUser.surname + ")"}`],
       ['Metodo di Pagamento', `${purchase.PaymentMethod.name}`],
       ['', `${purchase?.banktransfer || ''}`], // Aggiungi i dettagli se disponibili
+      ['Commessa', `${purchase?.Job.name || ''}`],
      
     ];
     
@@ -336,6 +337,10 @@ export default function Example({ purchase: initialPurchase }) {
           <td className="px-2 py-1">{purchase.name}</td>
         </tr>
         <tr>
+          <td className="px-2 py-1 font-medium text-gray-600">Ordine</td>
+          <td className="px-2 py-1">{purchase.referentUser.name + " " + purchase.referentUser.surname + ", ("+ purchase.referentUser?.name.slice(0, 2).toUpperCase() + purchase.referentUser?.surname.slice(0, 2).toUpperCase() + ")"}</td>
+        </tr>
+        <tr>
           <td className="px-2 py-1 font-medium text-gray-600">Fornitore</td>
           <td className="px-2 py-1">{purchase?.Company?.name}</td>
         </tr>
@@ -370,6 +375,18 @@ export default function Example({ purchase: initialPurchase }) {
         <tr>
           <td className="px-2 py-1 font-medium text-gray-600">Bonifico Bancario</td>
           <td className="px-2 py-1">{purchase.banktransfer}</td>
+        </tr>
+        <tr>
+          <td className="px-2 py-1 font-medium text-gray-600">Commessa</td>
+          <td className="px-2 py-1">{purchase?.Job?.name}</td>
+        </tr>
+        <tr>
+          <td className="px-2 py-1 font-medium text-gray-600">Codice Progetto Europeo</td>
+          <td className="px-2 py-1">{}</td>
+        </tr>
+        <tr>
+          <td className="px-2 py-1 font-medium text-gray-600">CUP</td>
+          <td className="px-2 py-1">{}</td>
         </tr>
       </tbody>
     </table>

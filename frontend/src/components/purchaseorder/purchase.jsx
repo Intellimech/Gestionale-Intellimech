@@ -41,6 +41,8 @@ export default function Example({ permissions }) {
     payment_method: '',
     total: '',
     taxed_total: '',
+    job: '',
+    referent: '',
     status: '',
     createdByUser: '',
     purchaserows : '',
@@ -479,12 +481,24 @@ export default function Example({ permissions }) {
                       />
                     </th>
                     <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('createdByUser')}>
-                    <br />  Referente Interno
+                   Referente  <br />  Interno
                       <br />
                       <input
                         value={searchQueries.createdByUser}
                         onClick={(e) => e.stopPropagation()}
                         onChange={handleSearchInputChange('createdByUser')}
+                        className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+                        placeholder=""
+                        rows={1}
+                      />
+                    </th>
+                    <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('job')}>
+                     <br />  Commessa
+                      <br />
+                      <input
+                        value={searchQueries.job}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={handleSearchInputChange('job')}
                         className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
                         placeholder=""
                         rows={1}
@@ -575,7 +589,9 @@ export default function Example({ permissions }) {
                     <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-500">
                       {item.referentUser?.name.slice(0, 2).toUpperCase() + item.referentUser?.surname.slice(0, 2).toUpperCase()}
                     </td>
-
+                    <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-500">
+                      {item?.Job?.name}
+                    </td>
                     <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-500">
                       <div className="flex items-center space-x-1">
                         {true && (

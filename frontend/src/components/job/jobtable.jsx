@@ -510,29 +510,29 @@ export default function Example({ permissions, user }) {
                         </td>
                         <td className="whitespace-normal overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
                           {
-                            job.SalesOrders.reduce((total, order) => total + parseFloat(order?.Offer?.amount), 0).toFixed(2) + ' €'
+                            job.SalesOrders?.reduce((total, order) => total + parseFloat(order?.Offer?.amount), 0).toFixed(2) + ' €'
                           }
                         </td>
                         <td className="whitespace-normal text-center overflow-hidden text-xs text-gray-500  py-2 break-words">
                           {
-                            isNaN(job.SalesOrders.reduce((total, order) => total + parseFloat(order?.Invoices?.amount), 0)) 
+                            isNaN(job.SalesOrders?.reduce((total, order) => total + parseFloat(order?.Invoices?.amount), 0)) 
                             ? '0 €' 
-                            : job.SalesOrders.reduce((total, order) => total + parseFloat(order?.Invoices?.amount), 0).toFixed(2) + ' €'                          
+                            : job.SalesOrders?.reduce((total, order) => total + parseFloat(order?.Invoices?.amount), 0).toFixed(2) + ' €'                          
                           }
                         </td>
                         <td className="whitespace-normal overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
                           {
-                            job.SalesOrders.reduce((total, order) => total + parseFloat(order?.Offer?.hour), 0) + ' h'
+                            job.SalesOrders?.reduce((total, order) => total + parseFloat(order?.Offer?.hour), 0) + ' h'
                           }
                         </td> 
                         <td className="whitespace-normal overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
                           {
-                            job.Reportings.reduce((total, reported) => total + reported.hour, 0) + ' h'
+                            job.Reportings?.reduce((total, reported) => total + reported.hour, 0) + ' h'
                           }
                         </td>
                         <td className="whitespace-normal overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
                           {
-                            (job.Reportings.reduce((total, reported) => total + reported.hour, 0) * (job.SalesOrders.reduce((total, order) => total + parseFloat(order?.Offer?.amount), 0).toFixed(2) / job?.SalesOrders?.reduce((total, order) => total + parseFloat(order?.Offer?.hour), 0).toFixed(2))).toFixed(2) + '€'
+                            (job.Reportings?.reduce((total, reported) => total + reported.hour, 0) * (job.SalesOrders?.reduce((total, order) => total + parseFloat(order?.Offer?.amount), 0).toFixed(2) / job?.SalesOrders?.reduce((total, order) => total + parseFloat(order?.Offer?.hour), 0).toFixed(2))).toFixed(2) + '€'
                           }
                         </td>
                         

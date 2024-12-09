@@ -17,10 +17,13 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
   const [users, setUsers] = useState([]);
   const [companies, setCompanies] = useState([]);
   const [selectedCompany, setSelectedCompany] = useState(initialPurchase ? { value: initialPurchase.id_company, label: initialPurchase?.Company?.name } : null);
+  const [selectedUser, setSelectedUser] = useState(initialPurchase ? { value: initialPurchase.referent, label: initialPurchase?.referentUser?.name + " "+  initialPurchase?.referentUser?.surname } : null);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(initialPurchase ? initialPurchase.payment_method : "Cash");
   const [selectedDate, setSelectedDate] = useState(initialPurchase.date || new Date().toISOString().split('T')[0]);
   const [products, setProducts] = useState(initialPurchase ? initialPurchase.PurchaseRows : [{ category: '', subcategory: '', subsubcategory: '', unit_price: '', vat: '',quantity: 1, depreciation: '', depreciation_aliquota: '', depreciation_years: '',  depreciation_details: '', description: '', subcategories: [] }]);
-
+  const [selectedJob, setSelectedJob]= useState([]);
+  const [jobs, setJobs]= useState([]);
+  const [job, setJob]= useState(initialPurchase ? initialPurchase.job : 'EUR');
   const [currencies, setCurrencies] = useState([]);
   const [selectedBank, setSelectedBank] = useState(initialPurchase ? initialPurchase.banktransfer : "");
   const [categoryMap, setCategoryMap] = useState({});
@@ -35,6 +38,12 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
     const currencyfind = currencies.find(curr => curr.id_currency == id);
   
     return currencyfind ? currencyfind.name : "Sconosciuto";
+  }
+  
+  function findJob(id) {
+    const jobfind = jobs.find(j => j.id_job == id);
+  
+    return jobfind ? jobfind.name : "Sconosciuto";
   }
   function findmethod(id) {
     const find = paymentMethods.find(curr => curr.id_paymentmethod == id);
@@ -93,6 +102,19 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+   
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/job/read`)
+      .then((response) => {
+        setJobs(response.data.jobs || []);
+      })
+      .catch((error) => {
+        console.error('Errore nel caricamento delle commesse:', error);
+        toast.error('Errore nel caricamento delle commesse');
+      });
+}, []);
   useEffect(() => {
     axios
       .get(`${process.env.REACT_APP_API_URL}/currency/read`)
@@ -178,8 +200,10 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
       id_purchase: purchase.id_purchase,
       id_company: selectedCompany?.value,
       payment: selectedPaymentMethod,
+      referent: selectedUser?.value,
       banktransfer: selectedBank,
       date: selectedDate,
+      job: job,
       currency: currency,
       products: products.map((product) => ({
         name: product.name ,
@@ -252,6 +276,23 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
                     options={companies}
                     primaryColor="#7fb7d4"
                     isSearchable
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td className="block text-sm font-medium text-gray-700">Referente</td>
+                <td>
+                  <Select
+                    value={selectedUser}
+                    onChange={(value) => {
+                      setSelectedUser(value);
+                      setPurchase({ ...purchase, referent: value?.value });
+                    }}
+                    options={users}
+                    primaryColor="#7fb7d4"
+                    isSearchable
+                    placeholder="Seleziona Referente"
+                    className="block w-full rounded border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[10px]"
                   />
                 </td>
               </tr>
@@ -329,6 +370,25 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
                     primaryColor="#7fb7d4"
                     isSearchable
                   />
+                </td>
+              </tr>
+
+              <tr>
+                <td className="block text-sm font-medium text-gray-700">Commessa</td>
+                <td>
+                <Select
+                        options={jobs.map((job) => ({ value: job.id_job, label: job.name }))}
+                        id="job"
+                        name="job"
+                        value={{ value: job, label: findJob(job) }}
+                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4] sm:text-sm sm:leading-6"
+                        onChange={(selectedOption) => {
+                          setJob(selectedOption.value);
+                          setPurchase({ ...purchase, job: selectedOption.value });
+                        }}
+                        isSearchable
+                        placeholder="Seleziona una commessa"
+                      />
                 </td>
               </tr>
             </tbody>

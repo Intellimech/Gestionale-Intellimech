@@ -50,6 +50,10 @@ Purchase.init(
       type: DataTypes.STRING(50),
       allowNull: true
     },
+    job: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
     //Add owner field - Who asked for the purchase
     createdBy: {
       type: DataTypes.INTEGER,

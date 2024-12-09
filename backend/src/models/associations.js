@@ -55,6 +55,9 @@ Currency.hasMany(Purchase, { foreignKey: 'currency' });
 Purchase.belongsTo(PaymentMethod, { foreignKey: 'payment_method' });
 PaymentMethod.hasMany(Purchase, { foreignKey: 'payment_method' });
 
+Purchase.belongsTo(Job, { foreignKey: 'job' });
+Job.hasMany(Purchase, { foreignKey: 'job' });
+
 
 Contract.belongsTo(Currency, { foreignKey: 'currency' });
 Currency.hasMany(Contract, { foreignKey: 'currency' });

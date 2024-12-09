@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo, useEffect, useState } from 'react';
 import Select from 'react-tailwindcss-select';
 import { TrashIcon } from '@heroicons/react/20/solid';
 
@@ -40,7 +40,9 @@ export default function PurchaseRowInput({
 
   const Vat = ['22', '10', '4', '0'];
 
-  // Precompilazione di Aliquota e Anni se Ammortamento è abilitato
+  const [selectedDetail, setSelectedDetail] = useState(null);
+  const details = ['Primo e Ultimo anno metà importo ', 'Importo uguale ogni anno.'];
+  
   useEffect(() => {
     if (product.depreciation) {
       const category = categories.find((c) => c.id_category === product.category);
@@ -49,6 +51,8 @@ export default function PurchaseRowInput({
 
       const depreciation_aliquota = subsubcategory?.aliquota || subcategory?.aliquota || category?.aliquota || null;
       const depreciation_years = subsubcategory?.years || subcategory?.years || category?.years || null;
+
+      
 
       if (depreciation_aliquota && depreciation_years) {
         onChange({ ...product, depreciation_aliquota, depreciation_years });
@@ -285,6 +289,23 @@ export default function PurchaseRowInput({
                   />
                 </td>
               </tr>
+              <tr>
+                <td className="block text-[11px] font-medium text-gray-700">Dettagli Ammortamento</td>
+                <td className="w-3/4 p-1">
+                <Select
+                    value={product.depreciation_details ? { 
+                      value: product.depreciation_details, 
+                      label: product.depreciation_details
+                    } : null}
+                    onChange={(e) => onChange({ ...product, depreciation_details: e.value })}
+                    options={details.map((b) => ({ value: b , label: b }))}
+                    className="w-full text-[8px] rounded-md border-gray-300"
+                    placeholder="Dettagli"
+                     // Disabilita se depreciation_years è già definito
+                  />
+                </td>
+              </tr>
+             
             </>
           )}
 

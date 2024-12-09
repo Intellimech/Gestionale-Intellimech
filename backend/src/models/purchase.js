@@ -41,6 +41,10 @@ Purchase.init(
       type: DataTypes.STRING(50),
       allowNull: true,
       defaultValue: "In Approvazione"
+    }, 
+    banktransfer: {
+      type: DataTypes.STRING(255),
+      allowNull: true,
     },
     //Add owner field - Who asked for the purchase
     createdBy: {

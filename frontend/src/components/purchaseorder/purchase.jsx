@@ -443,7 +443,7 @@ export default function Example({ permissions }) {
                       />
                     </th>
                     <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('Company')}>
-                    <br /> Fatturato
+                    <br /> Fatturazione
                     <br />
                       <input
                         value={searchQueries.Invoices}

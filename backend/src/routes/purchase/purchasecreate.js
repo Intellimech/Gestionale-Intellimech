@@ -8,7 +8,7 @@ const Purchase = sequelize.models.Purchase;
 const PurchaseRow = sequelize.models.PurchaseRow;
 router.post("/create", async (req, res) => {
   try {
-    const { id_company, products, date, payment, currency } = req.body;
+    const { id_company, products, date, payment, currency, banktransfer } = req.body;
     const user = req.user; // Assuming req.user is populated by the authentication middleware
 
     if (!id_company || !products || !date) {
@@ -40,6 +40,7 @@ router.post("/create", async (req, res) => {
       id_company: id_company,
       name: namePurchase,
       payment_method: payment,
+      banktransfer: banktransfer,
       date: date,
       currency: currency,
       total: purchaseTotal,
@@ -92,12 +93,11 @@ router.post("/create", async (req, res) => {
         taxed_totalprice: product.total,
         depreciation: product.depreciation || false,
         depreciation_years: product.depreciation ? product.depreciation_years : null,
-        
+        depreciation_details: product.depreciation ? product.depreciation_details : null,
         depreciation_aliquota: product.depreciation ? product.depreciation_aliquota : null,
         asset: product.asset || false,
       });
     }
-
     // Recupera il purchase con il conteggio delle righe
     const createdPurchase = await Purchase.findByPk(purchaseId, {
       include: [{ model: PurchaseRow, as: "PurchaseRows" }],

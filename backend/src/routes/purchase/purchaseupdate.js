@@ -102,6 +102,7 @@ router.put("/update", async (req, res) => {
         depreciation: product.depreciation || false,
         depreciation_years: product.depreciation ? parseInt(product.depreciation_years, 10) : null,
         depreciation_aliquota: product.depreciation ? product.depreciation_aliquota : null,
+        depreciation_details: product.depreciation ? product.depreciation_details : null,
         asset: product.asset || false
         });
       }

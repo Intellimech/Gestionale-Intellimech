@@ -30,6 +30,10 @@ PurchaseRow.init(
       type: DataTypes.DOUBLE,
       allowNull: true
     },
+    depreciation_details: {
+      type: DataTypes.STRING(250),
+      allowNull: true
+    },
     asset: {
       type: DataTypes.BOOLEAN,
       allowNull: true

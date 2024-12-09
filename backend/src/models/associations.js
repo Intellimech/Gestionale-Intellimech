@@ -50,6 +50,9 @@ Permissions.belongsToMany(Role, { through: RolePermissions, foreignKey: 'id_perm
 Purchase.belongsTo(Currency, { foreignKey: 'currency' });
 Currency.hasMany(Purchase, { foreignKey: 'currency' });
 
+Purchase.belongsTo(PaymentMethod, { foreignKey: 'payment_method' });
+PaymentMethod.hasMany(Purchase, { foreignKey: 'payment_method' });
+
 
 Contract.belongsTo(Currency, { foreignKey: 'currency' });
 Currency.hasMany(Contract, { foreignKey: 'currency' });

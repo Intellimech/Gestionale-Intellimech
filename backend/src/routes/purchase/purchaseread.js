@@ -31,6 +31,7 @@ router.get('/read', async (req, res) => {
             "depreciation",
             "depreciation_aliquota",
             "depreciation_years",
+            "depreciation_details",
             "asset",
             "category",
             "subcategory",
@@ -59,8 +60,12 @@ router.get('/read', async (req, res) => {
           ],
         },
         {
+          model: sequelize.models.PaymentMethod,
+          attributes: ["name"],
+        },
+        {
               model: sequelize.models.Currency,
-              attributes: ["name"],
+              attributes: ["name", "symbol"],
             },
         {
           model: Company,
@@ -135,8 +140,16 @@ router.get('/read/:id', async (req, res) => {
           ],
         },
         {
+          model: sequelize.models.PaymentMethod,
+          attributes: ["name"],
+        },
+        {
           model: Company,
           attributes: ["id_company", "name"],
+        },
+        {
+          model: sequelize.models.Currency,
+          attributes: ["name", "symbol"],
         },
         {
           model: sequelize.models.User,

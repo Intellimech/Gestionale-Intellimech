@@ -19,12 +19,34 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
   const [selectedCompany, setSelectedCompany] = useState(initialPurchase ? { value: initialPurchase.id_company, label: initialPurchase?.Company?.name } : null);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(initialPurchase ? initialPurchase.payment_method : "Cash");
   const [selectedDate, setSelectedDate] = useState(initialPurchase.date || new Date().toISOString().split('T')[0]);
-  const [products, setProducts] = useState(initialPurchase ? initialPurchase.PurchaseRows : [{ category: '', subcategory: '', subsubcategory: '', unit_price: '', vat: '',quantity: 1, depreciation: '', depreciation_aliquota: '', depreciation_years: '', description: '', subcategories: [] }]);
+  const [products, setProducts] = useState(initialPurchase ? initialPurchase.PurchaseRows : [{ category: '', subcategory: '', subsubcategory: '', unit_price: '', vat: '',quantity: 1, depreciation: '', depreciation_aliquota: '', depreciation_years: '',  depreciation_details: '', description: '', subcategories: [] }]);
 
+  const [currencies, setCurrencies] = useState([]);
+  const [selectedBank, setSelectedBank] = useState(initialPurchase ? initialPurchase.banktransfer : "");
   const [categoryMap, setCategoryMap] = useState({});
   const [currency, setCurrency] = useState(initialPurchase ? initialPurchase.currency : 'EUR');
-  const currencies = ['EUR', 'USD', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF', 'CNY', 'SEK', 'NZD'];
-  const paymentMethods = ['Bank Transfer', 'Cash', 'Credit Card Floreani', 'Credit Card Fasanotti', 'Credit Card Ierace', 'Paypal'];
+
+  const banks = ['Vista Fattura', '30 gg D.F.F.M.', '60 gg D.F.F.M.', '50% Anticipato, 50% alla Consegna', '100% Anticipato', 'Frazionato'];
+  const [paymentMethods, setPaymentMethods] = useState([]);
+
+
+  
+  function findcurrency(id) {
+    const currencyfind = currencies.find(curr => curr.id_currency == id);
+  
+    return currencyfind ? currencyfind.name : "Sconosciuto";
+  }
+  function findmethod(id) {
+    const find = paymentMethods.find(curr => curr.id_paymentmethod == id);
+  
+    return find ? find.name : "Sconosciuto";
+  }
+  function findrecurrence(id) {
+    const find = recurrences.find(curr => curr.id_recurrence == id);
+  console.log("sono il find", id );
+  console.log("ehi ciao", initialContract)
+    return find ? find.name : "Sconosciuto";
+  }
 
   useEffect(() => {
     console.log("miao sono qua", initialPurchase)
@@ -71,7 +93,28 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
 
     fetchData();
   }, []);
-
+  useEffect(() => {
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/currency/read`)
+      .then((response) => {
+        setCurrencies(response.data.currencies);
+        console.log(response.data)
+        
+      })
+      .catch((error) => {
+        console.error('Error fetching currencies:', error);
+      });
+  }, []);
+  useEffect(() => {
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/paymentmethod/read`)
+      .then((response) => {
+        setPaymentMethods(response.data.paymentmethods);
+      })
+      .catch((error) => {
+        console.error('Error fetching paymentmethods:', error);
+      });
+  }, []);
   const handleProductChange = (index, updatedProduct) => {
     const updatedProducts = [...products];
     updatedProducts[index] = updatedProduct;
@@ -135,6 +178,7 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
       id_purchase: purchase.id_purchase,
       id_company: selectedCompany?.value,
       payment: selectedPaymentMethod,
+      banktransfer: selectedBank,
       date: selectedDate,
       currency: currency,
       products: products.map((product) => ({
@@ -153,6 +197,7 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
         depreciation: product.depreciation || false,
         depreciation_years: product.depreciation ? parseInt(product.depreciation_years, 10) : null,
         depreciation_aliquota: product.depreciation ? product.depreciation_aliquota : null,
+        depreciation_details: product.depreciation ? product.depreciation_details : null,
         asset: product.asset || false
       }))
     };
@@ -236,7 +281,7 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
                     id="paymentmethod"
                     name="paymentmethod"
                     className="block w-full rounded border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[10px]"
-                    value={{ value: selectedPaymentMethod, label: selectedPaymentMethod }}
+                       value={{ value: selectedPaymentMethod, label: findmethod(selectedPaymentMethod) }}
                     onChange={(selectedOption) => {
                       setSelectedPaymentMethod(selectedOption.value);
                       setPurchase({ ...purchase, selectedPaymentMethod: selectedOption.value });
@@ -247,7 +292,27 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
                   />
                 </td>
               </tr>
-              {/* Valuta */}
+
+              {selectedPaymentMethod && selectedPaymentMethod == "1" ? (
+              <tr>
+                <td className="block text-sm font-medium text-gray-700">Dettagli di Pagamento</td>
+                <td>
+                  <Select
+                     value={{ value: selectedBank, label: selectedBank }}
+                    onChange={(selectedOption) => {
+                      setSelectedBank(selectedOption);
+                      setPurchase({ ...purchase, banktransfer: selectedOption.value });
+                    }}
+                    options={banks.map((b) => ({ value: b , label: b }))}
+                    primaryColor="#7fb7d4"
+                    isSearchable
+                    placeholder="Seleziona Metodo di Pagamento"
+                    className="block w-full rounded border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[10px]"
+                  />
+                </td>
+              </tr>
+            ) : null}
+
               <tr>
                 <td className="block text-sm font-medium text-gray-700">Valuta</td>
                 <td>
@@ -255,7 +320,7 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
                     id="currency"
                     name="currency"
                     className="block w-full rounded border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[10px]"
-                    value={{ value: currency, label: currency }}
+                    value={{ value: currency, label: findcurrency(currency) }}
                     onChange={(selectedOption) => {
                       setCurrency(selectedOption.value);
                       setPurchase({ ...purchase, currency: selectedOption.value });

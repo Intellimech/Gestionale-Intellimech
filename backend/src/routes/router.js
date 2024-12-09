@@ -36,7 +36,7 @@ import technicalarea from './technicalarea/technicalarearouter.js';
 import salesorder from './salesorder/salesorderrouter.js';
 import job from './job/jobrouter.js';
 import workingsite from './workingsite/workingsiterouter.js'
-// import reporting from './reporting/reportingrouter.js';
+import reporting from './reporting/reportingrouter.js';
 import task from './tasks/taskrouter.js';
 // import product from './product/productrouter.js';
 import notification from './notification/notificationrouter.js';
@@ -86,7 +86,7 @@ router.use('/', projecttype);
 router.use('/', paymentmethod);
 // router.use('/', reporting);
 router.use('/', currency);
-// router.use('/', reporting);
+router.use('/', reporting);
 router.use('/', task);
 // router.use('/', product);
 router.use('/', notification);

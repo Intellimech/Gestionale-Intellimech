@@ -15,6 +15,18 @@ Reporting.init(
         type: DataTypes.INTEGER,
         allowNull: true
     },
+    event: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+    },
+    text: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
+    reportingIndirect: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+    },
     task: {
         type: DataTypes.INTEGER,
         allowNull: true

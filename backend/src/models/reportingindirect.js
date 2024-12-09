@@ -23,6 +23,10 @@ ReportingIndirect.init(
         type: DataTypes.BOOLEAN,
         defaultValue: false
         },
+    TextInputName: {
+        type: DataTypes.STRING(255),
+        allowNull: true
+        },
     needJobInput: {
         type: DataTypes.BOOLEAN,
         defaultValue: false

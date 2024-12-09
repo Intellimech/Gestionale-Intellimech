@@ -271,6 +271,43 @@ User.belongsToMany(MailingList, { through: MailingListUser, foreignKey: 'user', 
 ReportingIndirect.belongsTo(ReportingIndirect, { foreignKey: 'parentIndirect' });
 ReportingIndirect.hasMany(ReportingIndirect, { foreignKey: 'parentIndirect' });
 
+Reporting.belongsTo(ReportingIndirect, { 
+  foreignKey: 'reportingIndirect',
+  as: 'indirectReporting' 
+});
+ReportingIndirect.hasMany(Reporting, { 
+  foreignKey: 'reportingIndirect',
+  as: 'reportings' 
+});
+
+Reporting.belongsTo(Job, { 
+  foreignKey: 'job',
+  as: 'associatedJob' 
+});
+Job.hasMany(Reporting, { 
+  foreignKey: 'job',
+  as: 'jobReportings' 
+});
+
+Reporting.belongsTo(Tasks, { 
+  foreignKey: 'task',
+  as: 'associatedTask' 
+});
+Tasks.hasMany(Reporting, { 
+  foreignKey: 'task',
+  as: 'taskReportings' 
+});
+
+Reporting.belongsTo(Event, {
+  foreignKey: 'event',
+  as: 'associatedEvent'
+});
+
+Event.hasMany(Reporting, {
+  foreignKey: 'event',
+  as: 'eventReportings'
+});
+
 export default {
     User,
     Role,

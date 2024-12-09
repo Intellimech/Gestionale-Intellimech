@@ -139,6 +139,13 @@ export default function Calendar() {
     fetchData();
     fetchLocations();
   }, []);
+
+  useEffect(() => {
+   
+    fetchCalendar();
+    fetchLocations();
+  }, []);
+
   const fetchLocations = async () => {
     try { const response = await axios.get(`${process.env.REACT_APP_API_URL}/locations/read`, );
       if (Array.isArray(response.data.locations)) {

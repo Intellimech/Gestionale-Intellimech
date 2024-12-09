@@ -350,11 +350,11 @@ export default function Example({ purchase: initialPurchase }) {
         </tr>
         <tr>
           <td className="px-2 py-1 font-medium text-gray-600">Totale IVA Esclusa</td>
-          <td className="px-2 py-1">{formatCurrency(purchase.total)}</td>
+          <td className="px-2 py-1">{Number(purchase.total).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}  {purchase.Currency.symbol}</td>
         </tr>
         <tr>
           <td className="px-2 py-1 font-medium text-gray-600">Totale con IVA</td>
-          <td className="px-2 py-1">{formatCurrency(purchase.taxed_total)}</td>
+          <td className="px-2 py-1">{Number(purchase.taxed_total).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}  {purchase.Currency.symbol}</td>
         </tr>
         <tr>
           <td className="px-2 py-1 font-medium text-gray-600">Modalità di Pagamento</td>
@@ -411,11 +411,11 @@ export default function Example({ purchase: initialPurchase }) {
             </tr>
             <tr>
               <td className="px-2 py-1 font-medium text-gray-600">Prezzo Unitario</td>
-              <td className="px-2 py-1">{formatCurrency(row.unit_price)}</td>
+              <td className="px-2 py-1">{Number(row.unit_price).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}  {purchase.Currency.symbol} </td>
             </tr>
             <tr>
               <td className="px-2 py-1 font-medium text-gray-600">Prezzo Unitario con IVA</td>
-              <td className="px-2 py-1">{formatCurrency(row.taxed_unit_price)}</td>
+              <td className="px-2 py-1">{Number(row.taxed_unit_price).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}  {purchase.Currency.symbol}</td>
             </tr>
             <tr>
               <td className="px-2 py-1 font-medium text-gray-600">IVA</td>
@@ -423,11 +423,11 @@ export default function Example({ purchase: initialPurchase }) {
             </tr>
             <tr>
               <td className="px-2 py-1 font-medium text-gray-600">Totale</td>
-              <td className="px-2 py-1">{formatCurrency(row.totalprice)}</td>
+              <td className="px-2 py-1">{Number(row.totalprice).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}  {purchase.Currency.symbol}</td>
             </tr>
             <tr>
               <td className="px-2 py-1 font-medium text-gray-600">Totale con IVA</td>
-              <td className="px-2 py-1">{formatCurrency(row.taxed_totalprice)}</td>
+              <td className="px-2 py-1">{Number(row.taxed_totalprice).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}  {purchase.Currency.symbol}</td>
             </tr>
             <tr>
               <td className="px-2 py-1 font-medium text-gray-600">Ammortamento</td>

@@ -22,6 +22,10 @@ Contract.init(
       type: DataTypes.STRING(50),
       allowNull: true
     },
+    referent: {
+      type: DataTypes.INTEGER,
+      allowNull: true
+    },
     IVA: {
       type: DataTypes.STRING(50),
       allowNull: true
@@ -42,6 +46,18 @@ Contract.init(
       type: DataTypes.INTEGER,
       allowNull: true,
     },
+    job: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    referent: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
+    deposit: {
+      type: DataTypes.DOUBLE,
+      allowNull: true,
+    },
     recurrence_number: {
       type: DataTypes.INTEGER,
       allowNull: true,
@@ -52,6 +68,10 @@ Contract.init(
     },
     contract_end_date: {
       type: DataTypes.DATE,
+      allowNull: true,
+    },
+    banktransfer: {
+      type: DataTypes.STRING(250),
       allowNull: true,
     },
     status: {

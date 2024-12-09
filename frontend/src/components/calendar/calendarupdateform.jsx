@@ -307,17 +307,34 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
       users.map((user) => {
         // Find morning and afternoon entries for this user from allCalendarData
         const userEntries = allCalendarData.filter(entry => entry.owner === user.id_user);
-
+        console.log(userEntries);
         let morningLocation = 'Non disponibile';
         let afternoonLocation = 'Non disponibile';
 
         // Loop through the user's entries to assign morning and afternoon locations
         userEntries.forEach(entry => {
-          if (entry.period === 'morning') {
-            morningLocation = ['Ufficio', 'Smartworking'].includes(entry.location) ? entry.location : 'Non disponibile';
-          } else if (entry.period === 'afternoon') {
-            afternoonLocation = ['Ufficio', 'Smartworking'].includes(entry.location) ? entry.location : 'Non disponibile';
+         
+           if (entry.period == 'afternoon') {
+            if(entry.location == 4){
+              afternoonLocation = " Ufficio";
+            }
+           else  if(entry.location == 6){
+              afternoonLocation = "Smartworking"
+            }
+            
+            // afternoonLocation = [4, 6].includes(entry.location) ? entry?.Location.name : 'Non disponibile';
           }
+          if (entry.period == 'morning') {
+           
+              if(entry.location == 4){
+                morningLocation = " Ufficio";
+              }
+            else  if(entry.location == 6){
+                morningLocation = "Smartworking"
+              }
+           
+          } 
+         
         });
 
         return (

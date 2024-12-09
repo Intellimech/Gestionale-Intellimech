@@ -52,12 +52,28 @@ Permissions.belongsToMany(Role, { through: RolePermissions, foreignKey: 'id_perm
 Purchase.belongsTo(Currency, { foreignKey: 'currency' });
 Currency.hasMany(Purchase, { foreignKey: 'currency' });
 
+
+Calendar.belongsTo(Location, { foreignKey: 'location' });
+Location.hasMany(Calendar, { foreignKey: 'location' });
+
+
+Contract.belongsTo(Recurrence, { foreignKey: 'recurrence' });
+Recurrence.hasMany(Contract, { foreignKey: 'recurrence' });
+
 Purchase.belongsTo(PaymentMethod, { foreignKey: 'payment_method' });
 PaymentMethod.hasMany(Purchase, { foreignKey: 'payment_method' });
 
 Purchase.belongsTo(Job, { foreignKey: 'job' });
 Job.hasMany(Purchase, { foreignKey: 'job' });
 
+Contract.belongsTo(Job, { foreignKey: 'job' });
+Job.hasMany(Contract, { foreignKey: 'job' });
+
+PurchaseRow.belongsTo(Purchase, { foreignKey: 'id_purchase' });
+Purchase.hasMany(PurchaseRow, { foreignKey: 'id_purchase' });
+
+ContractRow.belongsTo(Contract, { foreignKey: 'id_contract' });
+Contract.hasMany(ContractRow, { foreignKey: 'id_contract' });
 
 Contract.belongsTo(Currency, { foreignKey: 'currency' });
 Currency.hasMany(Contract, { foreignKey: 'currency' });
@@ -88,6 +104,8 @@ Role.hasMany(User, { foreignKey: 'deletedBy' });
 ContractType.hasMany(User, { foreignKey: 'createdBy' });
 ContractType.hasMany(User, { foreignKey: 'updatedBy' });
 ContractType.hasMany(User, { foreignKey: 'deletedBy' });
+
+Contract.belongsTo(User, { foreignKey: 'referent', as: 'referentUser' });
 
 //Invoice is associated with the Company in the Invoicecompany by id_company
 Invoice.belongsTo(Company, { foreignKey: 'invoicecompany' });

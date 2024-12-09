@@ -47,7 +47,8 @@ router.get("/read", async (req, res) => {
                 }
             ],
             where: {
-                '$Location.needApproval$': true
+                
+                status :"In Attesa di Approvazione"
             },
         });                
 

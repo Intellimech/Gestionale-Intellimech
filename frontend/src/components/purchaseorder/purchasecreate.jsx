@@ -33,6 +33,13 @@ export default function PurchaseCreateForm() {
     depreciation_details: '',
     asset: false
   }]);
+
+
+
+  const calculateTotalTaxed = () => {
+    
+    return products.reduce((sum, product) => sum + (parseFloat(product.unit_price*product.quantity) || 0), 0);
+  };
   const [currency, setCurrency] = useState('EUR');
 
   const banks = ['Vista Fattura', '30 gg D.F.F.M.', '60 gg D.F.F.M.', '50% Anticipato, 50% alla Consegna', '100% Anticipato', 'Frazionato'];
@@ -234,7 +241,6 @@ export default function PurchaseCreateForm() {
                   />
                 </td>
               </tr>
-              {/* Fornitore */}
               <tr>
                 <td className="block text-sm font-medium text-gray-700">Referente</td>
                 <td>
@@ -386,6 +392,12 @@ export default function PurchaseCreateForm() {
             </div>
           </div>
         )}
+         <div className="border-t border-gray-200 pt-4 text-right text-sm font-medium text-gray-700">
+        Importo Complessivo IVA inclusa: 
+        <span className="ml-2 text-lg font-bold text-gray-900">
+          {calculateTotalTaxed().toFixed(2)} {currency?.label || 'EUR'}
+        </span>
+      </div>
   
         {/* Pulsante di Invio */}
         <div className="mt-4 flex justify-end">

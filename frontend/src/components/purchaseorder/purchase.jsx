@@ -535,12 +535,11 @@ export default function Example({ permissions }) {
                     <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
                       {item.payment_method}
                     </td>
-                    <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
-                      {item.taxed_total + ' ' + item.currency}
-                    </td>
-                    <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
-                      {item.total + ' ' + item.Currency?.name}
-                    </td>
+
+                    <td  className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">{Number(item.taxed_total).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })+ item.Currency?.symbol} </td>
+
+                    <td  className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">{Number(item.total).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })+ item.Currency?.symbol} </td>
+
                   
                     <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
                       {item.purchaserows}

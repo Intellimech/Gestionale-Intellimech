@@ -47,21 +47,6 @@ router.get("/read/", (req, res) => {
                 ],
             },
             {
-                model: sequelize.models.Reporting,
-                include: [
-                    {
-                        model: sequelize.models.User,
-                        as: "createdByUser",
-                        attributes: ["id_user", "name", "surname"],
-                    },
-                    {
-                        model: sequelize.models.Tasks, 
-                        as : "Task",// Ensure this references your Tasks model
-                        attributes: ["id_task", "name", "percentage"], // Specify the fields to include
-                    },
-                ],
-            },
-            {
                 model: sequelize.models.User,
                 as: "createdByUser",
                 attributes: ["id_user", "name", "surname"],

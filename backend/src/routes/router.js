@@ -53,6 +53,8 @@ import purchaserow from './purchaserow/purchaserowrouter.js';
 import subsubcategory from './subsubcategory/subsubcategoryrouter.js'
 import recurrence from './recurrence/recurrencerouter.js'
 import mailinglist from './mailinglist/mailinglistrouter.js';
+import reportingindirect from './reportingindirect/reportingindirectrouter.js';
+import eventrouter from './event/eventrouter.js';
 
 router.use((req, res, next) => {
     logger('debug', `Request: ${req.method} ${req.originalUrl} | From: ${(req.ip == '::1') ? 'localhost' : req.ip}`, req, 'mainrouter');
@@ -95,5 +97,7 @@ router.use('/', purchaserow);
 router.use('/', subsubcategory);
 router.use('/', recurrence);
 router.use('/', mailinglist);
+router.use('/', eventrouter);
+router.use('/', reportingindirect);
 
 export default router;

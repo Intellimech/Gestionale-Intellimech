@@ -39,6 +39,8 @@ import Recurrence from './recurrence.js';
 import MailingList from './mailinglist.js';
 import MailingListUser from './mailinglistuser.js';
 import Mail from 'nodemailer/lib/mailer/index.js';
+import ReportingIndirect from './reportingindirect.js';
+import Event from './event.js';
 
 // Define associations
 User.belongsTo(Role, { foreignKey: 'role' });
@@ -266,6 +268,9 @@ Subsubcategory.hasMany(PurchaseRow, { foreignKey: 'subsubcategory' });
 MailingList.belongsToMany(User, { through: MailingListUser, foreignKey: 'mailinglist', as: 'mailinglistusers'});
 User.belongsToMany(MailingList, { through: MailingListUser, foreignKey: 'user',  });
 
+ReportingIndirect.belongsTo(ReportingIndirect, { foreignKey: 'parentIndirect' });
+ReportingIndirect.hasMany(ReportingIndirect, { foreignKey: 'parentIndirect' });
+
 export default {
     User,
     Role,
@@ -303,5 +308,8 @@ export default {
     Subsubcategory,
     Recurrence,
     MailingList,
-    ContractRow
+    ContractRow,
+    CommercialOffer,
+    ReportingIndirect,
+    Event
   };

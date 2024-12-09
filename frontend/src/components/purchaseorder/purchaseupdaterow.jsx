@@ -15,7 +15,8 @@ export default function PurchaseUpdateRow({
 }) {
   useEffect(() => {}, [product.taxed_unit_price, product.vat, product.quantity]);
   useEffect(() => {}, [subcategories]);
-
+  
+  const details = ['Primo e Ultimo anno metà importo ', 'Importo uguale ogni anno.'];
   const Vat = ['22', '10', '4', '0'];
   const handleDeleteClick = () => {
     const confirmed = window.confirm('Sei sicuro di voler eliminare questo prodotto?');
@@ -51,6 +52,28 @@ useEffect(() => {
     const quantity = parseFloat(product.quantity || 0);
     return (unitPrice * quantity).toFixed(2);
   }, [product.unit_price, product.quantity]);
+
+  useEffect(() => {
+    if (product.unit_price || product.vat) {
+      const unitPrice = parseFloat(product.unit_price);
+      const vatRate = parseFloat(product.vat);
+      const quantity = parseFloat(product.quantity) || 0;
+  
+      // Calculate taxed unit price (price without VAT)
+      const taxedUnitPrice = unitPrice * (1 + vatRate / 100);
+  
+      // Calculate totals
+      const totalTaxed = taxedUnitPrice * quantity;
+      const total = unitPrice * quantity;
+  
+      onChange({
+        ...product,
+        taxed_unit_price: taxedUnitPrice.toFixed(2),
+         taxed_totalprice: totalTaxed.toFixed(2),
+       totalprice: total.toFixed(2)
+      });
+    }
+  }, [product.unit_price, product.vat, product.quantity]);
 
   return (
     <div className="border border-gray-200 rounded p-2 text-xs">
@@ -140,8 +163,8 @@ useEffect(() => {
             <td>
               <input
                 type="number"
-                value={product.taxed_unit_price || calculatedTotal}
-                onChange={(e) => onChange({ ...product, taxed_unit_price: e.target.value })}
+                value={product.unit_price || calculatedTotal}
+                onChange={(e) => onChange({ ...product, unit_price: e.target.value })}
                 className="w-full text-[12px] rounded border-gray-300"
               />
             </td>
@@ -150,7 +173,7 @@ useEffect(() => {
             <td>
               <input
                 type="number"
-                value={product.totalprice || calculatedTotal}
+                value={product.totalprice}
                 onChange={(e) => onChange({ ...product, totalprice: e.target.value })}
                 className="w-full text-[12px] rounded border-gray-300"
               />
@@ -177,8 +200,8 @@ useEffect(() => {
             <td>
               <input
                 type="number"
-                value={product.unit_price}
-                onChange={(e) => onChange({ ...product, unit_price: e.target.value })}
+                value={product.taxed_unit_price}
+                onChange={(e) => onChange({ ...product, taxed_unit_price: e.target.value })}
                 className="w-full text-[12px] rounded border-gray-300"
               />
             </td>
@@ -188,7 +211,7 @@ useEffect(() => {
             <td>
               <input
                 type="number"
-                value={product.taxed_totalprice || calculatedTotalTassato}
+                value={product.taxed_totalprice}
                 onChange={(e) => onChange({ ...product, taxed_totalprice: e.target.value })}
                 className="w-full text-[12px] rounded border-gray-300"
               />
@@ -249,6 +272,22 @@ useEffect(() => {
                     className="w-full text-xs rounded-md border-gray-300"
                     placeholder="Anni"
                    
+                  />
+                </td>
+              </tr>
+              <tr>
+                <td className="block text-[11px] font-medium text-gray-700">Dettagli Ammortamento</td>
+                <td className="w-3/4 p-1">
+                <Select
+                    value={product.depreciation_details ? { 
+                      value: product.depreciation_details, 
+                      label: product.depreciation_details
+                    } : null}
+                    onChange={(e) => onChange({ ...product, depreciation_details: e.value })}
+                    options={details.map((b) => ({ value: b , label: b }))}
+                    className="w-full text-[8px] rounded-md border-gray-300"
+                    placeholder="Dettagli"
+                     // Disabilita se depreciation_years è già definito
                   />
                 </td>
               </tr>

@@ -12,6 +12,7 @@ export default function PurchaseCreateForm() {
   const [companies, setCompanies] = useState([]);
   const [selectedCompany, setSelectedCompany] = useState(null);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
+  const [selectedBank, setSelectedBank] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [products, setProducts] = useState([{
     category: '',
@@ -25,14 +26,16 @@ export default function PurchaseCreateForm() {
     depreciation: false,
     depreciation_years: '',
     depreciation_aliquota: '',
+    depreciation_details: '',
     asset: false
   }]);
   const [currency, setCurrency] = useState('EUR');
-  const [users, setUsers] = useState([]);
-  const [selectedUser, setSelectedUser] = useState(null);
+
+  const banks = ['Vista Fattura', '30 gg D.F.F.M.', '60 gg D.F.F.M.', '50% Anticipato, 50% alla Consegna', '100% Anticipato', 'Frazionato'];
   const [currencies, setCurrencies] = useState([]);
   const [paymentMethods, setPaymentMethods] = useState([]);
   const handleCompanyChange = setSelectedCompany;
+  const handleBankChange = setSelectedBank;
   const handlePaymentMethodChange = setSelectedPaymentMethod;
   const handleCurrencyChange = setCurrency;
   const handleDateChange = (event) => setSelectedDate(event.target.value);7
@@ -148,6 +151,7 @@ export default function PurchaseCreateForm() {
     const jsonObject = {
       id_company: selectedCompany.value,
       payment: selectedPaymentMethod.value,
+      banktransfer: selectedBank,
       date: selectedDate,
       referent: selectedUser.value,
       currency: currency.value,
@@ -164,6 +168,7 @@ export default function PurchaseCreateForm() {
         depreciation: product.depreciation || false,
         depreciation_years: product.depreciation ? parseInt(product.depreciation_years, 10) : null,
         depreciation_aliquota: product.depreciation ? product.depreciation_aliquota : null,
+        depreciation_details: product.depreciation ? product.depreciation_details : null,
         asset: product.asset || false
       }))
     };
@@ -184,6 +189,7 @@ export default function PurchaseCreateForm() {
         setCreateSuccess(false);
       });
   };
+  
   return (
     <div className="container mx-auto p-4 bg-white shadow-md rounded-lg">
       <Toaster />
@@ -256,6 +262,24 @@ export default function PurchaseCreateForm() {
                   />
                 </td>
               </tr>
+              {selectedPaymentMethod && selectedPaymentMethod.value == "1" ? (
+              <tr>
+                <td className="block text-sm font-medium text-gray-700">Dettagli di Pagamento</td>
+                <td>
+                  <Select
+                    value={selectedBank}
+                    onChange={handleBankChange}
+                    options={banks.map((b) => ({ value: b , label: b }))}
+                    primaryColor="#7fb7d4"
+                    isSearchable
+                    placeholder="Seleziona Metodo di Pagamento"
+                    className="block w-full rounded border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[10px]"
+                  />
+                </td>
+              </tr>
+            ) : null}
+
+
               {/* Valuta */}
               <tr>
                 <td className="block text-sm font-medium text-gray-700">Valuta</td>

@@ -27,6 +27,7 @@ export default function Reporting() {
   const [selectedEvent, setSelectedEvent] = useState(null);
 
   useEffect(() => {
+    fetchReportedHours();
     axios
       .get(`${process.env.REACT_APP_API_URL}/reportingindirect/read`)
       .then((response) => {
@@ -62,7 +63,23 @@ export default function Reporting() {
         console.error('Errore nel caricamento degli eventi:', error);
         toast.error('Errore nel caricamento degli eventi');
       });
-  }, [needEventInput]);
+  }, [needEventInput]);  
+  
+  const fetchReportedHours = () => {
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/reporting/read`, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get('token')}`,
+        },
+      })
+      .then((response) => {
+        setReportedHours(response.data.reportings || []);
+      })
+      .catch((error) => {
+        console.error('Error fetching reported hours:', error);
+        toast.error('Errore nel caricamento delle ore rendicontate');
+      });
+  }
 
   const handleJobChange = (value) => {
     setSelectedJob(value);
@@ -128,8 +145,24 @@ export default function Reporting() {
     data.id_job = selectedJob?.value;
     data.id_reportingindirect = selectedChildReportingIndirect?.value || selectedReportingIndirect?.value;
     data.task_percentage = data.task_percentage || 0;
+    data.id_event = selectedEvent?.value;
+    data.hours = parseFloat(data.hours);
 
     console.log(data);
+
+    axios
+      .post(`${process.env.REACT_APP_API_URL}/reporting/create`, data, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get('token')}`,
+        },
+      })
+      .then((response) => {
+        toast.success('Rendicontazione inviata con successo');
+      })
+      .catch((error) => {
+        console.error('Error creating reporting:', error);
+        toast.error('Errore nell\'invio della rendicontazione');
+      });
   };
 
   return (
@@ -256,7 +289,7 @@ export default function Reporting() {
                     <label htmlFor="text" className="block text-sm font-medium text-gray-900">Descrizione</label>
                     <textarea 
                       name="text" 
-                      id="text" 
+                      id="textinput" 
                       className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring focus:ring-[#7fb7d4] focus:ring-opacity-50" 
                       required 
                     />
@@ -267,7 +300,7 @@ export default function Reporting() {
                   <input 
                     type="number" 
                     name="hours" 
-                    id="hours" 
+                    id="hours"
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring focus:ring-[#7fb7d4] focus:ring-opacity-50" 
                     min={1} 
                     required 

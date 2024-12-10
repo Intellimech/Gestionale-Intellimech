@@ -5,7 +5,7 @@ import { XMarkIcon, CheckIcon, PaperAirplaneIcon, EyeIcon, ArrowPathIcon } from 
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import { UserContext } from '../../module/userContext';
-
+import ContractInfo from '../contracts/contractinfo'
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ');
 }
@@ -356,7 +356,7 @@ export default function Example({ permissions }) {
                   </th>
 
                   <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('Invoices')}>
-                  <br/>Stato di Fatturazione
+                  <br/>Fatturazione
                     {sortColumn === 'Invoices'  && sortDirection !== '' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
                     ) : null}

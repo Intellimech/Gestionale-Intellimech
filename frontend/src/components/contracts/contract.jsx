@@ -464,7 +464,48 @@ export default function Example({ permissions }) {
                       rows={1}
                     />
                   </th>
-              
+                  <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('recurrence')}>
+                   <br/>  Ricorrenza 
+                    {sortColumn === 'recurrence'  && sortDirection !== '' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
+                    <br />
+                    <input
+                      value={searchQueries.recurrence}
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={handleSearchInputChange('recurrence')}
+                      className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+                      placeholder=""
+                      rows={1}
+                    />
+                  </th>
+                  <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('recurrencenumber')}>
+                  Nr <br/>  Ricorrenze 
+                    {sortColumn === 'recurrencenumber'  && sortDirection !== '' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
+                    <br />
+                    <input
+                      value={searchQueries.recurrencenumber}
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={handleSearchInputChange('recurrencenumber')}
+                      className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+                      placeholder=""
+                      rows={1}
+                    />
+                  </th>
+                  <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('Invoices')}>
+                    <br /> Fatturazione
+                    <br />
+                      <input
+                        value={searchQueries.Invoices}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={handleSearchInputChange('Invoices')}
+                        className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+                        placeholder=""
+                        rows={1}
+                      />
+                    </th>
                   <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('status')}>
                   <br/>Stato
                     {sortColumn === 'status'  && sortDirection !== '' ? (
@@ -480,8 +521,10 @@ export default function Example({ permissions }) {
                       rows={1}
                     />
                   </th>
+
+
                   <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('createdByUser')}>
-                <br/> Referente
+                <br/> Creata da 
                     {sortColumn === 'createdByUser'  && sortDirection !== '' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
                     ) : null}
@@ -495,6 +538,30 @@ export default function Example({ permissions }) {
                       rows={1}
                     />
                   </th>
+                  <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('referent')}>
+                   Referente  <br />  Interno
+                      <br />
+                      <input
+                        value={searchQueries.referent}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={handleSearchInputChange('referent')}
+                        className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+                        placeholder=""
+                        rows={1}
+                      />
+                    </th>
+                    <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('job')}>
+                     <br />  Commessa
+                      <br />
+                      <input
+                        value={searchQueries.job}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={handleSearchInputChange('job')}
+                        className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+                        placeholder=""
+                        rows={1}
+                      />
+                    </th>
                   <th scope="col" className="relative px-3 py-3.5">
                     <span className="sr-only">Azioni</span>
                   </th>
@@ -534,12 +601,17 @@ export default function Example({ permissions }) {
                           {item?.PaymentMethod?.name}
                         </td>
                         <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
-                        {item.total + ' ' + item?.Currency?.symbol}
+                          {Number(item.total).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) +  ' ' + item?.Currency?.symbol}
                         </td>
                         <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
-                          {item.taxed_total + ' ' + item?.Currency?.symbol}
+                          {Number(item.taxed_total).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) +  ' ' + item?.Currency?.symbol}
                         </td>
-                        
+                        <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
+                        {item.Recurrence.name}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
+                          {item.recurrence_number}
+                        </td>
                         <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
                           {item.status === 'In Approvazione' ? (
                             
@@ -586,6 +658,12 @@ export default function Example({ permissions }) {
                         <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
                           {item.createdByUser?.name.slice(0, 2).toUpperCase() + item.createdByUser?.surname.slice(0, 2).toUpperCase()}
                         </td>
+                        <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
+                          {item?.referentUser?.name.slice(0, 2).toUpperCase() + item?.referentUser?.surname.slice(0, 2).toUpperCase()}
+                        </td>
+                        <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-500">
+                      {item?.Job?.name}
+                    </td>
                      
                     <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-500">
                       <div className="flex items-center space-x-1">

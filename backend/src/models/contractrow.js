@@ -63,7 +63,6 @@ ContractRow.init(
     sequelize: db,
     modelName: 'ContractRow',  
     tableName: 'contractrow',  
-    timestamps: false // Disabilita i timestamp automatici
   }
 );
 

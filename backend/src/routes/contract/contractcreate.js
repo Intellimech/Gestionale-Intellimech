@@ -9,7 +9,7 @@ const ContractRow = sequelize.models.ContractRow;
 
 router.post("/create", async (req, res) => {
   try {
-    const { id_company, contracts, total, taxed_total, date_start, date_end, payment, currency, recurrence, recurrence_number } = req.body;
+    const { id_company, referent, job, banktransfer, deposit, contracts, total, taxed_total, date_start, date_end, payment, currency, recurrence, recurrence_number } = req.body;
     const user = req.user;  // Assuming req.user is populated by the authentication middleware
 
     if (!id_company || !contracts || !date_start || !date_end) {
@@ -22,7 +22,7 @@ router.post("/create", async (req, res) => {
     const contractCount = await Contract.count({ distinct: "name" });
 
     // Generate a unique contract name
-    let nameContract = `CON${new Date().getFullYear().toString().substr(-2)}_${(contractCount + 1).toString().padStart(5, "0")}`;
+    let nameContract = `CON${new Date().getFullYear().toString().substr(-2)}_${(contractCount + 1).toString().padStart(5, "0")}_R0`;
     // Process contracts and calculate totals
     contracts.forEach((contract) => {
       // Calculate unit price with VAT
@@ -44,6 +44,10 @@ router.post("/create", async (req, res) => {
       payment_method: payment,
       contract_start_date: date_start,
       contract_end_date: date_end,
+      deposit: deposit,
+      job: job,
+      banktransfer: banktransfer,
+      referent: referent,
       currency: currency,
       total: total,
       taxed_total: taxed_total,

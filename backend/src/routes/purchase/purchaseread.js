@@ -72,6 +72,10 @@ router.get('/read', async (req, res) => {
           attributes: ["id_company", "name"],
         },
         {
+          model: sequelize.models.Job,
+          attributes: ["name" ],
+        },
+        {
           model: sequelize.models.User,
           as: 'createdByUser',
           attributes: ['id_user', 'name', 'surname'],
@@ -157,10 +161,19 @@ router.get('/read/:id', async (req, res) => {
           attributes: ["name", "symbol"],
         },
         {
+          model: sequelize.models.Job,
+          attributes: ["name" ],
+        },
+        {
           model: sequelize.models.User,
           as: 'createdByUser',
           attributes: ['id_user', 'name', 'surname'],
         },
+        {
+          model: sequelize.models.User,
+          as: 'referentUser',
+          attributes: ['id_user', 'name', 'surname'],
+        }
       ],
     });
 

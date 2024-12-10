@@ -33,6 +33,15 @@ export default function ContractCreateForm() {
     recurrence_number: '',
     
   }]);
+  const [selectedJob, setSelectedJob] = useState(null);
+  const [deposit, setDeposit] = useState(0);
+
+  const [users, setUsers]= useState([]);
+  const [job, setJob]= useState([]);
+  const [selecteduser, setSelectedUser] = useState(null);
+  const [selectedBank, setSelectedBank] = useState(null);
+  const banks = ['Vista Fattura', '30 gg D.F.F.M.', '60 gg D.F.F.M.', '50% Anticipato, 50% alla Consegna', '100% Anticipato', 'Frazionato'];
+  
   const [recurrence, setRecurrence] = useState('');
   const [currency, setCurrency] = useState('EUR');
   const [currencies, setCurrencies] = useState([]);
@@ -167,7 +176,17 @@ export default function ContractCreateForm() {
   const handlePaymentMethodChange = setSelectedPaymentMethod;
   const handleCurrencyChange = setCurrency;
   const handleStartDateChange = (event) => setSelectedStartDate(event.target.value);
-
+  const handleUserChange = setSelectedUser;
+  const handleJobChange = setSelectedJob;
+  const handleBankChange = setSelectedBank;
+  const handleDepositChange = (e) => {
+    const newValue = parseFloat(e.target.value); // Converte il valore in numero
+    if (!isNaN(newValue)) {
+      setDeposit(newValue); // Aggiorna lo stato solo se è un numero valido
+    } else {
+      setDeposit(""); // Se il valore non è valido, svuota l'input
+    }
+  };
   const addContract = () => setContracts([...contracts, { 
     category: '', 
     subcategory: '',  
@@ -196,8 +215,12 @@ export default function ContractCreateForm() {
       id_company: selectedCompany?.value,
       payment: selectedPaymentMethod.value,
       date_start: selectedStartDate,
+      banktransfer: selectedBank?.value || null,
       date_end: selectedEndDate,
       currency: currency.value,
+      deposit: deposit || null,
+      referent: selecteduser.value,
+      job: selectedJob.value,
       recurrence: recurrence.value,
       recurrence_number: recurrenceNumber,
       total: calculateTotalSum(),
@@ -237,6 +260,34 @@ console.log(jsonObject);
         setCreateSuccess(false);
       });
   };
+
+  useEffect(() => {
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/user/read`)
+      .then((response) => {
+        // Map users to the format expected by react-tailwindcss-select
+        const formattedUsers = response.data.users.map(user => ({
+          value: user.id_user, // Assuming there's an id_user field
+          label: `${user.name} ${user.surname}` // Adjust based on your user object structure
+        }));
+        setUsers(formattedUsers);
+      })
+      .catch((error) => {
+        console.error('Error fetching users:', error);
+      });
+  }, []);
+  useEffect(() => {
+   
+      axios
+        .get(`${process.env.REACT_APP_API_URL}/job/read`)
+        .then((response) => {
+          setJob(response.data.jobs || []);
+        })
+        .catch((error) => {
+          console.error('Errore nel caricamento delle commesse:', error);
+          toast.error('Errore nel caricamento delle commesse');
+        });
+  }, []);
   const handleEndDateChange = (event) => setSelectedEndDate(event.target.value);
 
 
@@ -267,6 +318,22 @@ console.log(jsonObject);
                 />
               </td>
             </tr>
+            <tr>
+                <td className="block text-sm font-medium text-gray-700">Referente</td>
+                <td>
+                  <Select
+                    value={selecteduser}
+                    onChange={(selectedOption) => {
+                      setSelectedUser(selectedOption);
+                    }}
+                    options={users}
+                    primaryColor="#7fb7d4"
+                    isSearchable
+                    placeholder="Seleziona Referente"
+                    className="block w-full rounded border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[10px]"
+                  />
+                </td>
+              </tr>
             {/* Data Inizio */}
             <tr>
               <td className="w-1/3 text-sm font-medium text-gray-700">Data Inizio</td>
@@ -308,10 +375,28 @@ console.log(jsonObject);
                 />
               </td>
             </tr>
+
+            {selectedPaymentMethod && selectedPaymentMethod.value == "1" ? (
+              <tr>
+                <td className="block text-sm font-medium text-gray-700">Dettagli di Pagamento</td>
+                <td>
+                  <Select
+                    value={selectedBank}
+                    onChange={handleBankChange}
+                    options={banks.map((b) => ({ value: b , label: b }))}
+                    primaryColor="#7fb7d4"
+                    isSearchable
+                    placeholder="Seleziona Metodo di Pagamento"
+                    className="block w-full rounded border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[10px]"
+                  />
+                </td>
+              </tr>
+            ) : null}
+
             {/* Valuta */}
             <tr>
               <td className="w-1/3 text-sm font-medium text-gray-700">Valuta</td>
-              <td className="w-2/3">
+              <td>
                 <Select
                   value={currency}
                   onChange={handleCurrencyChange}
@@ -362,6 +447,35 @@ console.log(jsonObject);
               </div>
             </td>
           </tr>
+          <tr>
+                <td className="block text-sm font-medium text-gray-700">Commessa</td>
+                <td>
+                <Select
+                        options={job.map((job) => ({ value: job.id_job, label: job.name }))}
+                        id="job"
+                        name="job"
+                        value={selectedJob}
+                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4] sm:text-sm sm:leading-6"
+                        onChange={handleJobChange}
+                        isSearchable
+                        placeholder="Seleziona una commessa"
+                      />
+                </td>
+              </tr>
+
+          <tr>
+                <td className="block text-sm font-medium text-gray-700">Acconto</td>
+                <td>
+                <input
+                type="number"
+                value={deposit}
+                onChange={handleDepositChange}
+                className="w-full text-xs rounded-md border-gray-300"
+                placeholder="Acconto"
+              />
+                </td>
+              </tr>
+
 
           </tbody>
         </table>
@@ -397,7 +511,7 @@ console.log(jsonObject);
               onClick={addContract}
               className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
             >
-              Aggiungi Prodotto
+              Aggiungi Servizio
             </button>
           </div>
         </div>
@@ -424,7 +538,7 @@ console.log(jsonObject);
         )}
         {/* Totale Somma */}
       <div className="border-t border-gray-200 pt-4 text-right text-sm font-medium text-gray-700">
-        Totale Complessivo IVA inclusa: 
+        Importo Complessivo IVA inclusa: 
         <span className="ml-2 text-lg font-bold text-gray-900">
           {calculateTotalTaxed().toFixed(2)} {currency?.label || 'EUR'}
         </span>

@@ -1,16 +1,38 @@
-import React from 'react';
+import React, { useMemo, useEffect, useCallback } from 'react';
 import Select from 'react-tailwindcss-select';
 import { TrashIcon } from '@heroicons/react/20/solid';
 
-export default function PurchaseUpdateRow({
-  product,
+export default function ContractUpdateRow({
+  contractrow = {}, // Valore predefinito come oggetto vuoto
+  recurrence_number,
   index,
-  categories,
-  subcategories,
+  categories = [],
+  subcategories = [],
+  subsubcategories = [],
   onChange,
   onRemove,
-  handleCategoryChange
+  handleCategoryChange,
+  handleSubcategoryChange,
 }) {
+  // Aggiunge valori predefiniti per evitare undefined
+  const defaultContractRow = {
+    taxed_unit_price: '',
+    vat: '',
+    quantity: '',
+    unit_price: '',
+    total: '',
+    totalprice: '',
+    taxed_totalprice: '',
+    category: '',
+    subcategory: '',
+    subsubcategory: '',
+    ...contractrow, // Sovrascrive con i valori reali se presenti
+  };
+
+  contractrow = defaultContractRow;
+
+  const Vat = ['22', '10', '4', '0'];
+
   const handleDeleteClick = () => {
     const confirmed = window.confirm('Sei sicuro di voler eliminare questo prodotto?');
     if (confirmed) {
@@ -18,110 +40,202 @@ export default function PurchaseUpdateRow({
     }
   };
 
+  const handleChange = useCallback(
+    (updatedContractRow) => {
+      onChange(updatedContractRow);
+    },
+    [onChange]
+  );
+
+  // Calcoli per valori derivati
+  useEffect(() => {
+    if (contractrow.taxed_unit_price && contractrow.vat) {
+      const taxedUnitPrice = parseFloat(contractrow.taxed_unit_price) || 0;
+      const vatRate = parseFloat(contractrow.vat) || 0;
+      const quantity = parseFloat(contractrow.quantity) || 0;
+
+      const unitPriceWithVat = taxedUnitPrice * (1 + vatRate / 100);
+      const totalWithVat = unitPriceWithVat * quantity;
+
+      if (
+        contractrow.unit_price !== unitPriceWithVat.toFixed(2) ||
+        contractrow.total !== totalWithVat.toFixed(2)
+      ) {
+        handleChange({
+          ...contractrow,
+          unit_price: unitPriceWithVat.toFixed(2),
+          total: totalWithVat.toFixed(2),
+        });
+      }
+    }
+  }, [contractrow.taxed_unit_price, contractrow.vat, contractrow.quantity, handleChange]);
+
+  const calculatedTotalTassato = useMemo(() => {
+    const taxedUnitPrice = parseFloat(contractrow.taxed_unit_price || 0);
+    const quantity = parseFloat(contractrow.quantity || 0);
+    return (taxedUnitPrice * quantity).toFixed(2);
+  }, [contractrow.taxed_unit_price, contractrow.quantity]);
+
+  const calculatedTotal = useMemo(() => {
+    const unitPrice = parseFloat(contractrow.unit_price || 0);
+    const quantity = parseFloat(contractrow.quantity || 0);
+    return (unitPrice * quantity).toFixed(2);
+  }, [contractrow.unit_price, contractrow.quantity]);
+
+  const taxedTotalRecurrent = useMemo(() => {
+    const taxedUnitPrice = parseFloat(contractrow.taxed_unit_price || 0);
+    return (taxedUnitPrice * recurrence_number).toFixed(2);
+  }, [contractrow.taxed_unit_price, recurrence_number]);
+
+  const totalRecurrent = useMemo(() => {
+    const unitPrice = parseFloat(contractrow.unit_price || 0);
+    return (unitPrice * recurrence_number).toFixed(2);
+  }, [contractrow.unit_price, recurrence_number]);
+
   return (
-    <tr>
-      <td className="px-4 py-2 whitespace-nowrap">
-        <label htmlFor={`category-${index}`} className="block text-sm font-medium text-gray-700">
-          Categoria
-        </label>
-        <Select
-          id={`category-${index}`}
-          name={`category-${index}`}
-          placeholder="Seleziona una categoria"
-          value={
-            product.category
-              ? { value: product.category, label: categories.find(c => c.id_category === product.category)?.name }
-              : null
-          }
-          onChange={(option) => {
-            handleCategoryChange({ target: { value: option.value } });
-            onChange({ ...product, category: option.value });
-          }}
-          options={categories.map(c => ({ value: c.id_category, label: c.name }))}
-          className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4]  sm:max-w-xs sm:text-sm sm:leading-6"
-          primaryColor='#7fb7d4'
-          isSearchable
-        />
-      </td>
+    <div className="border border-gray-200 rounded p-2 text-xs">
+      <table className="w-full text-left text-[10px] border-collapse">
+        <tbody>
+          {/* Categoria e Sottocategoria */}
+          <tr>
+            <td className="block text-[11px] font-medium text-gray-700">Macro Categoria</td>
+            <td className="w-3/4">
+              <Select
+                id={`category-${index}`}
+                placeholder="Seleziona"
+                value={
+                  contractrow.category
+                    ? { value: contractrow.category, label: categories.find(c => c.id_category === contractrow.category)?.name }
+                    : null
+                }
+                onChange={(option) => {
+                  const selectedCategory = option?.value || '';
+                  onChange({ ...contractrow, category: selectedCategory, subcategory: '', subsubcategory: '' });
+                  handleCategoryChange(index, selectedCategory);
+                }}
+                options={categories.map(c => ({ value: c.id_category, label: c.name }))}
+                className="text-[10px]"
+                primaryColor="#7fb7d4"
+                isSearchable
+              />
+            </td>
+          </tr>
+          <tr>
+            <td className="block text-[11px] font-medium text-gray-700">Categoria</td>
+            <td>
+              <Select
+                id={`subcategory-${index}`}
+                placeholder="Seleziona"
+                value={
+                  contractrow.subcategory
+                    ? { value: contractrow.subcategory, label: subcategories.find(s => s.id_subcategory === contractrow.subcategory)?.name }
+                    : null
+                }
+                onChange={(option) => {
+                  const selectedSubcategory = option?.value || '';
+                  onChange({ ...contractrow, subcategory: selectedSubcategory, subsubcategory: '' });
+                  handleSubcategoryChange(index, selectedSubcategory);
+                }}
+                options={subcategories.map(s => ({ value: s.id_subcategory, label: s.name }))}
+                className="text-[10px]"
+                isSearchable
+                primaryColor="#7fb7d4"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td className="block text-[11px] font-medium text-gray-700">Sottocategoria</td>
+            <td>
+              <Select
+                id={`subsubcategory-${index}`}
+                placeholder="Seleziona"
+                value={
+                  contractrow.subsubcategory
+                    ? { value: contractrow.subsubcategory, label: subsubcategories.find(s => s.id_subsubcategory === contractrow.subsubcategory)?.name }
+                    : null
+                }
+                onChange={(option) => onChange({ ...contractrow, subsubcategory: option?.value || '' })}
+                options={subsubcategories?.map(s => ({ value: s.id_subsubcategory, label: s.name }))}
+                className="text-[10px]"
+                isDisabled={subcategories.length === 0}
+                primaryColor="#7fb7d4"
+              />
+            </td>
+          </tr>
 
-      <td className="px-4 py-2 whitespace-nowrap">
-        <label htmlFor={`subcategory-${index}`} className="block text-sm font-medium text-gray-700">
-          Sottocategoria
-        </label>
-        <Select
-          id={`subcategory-${index}`}
-          name={`subcategory-${index}`}
-          placeholder="Seleziona una sottocategoria"
-          value={{ value: product?.Subcategory.name, label:  product?.Subcategory.name } }
-          onChange={(option) => onChange({ ...product, subcategory: option.value })}
-          options={subcategories.map(s => ({ value: s.id_subcategory, label: s.name }))}
-          className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4]  sm:max-w-xs sm:text-sm sm:leading-6"
-          isSearchable
-          primaryColor='#7fb7d4'
-        />
-      </td>
+          {/* Valori numerici */}
+          <tr>
+            <td className="block text-[11px] font-medium text-gray-700">Importo Ricorrente Unitario IVA Esclusa</td>
+            <td>
+              <input
+                type="number"
+                value={contractrow.taxed_unit_price || calculatedTotal}
+                onChange={(e) => onChange({ ...contractrow, taxed_unit_price: e.target.value })}
+                className="w-full text-[12px] rounded border-gray-300"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td className="block text-[11px] font-medium text-gray-700">IVA</td>
+            <td>
+              <Select
+                id={`vat-${index}`}
+                value={contractrow.vat ? { value: contractrow.vat, label: contractrow.vat } : null}
+                onChange={(option) => onChange({ ...contractrow, vat: option?.value || '' })}
+                options={Vat.map(v => ({ value: v, label: v }))}
+                placeholder="IVA"
+                className="text-[12px] rounded-md border-gray-300"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td className="block text-[11px] font-medium text-gray-700">Importo Unitario IVA Inclusa</td>
+            <td>
+              <input
+                type="number"
+                value={contractrow.unit_price || ''}
+                onChange={(e) => onChange({ ...contractrow, unit_price: e.target.value })}
+                className="w-full text-[12px] rounded border-gray-300"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td className="block text-[11px] font-medium text-gray-700">Importo Totale IVA Esclusa</td>
+            <td>
+              <input
+                type="text"
+              value={isNaN(taxedTotalRecurrent) ? 0 : taxedTotalRecurrent}
+               className="w-full text-xs rounded-md border-gray-300 bg-gray-100 cursor-not-allowed"
+                disable
+              />
+            </td>
+          </tr>
+          <tr>
+            <td className="block text-[11px] font-medium text-gray-700">Importo Totale IVA Inclusa</td>
+            <td>
+              <input
+                type="text"
+              value={isNaN(totalRecurrent) ? 0 : totalRecurrent}
+                className="w-full text-xs rounded-md border-gray-300 bg-gray-100 cursor-not-allowed"
+                disable
+              />
+            </td>
+          </tr>
 
-      <td className="px-4 py-1 whitespace-nowrap">
-        <label htmlFor={`description-${index}`} className="block text-sm font-medium text-gray-700">
-          Descrizione
-        </label>
-        <textarea
-          id={`description-${index}`}
-          name={`description-${index}`}
-          value={product.description || ''}
-          onChange={(e) => onChange({ ...product, description: e.target.value })}
-          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4]  focus:ring-[#7fb7d4]  sm:text-sm"
-          maxLength="150"
-          rows= {1}
-        />
-        <p className="mt-1 text-xs text-gray-700">Massimo 150 caratteri</p>
-      </td>
-
-      <td className="px-4 py-2 whitespace-nowrap">
-        <label htmlFor={`unit_price-${index}`} className="block text-sm font-medium text-gray-700">
-          Prezzo Unitario
-        </label>
-        <input
-          type="number"
-          placeholder="0.00"
-          id={`unit_price-${index}`}
-          name={`unit_price-${index}`}
-          value={product.unit_price || ''}
-          onChange={(e) => onChange({ ...product, unit_price: parseFloat(e.target.value) || '' })}
-          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4]  focus:ring-[#7fb7d4]  sm:text-sm"
-          min="0"
-          step="0.01"
-        />
-      </td>
-
-      <td className="px-4 py-2 whitespace-nowrap">
-        <label htmlFor={`quantity-${index}`} className="block text-sm font-medium text-gray-700">
-          Quantità
-        </label>
-        <input
-          type="number"
-          id={`quantity-${index}`}
-          name={`quantity-${index}`}
-          value={product.quantity || ''}
-          onChange={(e) => onChange({ ...product, quantity: parseInt(e.target.value, 10) || '' })}
-          className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4]  focus:ring-[#7fb7d4]  sm:text-sm"
-          min="0"
-          step="1"
-        />
-      </td>
-
-      <td className="px-4 py-2 whitespace-nowrap">
-        <div className="flex flex-col items-start">
-          <label className="text-sm font-medium text-gray-700 mb-1">Rimuovi</label>
-          <button
-            type="button"
-            onClick={handleDeleteClick}
-            className="text-blue-700 hover:text-blue-900 mt-1 flex items-center"
-          >
-            <TrashIcon className="h-5 w-5" aria-hidden="true" />
-          </button>
-        </div>
-      </td>
-    </tr>
+          {/* Azione Elimina */}
+          <tr>
+            <td colSpan="4" className="text-right py-1">
+              <button
+                type="button"
+                onClick={handleDeleteClick}
+                className="text-red-500 hover:text-red-700"
+              >
+                <TrashIcon className="h-5 w-5 inline" /> Rimuovi
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   );
 }

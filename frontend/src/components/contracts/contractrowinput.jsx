@@ -185,7 +185,7 @@ export default function ContractRowInput({
 
           <tr>
             <td className="block text-[11px] font-medium text-gray-700 p-1">
-              Importo Ricorrente (IVA Esclusa)
+              Importo Ricorrente IVA Esclusa
             </td>
             <td className="w-3/4 p-1">
               <input
@@ -217,7 +217,7 @@ export default function ContractRowInput({
 
           <tr>
             <td className="block text-[11px] font-medium text-gray-700 p-1">
-              Importo Ricorrente (IVA Inclusa)
+              Importo Ricorrente IVA Inclusa
             </td>
             <td className="w-3/4 p-1">
               <input
@@ -229,7 +229,7 @@ export default function ContractRowInput({
               />
             </td>
           </tr>
-          <tr>
+          {/* <tr>
             <td className="block text-[11px] font-medium text-gray-700 p-1">Importo Ricorrente IVA Esclusa</td>
             <td className="w-3/4 p-1">
               <input
@@ -240,11 +240,11 @@ export default function ContractRowInput({
                 disabled
               />
             </td>
-          </tr>
+          </tr> */}
 
           <tr>
           <td className="block text-[11px] font-medium text-gray-700 p-1">
-            Totale IVA Esclusa
+          Importo Totale IVA Esclusa
           </td>
           <td className="w-3/4 p-1">
             <input
@@ -258,7 +258,7 @@ export default function ContractRowInput({
 
         <tr>
           <td className="block text-[11px] font-medium text-gray-700 p-1">
-            Totale IVA Inclusa
+          Importo Unitario IVA Inclusa
           </td>
           <td className="w-3/4 p-1">
             <input

@@ -4,6 +4,7 @@ import sequelize from '../../utils/db.js';
 // Setup the express router
 const router = express.Router();
 const Contract = sequelize.models.Contract;
+const ContractRow = sequelize.models.ContractRow;
 const Company = sequelize.models.Company;
 
 // Funzione per formattare i nomi
@@ -27,10 +28,62 @@ router.get('/read', async (req, res) => {
         {
           model: sequelize.models.User,
           as: 'createdByUser',
+          attributes: ['id_user', 'name', 'surname']
+        
+        },       
+         {
+          model: sequelize.models.Currency,
+          attributes: ['name', 'code', 'symbol'],
+        },
+        {
+          model: sequelize.models.Recurrence,
+          attributes: ['name', 'name'],
+        },
+        {
+          model: sequelize.models.PaymentMethod,
+          attributes: ['name'],
+        },
+        {
+          model: sequelize.models.Job,
+          attributes: ["name" ],
+        },
+        {
+          model: sequelize.models.User,
+          as: 'referentUser',
           attributes: ['id_user', 'name', 'surname'],
-          foreignKey: 'createdBy'
-        }
+        },
+          {
+            model: ContractRow,
+            attributes: [
+              "id_contractrow",
+              "name",
+              "description",
+              "category",
+              "subcategory",
+              "subsubcategory",
+              "unit_price",
+              "vat",
+              "totalprice",
+              "taxed_unit_price",
+              "taxed_totalprice"
+            ],
+            include: [
+              {
+                model: sequelize.models.Category,
+                attributes: ["name"],
+              },
+              {
+                model: sequelize.models.Subcategory,
+                attributes: ["name"],
+              },
+              {
+                model: sequelize.models.Subsubcategory,
+                attributes: ["name"],
+              },
+            ],
+          },
       ],
+
     });
 
     res.json({
@@ -58,26 +111,49 @@ router.get('/read/:id', async (req, res) => {
           attributes: ['id_company', 'name'],
         },
         {
+          model: sequelize.models.Job,
+          attributes: ["name" ],
+        },
+        {
           model: sequelize.models.User,
           as: 'createdByUser',
           attributes: ['id_user', 'name', 'surname'],
           foreignKey: 'createdBy'
-        }
+        },        {
+          model: sequelize.models.Currency,
+          attributes: ['name', 'code', 'symbol'],
+        },
+          {
+            model: ContractRow,
+            attributes: [
+              "id_contractrow",
+              "name",
+              "description",
+              "category",
+              "subcategory",
+              "subsubcategory",
+              "unit_price",
+              "vat",
+              "totalprice",
+              "taxed_unit_price",
+              "taxed_totalprice"
+            ],
+            include: [
+              {
+                model: sequelize.models.Category,
+                attributes: ["name"],
+              },
+              {
+                model: sequelize.models.Subcategory,
+                attributes: ["name"],
+              },
+              {
+                model: sequelize.models.Subsubcategory,
+                attributes: ["name"],
+              },
+            ],
+          },
       ],
-      attributes: [
-        'id_contract',
-        'name',
-        'payment_method',
-        'IVA',
-        'total',
-        'currency',
-        'recurrence',
-        'contract_start_date',
-        'contract_end_date',
-        'status',
-        'createdAt',
-        'updatedAt'
-      ]
     });
 
     if (!contract) {

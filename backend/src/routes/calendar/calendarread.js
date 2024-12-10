@@ -102,7 +102,17 @@ router.get("/read-by-date", async (req, res) => {
 router.get("/read/all", async (req, res) => {
     try {
         const Calendar = sequelize.models.Calendar;
-        const calendars = await Calendar.findAll();
+        const calendars = await Calendar.findAll({
+            include: [
+                {
+                    model: sequelize.models.Location,
+                    attributes: ["name"],
+                  },
+            ]
+
+        }
+
+        );
         res.json(calendars);
     } catch (error) {
         Logger("error","Server error:", error);

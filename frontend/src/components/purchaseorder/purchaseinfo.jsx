@@ -124,9 +124,10 @@ export default function Example({ purchase: initialPurchase }) {
     const orderDetails = [
       ['N° Ordine di Acquisto', `${purchase.name}`],
       ['Data', `${formatDate(purchase.createdAt)}`],
-      ['Riferimento Intellimech', `${purchase?.createdByUser?.name.slice(0, 2).toUpperCase() + purchase?.createdByUser?.surname.slice(0, 2).toUpperCase() + " (" + purchase?.createdByUser.name + " " + purchase?.createdByUser.surname + ")"}`],
+      ['Riferimento Intellimech', `${purchase?.referentUser.name.slice(0, 2).toUpperCase() + purchase?.referentUser?.surname.slice(0, 2).toUpperCase() + " (" + purchase?.referentUser.name + " " + purchase?.referentUser.surname + ")"}`],
       ['Metodo di Pagamento', `${purchase.PaymentMethod.name}`],
       ['', `${purchase?.banktransfer || ''}`], // Aggiungi i dettagli se disponibili
+      ['Commessa', `${purchase?.Job.name || ''}`],
      
     ];
     
@@ -336,6 +337,10 @@ export default function Example({ purchase: initialPurchase }) {
           <td className="px-2 py-1">{purchase.name}</td>
         </tr>
         <tr>
+          <td className="px-2 py-1 font-medium text-gray-600">Ordine</td>
+          <td className="px-2 py-1">{purchase.referentUser.name + " " + purchase.referentUser.surname + ", ("+ purchase.referentUser?.name.slice(0, 2).toUpperCase() + purchase.referentUser?.surname.slice(0, 2).toUpperCase() + ")"}</td>
+        </tr>
+        <tr>
           <td className="px-2 py-1 font-medium text-gray-600">Fornitore</td>
           <td className="px-2 py-1">{purchase?.Company?.name}</td>
         </tr>
@@ -345,11 +350,11 @@ export default function Example({ purchase: initialPurchase }) {
         </tr>
         <tr>
           <td className="px-2 py-1 font-medium text-gray-600">Totale IVA Esclusa</td>
-          <td className="px-2 py-1">{formatCurrency(purchase.total)}</td>
+          <td className="px-2 py-1">{Number(purchase.total).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}  {purchase.Currency.symbol}</td>
         </tr>
         <tr>
           <td className="px-2 py-1 font-medium text-gray-600">Totale con IVA</td>
-          <td className="px-2 py-1">{formatCurrency(purchase.taxed_total)}</td>
+          <td className="px-2 py-1">{Number(purchase.taxed_total).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}  {purchase.Currency.symbol}</td>
         </tr>
         <tr>
           <td className="px-2 py-1 font-medium text-gray-600">Modalità di Pagamento</td>
@@ -370,6 +375,18 @@ export default function Example({ purchase: initialPurchase }) {
         <tr>
           <td className="px-2 py-1 font-medium text-gray-600">Bonifico Bancario</td>
           <td className="px-2 py-1">{purchase.banktransfer}</td>
+        </tr>
+        <tr>
+          <td className="px-2 py-1 font-medium text-gray-600">Commessa</td>
+          <td className="px-2 py-1">{purchase?.Job?.name}</td>
+        </tr>
+        <tr>
+          <td className="px-2 py-1 font-medium text-gray-600">Codice Progetto Europeo</td>
+          <td className="px-2 py-1">{}</td>
+        </tr>
+        <tr>
+          <td className="px-2 py-1 font-medium text-gray-600">CUP</td>
+          <td className="px-2 py-1">{}</td>
         </tr>
       </tbody>
     </table>
@@ -394,11 +411,11 @@ export default function Example({ purchase: initialPurchase }) {
             </tr>
             <tr>
               <td className="px-2 py-1 font-medium text-gray-600">Prezzo Unitario</td>
-              <td className="px-2 py-1">{formatCurrency(row.unit_price)}</td>
+              <td className="px-2 py-1">{Number(row.unit_price).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}  {purchase.Currency.symbol} </td>
             </tr>
             <tr>
               <td className="px-2 py-1 font-medium text-gray-600">Prezzo Unitario con IVA</td>
-              <td className="px-2 py-1">{formatCurrency(row.taxed_unit_price)}</td>
+              <td className="px-2 py-1">{Number(row.taxed_unit_price).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}  {purchase.Currency.symbol}</td>
             </tr>
             <tr>
               <td className="px-2 py-1 font-medium text-gray-600">IVA</td>
@@ -406,11 +423,11 @@ export default function Example({ purchase: initialPurchase }) {
             </tr>
             <tr>
               <td className="px-2 py-1 font-medium text-gray-600">Totale</td>
-              <td className="px-2 py-1">{formatCurrency(row.totalprice)}</td>
+              <td className="px-2 py-1">{Number(row.totalprice).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}  {purchase.Currency.symbol}</td>
             </tr>
             <tr>
               <td className="px-2 py-1 font-medium text-gray-600">Totale con IVA</td>
-              <td className="px-2 py-1">{formatCurrency(row.taxed_totalprice)}</td>
+              <td className="px-2 py-1">{Number(row.taxed_totalprice).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}  {purchase.Currency.symbol}</td>
             </tr>
             <tr>
               <td className="px-2 py-1 font-medium text-gray-600">Ammortamento</td>

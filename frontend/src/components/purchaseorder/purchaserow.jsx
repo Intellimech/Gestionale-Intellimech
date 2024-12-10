@@ -1,6 +1,7 @@
 import { Fragment, useState, useRef, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { UserContext } from '../../module/userContext';
+import { XMarkIcon, CheckIcon } from '@heroicons/react/24/outline';
 
 import PurchaseCreateForm from './purchasecreate';
 import PurchaseInfo from './purchaseinfo';
@@ -35,6 +36,7 @@ export default function CompactPurchaseTable({ permissions }) {
       .then((response) => {
         setPurchaseOrder(Array.isArray(response.data.purchaserows) ? response.data.purchaserows : []);
         setItems(Array.isArray(response.data.purchaserows) ? response.data.purchaserows : []);
+        console.log(response.data)
       })
       .catch((error) => {
         console.error('Error fetching orders:', error);
@@ -246,6 +248,21 @@ export default function CompactPurchaseTable({ permissions }) {
                       rows={1}
                     />
                   </th>
+                  <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('taxed_totalprice')}>
+                  <br/> <br/> Ammortamento
+                    {sortColumn === 'taxed_totalprice' && sortDirection !== '' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
+                    <br />
+                    <input
+                      value={searchQueries.taxed_totalprice}
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={handleSearchInputChange('taxed_totalprice')}
+                       className="mt- px-2 py-1 w-20 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-xs"
+                      placeholder=""
+                      rows={1}
+                    />
+                  </th>
                   <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('category')}>
                   <br/> Macro<br/>Categoria
                     {sortColumn === 'category'  && sortDirection !== '' ? (
@@ -293,7 +310,7 @@ export default function CompactPurchaseTable({ permissions }) {
                   </th>
 
                   <th scope="col" className="px-4 py-3.5 text-left text-sm font-semibold text-gray-900 cursor-pointer" onClick={() => handleSort('createdByUser')}>
-                    <br/> <br/>Stato di <br/>Fatturazione
+                    <br/>Stato di <br/>Fatturazione
                     {sortColumn === 'status'  && sortDirection !== '' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
                     ) : null}
@@ -327,16 +344,24 @@ export default function CompactPurchaseTable({ permissions }) {
                         {item.name}
                       </td>
                 <td className="whitespace-normal max-w-[150px] overflow-hidden text-xs text-gray-700 px-1 py-1.5 break-words">{item.description}</td>
-                <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">{item.quantity}</td>
-                <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">{item.unit_price}</td>
-                <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">{item.taxed_unit_price}</td>
+                <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">{item.quantity }</td>
+                <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">{Number(item.unit_price).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}  {item.Purchase.Currency?.symbol}</td>
+                <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">{Number(item.taxed_unit_price).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}  {item.Purchase.Currency?.symbol}</td>
                 <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">{item.vat}%</td>
-                <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">{item.totalprice}</td>
-                <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">{item.taxed_totalprice}</td>
+                <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">{Number(item.totalprice).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}  {item.Purchase.Currency?.symbol}</td>
+                <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">{Number(item.taxed_totalprice).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}  {item.Purchase.Currency?.symbol}</td>
+                <td className="whitespace-nowrap item-center px-10 py-1.5 text-xs text-gray-700">
+                {item.depreciation == 1 ? (
+                  <CheckIcon className="h-5 w-5 text-green-500" />
+                ) : (
+                  <XMarkIcon className="h-5 w-5 text-red-500" />
+                )}
+              </td>
+
                 <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">{item.Category?.name}</td>
                 <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">{item.Subcategory?.name}</td>
                 <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">{item.Subsubcategory?.name}</td>
-                    <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
+                    <td className="whitespace-nowrap px-5 py-1.5 text-xs text-gray-700">
                           {item?.Invoices?.length > 0 ? (
                             <span className="px-1 inline-flex text-[0.6rem] leading-4 font-semibold rounded-full bg-gray-100 text-green-500">
                               Fatturato

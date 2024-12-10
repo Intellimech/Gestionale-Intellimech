@@ -9,7 +9,7 @@ const PurchaseRow = sequelize.models.PurchaseRow;
 router.post("/create", async (req, res) => {
   try {
 
-    const { id_company, products, date, payment, currency, referent, banktransfer } = req.body;
+    const { id_company, products, date, payment, currency, referent, banktransfer, job } = req.body;
 
     const user = req.user; // Assuming req.user is populated by the authentication middleware
 
@@ -48,6 +48,7 @@ router.post("/create", async (req, res) => {
       total: purchaseTotal,
       taxed_total: purchaseTotaltax,
       referent: referent,
+      job: job,
       createdBy: user.id_user, // Use user ID from req.user
     });
 

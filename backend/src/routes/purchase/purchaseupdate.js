@@ -21,7 +21,7 @@ router.put("/update", async (req, res) => {
   try {
     console.log('Request Body:', req.body); // Log della richiesta
 
-    const { id_purchase, id_company, payment_method, date, currency, status, products } = req.body;
+    const { id_purchase, id_company, payment_method, date, currency, status, products , referent, job} = req.body;
 
     if (!id_purchase) {
       return res.status(400).json({ message: "Purchase ID is required" });
@@ -50,6 +50,8 @@ router.put("/update", async (req, res) => {
     purchase.currency = currency || purchase.currency;
     purchase.status = status || purchase.status;
     purchase.updatedBy = user.id_user;
+    purchase.referent= referent || purchase.referent;
+    purchase.job= job|| purchase.job;
     purchase.updatedAt = new Date();
 
     await purchase.save();

@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { ClockIcon, QueueListIcon, BriefcaseIcon, TrashIcon } from '@heroicons/react/24/outline';
 import Select from "react-tailwindcss-select";
 import axios from 'axios';
 import Cookies from 'js-cookie';
 import toast, { Toaster } from 'react-hot-toast';
+import { UserContext } from '../../module/userContext'
 
 import 'react-toastify/dist/ReactToastify.css';
-import { use } from 'react';
 
 export default function Reporting() {
   const [job, setJob] = useState([]);
@@ -16,18 +16,74 @@ export default function Reporting() {
   const [selectedJob, setSelectedJob] = useState(null);
   const [selectedTask, setSelectedTask] = useState(null);
   const [selectedChildTask, setSelectedChildTask] = useState(null);
-  const [needJobInput, setNeedJobInput] = useState(false);
-  const [needEventInput, setNeedEventInput] = useState(false);
-  const [needTextInput, setNeedTextInput] = useState(false);
   const [reportingIndirect, setReportingIndirect] = useState([]);
   const [childReportingIndirect, setChildReportingIndirect] = useState([]);
   const [selectedReportingIndirect, setSelectedReportingIndirect] = useState(null);
   const [selectedChildReportingIndirect, setSelectedChildReportingIndirect] = useState(null);
   const [event, setEvent] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [company, setCompany] = useState([]);
+  const [selectedCompany, setSelectedCompany] = useState(null);
+  const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+  const [certification, setCertification] = useState([]);
+  const [selectedCertification, setSelectedCertification] = useState(null);
+
+  const [percentage, setPercentage] = useState(0);
+
+  const [needJobInput, setNeedJobInput] = useState(false);
+  const [needEventInput, setNeedEventInput] = useState(false);
+  const [needTextInput, setNeedTextInput] = useState(false);
+  const [textInputPlaceholder, setTextInputPlaceholder] = useState('');
+  const [needCompanyInput, setNeedCompanyInput] = useState(false);
+  const [needCertificationInput, setNeedCertificationInput] = useState(false);
+
+  const user = useContext(UserContext)?.user;
+  const fetchReportedHours = (selectedDate) => {
+    const formattedDate = selectedDate 
+      ? (selectedDate instanceof Date 
+        ? selectedDate.toISOString().split('T')[0] 
+        : selectedDate) 
+      : new Date().toISOString().split('T')[0];
+
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/reporting/read`, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get('token')}`,
+        },
+        params: {
+          date: formattedDate,
+        },
+      })
+      .then((response) => {
+        setReportedHours(response.data.reporting || []);
+      })
+      .catch((error) => {
+        console.error('Error fetching reported hours:', error);
+        
+        if (error.response) {
+          if (error.response.status === 404) {
+            toast.info('Nessuna rendicontazione trovata per la data selezionata');
+            setReportedHours([]); 
+          } else {
+            toast.error('Errore nel caricamento delle ore rendicontate');
+          }
+        } else if (error.request) {
+          toast.error('Nessuna risposta dal server');
+        } else {
+          toast.error('Errore nella richiesta');
+        }
+      });
+  };
 
   useEffect(() => {
-    fetchReportedHours();
+    
+    fetchReportedHours(); // Fetch today's reported hours by default
+
+    // if (!user.location.canReport) {
+    //   console.log('User is not allowed to report hours');
+    //   toast.error('Non sei autorizzato a rendicontare le ore');
+    // }
+
     axios
       .get(`${process.env.REACT_APP_API_URL}/reportingindirect/read`)
       .then((response) => {
@@ -57,29 +113,40 @@ export default function Reporting() {
     axios
       .get(`${process.env.REACT_APP_API_URL}/event/read`)
       .then((response) => {
-        setEvent(response.data.events || []);
+        setEvent(response.data.events.filter((event) => event.eventtype == selectedChildReportingIndirect?.label) || []);
       })
       .catch((error) => {
         console.error('Errore nel caricamento degli eventi:', error);
         toast.error('Errore nel caricamento degli eventi');
       });
-  }, [needEventInput]);  
-  
-  const fetchReportedHours = () => {
+  }, [needEventInput, selectedChildReportingIndirect]);  
+
+  useEffect(() => {
+    axios.get(`${process.env.REACT_APP_API_URL}/company/read`, { params: { filter: 'client' } })
+    .then((response) => {
+      setCompany(response.data.value.map((item) => ({
+        value: item.id_company,
+        label:  `${item.name} `,
+      })));
+    })
+    .catch((error) => console.error('Error fetching company data:', error));
+  }, [needCompanyInput]);
+
+  useEffect(() => {
     axios
-      .get(`${process.env.REACT_APP_API_URL}/reporting/read`, {
+      .get(`${process.env.REACT_APP_API_URL}/certification/read`, {
         headers: {
           Authorization: `Bearer ${Cookies.get('token')}`,
         },
       })
       .then((response) => {
-        setReportedHours(response.data.reportings || []);
+        setCertification(response.data.certifications || []);
       })
       .catch((error) => {
-        console.error('Error fetching reported hours:', error);
-        toast.error('Errore nel caricamento delle ore rendicontate');
+        console.error('Error fetching certification data:', error);
+        toast.error('Errore nel caricamento delle certificazioni');
       });
-  }
+  }, [needCertificationInput]);
 
   const handleJobChange = (value) => {
     setSelectedJob(value);
@@ -102,25 +169,36 @@ export default function Reporting() {
       });
   };
 
+  const handleCompanyChange = (value) => {
+    setSelectedCompany(value);
+  };
+
   const handleTaskChange = (value) => {
     const selectedTaskObj = task.find(t => t.id_task === value?.value);
     setSelectedTask(value);
+    setPercentage(selectedTaskObj?.percentage || 0);
     setSelectedChildTask(null);
     setChildTasks(selectedTaskObj?.children || []);
   };
 
   const handleChildTaskChange = (value) => {
+    const selectedChildTaskObj = childTasks.find(t => t.id_task === value?.value);
     setSelectedChildTask(value);
+    setPercentage(selectedChildTaskObj?.percentage || 0);
   };
 
   const handleReportingIndirectChange = (value) => {
     const selectedReportingIndirectObj = reportingIndirect.find(ri => ri.id_reportingindirect === value?.value);
     setSelectedReportingIndirect(value);
+
     setChildReportingIndirect(selectedReportingIndirectObj?.children || []);
 
     setNeedJobInput(selectedReportingIndirectObj?.needJobInput || false);
     setNeedEventInput(selectedReportingIndirectObj?.needEventInput || false);
     setNeedTextInput(selectedReportingIndirectObj?.needTextInput || false);
+    setTextInputPlaceholder(selectedReportingIndirectObj?.TextInputName || '');
+    setNeedCompanyInput(selectedReportingIndirectObj?.needCompanyInput || false);
+    setNeedCertificationInput(selectedReportingIndirectObj?.needCertificationInput || false);
   };
 
   const handleEventChange = (value) => {
@@ -134,6 +212,9 @@ export default function Reporting() {
     setNeedJobInput(selectedChildReportingIndirectObj?.needJobInput || false);
     setNeedEventInput(selectedChildReportingIndirectObj?.needEventInput || false);
     setNeedTextInput(selectedChildReportingIndirectObj?.needTextInput || false);
+    setTextInputPlaceholder(selectedChildReportingIndirectObj?.TextInputName || '');
+    setNeedCompanyInput(selectedChildReportingIndirectObj?.needCompanyInput || false);
+    setNeedCertificationInput(selectedChildReportingIndirectObj?.needCertificationInput || false);
   };
 
   const handleSubmit = (e) => {
@@ -141,14 +222,14 @@ export default function Reporting() {
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData.entries());
 
+    data.date = date;
     data.id_task = selectedChildTask?.value || selectedTask?.value;
     data.id_job = selectedJob?.value;
     data.id_reportingindirect = selectedChildReportingIndirect?.value || selectedReportingIndirect?.value;
     data.task_percentage = data.task_percentage || 0;
     data.id_event = selectedEvent?.value;
     data.hours = parseFloat(data.hours);
-
-    console.log(data);
+    data.id_certification = selectedCertification?.value;
 
     axios
       .post(`${process.env.REACT_APP_API_URL}/reporting/create`, data, {
@@ -158,16 +239,17 @@ export default function Reporting() {
       })
       .then((response) => {
         toast.success('Rendicontazione inviata con successo');
+        fetchReportedHours(date); // Refresh reported hours after submission
       })
       .catch((error) => {
         console.error('Error creating reporting:', error);
         toast.error('Errore nell\'invio della rendicontazione');
       });
   };
-
   return (
     <main>
       <Toaster />
+      {user.location.canReport ? (
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="sm:flex-auto">
           <h1 className="text-base font-semibold leading-6 text-gray-900">Rendicontazione</h1>
@@ -177,19 +259,24 @@ export default function Reporting() {
           <div className="mt-10 text-center lg:col-start-8 lg:col-end-13 lg:row-start-1 lg:mt-9 xl:col-start-9">
             <form onSubmit={handleSubmit}>
               <div className="space-y-6">
-                <div>
+              <div>
                   <label htmlFor="date" className="block text-sm font-medium text-gray-900">Data</label>
                   <input 
                     type="date" 
                     name="date" 
                     id="date" 
+                    value={date}
+                    onChange={(e) => {
+                      const selectedDate = e.target.value;
+                      setDate(selectedDate);
+                      fetchReportedHours(selectedDate); // Fetch reported hours for the new date
+                    }}
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring focus:ring-[#7fb7d4] focus:ring-opacity-50" 
                     required 
-                    defaultValue={new Date().toISOString().split('T')[0]} 
                   />
                 </div>
                 <div>
-                  <label htmlFor="job" className="block text-sm font-medium text-gray-900">Rendicontabili</label>
+                  <label htmlFor="job" className="block text-sm font-medium text-gray-900">Reparto / Attività</label>
                   <Select
                     options={reportingIndirect.map((ri) => ({ value: ri.id_reportingindirect, label: ri.name }))}
                     id="reportingIndirect"
@@ -203,7 +290,7 @@ export default function Reporting() {
                 </div>
                 {childReportingIndirect.length > 0 && (
                 <div>
-                  <label htmlFor="childReportingIndirect" className="block text-sm font-medium text-gray-900">Sotto Rendicontabile</label>
+                  <label htmlFor="childReportingIndirect" className="block text-sm font-medium text-gray-900">Attività di Dettaglio</label>
                   <Select
                     options={(childReportingIndirect.map(cri => ({ value: cri.id_reportingindirect, label: cri.name })) || [])}
                     id="childReportingIndirect"
@@ -217,6 +304,22 @@ export default function Reporting() {
                   />
                 </div>
                 )}
+                {needCompanyInput && (
+                  <div>
+                    <label htmlFor="company" className="block text-sm font-medium text-gray-900">Azienda</label>
+                    <Select
+                      options={company}
+                      id="company"
+                      name="company"
+                      value={selectedCompany}
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4] sm:text-sm sm:leading-6"
+                      onChange={handleCompanyChange}
+                      isSearchable
+                      placeholder="Seleziona un'azienda"
+                    />
+                  </div>
+                )}
+
                 {needJobInput && (
                   <>
                     <div>
@@ -236,8 +339,11 @@ export default function Reporting() {
                     <div>
                       <label htmlFor="task" className="block text-sm font-medium text-gray-900">Task</label>
                       <Select
-                        options={task.map((t) => ({ value: t.id_task, label: `${t.name} - ${t.description}` }))}
-                        id="task"
+                      options={task.map((t) => ({ 
+                        value: t.id_task, 
+                        label: `${t.name} - ${t.description.length >= 60 ? t.description.substring(0, 60) + '...' : t.description}`
+                      }))}
+                      id="task"
                         name="task"
                         value={selectedTask}
                         className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4] sm:text-sm sm:leading-6"
@@ -252,7 +358,10 @@ export default function Reporting() {
                       <div>
                         <label htmlFor="childTask" className="block text-sm font-medium text-gray-900">Sotto Task</label>
                         <Select
-                          options={childTasks.map((t) => ({ value: t.id_task, label: `${t.name} - ${t.description}` }))}
+                          options={childTasks.map((t) => ({ 
+                            value: t.id_task, 
+                            label: `${t.name} - ${t.description.length >= 60 ? t.description.substring(0, 60) + '...' : t.description}`
+                          }))}
                           id="childTask"
                           name="childTask"
                           value={selectedChildTask}
@@ -264,7 +373,23 @@ export default function Reporting() {
                         />
                       </div>
                     )}
-                    <input type="range" name="task_percentage" id="task_percentage" min={0} max={100} step={5} defaultValue={1} className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6" />
+                    {selectedTask && (
+                      <div>
+                      <label htmlFor="task_percentage" className="block text-sm font-medium text-gray-900">Percentuale di completamento {percentage}%</label>
+                        <input 
+                          type="range" 
+                          name="task_percentage" 
+                          id="task_percentage" 
+                          value={percentage}
+                          min={0} 
+                          max={100} 
+                          step={5} 
+                          defaultValue={percentage} 
+                          onChange={(e) => setPercentage(e.target.value)}
+                          className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset sm:text-sm sm:leading-6" 
+                        /> 
+                      </div>      
+                    )}           
                   </>
                 )}
 
@@ -290,8 +415,25 @@ export default function Reporting() {
                     <textarea 
                       name="text" 
                       id="textinput" 
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring focus:ring-[#7fb7d4] focus:ring-opacity-50" 
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4] sm:text-sm sm:leading-6"
+                      placeholder={textInputPlaceholder}
                       required 
+                    />
+                  </div>
+                )}
+
+                {needCertificationInput && (
+                  <div>
+                    <label htmlFor="certification" className="block text-sm font-medium text-gray-900">Certificazione</label>
+                    <Select
+                      options={certification.map((cert) => ({ value: cert.id_certification, label: cert.name }))}
+                      id="certification"
+                      name="certification"
+                      value={selectedCertification}
+                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4] sm:text-sm sm:leading-6"
+                      onChange={(value) => setSelectedCertification(value)}
+                      isSearchable
+                      placeholder="Seleziona una certificazione"
                     />
                   </div>
                 )}
@@ -303,6 +445,8 @@ export default function Reporting() {
                     id="hours"
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring focus:ring-[#7fb7d4] focus:ring-opacity-50" 
                     min={1} 
+                    max={8}
+                    step={0.5}
                     required 
                     defaultValue={1} 
                   />
@@ -327,34 +471,66 @@ export default function Reporting() {
             {reportedHours.map((report, index) => (
               <li key={index} className="relative flex space-x-6 py-6 xl:static">
                 <div className="flex-auto">
-                  <h3 className="text-sm font-semibold text-gray-900">{}</h3>
-                  <dl className="mt-2 flex flex-col text-gray-500 xl:flex-row">
-                    <div className="flex items-start space-x-3">
+                  <dl className="mt-2 flex flex-wrap items-center text-gray-500 border-l border-gray-300">
+                    <div className="flex items-start space-x-3 px-3 first:border-none border-l border-gray-300 flex-12 min-w-[150px]">
                       <dt className="mt-0.5">
                         <span className="sr-only">Ore</span>
                         <ClockIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
                       </dt>
                       <dd>{report.hour} ore</dd>
                     </div>
-                    <div className="mt-2 flex items-start space-x-3 xl:ml-3.5 xl:mt-0 xl:border-l xl:border-gray-400 xl:border-opacity-50 xl:pl-3.5">
-                      <dt className="mt-0.5">
-                        <span className="sr-only">Commessa</span>
-                        <BriefcaseIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                      </dt>
-                      <dd>{report.Job.name}</dd>
-                    </div>
-                    <div className="mt-2 flex items-start space-x-3 xl:ml-3.5 xl:mt-0 xl:border-l xl:border-gray-400 xl:border-opacity-50 xl:pl-3.5">
-                      <dt className="mt-0.5">
-                        <span className="sr-only">Task</span>
-                        <QueueListIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                      </dt>
-                      <dd>{report.Task.name} - {report.Task.description}</dd>
-                    </div>
+                    {report.indirectReporting?.ParentIndirect && (
+                      <div className="flex items-start space-x-3 px-3 border-l border-gray-300 flex-1 min-w-[150px]">
+                        <dt className="mt-0.5">
+                          <span className="sr-only">Sotto Attività</span>
+                          <BriefcaseIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                        </dt>
+                        <dd>{report.indirectReporting.ParentIndirect.name}</dd>
+                      </div>
+                    )}
+                    {report.indirectReporting && (
+                      <div className="flex items-start space-x-3 px-3 border-l border-gray-300 flex-1 min-w-[150px]">
+                        <dt className="mt-0.5">
+                          <span className="sr-only">Attività</span>
+                          <BriefcaseIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                        </dt>
+                        <dd>{report.indirectReporting.name}</dd>
+                      </div>
+                    )}
+                    {report.associatedEvent && (
+                      <div className="flex items-start space-x-3 px-3 border-l border-gray-300 flex-1 min-w-[150px]">
+                        <dt className="mt-0.5">
+                          <span className="sr-only">Evento</span>
+                          <QueueListIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                        </dt>
+                        <dd>{report.associatedEvent.name}</dd>
+                      </div>
+                    )}
+                    {report.associatedTask && (
+                      <>
+                        <div className="flex items-start space-x-3 px-3 border-l border-gray-300 flex-1 min-w-[150px]">
+                          <dt className="mt-0.5">
+                            <span className="sr-only">Task</span>
+                            <QueueListIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                          </dt>
+                          <dd>
+                            {report.associatedTask.Offer.SalesOrders[0].Jobs[0].name} - Task {report.associatedTask.name}
+                          </dd>
+                        </div>
+                        <div className="flex items-start space-x-3 px-3 border-l border-gray-300 flex-1 min-w-[150px]">
+                          <dt className="mt-0.5">
+                            <span className="sr-only">Task</span>
+                            <QueueListIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                          </dt>
+                          <dd>{report.associatedTask.percentage + "%"}</dd>
+                        </div>
+                      </>
+                    )}
                   </dl>
                 </div>
                 <div className="flex space-x-3">
-                  <button 
-                    type="button" 
+                  <button
+                    type="button"
                     className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
                   >
                     <TrashIcon className="h-5 w-4 text-gray-500" />
@@ -365,6 +541,19 @@ export default function Reporting() {
           </ol>
         </div>
       </div>
+      ) : (
+            <body className="h-full">
+                <main className="grid min-h-full place-items-center bg-white px-6 py-24 sm:py-32 lg:px-8">
+                    <div className="text-center">
+                        <h1 className="mt-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-5xl">Rendicontazione non disponibile</h1>
+                        <p className="mt-6 text-base leading-7 text-gray-600" aria-hidden="true">
+                            Durante il periodo di {user.location.name} non è necessario rendicontare le ore.
+                        </p>
+
+                    </div>
+                </main>
+            </body>
+      )}
     </main>
   );
 }

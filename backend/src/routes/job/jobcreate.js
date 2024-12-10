@@ -48,7 +48,7 @@ router.post("/create/", async (req, res) => {
             let status = "Aperta";
 
             const year = new Date().getFullYear().toString().substr(-2);
-            const name = `COM${year}_${(jobCount + 1).toString().padStart(5, "0")}`;
+            const name = `COM_${(jobCount + 1).toString().padStart(5, "0")}`;
 
             const job = await Job.create({
                 name: name,

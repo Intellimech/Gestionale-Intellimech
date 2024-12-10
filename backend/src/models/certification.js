@@ -2,34 +2,26 @@
 import { DataTypes, Model } from 'sequelize';
 import db from '../utils/db.js';
 
-class Event extends Model {}
+class Certification extends Model {}
 
-Event.init(
+Certification.init(
   {
-    id_event: {
+    id_certification: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true
-    },
-    code: {
-      type: DataTypes.STRING(255),
-      allowNull: false
     },
     name: {
       type: DataTypes.STRING(255),
       allowNull: false
     },
-    eventtype: {
-      type: DataTypes.INTEGER,
-      allowNull: true
-    },
   },
   {
     sequelize: db,
-    modelName: 'Event',
-    tableName: 'event',
+    modelName: 'Certification',
+    tableName: 'certification',
     paranoid: true // Enable soft deletes
   }
 );
 
-export default Event;
+export default Certification;

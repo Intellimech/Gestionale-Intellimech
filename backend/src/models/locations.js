@@ -14,12 +14,12 @@ Location.init(
     name: {
       type: DataTypes.STRING(255),
       },
-    hours: {
-      type: DataTypes.FLOAT,
-    },
     needApproval: {
       type: DataTypes.TINYINT,
-    }
+    },
+    canReport: {
+      type: DataTypes.BOOLEAN,
+    },
   },
   {
     sequelize: db,

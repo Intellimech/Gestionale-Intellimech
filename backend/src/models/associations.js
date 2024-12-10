@@ -41,6 +41,8 @@ import MailingListUser from './mailinglistuser.js';
 import Mail from 'nodemailer/lib/mailer/index.js';
 import ReportingIndirect from './reportingindirect.js';
 import Event from './event.js';
+import EventType from './eventtype.js';
+import Certification from './certification.js';
 
 // Define associations
 User.belongsTo(Role, { foreignKey: 'role' });
@@ -271,8 +273,15 @@ Subsubcategory.hasMany(PurchaseRow, { foreignKey: 'subsubcategory' });
 MailingList.belongsToMany(User, { through: MailingListUser, foreignKey: 'mailinglist', as: 'mailinglistusers'});
 User.belongsToMany(MailingList, { through: MailingListUser, foreignKey: 'user',  });
 
-ReportingIndirect.belongsTo(ReportingIndirect, { foreignKey: 'parentIndirect' });
-ReportingIndirect.hasMany(ReportingIndirect, { foreignKey: 'parentIndirect' });
+ReportingIndirect.belongsTo(ReportingIndirect, { 
+  foreignKey: 'parentIndirect', 
+  as: 'ParentIndirect' // Alias univoco
+});
+
+ReportingIndirect.hasMany(ReportingIndirect, { 
+  foreignKey: 'parentIndirect', 
+  as: 'ChildrenIndirect' // Alias univoco per evitare collisioni
+});
 
 Reporting.belongsTo(ReportingIndirect, { 
   foreignKey: 'reportingIndirect',
@@ -310,6 +319,37 @@ Event.hasMany(Reporting, {
   foreignKey: 'event',
   as: 'eventReportings'
 });
+
+Reporting.belongsTo(Company, {
+  foreignKey: 'company',
+  as: 'associatedCompany'
+});
+
+Company.hasMany(Reporting, {
+  foreignKey: 'company',
+  as: 'companyReportings'
+});
+
+Event.belongsTo(EventType, {
+  foreignKey: 'eventtype',
+  as: 'eventType'
+});
+
+EventType.hasMany(Event, {
+  foreignKey: 'eventtype',
+  as: 'eventTypes'
+});
+
+Reporting.belongsTo(Certification, {
+  foreignKey: 'certifications',
+  as: 'associatedCertification'
+});
+
+Certification.hasMany(Reporting, {
+  foreignKey: 'certifications',
+  as: 'certificationReportings'
+});
+
 
 export default {
     User,

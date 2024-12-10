@@ -27,6 +27,10 @@ ReportingIndirect.init(
         type: DataTypes.STRING(255),
         allowNull: true
         },
+    needCompanyInput: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+        },
     needJobInput: {
         type: DataTypes.BOOLEAN,
         defaultValue: false
@@ -34,6 +38,10 @@ ReportingIndirect.init(
     parentIndirect: {
         type: DataTypes.INTEGER,
         allowNull: true
+        },
+    needCertificationInput: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
         },
   },
   {

@@ -23,6 +23,14 @@ Reporting.init(
         type: DataTypes.STRING,
         allowNull: true
     },
+    company: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+    },
+    certifications: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+    },
     reportingIndirect: {
         type: DataTypes.INTEGER,
         allowNull: true

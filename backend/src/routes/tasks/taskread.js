@@ -1,5 +1,6 @@
 import express from "express";
 import sequelize from "../../utils/db.js";
+import { Op } from "sequelize";
 
 const router = express.Router();
 
@@ -23,9 +24,10 @@ router.get("/read/:job", async (req, res) => {
                             include: [
                                 {
                                     model: sequelize.models.Tasks,
+                                    // where: { percentage: { [Op.lt]: 100 } }
                                 }
                             ],
-                        },
+                        }
                     ],
                 }
             ],

@@ -79,11 +79,11 @@ router.get("/verify", async (req, res) => {
                 {
                     model: sequelize.models.Calendar,
                     as: 'ownedCalendars', // Ensure this alias matches your Sequelize model definition
-                    attributes: ['id_calendar', 'date', 'period', 'status', 'location'],
+                    attributes: ['id_calendar', 'date', 'period', 'status', 'location', 'status'],
                     include: [
                         {
                             model: sequelize.models.Location,
-                            attributes: ['id_location', 'name', 'needApproval'],
+                            attributes: ['id_location', 'name', 'needApproval', 'canReport'],
                         }
                     ],
                     where: {
@@ -122,7 +122,11 @@ router.get("/verify", async (req, res) => {
             subgroup: user.Subgroup.name,
             notification: user.receiverUser,
             changepass: user.changepass,
-            location: user.ownedCalendars[0] ? user.ownedCalendars[0].Location.name : null,
+            location: {
+                name: user.ownedCalendars[0] ? user.ownedCalendars[0].Location.name : null,
+                canReport: user.ownedCalendars[0] ? user.ownedCalendars[0].Location.canReport : null,
+                status: user.ownedCalendars[0] ? user.ownedCalendars[0].status : null,
+            },
         };
 
         return res.status(200).json({

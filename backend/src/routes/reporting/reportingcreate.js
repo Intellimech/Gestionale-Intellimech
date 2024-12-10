@@ -5,7 +5,7 @@ import Reporting from '../../models/reporting.js';
 const router = express.Router();
 
 router.post('/create/', async (req, res) => {
-  const { date, task_percentage, hours, id_job, text,id_reportingindirect, id_event, id_task, percentage } = req.body;
+  const { date, task_percentage, company, hours, id_job, text,id_reportingindirect, id_event, id_task, percentage } = req.body;
   const user = req.user;
 
   if(!id_reportingindirect) {
@@ -20,6 +20,7 @@ router.post('/create/', async (req, res) => {
     const reportingindirect = await Reporting.create({
       hour: hours || null,
       event: id_event || null,
+      company: company || null,
       job: id_job || null,
       text: text || null,
       reportingIndirect: id_reportingindirect || null,

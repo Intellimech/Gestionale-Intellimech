@@ -308,34 +308,34 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
         // Find morning and afternoon entries for this user from allCalendarData
         const userEntries = allCalendarData.filter(entry => entry.owner === user.id_user);
         console.log(userEntries);
-        let morningLocation = 'Non disponibile';
-        let afternoonLocation = 'Non disponibile';
+        
 
         // Loop through the user's entries to assign morning and afternoon locations
+        let morningLocation = "Non disponibile";
+        let afternoonLocation = "Non disponibile";
+        
         userEntries.forEach(entry => {
-         
-           if (entry.period == 'afternoon') {
-            if(entry.location == 4){
-              afternoonLocation = " Ufficio";
-            }
-           else  if(entry.location == 6){
-              afternoonLocation = "Smartworking"
-            }
-            
-            // afternoonLocation = [4, 6].includes(entry.location) ? entry?.Location.name : 'Non disponibile';
-          }
-          if (entry.period == 'morning') {
-           
-              if(entry.location == 4){
-                morningLocation = " Ufficio";
-              }
-            else  if(entry.location == 6){
-                morningLocation = "Smartworking"
-              }
-           
-          } 
-         
+           const period = entry.period?.trim().toLowerCase();
+           const location = parseInt(entry.location);
+        
+           if (period === 'afternoon') {
+               if (location === 4) {
+                   afternoonLocation = "Ufficio";
+               } else if (location === 6) {
+                   afternoonLocation = "Smartworking";
+               }
+           } else if (period === 'morning') {
+               if (location === 4) {
+                   morningLocation = "Ufficio";
+               } else if (location === 6) {
+                   morningLocation = "Smartworking";
+               }
+           }
         });
+        
+        console.log("Morning Location:", morningLocation);
+        console.log("Afternoon Location:", afternoonLocation);
+        
 
         return (
           <tr key={user.id_user}>

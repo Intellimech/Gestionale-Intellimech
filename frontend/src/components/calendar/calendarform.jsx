@@ -190,7 +190,7 @@ export default function Example({ date, setOpen }) {
     endOfNextWeek.setDate(today.getDate() + (7 - today.getDay()) + 7); // Fine della prossima settimana
   
     // Controllo per posizioni speciali
-    const isSpecialLocation = (location) => ['Ferie', 'Permesso', 'Trasferta'].includes(location?.label);
+    const isSpecialLocation = (location) => ['Ferie', 'Permesso', 'Trasferta', 'Malattia'].includes(location?.label);
   
     // Se la data di inizio è dopo la fine della prossima settimana
     if (startDate && startDate > endOfNextWeek) {

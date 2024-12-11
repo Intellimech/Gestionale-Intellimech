@@ -533,7 +533,7 @@ export default function Example({ permissions }) {
                       {item.Company?.name}
                     </td>
                     <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
-                      {item.payment_method}
+                      {item.PaymentMethod?.name}
                     </td>
 
                     <td  className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">{Number(item.taxed_total).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })+ item.Currency?.symbol} </td>

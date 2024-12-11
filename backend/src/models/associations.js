@@ -81,6 +81,8 @@ Contract.belongsTo(Currency, { foreignKey: 'currency' });
 Currency.hasMany(Contract, { foreignKey: 'currency' });
 
 
+// Tasks.belongsTo(User, { foreignKey: 'assignedTo' });
+// User.hasMany(Tasks, { foreignKey: 'assignedTo' });
 
 Contract.belongsTo(PaymentMethod, { foreignKey: 'payment_method' });
 PaymentMethod.hasMany(Contract, { foreignKey: 'payment_method' });
@@ -213,8 +215,8 @@ Tasks.belongsTo(User, { foreignKey: 'deletedBy', as: 'deletedByUser' });
 
 
 //Tasks is associated with User in the assignedTo field
-Tasks.belongsTo(User, { foreignKey: 'assignedTo', as: 'assignedToUser' });
-User.hasMany(Tasks, { foreignKey: 'assignedTo' });
+// Tasks.belongsTo(User, { foreignKey: 'assignedTo', as: 'assignedToUser' });
+// User.hasMany(Tasks, { foreignKey: 'assignedTo' });
 
 //Tasks is associated with Tasks in the parentTask field
 Tasks.belongsTo(Tasks, { foreignKey: 'parentTask', as: 'parentTasks' });
@@ -241,6 +243,8 @@ Purchase.belongsTo(User, { foreignKey: 'createdBy', as: 'createdByUser' });
 Purchase.belongsTo(User, { foreignKey: 'updatedBy', as: 'updatedByUser' });
 Purchase.belongsTo(User, { foreignKey: 'deletedBy', as: 'deletedByUser' });
 Purchase.belongsTo(User, { foreignKey: 'referent', as: 'referentUser' });
+
+Tasks.belongsTo(User, { foreignKey: 'assignedTo', as: 'assignedToUser' });
 
 PurchaseRow.belongsTo(Purchase, { foreignKey: 'id_purchase' });
 Purchase.hasMany(PurchaseRow, { foreignKey: 'id_purchase' });

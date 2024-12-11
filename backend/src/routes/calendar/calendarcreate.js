@@ -175,15 +175,17 @@ router.post("/create/", async (req, res) => {
                     const text = `L'utente ${user.name + " " + user.surname} ha richiesto l'autorizzazione ${start === end ? 'per il giorno ' + date : 'dal ' + start.toISOString().split('T')[0] + ' al ' + end.toISOString().split('T')[0]} al ${partString} per essere in ${locationString}.`;                    
 
                     //now we have the mailing list, we can send the email
+                    if (locationObj.needApproval) {
                     const users = mailingList.mailinglistusers.map((user) => user.email);
-                    const emails = users.join(',');
-                    const subject = "Richiesta di autorizzazione ferie e permessi";
-                    transporter.sendMail({
-                        from: process.env.SMTP_USER,
-                        to: emails,
-                        subject: subject,
-                        text: text,
-                    });
+                        const emails = users.join(',');
+                        const subject = "Richiesta di autorizzazione ferie e permessi";
+                        transporter.sendMail({
+                            from: process.env.SMTP_USER,
+                            to: emails,
+                            subject: subject,
+                            text: text,
+                        });
+                    }
                 }
 
                 res.json({

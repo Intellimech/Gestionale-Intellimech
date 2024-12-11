@@ -24,7 +24,7 @@ router.get('/read/', async (req, res) => {
         const reporting = await Reporting.findAll({
             where: { 
                 createdBy: user.id_user,
-                createdAt: {
+                date: {
                     [Op.between]: [startOfDay, endOfDay], // Match the entire day
                 },
             },
@@ -81,6 +81,16 @@ router.get('/read/', async (req, res) => {
                     model: sequelize.models.Event,
                     as: 'associatedEvent',
                     attributes: ['id_event', 'name'],
+                },
+                {
+                    model: sequelize.models.Certification,
+                    as: 'associatedCertification',
+                    attributes: ['id_certification', 'name'],
+                },
+                {
+                    model: sequelize.models.Company,
+                    as: 'associatedCompany',
+                    attributes: ['id_company', 'name'],
                 }
             ]
         });
@@ -89,7 +99,7 @@ router.get('/read/', async (req, res) => {
 
         // Check if any reporting was found
         if (reporting.length === 0) {
-            return res.status(404).json({
+            return res.status(200).json({
                 message: 'No reporting found for the specified date',
                 reporting: [],
             });

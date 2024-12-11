@@ -5,7 +5,7 @@ import Reporting from '../../models/reporting.js';
 const router = express.Router();
 
 router.post('/create/', async (req, res) => {
-  const { date, task_percentage, company, hours, id_job, text,id_reportingindirect, id_event, id_task, percentage } = req.body;
+  const { date, task_percentage, id_certification, id_company, hours, id_job, text,id_reportingindirect, id_event, id_task, percentage } = req.body;
   const user = req.user;
 
   if(!id_reportingindirect) {
@@ -18,11 +18,13 @@ router.post('/create/', async (req, res) => {
   try {
     // Create a new record with null checks, make hour as integer
     const reportingindirect = await Reporting.create({
+      date: date || null,
       hour: hours || null,
       event: id_event || null,
-      company: company || null,
+      company: id_company || null,
       job: id_job || null,
       text: text || null,
+      certifications: id_certification || null,
       reportingIndirect: id_reportingindirect || null,
       task: id_task || null,
       createdBy: user.id_user,

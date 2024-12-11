@@ -11,6 +11,10 @@ Reporting.init(
       primaryKey: true,
       autoIncrement: true
     },
+    date: {
+      type: DataTypes.DATE,
+      allowNull: true
+    },
     job: {
         type: DataTypes.INTEGER,
         allowNull: true

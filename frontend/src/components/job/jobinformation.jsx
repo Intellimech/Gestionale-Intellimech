@@ -61,7 +61,7 @@ export default function Example({ job }) {
                 {new Date(job.createdAt).toLocaleDateString()}
               </td>
               <td className="px-4 py-3 text-sm text-gray-900">
-                {job.Reportings.reduce((total, reported) => total + reported.hour, 0)} h
+                {job.totalHours} h
               </td>
               <td className="px-4 py-3 text-sm text-gray-900">
                 {job.SalesOrders.reduce((total, order) => total + parseFloat(order.Offer?.amount || 0), 0).toFixed(2)} €
@@ -135,20 +135,20 @@ export default function Example({ job }) {
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 bg-white">
-            {job.Reportings.length === 0 ? (
+            {job.allReportings.length === 0 ? (
               <tr>
                 <td colSpan="4" className="px-3 py-4 text-sm text-gray-500 text-center">
                   Nessuna rendicontazione trovata
                 </td>
               </tr>
             ) : (
-              job.Reportings.map((reporting) => (
+              job.allReportings.map((reporting) => (
                 <tr key={reporting.id_reporting} className="hover:bg-gray-50">
                   <td className="px-3 py-3 text-sm text-gray-500">
                     {`${reporting.createdByUser?.name} ${reporting.createdByUser?.surname || ''}`}
                   </td>
                   <td className="px-3 py-3 text-sm text-gray-500">
-                    {reporting.task || 'No Task Assigned'}
+                    {reporting?.associatedTask?.name || 'No Task Assigned'}
                   </td>
                   <td className="px-3 py-3 text-sm text-gray-500">
                     {reporting.hour || 0} h

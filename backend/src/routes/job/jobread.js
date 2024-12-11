@@ -18,9 +18,7 @@ const publickey = fs.readFileSync(__dirname + "/src/keys/public.key", "utf8");
 // __dirname
 
 router.get("/read/", (req, res) => {
-    // Get the role from the database
     const Job = sequelize.models.Job;
-    const user = req.user;
 
     Job.findAll({
         include: [
@@ -42,6 +40,43 @@ router.get("/read/", (req, res) => {
                                     },
                                 ],
                             },
+                            {
+                                model: sequelize.models.Tasks,
+                                attributes: ["id_task", "name", "description", "percentage"],
+                                include: [
+                                    {
+                                        model: sequelize.models.Reporting,
+                                        as: "taskReportings",
+                                    },
+                                    {
+                                        model: sequelize.models.Tasks,
+                                        attributes: ["id_task", "name", "description", "percentage"],
+                                        include: [
+                                            {
+                                                model: sequelize.models.Reporting,
+                                                as: "taskReportings",
+                                                include: [
+                                                    {
+                                                        model: sequelize.models.Event,
+                                                        as: 'associatedEvent',
+                                                        attributes: ['id_event', 'name'],
+                                                    },
+                                                    {
+                                                        model: sequelize.models.Certification,
+                                                        as: 'associatedCertification',
+                                                        attributes: ['id_certification', 'name'],
+                                                    },
+                                                    {
+                                                        model: sequelize.models.Company,
+                                                        as: 'associatedCompany',
+                                                        attributes: ['id_company', 'name'],
+                                                    }
+                                                ],
+                                            },
+                                        ],
+                                    },
+                                ],
+                            },
                         ],
                     },
                 ],
@@ -55,9 +90,62 @@ router.get("/read/", (req, res) => {
     })
     .then((jobs) => {
         if (jobs) {
+            // Aggiungi il campo totalHours e totalPercentage per ogni job
+            const jobsWithStats = jobs.map((job) => {
+                let jobTotalHours = 0;
+                let totalPercentage = 0;
+                let taskCount = 0;
+
+                job.SalesOrders?.forEach((salesOrder) => {
+                    const offer = salesOrder.Offer;
+                    if (offer?.Tasks) {
+                        offer.Tasks.forEach((task) => {
+                            // Somma ore dai reporting diretti del task
+                            task.taskReportings?.forEach((reporting) => {
+                                jobTotalHours += reporting.hour || 0;
+                            });
+
+                            // Aggiungi la percentuale del task principale
+                            if (task.percentage !== undefined) {
+                                totalPercentage += task.percentage;
+                                taskCount++;
+                            }
+
+                            // Somma ore e percentuali dai subtasks
+                            task.Tasks?.forEach((subTask) => {
+                                subTask.taskReportings?.forEach((reporting) => {
+                                    jobTotalHours += reporting.hour || 0;
+                                });
+
+                                if (subTask.percentage !== undefined) {
+                                    totalPercentage += subTask.percentage;
+                                    taskCount++;
+                                }
+                            });
+                        });
+                    }
+                });
+
+                // Calcolo media percentuale
+                const averagePercentage = taskCount > 0 ? totalPercentage / taskCount : 0;
+
+                // Crea una lista generale delle rendicontazioni
+                const allReportings = job.SalesOrders.flatMap((salesOrder) =>
+                    salesOrder.Offer ? salesOrder.Offer.Tasks.flatMap((task) => task.taskReportings) : []
+                );
+
+                // Aggiungi i campi totalHours e totalPercentage al job corrente
+                return {
+                    ...job.toJSON(), // Converte il job in un oggetto JSON serializzabile
+                    allReportings: allReportings,
+                    totalHours: jobTotalHours,
+                    totalPercentage: averagePercentage,
+                };
+            });
+
             res.status(200).json({
                 message: "Job found",
-                jobs: jobs,
+                jobs: jobsWithStats,
             });
         } else {
             res.status(400).json({
@@ -66,12 +154,11 @@ router.get("/read/", (req, res) => {
         }
     })
     .catch((err) => {
-        console.log(err);
+        console.error(err);
         res.status(500).json({
             message: "Internal server error",
         });
     });
 });
-
 
 export default router;

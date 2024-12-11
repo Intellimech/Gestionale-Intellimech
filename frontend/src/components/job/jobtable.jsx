@@ -445,7 +445,21 @@ export default function Example({ permissions, user }) {
                       rows={1}
                     />
                   </th>
-                 
+                  <th scope="col"  className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer"onClick={() => handleSort('status')}>
+                  <br/>Avanzamento
+                    {sortColumn === 'status' && sortDirection !== '' ? (
+                      sortDirection === 'asc' ? null : null 
+                    ) : null}
+                    <br />
+                    <input
+                      value={searchQueries.status}
+                      onClick={(e) => e.stopPropagation()} 
+                      onChange={handleSearchInputChange('status')}
+               className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+                      placeholder=""
+                      rows={1}
+                    />
+                  </th>
                   <th scope="col"  className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer"onClick={() => handleSort('status')}>
                   <br/>Stato
                     {sortColumn === 'status' && sortDirection !== '' ? (
@@ -522,17 +536,24 @@ export default function Example({ permissions, user }) {
                         </td>
                         <td className="whitespace-normal overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
                           {
-                            job.SalesOrders?.reduce((total, order) => total + parseFloat(order?.Offer?.hour), 0) + ' h'
+                            isNaN(job.SalesOrders?.reduce((total, order) => total + parseFloat(order?.Offer?.hour), 0) + ' h') ?
+                            '0 h'
+                            : job.SalesOrders?.reduce((total, order) => total + parseFloat(order?.Offer?.hour), 0) + ' h'
                           }
                         </td> 
                         <td className="whitespace-normal overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
                           {
-                            job.Reportings?.reduce((total, reported) => total + reported.hour, 0) + ' h'
+                            job.totalHours + ' h'
                           }
                         </td>
                         <td className="whitespace-normal overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
                           {
-                            (job.Reportings?.reduce((total, reported) => total + reported.hour, 0) * (job.SalesOrders?.reduce((total, order) => total + parseFloat(order?.Offer?.amount), 0).toFixed(2) / job?.SalesOrders?.reduce((total, order) => total + parseFloat(order?.Offer?.hour), 0).toFixed(2))).toFixed(2) + '€'
+                            job.totalHours * (job.SalesOrders?.reduce((total, order) => total + parseFloat(order?.Invoices?.amount), 0) / job.SalesOrders?.reduce((total, order) => total + parseFloat(order?.Offer?.hour), 0))
+                          }
+                        </td>
+                        <td className="whitespace-normal overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
+                          {
+                            job.totalPercentage + ' %'
                           }
                         </td>
                         

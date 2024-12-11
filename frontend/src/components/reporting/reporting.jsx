@@ -228,6 +228,7 @@ export default function Reporting() {
     data.id_reportingindirect = selectedChildReportingIndirect?.value || selectedReportingIndirect?.value;
     data.task_percentage = data.task_percentage || 0;
     data.id_event = selectedEvent?.value;
+    data.id_company = selectedCompany?.value;
     data.hours = parseFloat(data.hours);
     data.id_certification = selectedCertification?.value;
 
@@ -246,6 +247,23 @@ export default function Reporting() {
         toast.error('Errore nell\'invio della rendicontazione');
       });
   };
+
+  const handleDelete = (id) => {
+    axios
+      .delete(`${process.env.REACT_APP_API_URL}/reporting/delete/${id}`, {
+        headers: {
+          Authorization: `Bearer ${Cookies.get('token')}`,
+        },
+      })
+      .then((response) => {
+        toast.success('Rendicontazione eliminata con successo');
+        fetchReportedHours(date); // Refresh reported hours after deletion
+      })
+      .catch((error) => {
+        console.error('Error deleting reporting:', error);
+        toast.error('Errore nell\'eliminazione della rendicontazione');
+      });
+  };
   return (
     <main>
       <Toaster />
@@ -257,10 +275,10 @@ export default function Reporting() {
         </div>
         <div className="lg:grid lg:grid-cols-12 lg:gap-x-16">
           <div className="mt-10 text-center lg:col-start-8 lg:col-end-13 lg:row-start-1 lg:mt-9 xl:col-start-9">
-            <form onSubmit={handleSubmit}>
-              <div className="space-y-6">
-              <div>
-                  <label htmlFor="date" className="block text-sm font-medium text-gray-900">Data</label>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 gap-x-6 gap-y-4">
+                <div className="col-span-1">
+                  <label htmlFor="date" className="block text-left text-sm font-medium text-gray-900 mb-1">Data</label>
                   <input 
                     type="date" 
                     name="date" 
@@ -269,26 +287,26 @@ export default function Reporting() {
                     onChange={(e) => {
                       const selectedDate = e.target.value;
                       setDate(selectedDate);
-                      fetchReportedHours(selectedDate); // Fetch reported hours for the new date
+                      setReportedHours([]);
+                      fetchReportedHours(selectedDate);
                     }}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring focus:ring-[#7fb7d4] focus:ring-opacity-50" 
+                    className="w-full rounded-md border-gray-300 text-left shadow-sm focus:border-[#7fb7d4] focus:ring focus:ring-[#7fb7d4] focus:ring-opacity-50" 
                     required 
                   />
                 </div>
-                <div>
-                  <label htmlFor="job" className="block text-sm font-medium text-gray-900">Reparto / Attività</label>
+                <div className="col-span-1">
+                  <label htmlFor="job" className="block text-left text-sm font-medium text-gray-900 mb-1">Reparto / Attività</label>
                   <Select
                     options={reportingIndirect.map((ri) => ({ value: ri.id_reportingindirect, label: ri.name }))}
                     id="reportingIndirect"
                     name="reportingIndirect"
                     value={selectedReportingIndirect}
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4] sm:text-sm sm:leading-6"
+                    className="w-full text-left"
                     onChange={handleReportingIndirectChange}
                     isSearchable
                     placeholder="Seleziona un rendicontabile" 
                   />
-                </div>
-                {childReportingIndirect.length > 0 && (
+                </div>{childReportingIndirect.length > 0 && (
                 <div>
                   <label htmlFor="childReportingIndirect" className="block text-sm font-medium text-gray-900">Attività di Dettaglio</label>
                   <Select
@@ -471,8 +489,9 @@ export default function Reporting() {
             {reportedHours.map((report, index) => (
               <li key={index} className="relative flex space-x-6 py-6 xl:static">
                 <div className="flex-auto">
-                  <dl className="mt-2 flex flex-wrap items-center text-gray-500 border-l border-gray-300">
-                    <div className="flex items-start space-x-3 px-3 first:border-none border-l border-gray-300 flex-12 min-w-[150px]">
+                  <dl className="grid grid-cols-6 gap-x-4 text-gray-500 border-l border-gray-300">
+                    {/* Always have 6 columns, even if some are empty */}
+                    <div className="col-span-1 flex items-start space-x-3 px-3 first:border-none border-l border-gray-300">
                       <dt className="mt-0.5">
                         <span className="sr-only">Ore</span>
                         <ClockIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
@@ -480,57 +499,65 @@ export default function Reporting() {
                       <dd>{report.hour} ore</dd>
                     </div>
                     {report.indirectReporting?.ParentIndirect && (
-                      <div className="flex items-start space-x-3 px-3 border-l border-gray-300 flex-1 min-w-[150px]">
+                      <div className="col-span-1 flex items-start space-x-3 px-3 border-l border-gray-300">
                         <dt className="mt-0.5">
                           <span className="sr-only">Sotto Attività</span>
                           <BriefcaseIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
                         </dt>
-                        <dd>{report.indirectReporting.ParentIndirect.name}</dd>
+                        <dd>{report.indirectReporting?.ParentIndirect?.name || '-'}</dd>
                       </div>
                     )}
                     {report.indirectReporting && (
-                      <div className="flex items-start space-x-3 px-3 border-l border-gray-300 flex-1 min-w-[150px]">
+                      <div className="col-span-1 flex items-start space-x-3 px-3 border-l border-gray-300">
                         <dt className="mt-0.5">
                           <span className="sr-only">Attività</span>
                           <BriefcaseIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
                         </dt>
-                        <dd>{report.indirectReporting.name}</dd>
+                        <dd>{report.indirectReporting?.name || '-'}</dd>
                       </div>
                     )}
                     {report.associatedEvent && (
-                      <div className="flex items-start space-x-3 px-3 border-l border-gray-300 flex-1 min-w-[150px]">
-                        <dt className="mt-0.5">
-                          <span className="sr-only">Evento</span>
-                          <QueueListIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-                        </dt>
-                        <dd>{report.associatedEvent.name}</dd>
-                      </div>
+                    <div className="col-span-1 flex items-start space-x-3 px-3 border-l border-gray-300">
+                      <dt className="mt-0.5">
+                        <span className="sr-only">Evento</span>
+                        <QueueListIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                      </dt>
+                      <dd>{report.associatedEvent?.name || '-'}</dd>
+                    </div>
                     )}
-                    {report.associatedTask && (
+                    {report.associatedJob && (
                       <>
-                        <div className="flex items-start space-x-3 px-3 border-l border-gray-300 flex-1 min-w-[150px]">
+                        <div className="col-span-1 flex items-start space-x-3 px-3 border-l border-gray-300">
                           <dt className="mt-0.5">
                             <span className="sr-only">Task</span>
                             <QueueListIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
                           </dt>
-                          <dd>
-                            {report.associatedTask.Offer.SalesOrders[0].Jobs[0].name} - Task {report.associatedTask.name}
-                          </dd>
+                          <dd>{report.associatedTask ? `${report.associatedTask.Offer.SalesOrders[0].Jobs[0].name} - ${report.associatedTask.name}` : '-'}</dd>
                         </div>
-                        <div className="flex items-start space-x-3 px-3 border-l border-gray-300 flex-1 min-w-[150px]">
+                        <div className="col-span-1 flex items-start space-x-3 px-3 border-l border-gray-300">
                           <dt className="mt-0.5">
-                            <span className="sr-only">Task</span>
+                            <span className="sr-only">Percentuale</span>
                             <QueueListIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
                           </dt>
-                          <dd>{report.associatedTask.percentage + "%"}</dd>
+                          <dd>{report.associatedTask?.percentage ? `${report.associatedTask.percentage}%` : '-'}</dd>
                         </div>
                       </>
+                    )}
+                    {report.associatedCompany && (
+                      <div className="col-span-1 flex items-start space-x-3 px-3 border-l border-gray-300">
+                        <dt className="mt-0.5">
+                          <span className="sr-only">Azienda</span>
+                          <QueueListIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                        </dt>
+                        <dd>{report.associatedCompany?.name || '-'}</dd>
+                      </div>
                     )}
                   </dl>
                 </div>
                 <div className="flex space-x-3">
                   <button
                     type="button"
+                    onClick={() => handleDelete(report.id_reporting)}
                     className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
                   >
                     <TrashIcon className="h-5 w-4 text-gray-500" />
@@ -542,17 +569,16 @@ export default function Reporting() {
         </div>
       </div>
       ) : (
-            <body className="h-full">
-                <main className="grid min-h-full place-items-center bg-white px-6 py-24 sm:py-32 lg:px-8">
-                    <div className="text-center">
-                        <h1 className="mt-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-5xl">Rendicontazione non disponibile</h1>
-                        <p className="mt-6 text-base leading-7 text-gray-600" aria-hidden="true">
-                            Durante il periodo di {user.location.name} non è necessario rendicontare le ore.
-                        </p>
-
-                    </div>
-                </main>
-            </body>
+        <body className="h-full">
+          <main className="grid min-h-full place-items-center bg-white px-6 py-24 sm:py-32 lg:px-8">
+            <div className="text-center">
+              <h1 className="mt-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-5xl">Rendicontazione non disponibile</h1>
+              <p className="mt-6 text-base leading-7 text-gray-600" aria-hidden="true">
+                Durante il periodo di {user.location.name} non è necessario rendicontare le ore.
+              </p>
+            </div>
+          </main>
+        </body>
       )}
     </main>
   );

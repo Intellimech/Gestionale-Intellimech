@@ -973,6 +973,26 @@ export default function Example({ permissions }) {
                                    
                                   </>
                                 )}
+                                {offer.status === 'Approvata' && (
+                                  <>
+                                    <button
+                                      type="button"
+                                      className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
+                                      onClick={(event) => {
+                                       
+                                          setShowRevision(true);
+                                          setSelectedOfferRevision(offer);
+                                          
+                                      }}
+                                     
+                                      title="Revisione"
+                                    >
+                                       <PencilSquareIcon className="h-5 w-4 text-gray-500" />
+                                    </button>
+                                    
+                                   
+                                  </>
+                                )}
                               </>
                             )}
                           </div>

@@ -19,7 +19,7 @@ export default function CommercialOfferForm({
     tasksArray.forEach(task => {
       // Ensure we're creating a valid option object with string values
       flat.push({
-        value: task.description || '', // Use description instead of name
+        value: task.id_task || '', // Use description instead of name
         label: task.description || '', // Use description instead of name
         estimatedend: task.estimatedend
       });

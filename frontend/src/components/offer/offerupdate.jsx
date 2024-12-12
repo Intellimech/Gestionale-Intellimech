@@ -270,7 +270,7 @@ export default function UpdateForm({ offer }) {
         assignedTo: task.assignedTo?.value || null,
         estimatedstart: task.estimatedstart || estimatedStartDate,
         estimatedend: task.estimatedend || estimatedEndDate,
-        children: task.children.map((child) => ({
+        children: task?.children?.map((child) => ({
           ...child,
           assignedTo: child.assignedTo?.value || null,
           estimatedstart: child.estimatedstart || task.estimatedstart || estimatedStartDate,
@@ -418,7 +418,7 @@ export default function UpdateForm({ offer }) {
         <div className="border-b border-gray-900/10 pb-4">
           <h2 className="text-base font-semibold leading-7 text-gray-900">Attività</h2>
           <div>
-            {/* {tasks.map((task, index) => (
+            { tasks.map((task, index) => (
               <TaskUpdate
                 key={index}
                 task={task}
@@ -441,7 +441,7 @@ export default function UpdateForm({ offer }) {
                 }}
                 users={users}
               />
-            ))} */}
+            ))} 
             <button
               type="button"
               onClick={() => setTasks([...tasks, { description: '', hour: 0, value: 0, assignedTo: '', children: [] }])}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import Select from 'react-tailwindcss-select';
 
 const CommercialOfferRev = ({
@@ -18,48 +18,55 @@ const CommercialOfferRev = ({
       return new Date().toISOString().split('T')[0];
     }
   };
-
-  const [localData, setLocalData] = useState({
-    linkedTask: offer?.CommercialOffer?.linkedTask,
-    date: formatDate(new Date()),
-    amount: 0
-  });
-
+  
   const flattenTasks = (tasksArray) => {
     let flat = [];
-    tasksArray.forEach(task => {
-      if (task.id_task && (task.description || task.name)) {
-        flat.push({
-          value: task.name,
-          label: task.description || task.name,
-          estimatedend: task.estimatedend ? formatDate(task.estimatedend) : null
-        });
-      }
-      if (task.children && task.children.length > 0) {
-        flat = flat.concat(flattenTasks(task.children));
-      }
-    });
+    if (Array.isArray(tasksArray)) {
+      tasksArray.forEach(task => {
+        if  (task.description || task.name) {
+          flat.push({
+            value: task.name,
+            label: task.description || task.name,
+            estimatedend: task.estimatedend ? formatDate(task.estimatedend) : null,
+          });
+        }
+        if (Array.isArray(task.children) && task.children.length > 0) {
+          flat = flat.concat(flattenTasks(task.children));
+        }
+      });
+    }
     return flat;
   };
+  
+  const [allTasks, setAllTasks] = useState([]);
 
-  const allTasks = flattenTasks(tasks);
+useEffect(() => {
+  const flattened = flattenTasks(tasks || []);
+  console.log("Flattened tasks:", flattened);
+  setAllTasks(flattened);
+}, [tasks]);
+
+useEffect(() => {
+  console.log("Tasks updated:", tasks);
+  console.log("All tasks recalculated:", allTasks);
+}, [tasks, allTasks]);
+
+  const [localData, setLocalData] = useState({
+    linkedtask: offer.linkedtask,
+    date: formatDate(offer?.date || new Date()),
+    amount: offer?.amount || 0,
+    
+  });
+console.log(localData);
+
 
   useEffect(() => {
     if (offer) {
       const newLocalData = {
-        linkedTask: null,
-        date: formatDate(offer.date || new Date()),
-        amount: offer.amount || 0
+        linkedtask: offer?.linkedtask ,
+        date: formatDate(offer?.date || new Date()),
+        amount: offer?.amount || 0
       };
-
-      if (offer.linkedTask) {
-        const taskOption = {
-          value: offer.linkedTask.id_task,
-          label: offer.linkedTask.description || offer.linkedTask.name,
-          estimatedend: formatDate(offer.linkedTask.estimatedend)
-        };
-        newLocalData.linkedTask = taskOption;
-      }
 
       setLocalData(newLocalData);
     }
@@ -78,13 +85,13 @@ const CommercialOfferRev = ({
   const handleTaskSelection = (selectedOption) => {
     const updatedData = {
       ...localData,
-      linkedTask: selectedOption,
+      linkedtask: selectedOption.label,
       date: selectedOption?.estimatedend || formatDate(new Date())
     };
     setLocalData(updatedData);
     onChange(updatedData);
   };
-  
+
   const getRowLabel = () => {
     const labels = ['I', 'II', 'III', 'IV', 'V', 'VI'];
     return labels[index] || '';
@@ -101,15 +108,18 @@ const CommercialOfferRev = ({
       
       <div className="flex-1">
         {isFirstRow ? (
-          <div className="font-medium">Accettazione Offerta
-          </div>
+          <div className="font-medium">Accettazione Offerta</div>
         ) : isLastRow ? (
           <div className="font-medium">Fine Attività</div>
         ) : (
           <Select
-            
             onChange={handleTaskSelection}
             options={allTasks}
+            value={localData?.linkedtask ? {
+              value: localData?.linkedtask, label: allTasks.find(t=> t?.label === localData?.linkedtask)?.label
+             }
+              : null
+            }
             placeholder="Seleziona un task..."
             isSearchable
             isClearable
@@ -127,7 +137,7 @@ const CommercialOfferRev = ({
           value={localData.date}
           onChange={(e) => handleInputChange('date', e.target.value)}
           className="w-32 px-2 py-1 rounded border border-gray-300 focus:border-[#7fb7d4] focus:ring-[#7fb7d4]"
-          readOnly={localData.linkedTask != null}
+          readOnly={localData.linkedtask != null}
         />
       </div>
 

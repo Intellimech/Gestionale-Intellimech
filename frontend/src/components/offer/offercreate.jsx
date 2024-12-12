@@ -36,7 +36,7 @@ export default function UserCreateForm() {
     amount: 0,
     index: 0
   }]);
-  
+  const [description, setDescription] = useState();
   const [estimatedStartDate, setEstimatedStartDate] = useState(new Date().toISOString().split('T')[0]);
   const [estimatedEndDate, setEstimatedEndDate] = useState(new Date().toISOString().split('T')[0]);
 
@@ -263,7 +263,7 @@ export default function UserCreateForm() {
     const form = document.forms.createoffer;
     const formData = new FormData(form);
     const jsonObject = Object.fromEntries(formData.entries());
-    
+    jsonObject.description=description;
     // Aggiungi esplicitamente le date al jsonObject
     jsonObject.estimatedstart = estimatedStartDate;
     jsonObject.estimatedend = estimatedEndDate;
@@ -274,7 +274,7 @@ export default function UserCreateForm() {
   
     // Aggiungi i dati delle commercial offers
     jsonObject.commercialoffers = commercialoffers.map(offer => ({
-      linkedTask: offer.linkedTask?.value || null,
+      linkedTask: offer.linkedTask?.label || null,
       date: offer.date,
       amount: offer.amount
     }));
@@ -391,7 +391,12 @@ export default function UserCreateForm() {
             <textarea
               className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
               rows={3}
-            />
+              value={description}
+              
+               onChange={(e) => setDescription(e.target.value)} // Aggiorna lo stato description
+              />
+
+          
           </td>
         </tr>
       </tbody>

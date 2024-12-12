@@ -5,10 +5,10 @@ import sequelize from "../../utils/db.js";
 const router = express.Router();
 
 router.post("/create", async (req, res) => {
-  let { amount, hour, estimatedstart, estimatedend, quotationrequest, team, tasks, commercialoffers } = req.body;
+  let { amount, hour, estimatedstart, estimatedend, quotationrequest, team, tasks, description, commercialoffers } = req.body;
   const user = req.user;
 
-  console.log("Received data:", { amount, hour, estimatedstart, estimatedend, quotationrequest, team, tasks, commercialoffers });
+  console.log("Received data:", { amount, hour, estimatedstart, estimatedend, description, quotationrequest, team, tasks, commercialoffers });
 
   if (isNaN(Date.parse(estimatedstart)) || isNaN(Date.parse(estimatedend))) {
     return res.status(400).json({
@@ -40,6 +40,7 @@ router.post("/create", async (req, res) => {
     const offer = await Offer.create({
       name: offerName,
       amount: amount,
+      description: description,
       hour: hour,
       estimatedstart: new Date(estimatedstart),
       estimatedend: new Date(estimatedend),
@@ -136,15 +137,15 @@ router.post("/create", async (req, res) => {
 });
 
 router.post("/create/rev", async (req, res) => {
-    let { amount, hour, estimatedstart, name, revision, quotationrequestdescription, estimatedend, quotationrequest, team, tasks, commercialoffers } = req.body;
+    let { amount, hour, estimatedstart, description,  name, revision, quotationrequestdescription, estimatedend, quotationrequest, team, id_offer, task, tasks, commercialoffers } = req.body;
     const user = req.user;
   
-    console.log("Received data:", { name, amount, hour, estimatedstart, estimatedend, quotationrequest, team, tasks, commercialoffers });
-  
+    console.log("Received data:", { name, id_offer, task,  amount, hour, estimatedstart, estimatedend, quotationrequest, team, tasks, commercialoffers });
+   const Tasks = tasks;
   
   
     const Offer = sequelize.models.Offer;
-    const Tasks = sequelize.models.Tasks;
+    const Task = sequelize.models.Tasks;
     const CommercialOffer = sequelize.models.CommercialOffer;
     const QuotationRequest = sequelize.models.QuotationRequest;
   
@@ -175,7 +176,7 @@ router.post("/create/rev", async (req, res) => {
         estimatedstart: new Date(estimatedstart),
         estimatedend: new Date(estimatedend),
         quotationrequest: quotationrequest,
-        
+        description : description,
         createdBy: user.id_user,
       });
   
@@ -195,26 +196,21 @@ router.post("/create/rev", async (req, res) => {
       } catch (error) {
         console.error("Error during update:", error);
       }
-  
-      // Aggiunge il team collegato
-      if (team && team.length > 0) {
-        await newOffer.addTeam(team);
-      }
-  
+
       await offer.addTeam(team);
   
       // Mappa per tenere traccia delle task create e dei loro nomi
       const taskMap = new Map();
   
-      const createTasks = async (parentId, tasks, parentPrefix = "") => {
+      const createTasks = async (parentId, Tasks, parentPrefix = "") => {
         let taskCounter = 1;
   
-        for (const task of tasks) {
+        for (const task of Tasks) {
           const taskName = parentPrefix 
             ? `${parentPrefix}.${taskCounter}`
             : taskCounter.toString();
   
-          const newTask = await Tasks.create({
+          const newTask = await Task.create({
             name: taskName,
             hour: task?.hour,
             value: task.value || 0,
@@ -222,7 +218,7 @@ router.post("/create/rev", async (req, res) => {
             estimatedend: new Date(task?.estimatedend),
             description: task.description,
             percentage: percentage || 0,
-            assignedTo: task.assignedTo,
+            assignedTo: task.assignedTo ,
             parentTask: parentId || null,
             createdBy: user.id_user,
             id_offer: offer.id_offer
@@ -239,7 +235,7 @@ router.post("/create/rev", async (req, res) => {
         }
       };
   
-      await createTasks(null, tasks);
+      await createTasks(null, Tasks);
   
       const createCommercialOffers = async (offers) => {
         for (const offerData of offers) {
@@ -261,7 +257,7 @@ router.post("/create/rev", async (req, res) => {
       }
   
       res.status(200).json({
-        message: "Offer created with tasks and commercial offers",
+        message: "Offer created with Tasks and commercial offers",
         offer: offer,
       });
     } catch (err) {

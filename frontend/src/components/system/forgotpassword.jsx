@@ -104,7 +104,7 @@ const Login = () => {
                 <CheckBadgeIcon className="h-5 w-5 text-green-400" aria-hidden="true" />
               </div>
               <div className="ml-3">
-                <h3 className="text-sm font-medium text-green-800">Login Successfully</h3>
+                <h3 className="text-sm font-medium text-green-800">Login effettuato con successo!</h3>
               </div>
             </div>
           </div>

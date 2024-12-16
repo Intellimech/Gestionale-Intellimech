@@ -294,28 +294,47 @@ export default function Reporting() {
                     required 
                   />
                 </div>
-                <div className="col-span-1">
-                  <label htmlFor="job" className="block text-left text-sm font-medium text-gray-900 mb-1">Reparto / Attività</label>
+                <div className="col-span-full">
+                  <label htmlFor="job" className="block text-sm text-left font-medium leading-6 text-gray-900">Attività</label>
+                  <div className= "mt-2">
                   <Select
                     options={reportingIndirect.map((ri) => ({ value: ri.id_reportingindirect, label: ri.name }))}
                     id="reportingIndirect"
                     name="reportingIndirect"
                     value={selectedReportingIndirect}
-                    className="w-full text-left"
                     onChange={handleReportingIndirectChange}
                     isSearchable
                     placeholder="Seleziona un rendicontabile" 
+                    styles={{
+                      control: (base) => ({
+                        ...base,
+                        textAlign: 'left', // Allinea il testo a sinistra nel controllo
+                      }),
+                      menu: (base) => ({
+                        ...base,
+                        textAlign: 'left', // Allinea il testo nel menu delle opzioni
+                      }),
+                      singleValue: (base) => ({
+                        ...base,
+                        textAlign: 'left', // Allinea il testo del valore selezionato
+                      }),
+                      option: (base) => ({
+                        ...base,
+                        textAlign: 'left', // Allinea le opzioni nel menu a sinistra
+                      }),
+                    }}
                   />
+                  </div>
                 </div>{childReportingIndirect.length > 0 && (
                 <div>
-                  <label htmlFor="childReportingIndirect" className="block text-sm font-medium text-gray-900">Attività di Dettaglio</label>
+                  <label htmlFor="childReportingIndirect" className="block text-left text-sm font-medium text-gray-900">Attività di Dettaglio</label>
                   <Select
                     options={(childReportingIndirect.map(cri => ({ value: cri.id_reportingindirect, label: cri.name })) || [])}
                     id="childReportingIndirect"
                     name="childReportingIndirect"
                     value={selectedChildReportingIndirect}
                     onChange={handleChildReportingIndirectChange}
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4] sm:text-sm sm:leading-6"
+                    className="block w-full rounded-md text-left border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4] sm:text-sm sm:leading-6"
                     isSearchable
                     placeholder="Seleziona un sotto rendicontabile"
                     disabled={!selectedReportingIndirect}
@@ -324,7 +343,7 @@ export default function Reporting() {
                 )}
                 {needCompanyInput && (
                   <div>
-                    <label htmlFor="company" className="block text-sm font-medium text-gray-900">Azienda</label>
+                    <label htmlFor="company" className="block text-sm text-left font-medium text-gray-900">Azienda</label>
                     <Select
                       options={company}
                       id="company"
@@ -341,7 +360,7 @@ export default function Reporting() {
                 {needJobInput && (
                   <>
                     <div>
-                      <label htmlFor="job" className="block text-sm font-medium text-gray-900">Commesse</label>
+                      <label htmlFor="job" className="block text-left text-sm font-medium text-gray-900">Commesse</label>
                       <Select
                         options={job.map((job) => ({ value: job.id_job, label: job.name }))}
                         id="job"
@@ -355,7 +374,7 @@ export default function Reporting() {
                     </div>
                     {selectedJob && (
                     <div>
-                      <label htmlFor="task" className="block text-sm font-medium text-gray-900">Task</label>
+                      <label htmlFor="task" className="block text-left text-sm font-medium text-gray-900">Task</label>
                       <Select
                       options={task.map((t) => ({ 
                         value: t.id_task, 
@@ -374,7 +393,7 @@ export default function Reporting() {
                     )}
                     {childTasks && childTasks.length > 0 && (
                       <div>
-                        <label htmlFor="childTask" className="block text-sm font-medium text-gray-900">Sotto Task</label>
+                        <label htmlFor="childTask" className="block text-left text-sm font-medium text-gray-900">Sotto Task</label>
                         <Select
                           options={childTasks.map((t) => ({ 
                             value: t.id_task, 
@@ -393,7 +412,7 @@ export default function Reporting() {
                     )}
                     {selectedTask && (
                       <div>
-                      <label htmlFor="task_percentage" className="block text-sm font-medium text-gray-900">Percentuale di completamento {percentage}%</label>
+                      <label htmlFor="task_percentage" className="block text-left text-sm font-medium text-gray-900">Percentuale di avanzamento {percentage}%</label>
                         <input 
                           type="range" 
                           name="task_percentage" 
@@ -413,7 +432,7 @@ export default function Reporting() {
 
                 {needEventInput && (
                   <div>
-                    <label htmlFor="event" className="block text-sm font-medium text-gray-900">Evento</label>
+                    <label htmlFor="event" className="block text-sm text-left font-medium text-gray-900">Evento</label>
                     <Select
                       options={event.map((event) => ({ value: event.id_event, label: event.name }))}
                       id="event"
@@ -442,13 +461,13 @@ export default function Reporting() {
 
                 {needCertificationInput && (
                   <div>
-                    <label htmlFor="certification" className="block text-sm font-medium text-gray-900">Certificazione</label>
+                    <label htmlFor="certification" className="block  text-left text-sm font-medium text-gray-900">Certificazione</label>
                     <Select
                       options={certification.map((cert) => ({ value: cert.id_certification, label: cert.name }))}
                       id="certification"
                       name="certification"
                       value={selectedCertification}
-                      className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4] sm:text-sm sm:leading-6"
+                      className="block text-left w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4] sm:text-sm sm:leading-6"
                       onChange={(value) => setSelectedCertification(value)}
                       isSearchable
                       placeholder="Seleziona una certificazione"
@@ -456,7 +475,7 @@ export default function Reporting() {
                   </div>
                 )}
                 <div>
-                  <label htmlFor="hours" className="block text-sm font-medium text-gray-900">Ore Lavorate</label>
+                  <label htmlFor="hours" className="block text-left text-sm font-medium text-gray-900">Ore Lavorate</label>
                   <input 
                     type="number" 
                     name="hours" 

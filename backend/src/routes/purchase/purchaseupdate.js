@@ -37,7 +37,7 @@ router.put("/update", async (req, res) => {
       const match = purchase.name.match(/_R(\d+)$/); // Cerca suffisso _R0, _R1, etc.
       if (match) {
         const number = parseInt(match[1], 10); // Estrai il numero dal suffisso
-        purchase.name = purchase.name.replace(/_R\d+$/, `_R${number + 1}`); // Incrementa il numero
+        purchase.name = purchase.name?.replace(/_R\d+$/, `_R${number + 1}`); // Incrementa il numero
       } else {
         // Se non c'è suffisso, aggiungi _R1 come suffisso iniziale
         purchase.name = `${purchase.name}_R1`;
@@ -70,7 +70,7 @@ router.put("/update", async (req, res) => {
         let PurchaseRowName = `${parts[0]}_${parts[1]}_${increment}_${parts[2]}`;
       
         // Estrarre il nome base (senza suffisso numerico)
-        const baseName = product.name.replace(/_R\d+$/, "");
+        const baseName = product.name?.replace(/_R\d+$/, "");
       
         const existingRow = await PurchaseRow.findOne({
           where: {

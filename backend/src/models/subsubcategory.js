@@ -23,6 +23,9 @@ Subsubcategory.init(
       years: {
         type: DataTypes.DOUBLE(255),
       },
+      details: {
+        type: DataTypes.STRING(255),
+      },
   },
   {
     sequelize: db,

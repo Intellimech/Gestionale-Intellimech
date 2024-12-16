@@ -80,7 +80,9 @@ export default function Example({ purchase: initialPurchase }) {
   }, [purchase]);
 
   const formatCurrency = (amount) => {
-    return `${amount} ${purchase?.Currency.symbol}`;
+    console.log(initialPurchase)
+    if (!amount) return `0${purchase?.Currency.code || ''}`;
+    return `${parseFloat(amount).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${purchase?.Currency.code || ''}`;
   };
 
   const formatDate = (date) => {
@@ -124,10 +126,10 @@ export default function Example({ purchase: initialPurchase }) {
     const orderDetails = [
       ['N° Ordine di Acquisto', `${purchase.name}`],
       ['Data', `${formatDate(purchase.createdAt)}`],
-      ['Riferimento Intellimech', `${purchase?.referentUser.name.slice(0, 2).toUpperCase() + purchase?.referentUser?.surname.slice(0, 2).toUpperCase() + " (" + purchase?.referentUser.name + " " + purchase?.referentUser.surname + ")"}`],
+      ['Riferimento Intellimech', `${purchase?.referentUser?.name.slice(0, 2).toUpperCase() + purchase?.referentUser?.surname.slice(0, 2).toUpperCase() + " (" + purchase?.referentUser?.name + " " + purchase?.referentUser?.surname + ")"}`],
       ['Metodo di Pagamento', `${purchase.PaymentMethod.name}`],
       ['', `${purchase?.banktransfer || ''}`], // Aggiungi i dettagli se disponibili
-      ['Commessa', `${purchase?.Job.name || ''}`],
+      ['Commessa', `${purchase?.Job?.name || ''}`],
      
     ];
     
@@ -199,6 +201,7 @@ export default function Example({ purchase: initialPurchase }) {
       margin: { left: 130, top: 10 },
       alternateRowStyles: { fillColor: [255, 255, 255] } 
     });
+
     const rows = purchase.PurchaseRows.map((row, index) => {
       if (!row) return []; // Gestisci eventuali righe undefined o null
       return [
@@ -207,7 +210,7 @@ export default function Example({ purchase: initialPurchase }) {
         row.quantity || 0,
         formatCurrency(row.unit_price || 0),
         formatCurrency((row.unit_price || 0) * (row.quantity || 0)),
-        row.vat,
+        row.vat + '%',
         formatCurrency(row.taxed_unit_price || 0),
         formatCurrency(row.taxed_totalprice || 0)
       ];
@@ -215,8 +218,9 @@ export default function Example({ purchase: initialPurchase }) {
     
 
     doc.autoTable({
-      startY: doc.autoTable.previous.finalY + 15,
-      head: [['#', 'Descrizione', 'Quantità', 'Importo Unitario IVA Esclusa ', 'Importo Totale IVA Esclusa', 'IVA', 'Importo Unitario IVA Inclusa', 'Importo Unitario IVA Inclusa']],
+      startX: -5,
+      startY: doc.autoTable.previous.finalY + 15, 
+      head: [['\n           #', '\n      Descrizione', '\n      Quantità', '            Importo Unitario \n            IVA Esclusa ', '            Importo Totale \n            IVA Esclusa', '\n        IVA', '            Importo Unitario \n            IVA Inclusa', '            Importo Unitario \n            IVA Inclusa']],
       body: rows,
       columnStyles: {
         0: { cellWidth: 10 }, // Larghezza della colonna "Row Number"
@@ -230,13 +234,15 @@ export default function Example({ purchase: initialPurchase }) {
       },
       headStyles: {
         fillColor: [255, 255, 255], // Colore di sfondo rosso per l'intestazione
-        textColor: [0, 0, 0], // Colore del testo bianco
-        fontStyle: 'bold',
-        fontSize: 6
+        textColor: [128,128,128], // Colore del testo bianco
+        halign: 'left' ,
+        fontSize: 5
       },
       styles: {
         cellPadding: 1, // Aumenta il padding per dare più spazio alle righe
-        fontSize: 8, // Riduci la dimensione del font per il corpo
+        fontSize: 8,
+        textColor: [0,0,0],  // Riduci la dimensione del font per il corpo
+        halign: 'right' ,
       },
       margin: { left: 15, top: 10 },
       alternateRowStyles: { fillColor: [255, 255, 255] } 
@@ -244,6 +250,7 @@ export default function Example({ purchase: initialPurchase }) {
     
     // Aggiungi la tabella con i totali e altre informazioni
     const summaryDetails = [
+      ['Importo Totale IVA Esclusa', `${formatCurrency(purchase.taxed_total)}`],
       ['Importo Totale IVA Inclusa', `${formatCurrency(purchase.total)}`],
       ['Approvato da', 'Stefano Ierace']
     ];
@@ -269,15 +276,16 @@ export default function Example({ purchase: initialPurchase }) {
       
       alternateRowStyles: { fillColor: [255, 255, 255] } 
     });
-    doc.addImage(firma, 'JPEG', 66, doc.autoTable.previous.finalY + 2,20, 11);
+    doc.addImage(firma, 'JPEG', 72, doc.autoTable.previous.finalY + 3,30, 11);
     // Aggiungi il piè di pagina
     const footerText = [
-      "Sede Legale e Operativa c/o Kilometro Rosso (Gate 4) - Via Stezzano, 87 24126 Bergamo Tel. +39 035 0690366 - C.F. 95160560165",
-      "P.I. 03388700167 REA BG 3713330 - Iscrizione CCIAA di BG n° 03388700167 - SDI J6URRTW PEC: intellimech@legalmail.it",
-      "Amministrazione: m.innovati@confindustriabergamo.it"
+      "\n",
+      "Sede Legale e Operativa c/o Kilometro Rosso (Gate 4) - Via Stezzano, 87 24126 Bergamo Tel. +39 035 0690366 - C.F. 95160560165 P.I. 03388700167 REA BG 3713330",
+      "Iscrizione CCIAA di BG n° 03388700167 - SDI J6URRTW PEC: intellimech@legalmail.it Amministrazione: m.innovati@confindustriabergamo.it",
+      
     ];
   
-    doc.setFontSize(8);
+    doc.setFontSize(6);
     doc.setFont('Helvetica', 'normal');
     
     const pageHeight = doc.internal.pageSize.height;
@@ -338,7 +346,7 @@ export default function Example({ purchase: initialPurchase }) {
         </tr>
         <tr>
           <td className="px-2 py-1 font-medium text-gray-600">Ordine</td>
-          <td className="px-2 py-1">{purchase.referentUser.name + " " + purchase.referentUser.surname + ", ("+ purchase.referentUser?.name.slice(0, 2).toUpperCase() + purchase.referentUser?.surname.slice(0, 2).toUpperCase() + ")"}</td>
+          <td className="px-2 py-1">{purchase.referentUser?.name + " " + purchase.referentUser?.surname + ", ("+ purchase.referentUser?.name.slice(0, 2).toUpperCase() + purchase.referentUser?.surname.slice(0, 2).toUpperCase() + ")"}</td>
         </tr>
         <tr>
           <td className="px-2 py-1 font-medium text-gray-600">Fornitore</td>

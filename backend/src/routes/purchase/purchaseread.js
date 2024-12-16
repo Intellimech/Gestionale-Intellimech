@@ -65,7 +65,7 @@ router.get('/read', async (req, res) => {
         },
         {
               model: sequelize.models.Currency,
-              attributes: ["name", "symbol"],
+              attributes: ["name", "symbol", "code"],
             },
         {
           model: Company,
@@ -126,6 +126,8 @@ router.get('/read/:id', async (req, res) => {
             "depreciation",
             "depreciation_aliquota",
             "depreciation_years",
+            
+            "depreciation_details",
             "asset",
             "category",
             "subcategory",
@@ -158,7 +160,7 @@ router.get('/read/:id', async (req, res) => {
         },
         {
           model: sequelize.models.Currency,
-          attributes: ["name", "symbol"],
+          attributes: ["name", "symbol", "code"],
         },
         {
           model: sequelize.models.Job,

@@ -41,7 +41,7 @@ export default function PurchaseRowInput({
   const Vat = ['22', '10', '4', '0'];
 
   const [selectedDetail, setSelectedDetail] = useState(null);
-  const details = ['Primo e Ultimo anno metà importo ', 'Importo uguale ogni anno.'];
+  const details = ['Primo e Ultimo anno metà importo ', 'Importo uguale ogni anno'];
   
   useEffect(() => {
     if (product.depreciation) {
@@ -51,11 +51,11 @@ export default function PurchaseRowInput({
 
       const depreciation_aliquota = subsubcategory?.aliquota || subcategory?.aliquota || category?.aliquota || null;
       const depreciation_years = subsubcategory?.years || subcategory?.years || category?.years || null;
-
+      const depreciation_details = subsubcategory?.details || subcategory?.details || category?.details || null;
       
 
-      if (depreciation_aliquota && depreciation_years) {
-        onChange({ ...product, depreciation_aliquota, depreciation_years });
+      if (depreciation_aliquota && depreciation_years && depreciation_details) {
+        onChange({ ...product, depreciation_aliquota, depreciation_years, depreciation_details });
       }
     }
   }, [product.depreciation, product.category, product.subcategory, product.subsubcategory]);

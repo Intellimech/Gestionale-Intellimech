@@ -20,6 +20,7 @@ Category.init(
       years: {
         type: DataTypes.DOUBLE(255),
       },
+      
   },
   {
     sequelize: db,

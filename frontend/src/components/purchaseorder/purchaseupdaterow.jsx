@@ -145,7 +145,18 @@ useEffect(() => {
               />
             </td>
           </tr>
-
+          <tr>
+            <td className="block text-[11px] font-medium text-gray-700">Description</td>
+            <td>
+              <input
+                type="text"
+                value={product.description || ''}
+                onChange={(e) => onChange({ ...product, description: e.target.value })}
+                className="w-full text-[12px] rounded border-gray-300"
+                placeholder= "Descrizione"
+              />
+            </td>
+          </tr>
           {/* Prezzi e Quantità */}
           <tr>
             <td className="block text-[11px] font-medium text-gray-700">Quantità</td>

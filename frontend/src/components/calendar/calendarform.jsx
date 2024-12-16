@@ -198,11 +198,7 @@ export default function Example({ date, setOpen }) {
       return isSpecialLocation(morningLocation) || isSpecialLocation(afternoonLocation);
     }
   
-    // Seleziona solo date valide e non nel passato
-    if (!startDate || startDate < today) {
-      return false;
-    }
-  
+   
     // Permetti le posizioni speciali senza altre restrizioni
     if (isSpecialLocation(morningLocation) || isSpecialLocation(afternoonLocation)) {
       return true;

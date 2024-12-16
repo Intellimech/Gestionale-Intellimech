@@ -16,7 +16,7 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
   const [locations, setLocations] = useState([]);
   const [allCalendarData, setAllCalendarData] = useState([]);
   const [morningStatus, setMorningStatus] = useState(null);
-  const [afternoonStatus, setAfternoonStatus] = useState(null);
+  const [afternoonStatus, setAfternoonStatus] = useState("Approvata");
   
   useEffect(() => {
    
@@ -173,11 +173,13 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
                                                 
 
   const handleFormSubmit = () => {
+    handleAfternoonLocationChange(afternoonLocation);
+    handleMorningLocationChange(morningLocation);
     // Trova l'ID corrispondente al nome della location
     const morningLocationId = morningLocation ? getLocationIdByName(morningLocation.label) : initialData.morningLocation;
     const afternoonLocationId = afternoonLocation ? getLocationIdByName(afternoonLocation.label) : initialData.afternoonLocation;
     const selectedDate = dataSelezionata || date;
-  
+
     const requestData = {
       morning_id: morningId,
       afternoon_id: afternoonId,
@@ -306,7 +308,11 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
     {Array.isArray(users) && users.length > 0 ? (
       users.map((user) => {
         // Find morning and afternoon entries for this user from allCalendarData
-        const userEntries = allCalendarData.filter(entry => entry.owner === user.id_user);
+     
+      const userEntries = allCalendarData.filter(entry => {
+        const entryDate = new Date(entry.date).toISOString().split("T")[0]; // Ottieni la parte della data
+        return entry.owner === user.id_user && entryDate === date; // Confronta solo le date
+      });
         console.log(userEntries);
         
 

@@ -32,7 +32,8 @@ router.post('/update/', async (req, res) => {
     try {
         const Calendar = sequelize.models.Calendar;
 
-        if (morning_id && morning_location_id) {
+        // Handle morning entry
+        if (morning_id) {
             const morningEntry = await Calendar.findOne({
                 where: {
                     id_calendar: morning_id,
@@ -59,13 +60,24 @@ router.post('/update/', async (req, res) => {
             
                 await morningEntry.update({
                     location: morning_location_id,
-                    status: locationObj.needApproval ? "In Attesa di Approvazione" : "Approvata",
+                    status: morning_status,
                     updatedBy: user.id_user
                 });
             }
+        } else if (!morning_location_id) {
+            // Create morning entry if morning_id is null
+            await Calendar.create({
+                date,
+                location: morning_location_id,
+                status: morning_status,
+                period: "morning",
+                owner: user.id_user,
+                createdBy: user.id-user
+            });
         }
-        
-        if (afternoon_id && afternoon_location_id) {
+
+        // Handle afternoon entry
+        if (afternoon_id) {
             const afternoonEntry = await Calendar.findOne({
                 where: {
                     id_calendar: afternoon_id,
@@ -91,10 +103,20 @@ router.post('/update/', async (req, res) => {
             
                 await afternoonEntry.update({
                     location: afternoon_location_id,
-                    status: locationObj.needApproval ? "In Attesa di Approvazione" : "Approvata",
-                    updatedBy: user.id_user
+                    status: afternoon_status,
+                    owner: user.id_user,
+                    createdBy: user.id_user,
                 });
             }
+        } else if (!afternoon_id && afternoon_location_id) {
+            // Create afternoon entry if afternoon_id is null
+            await Calendar.create({
+                date,
+                location: afternoon_location_id,
+                period: "afternoon",
+                status: afternoon_status,
+                owner: user.id_user
+            });
         }
 
         res.json({

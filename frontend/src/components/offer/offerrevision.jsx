@@ -344,6 +344,7 @@ const createOffer = async (event) => {
     estimatedstart: estimatedStartDate !== initialoffer.estimatedstart ? estimatedStartDate : initialoffer.estimatedstart,
     estimatedend: estimatedEndDate !== initialoffer.estimatedend ? estimatedEndDate : initialoffer.estimatedend,
     amount: totalCommercialAmount !== initialoffer.amount ? totalCommercialAmount : initialoffer.amount,
+    hour: totalHours !== initialoffer.hour ? totalHours : initialoffer.hour, 
     team: selectedTeam?.length > 0 ? selectedTeam.map((team) => team.value) : initialoffer.team?.map(t => t.id_user),
     quotationrequest: selectedQuotationRequest?.value || initialoffer.quotationrequest,
     quotationrequestdescription: quotationRequestDescri !== initialoffer.QuotationRequest?.description 

@@ -146,7 +146,7 @@ PEC: intellimech@legalmail.it - www.intellimech.it
               <td className="px-6 py-1 whitespace-nowrap text-sm font-medium text-gray-900 w-1/4">Codice Offerta</td>
               <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-500">{offer?.name}</td>
             </tr>
-            <tr className="bg-gray-50">
+            <tr className="bg-white-50">
               <td className="px-6 py-1 whitespace-nowrap text-sm font-medium text-gray-900">Cliente</td>
               <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-500">{capitalizeAfterPeriodAndFirstLetter(offer?.QuotationRequest?.Company?.name)}</td>
             </tr>
@@ -154,7 +154,7 @@ PEC: intellimech@legalmail.it - www.intellimech.it
               <td className="px-6 py-1 whitespace-nowrap text-sm font-medium text-gray-900">Ore stimate</td>
               <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-500">{offer?.hour} h</td>
             </tr>
-            <tr className="bg-gray-50">
+            <tr className="bg-white-50">
               <td className="px-6 py-1 whitespace-nowrap text-sm font-medium text-gray-900">Valore</td>
               <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-500">{Number(offer.amount).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €</td>
             </tr>
@@ -162,7 +162,7 @@ PEC: intellimech@legalmail.it - www.intellimech.it
               <td className="px-6 py-1 whitespace-nowrap text-sm font-medium text-gray-900">Costo Orario</td>
               <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-500">{Number(((offer?.amount / offer?.hour)).toFixed(2)).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €</td>
             </tr>
-            <tr className="bg-gray-50">
+            <tr className="bg-white-50">
               <td className="px-6 py-1 whitespace-nowrap text-sm font-medium text-gray-900">Data di Creazione</td>
               <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-500">
                 {new Date(offer?.createdAt).toLocaleDateString() + " " + new Date(offer?.createdAt).toLocaleTimeString()}
@@ -181,7 +181,7 @@ PEC: intellimech@legalmail.it - www.intellimech.it
               <td className="px-6 py-1 whitespace-nowrap text-sm font-medium text-gray-900 w-1/4">Nome Richiesta</td>
               <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-500">{offer?.QuotationRequest?.name}</td>
             </tr>
-            <tr className="bg-gray-50">
+            <tr className="bg-white-50">
               <td className="px-6 py-1 whitespace-nowrap text-sm font-medium text-gray-900">Tipo Progetto</td>
               <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-500">{offer?.QuotationRequest?.ProjectType?.description}</td>
             </tr>
@@ -189,7 +189,7 @@ PEC: intellimech@legalmail.it - www.intellimech.it
               <td className="px-6 py-1 whitespace-nowrap text-sm font-medium text-gray-900">Area Tecnica</td>
               <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-500">{offer?.QuotationRequest?.TechnicalArea?.name}</td>
             </tr>
-            <tr className="bg-gray-50">
+            <tr className="bg-white-50">
               <td className="px-6 py-1 whitespace-nowrap text-sm font-medium text-gray-900">Incarico</td>
               <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-500">{offer?.QuotationRequest?.Assignment?.description}</td>
             </tr>

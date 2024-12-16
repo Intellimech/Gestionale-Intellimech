@@ -340,7 +340,7 @@ export default function UserCreateForm() {
                 id="hour"
                 name="hour"
                 type="number"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
+                className="w-full px-2 py-1 rounded border-gray-300 focus:border-[#7fb7d4] focus:ring-[#7fb7d4]"
                 value={totalHours}
                 readOnly
               />

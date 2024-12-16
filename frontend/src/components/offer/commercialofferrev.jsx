@@ -1,14 +1,14 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import Select from 'react-tailwindcss-select';
 
-const CommercialOfferRev = ({
+export default function CommercialOfferRev  ({
   offer,
   onChange,
   onRemove,
   tasks,
   index,
   onAmountChange
-}) => {
+})  {
   const formatDate = (dateString) => {
     if (!dateString) return new Date().toISOString().split('T')[0];
     try {
@@ -20,6 +20,7 @@ const CommercialOfferRev = ({
   };
   
   const flattenTasks = (tasksArray) => {
+
     let flat = [];
     if (Array.isArray(tasksArray)) {
       tasksArray.forEach(task => {
@@ -97,22 +98,20 @@ console.log(localData);
     return labels[index] || '';
   };
 
-  const isFirstRow = index === 0;
-  const isLastRow = index === 5;
 
   return (
-    <div className="flex items-center space-x-4 mb-4 p-4 bg-white rounded-lg shadow">
-      <div className="w-16 font-semibold">
-        {getRowLabel()}
-      </div>
-      
-      <div className="flex-1">
-        {isFirstRow ? (
-          <div className="font-medium">Accettazione Offerta</div>
-        ) : isLastRow ? (
-          <div className="font-medium">Fine Attività</div>
-        ) : (
-          <Select
+    <div className="p-4 mb-4 bg-white rounded-lg shadow-md">
+    <table className="w-full text-sm">
+      <tbody>
+        <tr>
+          <td className="w-1/4 p-2 text-left font-medium">
+            <span className="font-semibold"></span>
+          </td>
+        </tr>
+        <tr>
+            <td className="w-1/4 p-2 text-left font-medium">Task Collegato:</td>
+            <td className="w-3/4 p-2">
+            <Select
             onChange={handleTaskSelection}
             options={allTasks}
             value={localData?.linkedtask ? {
@@ -128,42 +127,46 @@ console.log(localData);
               menuButton: () => 'flex text-sm text-gray-500 border border-gray-300 rounded shadow-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#7fb7d4] focus:border-[#7fb7d4]'
             }}
           />
-        )}
-      </div>
-
-      <div>
-        <input
-          type="date"
-          value={localData.date}
-          onChange={(e) => handleInputChange('date', e.target.value)}
-          className="w-32 px-2 py-1 rounded border border-gray-300 focus:border-[#7fb7d4] focus:ring-[#7fb7d4]"
-          readOnly={localData.linkedtask != null}
-        />
-      </div>
-
-      <div className="flex items-center space-x-2">
-        <input
-          type="number"
-          value={localData.amount}
-          onChange={(e) => handleInputChange('amount', parseFloat(e.target.value) || 0)}
-          placeholder="Importo"
-          className="w-32 px-2 py-1 rounded border border-gray-300 focus:border-[#7fb7d4] focus:ring-[#7fb7d4]"
-        />
-        <span className="text-sm text-gray-500">+ IVA</span>
-      </div>
-
-      {!isFirstRow && !isLastRow && (
-        <button
-          type="button"
-          onClick={onRemove}
-          className="text-red-500 hover:text-red-700"
-        >
-          <span className="sr-only">Rimuovi</span>
-          -
-        </button>
-      )}
+            </td>
+          </tr>
+          <tr>
+            <td className="w-1/4 p-2 text-left font-medium">Data:</td>
+            <td className="w-3/4 p-2">
+              <input
+                type="date"
+                value={localData.date}
+                onChange={(e) => handleInputChange('date', e.target.value)}
+                className="w-full px-2 py-1 rounded border-gray-300 focus:border-[#7fb7d4] focus:ring-[#7fb7d4]"
+              />
+            </td>
+          </tr>
+          <tr>
+            <td className="w-1/4 p-2 text-left font-medium">Importo:</td>
+            <td className="w-3/4 p-2">
+              <input
+                type="number"
+                value={localData.amount}
+                onChange={(e) => handleInputChange('amount', parseFloat(e.target.value) || 0)}
+                className="w-full px-2 py-1 rounded border-gray-300 focus:border-[#7fb7d4] focus:ring-[#7fb7d4]"
+              />
+              <span className="ml-2 text-sm text-gray-500">+ IVA</span>
+            </td>
+          </tr>
+          {onRemove && (
+            <tr>
+              <td colSpan={2} className="p-2 text-right">
+                <button
+                  type="button"
+                  onClick={onRemove}
+                  className="px-4 py-2 text-xs font-semibold text-red-500 border border-red-500 rounded hover:bg-red-500 hover:text-white"
+                >
+                  Rimuovi
+                </button>
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
     </div>
   );
-};
-
-export default CommercialOfferRev;
+}

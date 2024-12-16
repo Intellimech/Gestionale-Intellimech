@@ -1,7 +1,7 @@
 import { Fragment, useState, useRef, useEffect, useContext } from 'react'
 import { Dialog, Transition } from '@headlessui/react'
 
-import { XMarkIcon, CheckIcon, PaperAirplaneIcon, EyeIcon, ArrowPathIcon, PencilSquareIcon } from '@heroicons/react/24/outline'
+import { XMarkIcon, CheckIcon, PaperAirplaneIcon, EyeIcon, ArrowPathIcon, PencilSquareIcon, PencilIcon } from '@heroicons/react/24/outline'
 import axios from 'axios';
 import Cookies from 'js-cookie';
 
@@ -35,7 +35,7 @@ export default function Example({ permissions }) {
   const [selectedAssignment, setSelectedAssignment] = useState('');
   const [selectedArea, setSelectedArea] = useState('');
   const [selectedProjectType, setSelectedProjectType] = useState('');
-  const [sortColumn, setSortColumn] = useState('name');
+  const [sortColumn, setSortColumn] = useState('createdAt');
   const [sortDirection, setSortDirection] = useState('desc');
   const [filterType, setFilterType] = useState('name');
   const [showUpdate, setShowUpdate] = useState(false);
@@ -759,7 +759,7 @@ export default function Example({ permissions }) {
                     />
                   </th>
                   <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('clienttype')}>
-                  <br/>Project Leader
+                  Project Leader
                   {sortColumn === 'createdByUser' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
                     ) : null}
@@ -773,6 +773,8 @@ export default function Example({ permissions }) {
                       rows={1}
                     />
                   </th>
+                 
+                
                 </tr>
                 </thead>
 
@@ -781,7 +783,9 @@ export default function Example({ permissions }) {
                     sortedSaleOrder.map((offer) => (
                       <tr
                         key={offer.id_user}
-                        className={selectedOffer.includes(offer) ? 'bg-gray-50' : undefined}
+                        className={`${
+                          selectedOffer.includes(offer) ? 'bg-gray-50' : ''
+                        } min-h-[200px]`} // Aggiungi min-h-12 per altezza minima
                       >
                         <td
                           onClick={(event) => {
@@ -800,7 +804,7 @@ export default function Example({ permissions }) {
                         >
                           {offer.name}
                         </td>
-                        <td className="whitespace-normal max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
+                        <td className="whitespace-normal min-h-20 max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
                           {offer.QuotationRequest.description.split(" ").slice(0, 4).join(" ") + (offer.QuotationRequest.description.split(" ")?.length > 2 ? "..." : "")}
                         </td>
                         <td className="whitespace-normal max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
@@ -887,8 +891,9 @@ export default function Example({ permissions }) {
                                     }}
                                       title="Modifica"
                                     >
-                                      <PencilSquareIcon className="h-5 w-4 text-gray-500" />
+                                      <PencilIcon className="h-5 w-4 text-gray-500" />
                                     </button>
+                                   
                                     <button
                                       type="button"
                                       className="inline-flex items-center rounded bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
@@ -934,7 +939,7 @@ export default function Example({ permissions }) {
                                     }}
                                       title="Modifica"
                                     >
-                                      <PencilSquareIcon className="h-5 w-4 text-gray-500" />
+                                      <PencilIcon className="h-5 w-4 text-gray-500" />
                                     </button>
                                     <button
                                       type="button"
@@ -943,6 +948,19 @@ export default function Example({ permissions }) {
                                       title="Invia al cliente"
                                     >
                                       <PaperAirplaneIcon className="h-5 w-4 text-gray-500" />
+                                    </button>
+                                   
+                                  </>
+                                )}
+                                 {offer.status === 'Annullata' && (
+                                  <>
+                                  <button
+                                      type="button"
+                                      className="inline-flex items-center px-2 py-1 text-sm font-semibold ring-1 ring-inset ring-white disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
+                                     
+                                    >
+                                     
+                                     <PaperAirplaneIcon className="h-5 w-4 text-white" />
                                     </button>
                                    
                                   </>
@@ -960,7 +978,7 @@ export default function Example({ permissions }) {
                                     }}
                                       title="Modifica"
                                     >
-                                      <PencilSquareIcon className="h-5 w-4 text-gray-500" />
+                                      <PencilIcon className="h-5 w-4 text-gray-500" />
                                     </button>
                                     <button
                                       type="button"

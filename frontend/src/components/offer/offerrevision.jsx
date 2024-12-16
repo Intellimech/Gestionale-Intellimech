@@ -32,8 +32,9 @@ export default function RevisionForm({offer : initialoffer}) {
   const [quotationRequest, setQuotationRequest] = useState(initialoffer?.QuotationRequest?.name);
   console.log("sono la richiesta di offertsa", initialoffer);
   const [description, setDescription] = useState(initialoffer?.description || null);
-  const [amount, setAmount] = useState(initialoffer?.amount || '');
   const [quotationRequestDescri, setQuotationRequestDescri] = useState(initialoffer?.QuotationRequest?.description);
+  
+  const [amount, setAmount] = useState(initialoffer?.amount || '');
   const [hour, setHour] = useState(initialoffer?.hour || '');
   const [users, setUsers] = useState([]);
   const [totalHours, setTotalHours] = useState(0);

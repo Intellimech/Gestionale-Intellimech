@@ -48,6 +48,8 @@ export default function Example({ permissions }) {
     purchaserows : '',
   });
 
+  
+
   const handlectrlClick = (purchase) => {
     window.open(`/app/purchase/${purchase.id_purchase}`, '_blank'); // Apre in una nuova scheda
     
@@ -68,21 +70,29 @@ export default function Example({ permissions }) {
     setIndeterminate(false);
   }
 
+  
   const fetchOrders = () => {
     axios
-      .get(`${process.env.REACT_APP_API_URL}/purchase/read`, )
+      .get(`${process.env.REACT_APP_API_URL}/purchase/read`)
       .then((response) => {
-        console.log(response.data)
+        console.log(response.data);
         setPurchaseOrder(Array.isArray(response.data.purchases) ? response.data.purchases : []);
         setItems(Array.isArray(response.data.purchases) ? response.data.purchases : []);
+        // Ricarica i dati ogni 5 secondi dopo aver completato la richiesta
+        setTimeout(fetchOrders, 5000);
       })
       .catch((error) => {
+        console.error("Error fetching orders:", error);
+        // Riprova dopo 5 secondi se c'è un errore
+        setTimeout(fetchOrders, 5000);
       });
   };
 
   useEffect(() => {
+    // Avvia il recupero dei dati
     fetchOrders();
   }, []);
+
 
  
   const handleSearchInputChange = (column) => (event) => {

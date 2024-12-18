@@ -158,10 +158,7 @@ PEC: intellimech@legalmail.it - www.intellimech.it
               <td className="px-6 py-1 whitespace-nowrap text-sm font-medium text-gray-900">Valore</td>
               <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-500">{Number(offer.amount).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €</td>
             </tr>
-            <tr className="bg-white">
-              <td className="px-6 py-1 whitespace-nowrap text-sm font-medium text-gray-900">Costo Orario</td>
-              <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-500">{Number(((offer?.amount / offer?.hour)).toFixed(2)).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €</td>
-            </tr>
+    
             <tr className="bg-white-50">
               <td className="px-6 py-1 whitespace-nowrap text-sm font-medium text-gray-900">Data di Creazione</td>
               <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-500">

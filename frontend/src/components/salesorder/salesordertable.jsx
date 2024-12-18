@@ -197,6 +197,7 @@ const sortedSaleOrder = filteredSaleOrder.sort((a, b) => {
         })
           .then((response) => {
             setSalesOrder(response.data.salesorders);
+            console.log(response.data)
           })
           .catch((error) => {
             console.log(error);
@@ -504,6 +505,20 @@ const sortedSaleOrder = filteredSaleOrder.sort((a, b) => {
                         rows= {1}
                       />
                     </th>
+                    <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('actualstart')}>
+                      Inizio <br />Effettivo
+                      <br></br>
+                      <input
+                        type="text"
+                        value={searchQueries.actualstart}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={handleSearchInputChange('actualstart')}
+                        className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
+                        placeholder=""
+                        rows={1}
+                      />
+                    </th>
+
                     <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('estimatedend')}>
                       Fine <br />Stimata  
                       {sortColumn === 'estimatedend' ? (
@@ -518,6 +533,19 @@ const sortedSaleOrder = filteredSaleOrder.sort((a, b) => {
                         className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
                         placeholder=""
                         rows= {1}
+                      />
+                    </th>
+                    <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('actualend')}>
+                      Fine <br />Effettiva  
+                      <br></br>
+                      <input
+                        type="text"
+                        value={searchQueries.actualend}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={handleSearchInputChange('actualend')}
+                        className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
+                        placeholder=""
+                        rows={1}
                       />
                     </th>
                     <th scope="col" className="px-2 py-2 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('status')}>
@@ -607,7 +635,13 @@ const sortedSaleOrder = filteredSaleOrder.sort((a, b) => {
                          {salesorder?.Offer?.estimatedstart ? new Date(salesorder?.Offer?.estimatedstart).toLocaleDateString() : ''}
                         </td>
                         <td className="whitespace-normal max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
+                        {salesorder?.earliestReportingDate ? new Date(salesorder?.earliestReportingDate).toLocaleDateString() : ''}
+                        </td>
+                        <td className="whitespace-normal max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
                         {salesorder?.Offer?.estimatedend ? new Date(salesorder?.Offer?.estimatedend).toLocaleDateString() : ''}
+                        </td>
+                        <td className="whitespace-normal max-w-[150px] overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
+                        {salesorder?.latestReportingDate ? new Date(salesorder?.latestReportingDate).toLocaleDateString() : ''}
                         </td>
                       <td className="whitespace-normal overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
                         {salesorder.status === 'Da Fatturare' ? (

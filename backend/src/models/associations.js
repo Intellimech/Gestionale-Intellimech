@@ -208,6 +208,7 @@ Reporting.belongsTo(User, { foreignKey: 'createdBy', as: 'createdByUser' });
 Reporting.belongsTo(User, { foreignKey: 'updatedBy', as: 'updatedByUser' });
 Reporting.belongsTo(User, { foreignKey: 'deletedBy', as: 'deletedByUser' });
 
+
 //Tasks is associated with User in the createdBy, updatedBy, and deletedBy fields
 Tasks.belongsTo(User, { foreignKey: 'createdBy', as: 'createdByUser' });
 Tasks.belongsTo(User, { foreignKey: 'updatedBy', as: 'updatedByUser' });

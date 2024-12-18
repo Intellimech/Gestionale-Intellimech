@@ -1,166 +1,169 @@
-import { PaperClipIcon, EllipsisVerticalIcon } from '@heroicons/react/20/solid'
-import { useEffect } from 'react';
+import { PaperClipIcon } from '@heroicons/react/20/solid';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
 
-export default function Example({ job }) {
+export default function JobDetails({ job }) {
   if (!job) return null;
-
-  const getStatusColor = (status) => {
-    const colors = {
-      'Aperta': 'bg-green-100 text-green-800',
-      'Chiusa': 'bg-red-100 text-red-800',
-    };
-    return colors[status] || 'bg-gray-100 text-gray-800';
-  };
-
+ console.log(job);
   function capitalizeAfterPeriodAndFirstLetter(str) {
-    if (!str) return ""; // Handle empty or undefined strings
+    if (!str) return ""; 
     return str
-        .trim() // Remove leading/trailing spaces
+        .trim()
         .replace(/(^|\.\s+)(\w+)/g, (match, prefix, word) => {
-            // Prefix is the character(s) before the word (e.g., a period and space)
-            // Word is the actual word to capitalize
             return prefix + word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
         });
   }
 
+  const handleDownloadPdf = () => {
+    // Implement PDF download logic if needed
+    console.log('PDF download for job', job.name);
+  };
+
+  const getRowLabel = (index) => {
+    const labels = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X'];
+    return labels[index] || '';
+  };
+
   return (
-    <div className="space-y-6 px-4 py-5 sm:p-6">
-      {/* Header Section */}
-      <div className="border-b border-gray-200 pb-4">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-            {job.name}
-            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(job.status)}`}>
-              {job?.status || 'Nessuno'}
-            </span>
-          </h3>
-        </div>
+    <div>
+      <div className="px-4 sm:px-0">
+        <h3 className="text-base font-semibold leading-7 text-gray-900">Dettagli del Lavoro</h3>
+        <p className="mt-1 max-w-2xl text-sm leading-6 text-gray-500">Informazioni dettagliate sul progetto</p>
       </div>
 
-      {/* Summary Table */}
-      <div className="overflow-hidden rounded-lg border border-gray-200">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Codice</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Creato da</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Data Creazione</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ore Totali</th>
-              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Valore Totale</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            <tr>
-              <td className="px-4 py-3 text-sm text-gray-900">{job.name}</td>
-              <td className="px-4 py-3 text-sm text-gray-900">
-                {`${job.createdByUser?.name.slice(0, 2).toUpperCase()}${job.createdByUser?.surname.slice(0, 2).toUpperCase()} (${job.createdByUser?.name} ${job.createdByUser?.surname})`}
-              </td>
-              <td className="px-4 py-3 text-sm text-gray-900">
-                {new Date(job.createdAt).toLocaleDateString()}
-              </td>
-              <td className="px-4 py-3 text-sm text-gray-900">
-                {job.totalHours} h
-              </td>
-              <td className="px-4 py-3 text-sm text-gray-900">
-                {job.SalesOrders.reduce((total, order) => total + parseFloat(order.Offer?.amount || 0), 0).toFixed(2)} €
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      {/* Sales Orders Section */}
-      <div className="rounded-lg border border-gray-200">
-        <div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
-          <h4 className="text-sm font-medium text-gray-900">Ordini di Vendita</h4>
-        </div>
-        <div className="overflow-x-auto">
+      {/* Main Details Table */}
+      <div className="mt-4">
+        <div className="overflow-hidden border border-gray-200 rounded-lg mb-8">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Prodotto</th>
-                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Offerta</th>
-                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ore</th>
-                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Valore</th>
-                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Azienda</th>
-                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Data Inizio</th>
-                <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Data Fine</th>
+            <tbody className="divide-y divide-gray-200">
+              <tr className="bg-white">
+                <td className="px-6 py-1 whitespace-nowrap text-sm font-medium text-gray-900 w-1/4">Codice Lavoro</td>
+                <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-500">{job?.name}</td>
               </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200 bg-white">
-              {job.SalesOrders.length === 0 ? (
-                <tr>
-                  <td colSpan="7" className="px-3 py-4 text-sm text-gray-500 text-center">
-                    Nessun ordine di vendita trovato
-                  </td>
-                </tr>
-              ) : (
-                job.SalesOrders.map((salesorder) => (
-                  <tr key={salesorder.id_salesorder} className="hover:bg-gray-50">
-                    <td className="px-3 py-3 text-sm text-gray-500">{salesorder.name}</td>
-                    <td className="px-3 py-3 text-sm text-gray-500">{salesorder.Offer?.name}</td>
-                    <td className="px-3 py-3 text-sm text-gray-500">{salesorder.Offer?.hour} h</td>
-                    <td className="px-3 py-3 text-sm text-gray-500">{salesorder.Offer?.amount} €</td>
-                    <td className="px-3 py-3 text-sm text-gray-500">
-                      {salesorder.Offer?.QuotationRequest?.Company?.name}
-                    </td>
-                    <td className="px-3 py-3 text-sm text-gray-500">
-                      {new Date(salesorder.Offer?.estimatedstart).toLocaleDateString()}
-                    </td>
-                    <td className="px-3 py-3 text-sm text-gray-500">
-                      {new Date(salesorder.Offer?.estimatedend).toLocaleDateString()}
-                    </td>
-                  </tr>
-                ))
-              )}
+              <tr className="bg-white-50">
+                <td className="px-6 py-1 whitespace-nowrap text-sm font-medium text-gray-900">Stato</td>
+                <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-500">
+                  <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium 
+                    ${job.status === 'Aperta' ? 'bg-green-100 text-green-800' : 
+                      job.status === 'Chiusa' ? 'bg-red-100 text-red-800' : 
+                      'bg-gray-100 text-gray-800'}`}>
+                    {job?.status || 'Nessuno'}
+                  </span>
+                </td>
+              </tr>
+              <tr className="bg-white">
+                <td className="px-6 py-1 whitespace-nowrap text-sm font-medium text-gray-900">Creato da</td>
+                <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-500">
+                  {`${job.createdByUser?.name} ${job.createdByUser?.surname}`}
+                </td>
+              </tr>
+              <tr className="bg-white-50">
+                <td className="px-6 py-1 whitespace-nowrap text-sm font-medium text-gray-900">Data di Creazione</td>
+                <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-500">
+                  {new Date(job?.createdAt).toLocaleDateString() + " " + new Date(job?.createdAt).toLocaleTimeString()}
+                </td>
+              </tr>
+              <tr className="bg-white">
+                <td className="px-6 py-1 whitespace-nowrap text-sm font-medium text-gray-900">Ore Totali</td>
+                <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-500">{job.totalHours} h</td>
+              </tr>
+              <tr className="bg-white-50">
+                <td className="px-6 py-1 whitespace-nowrap text-sm font-medium text-gray-900">Valore Totale</td>
+                <td className="px-6 py-1 whitespace-nowrap text-sm text-gray-500">
+                  {job.SalesOrders.reduce((total, order) => total + parseFloat(order.Offer?.amount || 0), 0).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
-      </div>
 
-      {/* Reportings Section */}
-      <div className="rounded-lg border border-gray-200">
-        <div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
-          <h4 className="text-sm font-medium text-gray-900">Rendicontazione</h4>
-        </div>
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Utente</th>
-              <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Tasks</th>
-              <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Ore</th>
-              <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">Percentuale</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200 bg-white">
-            {job.allReportings.length === 0 ? (
-              <tr>
-                <td colSpan="4" className="px-3 py-4 text-sm text-gray-500 text-center">
-                  Nessuna rendicontazione trovata
-                </td>
-              </tr>
-            ) : (
-              job.allReportings.map((reporting) => (
-                <tr key={reporting.id_reporting} className="hover:bg-gray-50">
-                  <td className="px-3 py-3 text-sm text-gray-500">
-                    {`${reporting.createdByUser?.name} ${reporting.createdByUser?.surname || ''}`}
-                  </td>
-                  <td className="px-3 py-3 text-sm text-gray-500">
-                    {reporting?.associatedTask?.name || 'No Task Assigned'}
-                  </td>
-                  <td className="px-3 py-3 text-sm text-gray-500">
-                    {reporting.hour || 0} h
-                  </td>
-                  <td className="px-3 py-3 text-sm text-gray-500">
-                    {reporting.Task?.percentage ? `${reporting.Task.percentage} %` : 'N/A'}
-                  </td>
+        {/* Sales Orders Section */}
+        <div className="mt-6">
+          <h4 className="text-lg font-semibold leading-6 text-gray-900 mb-4">Ordini di Vendita</h4>
+          <div className="overflow-hidden border border-gray-200 rounded-lg mb-8">
+            <table className="min-w-full divide-y divide-gray-300">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-3 py-1 text-left text-sm font-medium text-gray-900">Prodotto</th>
+                  <th className="px-3 py-1 text-left text-sm font-medium text-gray-900">Offerta</th>
+                  <th className="px-3 py-1 text-left text-sm font-medium text-gray-900">Ore</th>
+                  <th className="px-3 py-1 text-right text-sm font-medium text-gray-900">Valore</th>
+                  <th className="px-3 py-1 text-left text-sm font-medium text-gray-900">Azienda</th>
+                  <th className="px-3 py-1 text-left text-sm font-medium text-gray-900">Date</th>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {job.SalesOrders.length > 0 ? (
+                  job.SalesOrders.map((salesorder, index) => (
+                    <tr key={salesorder.id_salesorder}>
+                      <td className="px-3 py-1 whitespace-nowrap text-sm text-gray-900">{salesorder.name}</td>
+                      <td className="px-3 py-1 whitespace-nowrap text-sm text-gray-900">{salesorder.Offer?.name}</td>
+                      <td className="px-3 py-1 whitespace-nowrap text-sm text-gray-900">{salesorder.Offer?.hour} h</td>
+                      <td className="px-3 py-1 whitespace-nowrap text-sm text-gray-900 text-right">
+                        {Number(salesorder.Offer?.amount).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €
+                      </td>
+                      <td className="px-3 py-1 whitespace-nowrap text-sm text-gray-900">
+                        {salesorder.Offer?.QuotationRequest?.Company?.name}
+                      </td>
+                      <td className="px-3 py-1 whitespace-nowrap text-sm text-gray-900">
+                        {new Date(salesorder.Offer?.estimatedstart).toLocaleDateString()} - 
+                        {new Date(salesorder.Offer?.estimatedend).toLocaleDateString()}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="6" className="px-3 py-1 text-sm text-gray-500 text-center">Nessun ordine di vendita disponibile.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Reportings Section */}
+        <div className="mt-6">
+          <h4 className="text-lg font-semibold leading-6 text-gray-900 mb-4">Rendicontazione</h4>
+          <div className="overflow-hidden border border-gray-200 rounded-lg">
+            <table className="min-w-full divide-y divide-gray-300">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="px-3 py-1 text-left text-sm font-medium text-gray-900">Utente</th>
+                  <th className="px-3 py-1 text-left text-sm font-medium text-gray-900">Tasks</th>
+                  <th className="px-3 py-1 text-left text-sm font-medium text-gray-900">Ore</th>
+                  {/* <th className="px-3 py-1 text-left text-sm font-medium text-gray-900">Percentuale</th> */}
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {job.allReportings.length > 0 ? (
+                  job.allReportings.map((reporting) => (
+                    <tr key={reporting.id_reporting}>
+                      <td className="px-3 py-1 whitespace-nowrap text-sm text-gray-900">
+                        {`${reporting.createdByUser?.name} ${reporting.createdByUser?.surname || ''}`}
+                      </td>
+                      <td className="px-3 py-1 whitespace-nowrap text-sm text-gray-900">
+                        {reporting?.associatedTask?.description || 'Nessun Task Assegnato'}
+                      </td>
+                      <td className="px-3 py-1 whitespace-nowrap text-sm text-gray-900">
+                        {reporting.hour || 0} h
+                      </td>
+                      {/* <td className="px-3 py-1 whitespace-nowrap text-sm text-gray-900">
+                        {reporting.Task?.percentage ? `${reporting.Task.percentage} %` : 'N/A'}
+                      </td> */}
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="4" className="px-3 py-1 text-sm text-gray-500 text-center">Nessuna rendicontazione disponibile.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Documents Section */}
+        
       </div>
     </div>
   );

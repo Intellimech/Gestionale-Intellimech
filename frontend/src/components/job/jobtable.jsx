@@ -355,7 +355,7 @@ export default function Example({ permissions, user }) {
                       rows={1}
                     />
                   </th>
-                  <th scope="col"  className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('SaleOrder')}>
+                  <th scope="col"  className="px-1 py-1.5 w-20  text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('SaleOrder')}>
                      <br/> ODV
                     {sortColumn === 'SaleOrder' && sortDirection !== '' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
@@ -370,8 +370,8 @@ export default function Example({ permissions, user }) {
                       rows={1}
                     />
                   </th>
-                  <th scope="col"  className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('offertotal')}>
-                    <br/> Valore  
+                  <th scope="col"  style={{ width: '100px' }}   className="px-1 py-1.5 min-w-[10px] text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('offertotal')}>
+                  <br/>Valore
                     {sortColumn === 'offertotal' && sortDirection !== '' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
                     ) : null}
@@ -384,8 +384,8 @@ export default function Example({ permissions, user }) {
                       placeholder=""
                       rows={1}
                     />
-                  </th>
-                  <th scope="col"  className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('offertotal')}>
+                    </th>
+                  <th scope="col"  style={{ width: '100px' }}   className="px-1 py-1.5 min-w-[10px] text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('offertotal')}>
                   <br/>Fatturato
                     {sortColumn === 'offertotal' && sortDirection !== '' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
@@ -395,7 +395,7 @@ export default function Example({ permissions, user }) {
                       value={searchQueries.offertotal}
                       onClick={(e) => e.stopPropagation()} 
                       onChange={handleSearchInputChange('offertotal')}
-                      className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+                      className="mt-0.5 px-1 w-16 py-0.5 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
                       placeholder=""
                       rows={1}
                     />
@@ -430,7 +430,7 @@ export default function Example({ permissions, user }) {
                       rows={1}
                     />
                   </th>
-                  <th scope="col"  className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('total')}>
+                  {/* <th scope="col"  className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('total')}>
                     Costo   <br/> Totale
                     {sortColumn === 'total'&& sortDirection !== ''? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
@@ -444,7 +444,7 @@ export default function Example({ permissions, user }) {
                       placeholder=""
                       rows={1}
                     />
-                  </th>
+                  </th> */}
                   <th scope="col"  className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer"onClick={() => handleSort('status')}>
                   <br/>Avanzamento
                     {sortColumn === 'status' && sortDirection !== '' ? (
@@ -522,12 +522,12 @@ export default function Example({ permissions, user }) {
                             job.SalesOrders.length > 1 ? job.SalesOrders[0].name + '...' + " (" + job?.SalesOrders?.length + ")" : job?.SalesOrders[0]?.name
                           }
                         </td>
-                        <td className="whitespace-normal overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
+                        <td className="whitespace-normal   text-right  overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
                           {
                             job.SalesOrders?.reduce((total, order) => total + parseFloat(order?.Offer?.amount), 0).toFixed(2) + ' €'
                           }
                         </td>
-                        <td className="whitespace-normal text-center overflow-hidden text-xs text-gray-500  py-2 break-words">
+                        <td className="whitespace-normal text-right overflow-hidden text-xs text-gray-500  py-2 break-words">
                           {
                             isNaN(job.SalesOrders?.reduce((total, order) => total + parseFloat(order?.Invoices?.amount), 0)) 
                             ? '0 €' 
@@ -535,22 +535,31 @@ export default function Example({ permissions, user }) {
                           }
                         </td>
                         <td className="whitespace-normal overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
-                          {
-                            isNaN(job.SalesOrders?.reduce((total, order) => total + parseFloat(order?.Offer?.hour), 0) + ' h') ?
-                            '0 h'
-                            : job.SalesOrders?.reduce((total, order) => total + parseFloat(order?.Offer?.hour), 0) + ' h'
-                          }
-                        </td> 
+                        {
+                          (() => {
+                            // Verifica se esistono SalesOrders
+                            if (job.SalesOrders?.length > 0) {
+                              // Somma tutte le ore degli Offer
+                              const totalOfferHours = job.SalesOrders.reduce((total, order) => {
+                                return total + (parseFloat(order.Offer?.hour) || 0); // Somma se l'ora è valida
+                              }, 0);
+                              return `${totalOfferHours} h`; // Ritorna il totale con 'h'
+                            }
+                            return '0 h'; // Ritorna 0 se non ci sono SalesOrders
+                          })()
+                        }
+                      </td>
+
                         <td className="whitespace-normal overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
                           {
                             job.totalHours + ' h'
                           }
                         </td>
-                        <td className="whitespace-normal overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
+                        {/* <td className="whitespace-normal overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
                           {
                             job.totalHours * (job.SalesOrders?.reduce((total, order) => total + parseFloat(order?.Invoices?.amount), 0) / job.SalesOrders?.reduce((total, order) => total + parseFloat(order?.Offer?.hour), 0))
                           }
-                        </td>
+                        </td> */}
                         <td className="whitespace-normal overflow-hidden text-xs text-gray-500 px-2 py-2 break-words">
                           {
                             job.totalPercentage + ' %'

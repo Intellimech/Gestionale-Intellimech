@@ -13,7 +13,12 @@ router.post("/create", async (req, res) => {
 
     const user = req.user; // Assuming req.user is populated by the authentication middleware
 
-    if (!id_company || !products || !date || !payment || !currency || !referent) {
+    if (!id_company || !products || !date || !payment || !currency || !referent ) {
+      return res.status(400).json({
+        message: "Bad request, view documentation for more information",
+      });
+    }
+    if(payment == 1 && !banktransfer){
       return res.status(400).json({
         message: "Bad request, view documentation for more information",
       });

@@ -143,7 +143,7 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
     setProducts(updatedProducts);
     setPurchase({ ...purchase, products: updatedProducts });
   };
-
+console.log("guarda qui", selectedBank)
   const handleCategoryChange = async (index, categoryId) => {
     try {
       const { data: { subcategories: filteredSubcategories } } = await axios.get(
@@ -327,7 +327,7 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
                       setSelectedPaymentMethod(selectedOption.value);
                       setPurchase({ ...purchase, selectedPaymentMethod: selectedOption.value });
                     }}
-                    options={paymentMethods.map((method) => ({ value: method, label: method }))}
+                    options={paymentMethods.map((method) => ({ value: method.id_paymentmethod, label: method.name }))}
                     primaryColor="#7fb7d4"
                     isSearchable
                   />
@@ -341,7 +341,7 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
                   <Select
                      value={{ value: selectedBank, label: selectedBank }}
                     onChange={(selectedOption) => {
-                      setSelectedBank(selectedOption);
+                      setSelectedBank(selectedOption.value);
                       setPurchase({ ...purchase, banktransfer: selectedOption.value });
                     }}
                     options={banks.map((b) => ({ value: b , label: b }))}
@@ -366,7 +366,7 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
                       setCurrency(selectedOption.value);
                       setPurchase({ ...purchase, currency: selectedOption.value });
                     }}
-                    options={currencies.map((curr) => ({ value: curr, label: curr }))}
+                    options={currencies.map((curr) => ({ value: curr.id_currency, label: curr.name }))}
                     primaryColor="#7fb7d4"
                     isSearchable
                   />

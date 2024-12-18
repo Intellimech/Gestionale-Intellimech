@@ -174,7 +174,7 @@ export default function PurchaseCreateForm() {
     const jsonObject = {
       id_company: selectedCompany.value,
       payment: selectedPaymentMethod.value,
-      banktransfer: selectedBank,
+      banktransfer: selectedBank.value,
       date: selectedDate,
       referent: selecteduser.value,
       job: selectedJob.value,

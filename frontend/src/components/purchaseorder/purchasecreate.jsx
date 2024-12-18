@@ -202,11 +202,12 @@ export default function PurchaseCreateForm() {
       {
         loading: 'Invio in corso...',
         success: 'ODA creato con successo!',
-        error: 'Errore durante la creazione di Ordine di Acquisto',
+        error: 'Errore durante la creazione di Ordine di Acquisto' ,
       }
     )
       .then((response) => {
         setCreateSuccess(true);
+        window.location.reload();
       })
       .catch((error) => {
         setErrorMessages(error.response.data.message);

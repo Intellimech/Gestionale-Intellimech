@@ -12,17 +12,28 @@ router.post("/create", async (req, res) => {
     const { id_company, products, date, payment, currency, referent, banktransfer, job } = req.body;
 
     const user = req.user; // Assuming req.user is populated by the authentication middleware
+// Creiamo un array che raccoglie i campi mancanti
+let missingFields = [];
 
-    if (!id_company || !products || !date || !payment || !currency || !referent ) {
-      return res.status(400).json({
-        message: "Bad request, view documentation for more information",
-      });
-    }
-    if(payment == 1 && !banktransfer){
-      return res.status(400).json({
-        message: "Bad request, view documentation for more information",
-      });
-    }
+if (!id_company) missingFields.push("id_company");
+if (!products) missingFields.push("products");
+if (!date) missingFields.push("date");
+if (!payment) missingFields.push("payment");
+if (!currency) missingFields.push("currency");
+if (!referent) missingFields.push("referent");
+
+// Controllo per il campo `payment` e se `banktransfer` è necessario
+if (payment === 1 && !banktransfer) {
+  missingFields.push("banktransfer");
+}
+
+// Se ci sono campi mancanti, restituiamo l'errore con i campi mancanti
+if (missingFields.length > 0) {
+  return res.status(400).json({
+    message: "Campi mancanti: " + missingFields.join(", "),
+  });
+}
+
 
     // Count distinct purchases to generate a unique name
     const purchaseCount = await Purchase.count({ distinct: "name" });

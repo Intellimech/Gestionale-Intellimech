@@ -42,7 +42,12 @@ export default function PurchaseRowInput({
 
   const [selectedDetail, setSelectedDetail] = useState(null);
   const details = ['Primo e Ultimo anno metà importo ', 'Importo uguale ogni anno'];
-  
+  useEffect(() => {
+    // Imposta IVA di default a 22% se non è già definita
+    if (!product.vat) {
+      onChange({ ...product, vat: '22' });
+    }
+  }, []);
   useEffect(() => {
     if (product.depreciation) {
       const category = categories.find((c) => c.id_category === product.category);
@@ -94,6 +99,7 @@ export default function PurchaseRowInput({
                 className="text-xs"
                 primaryColor="#7fb7d4"
                 isSearchable
+                isClearable
               />
             </td>
           </tr>
@@ -116,6 +122,7 @@ export default function PurchaseRowInput({
                 isDisabled={subcategories.length === 0}
                 primaryColor="#7fb7d4"
                 isSearchable
+                isClearable
               />
             </td>
           </tr>
@@ -135,6 +142,7 @@ export default function PurchaseRowInput({
                 isDisabled={subcategories.length === 0}
                 primaryColor="#7fb7d4"
                 isSearchable
+                isClearable
               />
             </td>
           </tr>
@@ -238,19 +246,9 @@ export default function PurchaseRowInput({
           </tr>
   
       {/* Asset e Ammortamento */}
-      <tr>
-            <td className="block text-[11px] font-medium text-gray-700">Cespite</td>
-            <td>
-              <input
-                type="checkbox"
-                checked={product.asset || false}
-                onChange={(e) => onChange({ ...product, asset: e.target.checked })}
-                className="h-3 w-3 text-[#7fb7d4]"
-              />
-            </td>
-          </tr>
+     
           <tr>
-            <td className="block text-[11px] font-medium text-gray-700">Ammortamento</td>
+            <td className="block text-[11px] font-medium text-gray-700">Cespite / Ammortamento</td>
             <td>
               <input
                 type="checkbox"

@@ -68,10 +68,10 @@ export default function CompactPurchaseTable({ permissions }) {
     return Object.keys(searchQueries).every(key => 
       searchQueries[key] === '' || 
       (item[key]?.toString().toLowerCase().includes(searchQueries[key].toLowerCase()) || 
-       (key === 'id_company' && item.Company?.name.toLowerCase().includes(searchQueries[key].toLowerCase())) ||
-       (key === 'category' && item.Category?.name.toLowerCase().includes(searchQueries[key].toLowerCase())) ||
-       (key === 'subcategory' && item.Subcategory?.name.toLowerCase().includes(searchQueries[key].toLowerCase())) ||
-       (key === 'subsubcategory' && item.Subsubcategory?.name.toLowerCase().includes(searchQueries[key].toLowerCase())))
+       (key === 'id_company' && item?.Company?.name.toLowerCase().includes(searchQueries[key].toLowerCase())) ||
+       (key === 'category' && item?.Category?.name.toLowerCase().includes(searchQueries[key].toLowerCase())) ||
+       (key === 'subcategory' && item?.Subcategory?.name.toLowerCase().includes(searchQueries[key].toLowerCase())) ||
+       (key === 'subsubcategory' && item?.Subsubcategory?.name.toLowerCase().includes(searchQueries[key].toLowerCase())))
     );
   });
 
@@ -84,7 +84,7 @@ export default function CompactPurchaseTable({ permissions }) {
     }
   };
 
-  const sortedPurchase = filteredPurchase.sort((a, b) => {
+  const sortedPurchase = filteredPurchase?.sort((a, b) => {
     const valueA = a[sortColumn];
     const valueB = b[sortColumn];
     
@@ -333,34 +333,34 @@ export default function CompactPurchaseTable({ permissions }) {
               </thead>
 
           <tbody className="divide-y divide-gray-200 bg-white text-[10px]">
-            {sortedPurchase.map((item) => (
-              <tr key={item.id} className="hover:bg-gray-50">
+            {sortedPurchase?.map((item) => (
+              <tr key={item?.id} className="hover:bg-gray-50">
                   <td
                         className={classNames(
                           'whitespace-nowrap px-1 py-1.5 text-xs font-medium',
                           selectedItems.includes(item) ? 'text-red-600' : 'text-gray-700'
                         )}
                       >
-                        {item.name}
+                        {item?.name}
                       </td>
-                <td className="whitespace-normal max-w-[150px] overflow-hidden text-xs text-gray-700 px-1 py-1.5 break-words">{item.description}</td>
-                <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">{item.quantity }</td>
-                <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">{Number(item.unit_price).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}  {item.Purchase.Currency?.symbol}</td>
-                <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">{Number(item.taxed_unit_price).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}  {item.Purchase.Currency?.symbol}</td>
-                <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">{item.vat}%</td>
-                <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">{Number(item.totalprice).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}  {item.Purchase.Currency?.symbol}</td>
-                <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">{Number(item.taxed_totalprice).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}  {item.Purchase.Currency?.symbol}</td>
+                <td className="whitespace-normal max-w-[150px] overflow-hidden text-xs text-gray-700 px-1 py-1.5 break-words">{item?.description}</td>
+                <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">{item?.quantity }</td>
+                <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">{Number(item?.unit_price).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}  {item?.Purchase?.Currency?.symbol}</td>
+                <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">{Number(item?.taxed_unit_price).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}  {item?.Purchase?.Currency?.symbol}</td>
+                <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">{item?.vat}%</td>
+                <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">{Number(item?.totalprice).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}  {item?.Purchase?.Currency?.symbol}</td>
+                <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">{Number(item?.taxed_totalprice).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}  {item?.Purchase?.Currency?.symbol}</td>
                 <td className="whitespace-nowrap item-center px-10 py-1.5 text-xs text-gray-700">
-                {item.depreciation == 1 ? (
+                {item?.depreciation == 1 ? (
                   <CheckIcon className="h-5 w-5 text-green-500" />
                 ) : (
                   <XMarkIcon className="h-5 w-5 text-red-500" />
                 )}
               </td>
 
-                <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">{item.Category?.name}</td>
-                <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">{item.Subcategory?.name}</td>
-                <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">{item.Subsubcategory?.name}</td>
+                <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">{item?.Category?.name}</td>
+                <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">{item?.Subcategory?.name}</td>
+                <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">{item?.Subsubcategory?.name}</td>
                     <td className="whitespace-nowrap px-5 py-1.5 text-xs text-gray-700">
                           {item?.Invoices?.length > 0 ? (
                             <span className="px-1 inline-flex text-[0.6rem] leading-4 font-semibold rounded-full bg-gray-100 text-green-500">

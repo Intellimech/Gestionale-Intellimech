@@ -465,36 +465,39 @@ export default function Example({ purchase: initialPurchase }) {
               <td className="px-2 py-1 font-medium text-gray-600">Sottocategoria</td>
               <td className="px-2 py-1">{row.Subsubcategory?.name|| "Non specificata"}</td>
             </tr>
-            <tr>
-              <td className="px-2 py-1 font-medium text-gray-600">Cespite</td>
-              <td className="px-2 py-1">{row.asset ? <CheckIcon className="h-4 w-4 text-green-500" /> : <XMarkIcon className="h-4 w-4 text-red-500" />}</td>
-            </tr>
+           
           </tbody>
         </table>
       </div>
           ))}
-        <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-3">
-        <dt className="text-sm font-medium leading-6 text-gray-900">Ordine di Acquisto</dt>
-            <dd className="mt-2 text-sm text-gray-900">
-            <ul role="list" className="divide-y divide-gray-100 rounded-md border border-gray-200">
-                <li className="flex items-center justify-between py-4 pl-4 pr-5 text-sm leading-6">
-                    <div className="flex w-0 flex-1 items-center">
-                        <PaperClipIcon className="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
-                        <div className="ml-4 flex min-w-0 flex-1 gap-2">
-                            <span className="truncate font-medium">{purchase?.name}.pdf</span>
-                            <span className="flex-shrink-0 text-gray-400">2.4mb</span>
-                        </div>
-                    </div>
-                    <div className="ml-4 flex-shrink-0">
-                        <a onClick={handleDownloadPdf} className="font-medium text-blue-800 hover:text-blue-900">
-                            Download
-                        </a>
-                    </div>
-                </li>
-            </ul>
-        </dd>
-    </div>
-    <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-3">
+
+
+
+       {purchase?.status === 'Approvato' && (
+  <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-3">
+    <dt className="text-sm font-medium leading-6 text-gray-900">Ordine di Acquisto</dt>
+    <dd className="mt-2 text-sm text-gray-900">
+      <ul role="list" className="divide-y divide-gray-100 rounded-md border border-gray-200">
+        <li className="flex items-center justify-between py-4 pl-4 pr-5 text-sm leading-6">
+          <div className="flex w-0 flex-1 items-center">
+            <PaperClipIcon className="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
+            <div className="ml-4 flex min-w-0 flex-1 gap-2">
+              <span className="truncate font-medium">{purchase?.name}.pdf</span>
+              <span className="flex-shrink-0 text-gray-400">2.4mb</span>
+            </div>
+          </div>
+          <div className="ml-4 flex-shrink-0">
+            <a onClick={handleDownloadPdf} className="font-medium text-blue-800 hover:text-blue-900">
+              Download
+            </a>
+          </div>
+        </li>
+      </ul>
+    </dd>
+  </div>
+)}
+
+    {/* <div className="border-t border-gray-100 px-4 py-6 sm:col-span-1 lg:col-span-3">
         <dt className="text-sm font-medium leading-6 text-gray-900">Fattur{purchase?.invoices?.length > 1 ? "e" : "a"}</dt>
         <dd className="mt-2 text-sm text-gray-900">
             <ul role="list" className="divide-y divide-gray-100 rounded-md border border-gray-200">
@@ -516,7 +519,7 @@ export default function Example({ purchase: initialPurchase }) {
                 ))}
             </ul>
         </dd>
-    </div>
+    </div> */}
     </div>
   );
 }

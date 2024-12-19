@@ -100,6 +100,7 @@ useEffect(() => {
                 className="text-[10px]"
                 primaryColor="#7fb7d4"
                 isSearchable
+                isClearable
               />
             </td>
           </tr>
@@ -122,6 +123,7 @@ useEffect(() => {
                 options={subcategories.map(s => ({ value: s.id_subcategory, label: s.name }))}
                 className="text-[10px]"
                 isSearchable
+                isClearable
                 primaryColor="#7fb7d4"
               />
             </td>
@@ -142,6 +144,7 @@ useEffect(() => {
                 className="text-[10px]"
                 isDisabled={subcategories.length === 0}
                 primaryColor="#7fb7d4"
+                isClearable
               />
             </td>
           </tr>
@@ -201,6 +204,8 @@ useEffect(() => {
                 options={Vat.map(v => ({ value: v, label: v }))}
                 placeholder="IVA"
                 className="text-[12px] rounded-md border-gray-300"
+                
+                isClearable
               />
             </td>
           </tr>
@@ -231,20 +236,10 @@ useEffect(() => {
 
           <br/>
           {/* Asset e Ammortamento */}
-          <tr>
-            <td className="block text-[11px] font-medium text-gray-700">Asset</td>
-            <td>
-              <input
-                type="checkbox"
-                checked={product.asset || false}
-                onChange={(e) => onChange({ ...product, asset: e.target.checked })}
-                className="h-3 w-3 text-[#7fb7d4]"
-              />
-            </td>
-          </tr>
+         
           <br/>
           <tr>
-            <td className="block text-[11px] font-medium text-gray-700">Ammortamento</td>
+            <td className="block text-[11px] font-medium text-gray-700">Cespite / Ammortamento</td>
             <td>
               <input
                 type="checkbox"
@@ -298,7 +293,8 @@ useEffect(() => {
                     options={details.map((b) => ({ value: b , label: b }))}
                     className="w-full text-[8px] rounded-md border-gray-300"
                     placeholder="Dettagli"
-                     // Disabilita se depreciation_years è già definito
+                    
+                isClearable
                   />
                 </td>
               </tr>

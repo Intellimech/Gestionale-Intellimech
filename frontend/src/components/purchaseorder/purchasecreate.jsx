@@ -15,6 +15,7 @@ export default function PurchaseCreateForm() {
   const [selectedBank, setSelectedBank] = useState(null);
   const [selectedJob, setSelectedJob] = useState(null);
   const [users, setUsers]= useState([]);
+  const [today, setToday]= useState(true);
   const [job, setJob]= useState([]);
   const [selecteduser, setSelectedUser] = useState(null);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
@@ -40,7 +41,7 @@ export default function PurchaseCreateForm() {
     
     return products.reduce((sum, product) => sum + (parseFloat(product.unit_price*product.quantity) || 0), 0);
   };
-  const [currency, setCurrency] = useState('EUR');
+  const [currency, setCurrency] = useState(null);
 
   const banks = ['Vista Fattura', '30 gg D.F.F.M.', '60 gg D.F.F.M.', '50% Anticipato, 50% alla Consegna', '100% Anticipato', 'Frazionato'];
   const [currencies, setCurrencies] = useState([]);
@@ -49,7 +50,27 @@ export default function PurchaseCreateForm() {
   const handleBankChange = setSelectedBank;
   const handlePaymentMethodChange = setSelectedPaymentMethod;
   const handleCurrencyChange = setCurrency;
-  const handleDateChange = (event) => setSelectedDate(event.target.value);7
+  const handleDateChange = (event) => {
+    const selectedDate = event.target.value;
+    setSelectedDate(event.target.value);
+    console.log(selectedDate)
+    // Ottieni la data di oggi in formato YYYY-MM-DD (senza ora)
+    const today = new Date();
+    
+    const todayString = today.toISOString().split('T')[0]; // Ottieni solo la data (yyyy-mm-dd)
+    console.log("today is ", todayString)
+    // Confronta la data selezionata con la data odierna
+    if (selectedDate === todayString) {
+      // Se la data è oggi, prendi la data corrente completa (data + ora)
+      console.log("è vero");
+      setSelectedDate(todayString); // Imposta la data e l'ora correnti
+  
+    } else {
+      setToday(false);
+      setSelectedDate(selectedDate);
+    }
+  };
+  
   const handleUserChange = setSelectedUser;
   const handleJobChange = setSelectedJob;
 
@@ -169,31 +190,33 @@ export default function PurchaseCreateForm() {
   const createPurchaseOrder = async (event) => {
     event.preventDefault();
     const form = new FormData(event.target);
+    console.log(today)
     const formDataObject = Object.fromEntries(form.entries());
 
     const jsonObject = {
-      id_company: selectedCompany.value,
-      payment: selectedPaymentMethod.value,
-      banktransfer: selectedBank.value,
-      date: selectedDate,
-      referent: selecteduser.value,
-      job: selectedJob.value,
-      currency: currency.value,
+      id_company: selectedCompany?.value,
+      payment: selectedPaymentMethod?.value,
+      banktransfer: selectedBank?.value,
+      date: selectedDate ,
+      referent: selecteduser?.value,
+      job: selectedJob?.value,
+      today : today,
+      currency: currency?.value,
       products: products.map((product) => ({
-        category: product.category,
-        subcategory: product.subcategory,
-        subsubcategory: product.subsubcategory,
-        description: product.description || '',
-        unit_price: parseFloat(product.unit_price),
-        taxed_unit_price: parseFloat(product.taxed_unit_price),
-        taxed_totalprice: product.total,
-        quantity: parseInt(product.quantity, 10),
-        vat: product.vat || 0,
-        depreciation: product.depreciation || false,
-        depreciation_years: product.depreciation ? parseInt(product.depreciation_years, 10) : null,
-        depreciation_aliquota: product.depreciation ? product.depreciation_aliquota : null,
-        depreciation_details: product.depreciation ? product.depreciation_details : null,
-        asset: product.asset || false
+        category: product?.category,
+        subcategory: product?.subcategory,
+        subsubcategory: product?.subsubcategory,
+        description: product?.description || '',
+        unit_price: parseFloat(product?.unit_price),
+        taxed_unit_price: parseFloat(product?.taxed_unit_price),
+        taxed_totalprice: product?.total,
+        quantity: parseInt(product?.quantity, 10),
+        vat: product?.vat || 0,
+        depreciation: product?.depreciation || false,
+        depreciation_years: product?.depreciation ? parseInt(product?.depreciation_years, 10) : null,
+        depreciation_aliquota: product?.depreciation ? product?.depreciation_aliquota : null,
+        depreciation_details: product?.depreciation ? product?.depreciation_details : null,
+        asset: product?.asset || false
       }))
     };
 
@@ -210,9 +233,12 @@ export default function PurchaseCreateForm() {
         window.location.reload();
       })
       .catch((error) => {
-        setErrorMessages(error.response.data.message);
+        const errorMessage = error.response?.data?.message || 'Errore sconosciuto';
+        setErrorMessages(errorMessage);
         setCreateSuccess(false);
+        toast.error(errorMessage); // Mostra il messaggio di errore del backend nel toast
       });
+      
   };
   
   return (
@@ -237,6 +263,7 @@ export default function PurchaseCreateForm() {
                     options={(companies).map(({ value, label }) => ({ value, label }))}
                     primaryColor="#7fb7d4"
                     isSearchable
+                    isClearable
                     placeholder="Seleziona Fornitore"
                     className="block w-full rounded border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[10px]"
                   />
@@ -253,6 +280,7 @@ export default function PurchaseCreateForm() {
                     options={users}
                     primaryColor="#7fb7d4"
                     isSearchable
+                    isClearable
                     placeholder="Seleziona Referente"
                     className="block w-full rounded border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[10px]"
                   />
@@ -260,14 +288,14 @@ export default function PurchaseCreateForm() {
               </tr>
               {/* Data */}
               <tr>
-                <td className="block text-sm font-medium text-gray-700">Data</td>
+                <td className="block text-sm font-medium text-gray-700">Data Emissione</td>
                 <td>
                   <input
                     type="date"
                     value={selectedDate}
                     onChange={handleDateChange}
                     className="block w-full rounded border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[12px]"
-                    min={new Date().toISOString().split('T')[0]}
+                   
                   />
                 </td>
               </tr>
@@ -281,6 +309,7 @@ export default function PurchaseCreateForm() {
                     options={paymentMethods.map((method) => ({ value: method.id_paymentmethod, label: method.name }))}
                     primaryColor="#7fb7d4"
                     isSearchable
+                    isClearable
                     placeholder="Seleziona Metodo di Pagamento"
                     className="block w-full rounded border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[10px]"
                   />
@@ -296,7 +325,8 @@ export default function PurchaseCreateForm() {
                     options={banks.map((b) => ({ value: b , label: b }))}
                     primaryColor="#7fb7d4"
                     isSearchable
-                    placeholder="Seleziona Metodo di Pagamento"
+                    isClearable
+                    placeholder="Seleziona Dettagli di Pagamento"
                     className="block w-full rounded border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[10px]"
                   />
                 </td>
@@ -314,6 +344,7 @@ export default function PurchaseCreateForm() {
                     options={currencies.map((currency) => ({ value: currency.id_currency, label: currency.name }))}
                     primaryColor="#7fb7d4"
                     isSearchable
+                    isClearable
                     placeholder="Seleziona Valuta"
                     className="block w-full rounded border-gray-300  shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[10px]"
                   />
@@ -332,6 +363,7 @@ export default function PurchaseCreateForm() {
                         onChange={handleJobChange}
                         isSearchable
                         placeholder="Seleziona una commessa"
+                        isClearable
                       />
                 </td>
               </tr>

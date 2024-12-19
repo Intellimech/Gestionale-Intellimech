@@ -9,22 +9,21 @@ const PurchaseRow = sequelize.models.PurchaseRow;
 router.post("/create", async (req, res) => {
   try {
 
-    const { id_company, products, date, payment, currency, referent, banktransfer, job } = req.body;
-
+    const { id_company, products, date, payment, currency, referent, today, banktransfer , job} = req.body;
+let data= date;
     const user = req.user; // Assuming req.user is populated by the authentication middleware
 // Creiamo un array che raccoglie i campi mancanti
 let missingFields = [];
-
-if (!id_company) missingFields.push("id_company");
-if (!products) missingFields.push("products");
-if (!date) missingFields.push("date");
-if (!payment) missingFields.push("payment");
-if (!currency) missingFields.push("currency");
-if (!referent) missingFields.push("referent");
+if (!id_company) missingFields.push("Fornitore");
+if (!products) missingFields.push("Prodotti");
+if (!date) missingFields.push("Data");
+if (!payment) missingFields.push("Pagamento");
+if (!currency) missingFields.push("Valuta");
+if (!referent) missingFields.push("Referente");
 
 // Controllo per il campo `payment` e se `banktransfer` è necessario
 if (payment === 1 && !banktransfer) {
-  missingFields.push("banktransfer");
+  missingFields.push("Dettagli di pagamento");
 }
 
 // Se ci sono campi mancanti, restituiamo l'errore con i campi mancanti
@@ -33,6 +32,15 @@ if (missingFields.length > 0) {
     message: "Campi mancanti: " + missingFields.join(", "),
   });
 }
+
+
+if (today){
+ 
+  data = new Date();
+}
+
+
+
 
 
     // Count distinct purchases to generate a unique name
@@ -59,7 +67,7 @@ if (missingFields.length > 0) {
       name: namePurchase,
       payment_method: payment,
       banktransfer: banktransfer,
-      date: date,
+      date: data,
       currency: currency,
       total: purchaseTotal,
       taxed_total: purchaseTotaltax,

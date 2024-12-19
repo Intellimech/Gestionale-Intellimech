@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
-import { CheckBadgeIcon, XCircleIcon } from '@heroicons/react/20/solid';
+import { CheckBadgeIcon, TrashIcon, XCircleIcon } from '@heroicons/react/20/solid';
 import Select from "react-tailwindcss-select";
 import PurchaseUpdateRow from './purchaseupdaterow.jsx';
 import toast, { Toaster } from 'react-hot-toast';
@@ -19,7 +19,7 @@ export default function PurchaseUpdateForm({ purchase: initialPurchase, onChange
   const [selectedCompany, setSelectedCompany] = useState(initialPurchase ? { value: initialPurchase.id_company, label: initialPurchase?.Company?.name } : null);
   const [selectedUser, setSelectedUser] = useState(initialPurchase ? { value: initialPurchase.referent, label: initialPurchase?.referentUser?.name + " "+  initialPurchase?.referentUser?.surname } : null);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(initialPurchase ? initialPurchase.payment_method : "Cash");
-  const [selectedDate, setSelectedDate] = useState(initialPurchase.date || new Date().toISOString().split('T')[0]);
+  const [selectedDate, setSelectedDate] = useState(initialPurchase.date.split('T')[0] || new Date().toISOString().split('T')[0]);
   const [products, setProducts] = useState(initialPurchase ? initialPurchase.PurchaseRows : [{ category: '', subcategory: '', subsubcategory: '', unit_price: '', vat: '',quantity: 1, depreciation: '', depreciation_aliquota: '', depreciation_years: '',  depreciation_details: '', description: '', subcategories: [] }]);
   const [selectedJob, setSelectedJob]= useState([]);
   const [jobs, setJobs]= useState([]);
@@ -199,7 +199,7 @@ console.log("guarda qui", selectedBank)
     const jsonObject = {
       id_purchase: purchase.id_purchase,
       id_company: selectedCompany?.value,
-      payment: selectedPaymentMethod,
+      payment_method: selectedPaymentMethod,
       referent: selectedUser?.value,
       banktransfer: selectedBank,
       date: selectedDate,
@@ -238,6 +238,8 @@ console.log("guarda qui", selectedBank)
         
         console.log("sto modificando", jsonObject);
         setCreateSuccess(true);
+        
+        window.location.reload();
       })
       .catch((error) => {
         console.log(jsonObject);
@@ -276,6 +278,7 @@ console.log("guarda qui", selectedBank)
                     options={companies}
                     primaryColor="#7fb7d4"
                     isSearchable
+                    isClearable
                   />
                 </td>
               </tr>
@@ -291,6 +294,7 @@ console.log("guarda qui", selectedBank)
                     options={users}
                     primaryColor="#7fb7d4"
                     isSearchable
+                    isClearable
                     placeholder="Seleziona Referente"
                     className="block w-full rounded border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[10px]"
                   />
@@ -305,7 +309,7 @@ console.log("guarda qui", selectedBank)
                     name="dateorder"
                     type="date"
                     className="block w-full rounded border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[12px]"
-                    min={new Date().toISOString().split('T')[0]}
+                    
                     value={selectedDate}
                     onChange={(e) => {
                       setSelectedDate(e.target.value);
@@ -330,6 +334,7 @@ console.log("guarda qui", selectedBank)
                     options={paymentMethods.map((method) => ({ value: method.id_paymentmethod, label: method.name }))}
                     primaryColor="#7fb7d4"
                     isSearchable
+                    isClearable
                   />
                 </td>
               </tr>
@@ -347,6 +352,7 @@ console.log("guarda qui", selectedBank)
                     options={banks.map((b) => ({ value: b , label: b }))}
                     primaryColor="#7fb7d4"
                     isSearchable
+                    isClearable
                     placeholder="Seleziona Metodo di Pagamento"
                     className="block w-full rounded border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[10px]"
                   />
@@ -369,28 +375,42 @@ console.log("guarda qui", selectedBank)
                     options={currencies.map((curr) => ({ value: curr.id_currency, label: curr.name }))}
                     primaryColor="#7fb7d4"
                     isSearchable
+                    isClearable
                   />
                 </td>
               </tr>
-
               <tr>
-                <td className="block text-sm font-medium text-gray-700">Commessa</td>
-                <td>
+              <td className="block text-sm font-medium text-gray-700">Commessa</td>
+              <td >
                 <Select
-                        options={jobs.map((job) => ({ value: job.id_job, label: job.name }))}
-                        id="job"
-                        name="job"
-                        value={{ value: job, label: findJob(job) }}
-                        className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4] sm:text-sm sm:leading-6"
-                        onChange={(selectedOption) => {
-                          setJob(selectedOption.value);
-                          setPurchase({ ...purchase, job: selectedOption.value });
-                        }}
-                        isSearchable
-                        placeholder="Seleziona una commessa"
-                      />
-                </td>
-              </tr>
+                  options={jobs.map((job) => ({ value: job.id_job, label: job.name }))}
+                  id="job"
+                  name="job"
+                  value={job ? { value: job, label: findJob(job) } : null} // Mostra il valore selezionato o null
+                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4] sm:text-sm sm:leading-6"
+                  onChange={(selectedOption) => {
+                    const selectedJob = selectedOption ? selectedOption.value : null; // Verifica se il valore è nullo
+                    setJob(selectedJob); // Aggiorna lo stato del job
+                    setPurchase({ ...purchase, job: selectedJob }); // Aggiorna lo stato di purchase
+                    setSelectedJob(selectedJob); // Assicura che anche selectedJob sia aggiornato
+                  }}
+                  isSearchable
+                  placeholder="Seleziona una commessa"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setJob(null); // Imposta job a null
+                    setPurchase({ ...purchase, job: nul }); // Aggiorna lo stato di purchase
+                    setSelectedJob(null); // Imposta anche selectedJob a null
+                  }}
+                  className="ml-2 p-2 text-gray-500 hover:text-red-500"
+                >
+                  <TrashIcon className="h-4 w-4" aria-hidden="true" />
+                </button>
+              </td>
+            </tr>
+
             </tbody>
           </table>
         </div>

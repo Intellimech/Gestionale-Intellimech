@@ -294,7 +294,6 @@ export default function UserCreateForm() {
     }));
   
     console.log("Sending data:", jsonObject);
-  
     toast.promise(
       axios.post(`${process.env.REACT_APP_API_URL}/offer/create`, jsonObject),
       {
@@ -302,9 +301,18 @@ export default function UserCreateForm() {
         success: 'Offerta creata con successo!',
         error: 'Errore durante la creazione dell\'offerta',
       }
-    ).catch((error) => {
+    )
+    .then(() => {
+      // Reload della pagina solo in caso di successo
+      window.location.reload();
+    })
+    .catch((error) => {
+      // Mostra il messaggio di errore specifico dal backend, se disponibile
+      const errorMessage = error.response?.data?.message || 'Si è verificato un errore imprevisto.';
+      toast.error(`Errore: ${errorMessage}`);
       console.error('Errore nella creazione dell\'offerta:', error);
     });
+    
   };
   
   

@@ -14,22 +14,7 @@ export default function ContractUpdateRow({
   handleCategoryChange,
   handleSubcategoryChange,
 }) {
-  // Aggiunge valori predefiniti per evitare undefined
-  const defaultContractRow = {
-    taxed_unit_price: '',
-    vat: '',
-    quantity: '',
-    unit_price: '',
-    total: '',
-    totalprice: '',
-    taxed_totalprice: '',
-    category: '',
-    subcategory: '',
-    subsubcategory: '',
-    ...contractrow, // Sovrascrive con i valori reali se presenti
-  };
 
-  contractrow = defaultContractRow;
 
   const Vat = ['22', '10', '4', '0'];
 
@@ -117,6 +102,7 @@ export default function ContractUpdateRow({
                 className="text-[10px]"
                 primaryColor="#7fb7d4"
                 isSearchable
+                isClearable
               />
             </td>
           </tr>
@@ -139,6 +125,7 @@ export default function ContractUpdateRow({
                 options={subcategories.map(s => ({ value: s.id_subcategory, label: s.name }))}
                 className="text-[10px]"
                 isSearchable
+                isClearable
                 primaryColor="#7fb7d4"
               />
             </td>
@@ -159,6 +146,7 @@ export default function ContractUpdateRow({
                 className="text-[10px]"
                 isDisabled={subcategories.length === 0}
                 primaryColor="#7fb7d4"
+                isClearable
               />
             </td>
           </tr>
@@ -184,6 +172,7 @@ export default function ContractUpdateRow({
                 onChange={(option) => onChange({ ...contractrow, vat: option?.value || '' })}
                 options={Vat.map(v => ({ value: v, label: v }))}
                 placeholder="IVA"
+                isClearable
                 className="text-[12px] rounded-md border-gray-300"
               />
             </td>

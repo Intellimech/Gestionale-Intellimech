@@ -315,7 +315,7 @@ console.log("ehi ciao", initialContract)
       }
     )
       .then((response) => {
-        
+        window.location.reload();
         console.log("sto modificando", jsonObject);
         setCreateSuccess(true);
       })
@@ -356,6 +356,7 @@ console.log("ehi ciao", initialContract)
                     options={companies}
                     primaryColor="#7fb7d4"
                     isSearchable
+                    isClearable
                   />
                 </td>
               </tr>
@@ -372,6 +373,7 @@ console.log("ehi ciao", initialContract)
                     options={users}
                     primaryColor="#7fb7d4"
                     isSearchable
+                    isClearable
                     placeholder="Seleziona Referente"
                     className="block w-full rounded border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[10px]"
                   />
@@ -428,6 +430,7 @@ console.log("ehi ciao", initialContract)
                     options={paymentMethods.map((method) => ({ value: method.id_paymentmethod, label: method.name }))}
                     primaryColor="#7fb7d4"
                     isSearchable
+                    isClearable
                   />
                 </td>
               </tr>
@@ -444,6 +447,7 @@ console.log("ehi ciao", initialContract)
                     options={banks.map((b) => ({ value: b , label: b }))}
                     primaryColor="#7fb7d4"
                     isSearchable
+                    isClearable
                     placeholder="Seleziona Metodo di Pagamento"
                     className="block w-full rounded border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[10px]"
                   />
@@ -467,6 +471,7 @@ console.log("ehi ciao", initialContract)
                     options={currencies.map((curr) => ({ value: curr.id_currency, label: curr.name }))}
                     primaryColor="#7fb7d4"
                     isSearchable
+                    isClearable
                   />
                 </td>
               </tr>
@@ -488,6 +493,7 @@ console.log("ehi ciao", initialContract)
                     }))}
                     primaryColor="#7fb7d4"
                     isSearchable
+                    isClearable
                     placeholder="Seleziona Ricorrenza"
                     className="block w-full rounded border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[10px]"
                   />
@@ -521,7 +527,7 @@ console.log("ehi ciao", initialContract)
                       setDeposit(selectedOption.value);
                     }}
                     min="1"
-                    placeholder="N. di ricorrenze"
+                    placeholder="Acconto"
                     className="block w-full rounded border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[10px]"
                   />
                 </td>
@@ -540,6 +546,7 @@ console.log("ehi ciao", initialContract)
                           setContract({ ...contract, job: selectedOption.value });
                         }}
                         isSearchable
+                        isClearable
                         placeholder="Seleziona una commessa"
                       />
                 </td>

@@ -96,6 +96,7 @@ const createQuotationRequest = async (event) => {
       );
       
       toast.success(`Richiesta di offerta per ${company.label} creata!`);
+      window.location.reload();
       return response.data;
     } catch (error) {
       toast.error(`Errore creazione RDO per ${company.label}`);
@@ -134,6 +135,7 @@ const createQuotationRequest = async (event) => {
                   placeholder="Seleziona uno o più clienti"
                   isMultiple
                   isSearchable
+                  isClearable
                 />
              
               </div>
@@ -153,6 +155,7 @@ const createQuotationRequest = async (event) => {
                   onChange={setSelectedProjecttype}
                   placeholder={selectedCompanies?.length > 1 ? 'CLUSTER' : 'Seleziona tipo progetto'}
                   isSearchable
+                  isClearable
                   isDisabled={selectedCompanies?.length > 1}
                   
                 />
@@ -173,6 +176,7 @@ const createQuotationRequest = async (event) => {
                   onChange={setSelectedAssignment}
                   placeholder="Seleziona tipo incarico"
                   isSearchable
+                  isClearable
                 />
               </div>
               </div>
@@ -192,6 +196,7 @@ const createQuotationRequest = async (event) => {
                   onChange={setSelectedTechnicalArea}
                   placeholder="Seleziona area tecnica"
                   isSearchable
+                  isClearable
                 />
                 </div>
               </div>
@@ -215,7 +220,7 @@ const createQuotationRequest = async (event) => {
             </div>
 
            
-            {selectedProjecttype?.value == '5' && (
+            {/* {selectedProjecttype?.value == '5' && (
               <div className="col-span-full">
                 <label htmlFor="externalcode" className="block text-sm font-medium leading-6 text-gray-900">
                   Codice Progetto
@@ -231,7 +236,7 @@ const createQuotationRequest = async (event) => {
                   />
                 </div>
               </div>
-            )}
+            )} */}
           </div>
         </div>
       </div>

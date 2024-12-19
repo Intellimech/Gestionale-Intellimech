@@ -106,6 +106,7 @@ export default function ContractRowInput({
                 className="text-xs"
                 primaryColor="#7fb7d4"
                 isSearchable
+                isClearable
               />
             </td>
           </tr>
@@ -134,6 +135,7 @@ export default function ContractRowInput({
                 isDisabled={subcategories?.length === 0}
                 primaryColor="#7fb7d4"
                 isSearchable
+                isClearable
               />
             </td>
           </tr>
@@ -164,6 +166,7 @@ export default function ContractRowInput({
                 isDisabled={subcategories?.length === 0}
                 primaryColor="#7fb7d4"
                 isSearchable
+                isClearable
               />
             </td>
           </tr>
@@ -211,6 +214,7 @@ export default function ContractRowInput({
                 className="text-xs"
                 primaryColor="#7fb7d4"
                 isSearchable
+                isClearable
               />
             </td>
           </tr>

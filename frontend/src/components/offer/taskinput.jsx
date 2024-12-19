@@ -103,6 +103,7 @@ export default function TaskForm({ key, task, name, onChange, onAddChild, onRemo
                 }}
                 primaryColor="[#7fb7d4]"
                 isSearchable
+                isClearable
                 placeholder="Seleziona un utente"
               />
             </td>

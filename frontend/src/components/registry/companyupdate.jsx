@@ -171,6 +171,7 @@ export default function ClientUpdateForm({ company }) {
         onChange={handleClientChange}
         placeholder="Seleziona"
         isSearchable
+        isClearable
       />
     </div>
   )}

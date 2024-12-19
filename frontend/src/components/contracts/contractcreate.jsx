@@ -43,7 +43,7 @@ export default function ContractCreateForm() {
   const banks = ['Vista Fattura', '30 gg D.F.F.M.', '60 gg D.F.F.M.', '50% Anticipato, 50% alla Consegna', '100% Anticipato', 'Frazionato'];
   
   const [recurrence, setRecurrence] = useState('');
-  const [currency, setCurrency] = useState('EUR');
+  const [currency, setCurrency] = useState(null);
   const [currencies, setCurrencies] = useState([]);
   const [paymentMethods, setPaymentMethods] = useState([]);
   const [recurrences, setRecurrences] = useState([]);
@@ -254,6 +254,7 @@ console.log(jsonObject);
     )
       .then((response) => {
         setCreateSuccess(true);
+        window.location.reload();
       })
       .catch((error) => {
         setErrorMessages(error.response.data.message);
@@ -313,6 +314,7 @@ console.log(jsonObject);
                   options={(companies || []).map(({ value, label }) => ({ value, label }))}
                   primaryColor="#7fb7d4"
                   isSearchable
+                  isClearable
                   placeholder="Seleziona Fornitore"
                   className="block w-full rounded border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[10px]"
                 />
@@ -329,6 +331,7 @@ console.log(jsonObject);
                     options={users}
                     primaryColor="#7fb7d4"
                     isSearchable
+                    isClearable
                     placeholder="Seleziona Referente"
                     className="block w-full rounded border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[10px]"
                   />
@@ -370,6 +373,7 @@ console.log(jsonObject);
                   options={paymentMethods.map((method) => ({ value: method.id_paymentmethod, label: method.name }))}
                   primaryColor="#7fb7d4"
                   isSearchable
+                  isClearable
                   placeholder="Seleziona Metodo di Pagamento"
                   className="block w-full rounded border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[10px]"
                 />
@@ -386,6 +390,7 @@ console.log(jsonObject);
                     options={banks.map((b) => ({ value: b , label: b }))}
                     primaryColor="#7fb7d4"
                     isSearchable
+                    isClearable
                     placeholder="Seleziona Metodo di Pagamento"
                     className="block w-full rounded border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[10px]"
                   />
@@ -403,6 +408,7 @@ console.log(jsonObject);
                   options={currencies.map((currency) => ({ value: currency.id_currency, label: currency.name }))}
                   primaryColor="#7fb7d4"
                   isSearchable
+                  isClearable
                   placeholder="Seleziona Valuta"
                   className="block w-full rounded border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[10px]"
                 />
@@ -430,6 +436,7 @@ console.log(jsonObject);
                     }))}
                     primaryColor="#7fb7d4"
                     isSearchable
+                    isClearable
                     placeholder="Seleziona Ricorrenza"
                     className="block w-full rounded border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] text-[10px]"
                   />
@@ -458,6 +465,7 @@ console.log(jsonObject);
                         className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4] sm:text-sm sm:leading-6"
                         onChange={handleJobChange}
                         isSearchable
+                        isClearable
                         placeholder="Seleziona una commessa"
                       />
                 </td>

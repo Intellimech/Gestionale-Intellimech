@@ -140,6 +140,7 @@ export default function TaskRevision({ task, onChange, onAddChild, onRemove, lev
               }}
               primaryColor="[#7fb7d4]"
               isSearchable
+              isClearable
               placeholder="Seleziona un utente"
             />
 

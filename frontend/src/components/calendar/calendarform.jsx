@@ -165,6 +165,7 @@ export default function Example({ date, setOpen }) {
       Promise.all([morningPromise, afternoonPromise])
         .then((responses) => {
           notifySuccess();  // Notifica di successo
+          window.location.reload();
         })
         .catch((error) => {
          notifyError();  // Notifica di errore
@@ -249,8 +250,10 @@ export default function Example({ date, setOpen }) {
                   value={morningLocation}
                   onChange={handleMorningLocationChange}
                   options={Locations}
+                  isClearable
                   primaryColor={'[#7fb7d4]'}
                   placeholder="Seleziona una posizione"
+                  
                 />
               </div>
             </div>
@@ -264,6 +267,7 @@ export default function Example({ date, setOpen }) {
                   value={afternoonLocation}
                   onChange={handleAfternoonLocationChange}
                   options={Locations}
+                  isClearable
                   primaryColor={'[#7fb7d4]'}
                   placeholder="Seleziona una posizione"
                 />

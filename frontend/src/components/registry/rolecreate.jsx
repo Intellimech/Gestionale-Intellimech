@@ -102,6 +102,7 @@ export default function RoleCreate() {
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/role/create`, jsonObject);
       setCreateSuccess(true);
       toast.success('Ruolo creato con successo!');
+      window.location.reload();
     } catch (error) {
       console.error('Errore:', error);
       setCreateSuccess(false);
@@ -143,6 +144,7 @@ export default function RoleCreate() {
             <div className="mt-2">
               <Select
                 value={selectedrole}
+                isClearable
                 onChange={handleRoleChange}
                 options={roles?.map((role) => ({
                   value: role.id_role,
@@ -161,6 +163,7 @@ export default function RoleCreate() {
             <div className="mt-2">
             <Select
               isMultiple
+              isClearable
               value={selectedPermissions} // Valori attuali selezionati
               onChange={(value) => handlePermissionChange(value)} // Gestisce i cambiamenti
               options={permissions.map((permission) => ({

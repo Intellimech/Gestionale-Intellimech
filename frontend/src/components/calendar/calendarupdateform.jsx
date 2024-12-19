@@ -198,6 +198,7 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
           toast.success('Aggiornamento riuscito!', {
             position: toast.POSITION.TOP_RIGHT
           });
+          window.location.reload();
         })
         .catch((error) => {
          
@@ -253,6 +254,7 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
                     options={locations}
                     primaryColor="#7fb7d4"
                     isSearchable
+                    isClearable
                   />
                 </div>
               </div>
@@ -271,6 +273,7 @@ export default function CalendarUpdateForm({ open, setOpen, date, initialData })
                     options={locations}
                     primaryColor="#7fb7d4"
                     isSearchable
+                    isClearable
                   />
                 </div>
               </div>

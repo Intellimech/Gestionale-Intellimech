@@ -4,6 +4,8 @@ import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon, CheckIcon, PaperAirplaneIcon, EyeIcon, ArrowPathIcon, PencilSquareIcon } from '@heroicons/react/24/outline';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+
+import toast, { Toaster } from 'react-hot-toast';
 import { UserContext } from '../../module/userContext';
 import ContractCreateForm from './contractcreate';
 import ContractUpdateForm from './contractupdate';
@@ -68,10 +70,16 @@ export default function Example({ permissions }) {
     axios
       .get(`${process.env.REACT_APP_API_URL}/contract/read`, )
       .then((response) => {
+
         setContract(Array.isArray(response.data.contracts) ? response.data.contracts : []);
         setItems(Array.isArray(response.data.contracts) ? response.data.contracts : []);
+           // Ricarica i dati ogni 5 secondi dopo aver completato la richiesta
+        setTimeout(fetchOrders, 5000);
       })
       .catch((error) => {
+        console.error("Error fetching orders:", error);
+        // Riprova dopo 5 secondi se c'è un errore
+        setTimeout(fetchOrders, 2000);
       });
   };
 
@@ -99,7 +107,7 @@ export default function Example({ permissions }) {
   };
   
   
-  const filteredcontract = Contract.filter((item) => {
+  const filteredcontract = Contract?.filter((item) => {
     return (
       (searchQueries.name === '' || item.name.toLowerCase().includes(searchQueries.name.toLowerCase())) &&
       (searchQueries.id_company === '' || item.Company?.name.toLowerCase().includes(searchQueries.id_company.toLowerCase())) &&
@@ -131,8 +139,18 @@ export default function Example({ permissions }) {
       setSortDirection('asc');
     }
   };
-
-  const sortedcontract = filteredcontract.sort((a, b) => {
+  function handleReloadContract() {
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/contract/read`)
+      .then((response) => {
+        setContract(response.data.contract);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+      window.location.reload();
+  }  
+  const sortedcontract = filteredcontract?.sort((a, b) => {
     // Se sortColumn è vuota, ordina per id per impostazione predefinita
     if (!sortColumn) {
       setSortColumn('name');
@@ -157,11 +175,55 @@ export default function Example({ permissions }) {
       return a.name - b.name;
   });
   
+  
+  const Accept = (contract) => {
+    toast.promise(
+        axios
+          .post(`${process.env.REACT_APP_API_URL}/contract/accept/${contract}`)
+          .then((response) => {
+            console.log(response.data.contract); 
+            window.location.reload();
+            handleReloadContract();  
+            
+          })
+          .catch((error) => {
+            console.log(error);
+            window.location.reload();
+            throw new Error('Errore durante l\'accettazione della richiesta di offerta');
+          }),
+        {
+          loading: 'Loading...',
+          success: 'Richiesta di contratto accettata',
+          error: 'Errore durante l\'accettazione di contratto',
+        }
+      )
+  };
+
+  const Refuse = (contract) => {
+    toast.promise(
+      axios
+      .post(`${process.env.REACT_APP_API_URL}/contract/refuse/${contract}`)
+      .then((response) => {
+        console.log(response.data.contract);
+        handleReloadContract(); 
+        window.location.reload();
+        })
+        .catch((error) => {
+          console.log(error);
+          throw new Error('Errore durante il rifiuto di contratto');
+        }),
+      {
+        loading: 'Loading...',
+        success: 'Richiesta di contratto è stata rifiutata',
+        error: 'Errore durante il rifiuto della richiesta di offerta',
+      }
+    )
+  }
 
   function exportData() {
     const csvContent =
       'data:text/csv;charset=utf-8,' +
-      items.map((item) => Object.values(item).join(',')).join('\n');
+      items?.map((item) => Object.values(item).join(',')).join('\n');
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
@@ -220,7 +282,7 @@ export default function Example({ permissions }) {
                           </div>
                         </div>
                       </div>
-                      <div className="relative mt-6 flex-1 px-4 sm:px-6">{ <contractInfo contract={selectedItemInfo} /> }</div>
+                      <div className="relative mt-6 flex-1 px-4 sm:px-6">{ <ContractInfo contract={selectedItemInfo} /> }</div>
                     </div>
                   </Dialog.Panel>
                 </Transition.Child>
@@ -569,7 +631,7 @@ export default function Example({ permissions }) {
               </thead>
 
                 <tbody className="divide-y divide-gray-200 bg-white">
-                  {sortedcontract.map((item) => (
+                  {sortedcontract?.map((item) => (
                     <tr key={item.id}>
                       <td
                      onClick={(event) => {
@@ -682,8 +744,32 @@ export default function Example({ permissions }) {
                         )}
                       </div>
                     </td>
-                    </tr>
-                  ))}
+
+                    {(item.status === "In Approvazione") && (
+                    <td className="whitespace-nowrap py-2 pl-2 pr-2 text-right text-xs font-medium">
+                      <div className="flex items-center space-x-1">
+                        <button
+                          type="button"
+                          className="inline-flex items-center rounded bg-white px-1.5 py-0.5 text-xs font-medium text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
+                          onClick={() => Accept(item.id_contract)}
+                          disabled={['Approvata', 'Rifiutata', 'Scaduta', 'Utilizzata'].includes(item.status)}
+                        >
+                          <CheckIcon className="h-4 w-3 text-gray-500" />
+                        </button>
+                        <button
+                          type="button"
+                          className="inline-flex items-center rounded bg-white px-1.5 py-0.5 text-xs font-medium text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
+                          onClick={() => Refuse(item.id_contract)}
+                          disabled={['Approvata', 'Rifiutata', 'Scaduta', 'Utilizzata'].includes(item.status)}
+                        >
+                          <XMarkIcon className="h-4 w-3 text-gray-500" />
+                        </button>
+                      </div>
+                    </td>
+                    )}
+                  </tr>
+                ))}
+                  
                 </tbody>
               </table>
             </div>

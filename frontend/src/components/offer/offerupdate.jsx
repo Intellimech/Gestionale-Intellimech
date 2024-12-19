@@ -411,8 +411,11 @@ const createOffer = async (event) => {
         success: 'Offerta modificata con successo!',
         error: 'Errore nella modifica di offerta',
       }
-    );
-
+    )
+    .then(() => {
+      // Reload della pagina solo in caso di successo
+      window.location.reload();
+    })
   
   } catch (error) {
     console.error('Errore nella modifica dell\'offerta:', error);

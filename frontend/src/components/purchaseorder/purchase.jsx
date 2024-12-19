@@ -3,6 +3,7 @@ import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/20/solid';
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon, CheckIcon, PaperAirplaneIcon, EyeIcon, ArrowPathIcon, PencilSquareIcon } from '@heroicons/react/24/outline'
 import axios from 'axios';
+import toast, { Toaster } from 'react-hot-toast';
 import Cookies from 'js-cookie';
 import { UserContext } from '../../module/userContext';
 import PurchaseCreateForm from './purchasecreate';
@@ -25,7 +26,7 @@ export default function Example({ permissions }) {
   const [selectedUpdate, setSelectedUpdate] = useState({});
   const [showUpdate, setShowUpdate] = useState(false);
   const [showCreate, setShowCreate] = useState(false);
-  const [sortColumn, setSortColumn] = useState('name'); // Imposta 'name' come colonna di ordinamento predefinita
+  const [sortColumn, setSortColumn] = useState('date'); // Imposta 'name' come colonna di ordinamento predefinita
   const [sortDirection, setSortDirection] = useState('desc');
   
   const [filterType, setFilterType] = useState('name');
@@ -44,6 +45,7 @@ export default function Example({ permissions }) {
     job: '',
     referent: '',
     status: '',
+    date: '',
     createdByUser: '',
     purchaserows : '',
   });
@@ -103,18 +105,33 @@ export default function Example({ permissions }) {
     if (a === null || a === undefined) return 1;
     if (b === null || b === undefined) return -1;
   
+    // Verifica se i valori sono date
+    const isDate = (value) => {
+      return value instanceof Date || 
+             (typeof value === 'string' && !isNaN(Date.parse(value)));
+    };
+  
+    // Se entrambi i valori sono date
+    if (isDate(a) && isDate(b)) {
+      return new Date(a) - new Date(b);
+    }
+    
+    // Per le stringhe
     if (typeof a === 'string' && typeof b === 'string') {
-      // Sensitivity 'base' ignora le differenze tra maiuscole e minuscole
       return a.localeCompare(b, undefined, { numeric: true, sensitivity: 'base' });
-    } else if (typeof a === 'number' && typeof b === 'number') {
+    } 
+    // Per i numeri
+    else if (typeof a === 'number' && typeof b === 'number') {
       return a - b;
-    } else {
+    } 
+    // Per altri tipi
+    else {
       return a < b ? -1 : a > b ? 1 : 0;
     }
   };
   
   
-  const filteredPurchase = purchaseOrder.filter((item) => {
+  const filteredPurchase = purchaseOrder?.filter((item) => {
     return (
       (searchQueries.name === '' || item.name.toLowerCase().includes(searchQueries.name.toLowerCase())) &&
       (searchQueries.id_company === '' || item.Company?.name.toLowerCase().includes(searchQueries.id_company.toLowerCase())) &&
@@ -148,36 +165,96 @@ export default function Example({ permissions }) {
     }
   };
 
-  const sortedPurchase = filteredPurchase.sort((a, b) => {
-    // Se sortColumn è vuota, ordina per id per impostazione predefinita
+  const sortedPurchase = filteredPurchase?.sort((a, b) => {
+    // Se sortColumn è vuota, ordina per name per impostazione predefinita
     if (!sortColumn) {
       setSortColumn('name');
     }
   
-    // Altrimenti, ordina per la colonna specificata
-    const valueA = sortColumn === 'Company' ? a.Company?.name :
-                    sortColumn === 'createdByUser' ? (a.createdByUser?.name + ' ' + a.createdByUser?.surname) :
-                    a[sortColumn];
-    const valueB = sortColumn === 'Company' ? b.Company?.name :
-                    sortColumn === 'createdByUser' ? (b.createdByUser?.name + ' ' + b.createdByUser?.surname) :
-                    b[sortColumn];
-    
-      if (sortColumn) {
-        if (sortDirection === 'asc') {
-          return compareValues(a[sortColumn], b[sortColumn]);
-        } else {
-          return compareValues(b[sortColumn], a[sortColumn]);
-        }
-      }
-      // Default sorting by id_category
-      return a.name - b.name;
-  });
+    // Array delle colonne che contengono date
+    const dateColumns = ['createdAt', 'updatedAt', 'deletedAt', 'date'];
   
+    // Se la colonna è una colonna di date
+    if (dateColumns.includes(sortColumn)) {
+      const dateA = new Date(a[sortColumn]);
+      const dateB = new Date(b[sortColumn]);
+      return sortDirection === 'asc' ? dateA - dateB : dateB - dateA;
+    }
+  
+    // Per le altre colonne, mantieni la logica esistente
+    const valueA = sortColumn === 'Company' ? a.Company?.name :
+                   sortColumn === 'createdByUser' ? (a.createdByUser?.name + ' ' + a.createdByUser?.surname) :
+                   a[sortColumn];
+    const valueB = sortColumn === 'Company' ? b.Company?.name :
+                   sortColumn === 'createdByUser' ? (b.createdByUser?.name + ' ' + b.createdByUser?.surname) :
+                   b[sortColumn];
+  
+    if (sortColumn) {
+      if (sortDirection === 'asc') {
+        return compareValues(valueA, valueB);
+      } else {
+        return compareValues(valueB, valueA);
+      }
+    }
+    
+    // Default sorting by name
+    return compareValues(a.name, b.name);
+  });
+  function handleReloadPurchase() {
+    axios
+      .get(`${process.env.REACT_APP_API_URL}/purchase/read`)
+      .then((response) => {
+        setPurchaseOrder(response.data.purchase);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }  
 
+  
+  const Accept = (purchase) => {
+    toast.promise(
+        axios
+          .post(`${process.env.REACT_APP_API_URL}/purchase/accept/${purchase}`)
+          .then((response) => {
+            console.log(response.data.purchase);
+            handleReloadPurchase();
+          })
+          .catch((error) => {
+            console.log(error);
+            throw new Error('Errore durante l\'accettazione della richiesta di offerta');
+          }),
+        {
+          loading: 'Loading...',
+          success: 'Richiesta di acquisto accettata',
+          error: 'Errore durante l\'accettazione di acquisto',
+        }
+      )
+  };
+
+  const Refuse = (purchase) => {
+    toast.promise(
+      axios
+      .post(`${process.env.REACT_APP_API_URL}/purchase/refuse/${purchase}`)
+      .then((response) => {
+        console.log(response.data.purchase);
+        handleReloadPurchase();
+        })
+        .catch((error) => {
+          console.log(error);
+          throw new Error('Errore durante il rifiuto di acquisto');
+        }),
+      {
+        loading: 'Loading...',
+        success: 'Richiesta di acquisto è stata rifiutata',
+        error: 'Errore durante il rifiuto della richiesta di offerta',
+      }
+    )
+  }
   function exportData() {
     const csvContent =
       'data:text/csv;charset=utf-8,' +
-      items.map((item) => Object.values(item).join(',')).join('\n');
+      items?.map((item) => Object.values(item).join(',')).join('\n');
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
@@ -189,6 +266,7 @@ export default function Example({ permissions }) {
 
   return (
     <div className="px-4 sm:px-6 lg:px-8">
+          <Toaster />
       <Transition.Root show={showInfo} as={Fragment}>
         <Dialog className="relative z-50" onClose={setShowInfo}>
           <div className="fixed inset-0" />
@@ -467,8 +545,8 @@ export default function Example({ permissions }) {
                       />
                     </th>
                     <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('date')}>
-                    <br /> Data
-                      <br />
+                    Data <br/> Emissione
+                      <br /> 
                       <input
                         value={searchQueries.date}
                         onClick={(e) => e.stopPropagation()}
@@ -521,7 +599,7 @@ export default function Example({ permissions }) {
               </thead>
 
               <tbody className="divide-y divide-gray-200 bg-white">
-                {sortedPurchase.map((item) => (
+                {sortedPurchase?.map((item) => (
                   <tr key={item.id}>
                     <td
                       onClick={(event) => {
@@ -571,6 +649,7 @@ export default function Example({ permissions }) {
                         <span className="px-1 inline-flex text-[0.6rem] leading-4 font-semibold rounded-full bg-gray-100 text-purple-800">
                           Revisionato
                         </span>
+
                       ) : (
                         <span className="px-1 inline-flex text-[0.6rem] leading-4 font-semibold rounded-full bg-gray-100 text-gray-800">
                           Nessuno
@@ -590,7 +669,7 @@ export default function Example({ permissions }) {
                     </td>
                     <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
                    
-                      {new Date(item.createdAt).toLocaleDateString()}
+                      {new Date(item?.date).toLocaleDateString()}
                     </td>
                     <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
                       {item.createdByUser?.name.slice(0, 2).toUpperCase() + item.createdByUser?.surname.slice(0, 2).toUpperCase()}
@@ -618,6 +697,28 @@ export default function Example({ permissions }) {
                         )}
                       </div>
                     </td>
+                    {(item.status === "In Approvazione") && (
+                    <td className="whitespace-nowrap py-2 pl-2 pr-2 text-right text-xs font-medium">
+                      <div className="flex items-center space-x-1">
+                        <button
+                          type="button"
+                          className="inline-flex items-center rounded bg-white px-1.5 py-0.5 text-xs font-medium text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
+                          onClick={() => Accept(item.id_purchase)}
+                          disabled={['Approvata', 'Rifiutata', 'Scaduta', 'Utilizzata'].includes(item.status)}
+                        >
+                          <CheckIcon className="h-4 w-3 text-gray-500" />
+                        </button>
+                        <button
+                          type="button"
+                          className="inline-flex items-center rounded bg-white px-1.5 py-0.5 text-xs font-medium text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-white"
+                          onClick={() => Refuse(item.id_purchase)}
+                          disabled={['Approvata', 'Rifiutata', 'Scaduta', 'Utilizzata'].includes(item.status)}
+                        >
+                          <XMarkIcon className="h-4 w-3 text-gray-500" />
+                        </button>
+                      </div>
+                    </td>
+                    )}
                   </tr>
                 ))}
               </tbody>

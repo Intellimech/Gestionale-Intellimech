@@ -153,6 +153,7 @@ export default function HolidayCreateForm() {
                             <div className="mt-2">
                                 <Select
                                     isMultiple
+                                    isClearable
                                     value={selectedUsers}
                                     onChange={handleUserChange}
                                     options={users}
@@ -174,6 +175,7 @@ export default function HolidayCreateForm() {
                                     startDate={startDate}
                                     endDate={endDate}
                                     selectsRange
+                                    isClearable
                                     dateFormat="dd/MM/yyyy"
                                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4] sm:text-sm sm:leading-6"
                                     placeholderText={`Seleziona una data`}
@@ -191,6 +193,7 @@ export default function HolidayCreateForm() {
                                     value={morningLocation}
                                     onChange={handleMorningLocationChange}
                                     options={locations}
+                                    isClearable
                                     primaryColor={'[#7fb7d4]'}
                                     placeholder="Seleziona una posizione"
                                 />
@@ -206,6 +209,7 @@ export default function HolidayCreateForm() {
                                     value={afternoonLocation}
                                     onChange={handleAfternoonLocationChange}
                                     options={locations}
+                                    isClearable
                                     primaryColor={'[#7fb7d4]'}
                                     placeholder="Seleziona una posizione"
                                 />

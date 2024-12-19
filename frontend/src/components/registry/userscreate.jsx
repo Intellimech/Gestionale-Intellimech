@@ -87,7 +87,7 @@ export default function UserCreateForm() {
       const response = await axios.post(`${process.env.REACT_APP_API_URL}/user/create`, jsonObject);
       
       setCreateSuccess(true);
-      
+      window.location.reload();
       // Mostra la notifica di successo
       toast.success('Utente creato con successo!');
     } catch (error) {
@@ -146,6 +146,7 @@ export default function UserCreateForm() {
                   onChange={(value) => setSelectedRole(value)}
                   options={roles.map((role) => ({ value: role.id_role, label: role.name }))}
                   placeholder="Seleziona un ruolo"
+                  isClearable
                 />
               </div>
             </div>
@@ -160,6 +161,7 @@ export default function UserCreateForm() {
                   onChange={(value) => setSelectedGroup(value)}
                   options={groups.map((group) => ({ value: group.id_group, label: group.name }))}
                   placeholder="Seleziona un gruppo"
+                  isClearable
                 />
               </div>
             </div>
@@ -174,6 +176,7 @@ export default function UserCreateForm() {
                   onChange={(value) => setSelectedSubgroup(value)}
                   options={subgroups.map((subgroup) => ({ value: subgroup.id_subgroup, label: subgroup.name }))}
                   placeholder="Seleziona un sotto gruppo"
+                  isClearable
                 />
               </div>
             </div> 
@@ -208,6 +211,7 @@ export default function UserCreateForm() {
                     label: contracttype.name,
                   }))}
                   placeholder="Seleziona un contratto"
+                  isClearable
                 />
               </div>
             </div>
@@ -295,11 +299,43 @@ export default function UserCreateForm() {
                 value={selectedCountry}
                 onChange={(value) => setSelectedCountry(value)}
                 options={[
-                  { value: 'IT', label: 'Italy' },
+                  { value: 'IT', label: 'Italia' },
                   { value: 'CA', label: 'Canada' },
-                  { value: 'MX', label: 'Mexico' },
+                  { value: 'MX', label: 'Messico' },
+                  { value: 'FR', label: 'Francia' },
+                  { value: 'DE', label: 'Germania' },
+                  { value: 'ES', label: 'Spagna' },
+                  { value: 'PT', label: 'Portogallo' },
+                  { value: 'GB', label: 'Regno Unito' },
+                  { value: 'US', label: 'Stati Uniti' },
+                  { value: 'AU', label: 'Australia' },
+                  { value: 'JP', label: 'Giappone' },
+                  { value: 'CN', label: 'Cina' },
+                  { value: 'IN', label: 'India' },
+                  { value: 'BR', label: 'Brasile' },
+                  { value: 'AR', label: 'Argentina' },
+                  { value: 'RU', label: 'Russia' },
+                  { value: 'ZA', label: 'Sudafrica' },
+                  { value: 'EG', label: 'Egitto' },
+                  { value: 'TR', label: 'Turchia' },
+                  { value: 'GR', label: 'Grecia' },
+                  { value: 'NL', label: 'Paesi Bassi' },
+                  { value: 'SE', label: 'Svezia' },
+                  { value: 'NO', label: 'Norvegia' },
+                  { value: 'FI', label: 'Finlandia' },
+                  { value: 'DK', label: 'Danimarca' },
+                  { value: 'CH', label: 'Svizzera' },
+                  { value: 'AT', label: 'Austria' },
+                  { value: 'BE', label: 'Belgio' },
+                  { value: 'PL', label: 'Polonia' },
+                  { value: 'CZ', label: 'Repubblica Ceca' },
+                  { value: 'HU', label: 'Ungheria' },
+                  { value: 'SK', label: 'Slovacchia' },
+                  { value: 'IE', label: 'Irlanda' },
+                  { value: 'NZ', label: 'Nuova Zelanda' }
                 ]}
                 placeholder="Seleziona un paese"
+                isClearable
               />
             </div>
           </div>

@@ -411,7 +411,10 @@ const createOffer = async (event) => {
         success: 'Offer created successfully!',
         error: 'Error creating offer',
       }
-    );
+    )  .then(() => {
+      // Reload della pagina solo in caso di successo
+      window.location.reload();
+    })
 
     await toast.promise(
       axios.post(`${process.env.REACT_APP_API_URL}/offer/updaterev`, {

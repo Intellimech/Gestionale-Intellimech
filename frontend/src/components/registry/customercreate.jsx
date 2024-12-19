@@ -86,6 +86,10 @@ export default function ClientForm() {
         success: 'Cliente creato con successo!',
         error: 'Errore durante la creazione del Cliente',
       }
+      .then(() => {
+        // Reload della pagina solo in caso di successo
+        window.location.reload();
+      })
     ).catch((error) => {
       console.error('Errore durante la creazione del cliente:', error);
       throw new Error('Errore durante la creazione del cliente');
@@ -152,6 +156,7 @@ export default function ClientForm() {
                 onChange={handleClientChange}
                 placeholder="Seleziona"
                 isSearchable
+                isClearable
               />
             </div>
           </div>

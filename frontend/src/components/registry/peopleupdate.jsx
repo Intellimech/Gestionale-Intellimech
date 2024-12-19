@@ -146,6 +146,8 @@ export default function UpdateForm({ person, onClose }) {
                    onChange={(e) => setFormData({ ...formData, role: e.target.value })} // Update on change
                   options={roles.map((role) => ({ value: role.id_role, label: role.name }))}
                   placeholder="Seleziona un ruolo"
+            isClearable
+            isSearchable
                 />
               </div>
             </div>
@@ -160,6 +162,8 @@ export default function UpdateForm({ person, onClose }) {
                    onChange={(e) => setFormData({ ...formData, group: e.target.value })} // Update on change
                   options={groups.map((group) => ({ value: group.id_group, label: group.name }))}
                   placeholder="Seleziona un gruppo"
+            isClearable
+            isSearchable
                 />
               </div>
             </div>
@@ -174,6 +178,8 @@ export default function UpdateForm({ person, onClose }) {
                  onChange={(e) => setFormData({ ...formData, subgroup: e.target.value })} // Update on change
                   options={subgroups.map((subgroup) => ({ value: subgroup.id_subgroup, label: subgroup.name }))}
                   placeholder="Seleziona un sotto gruppo"
+            isClearable
+            isSearchable
                 />
               </div>
             </div> 
@@ -216,6 +222,8 @@ export default function UpdateForm({ person, onClose }) {
                     label: contracttype?.name,
                   }))}
                   placeholder="Seleziona un contratto"
+                  isClearable
+                  isSearchable
                 />
               </div>
             </div>
@@ -234,6 +242,7 @@ export default function UpdateForm({ person, onClose }) {
                   autoComplete="hWeek"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#7fb7d4] sm:text-sm sm:leading-6"
                   placeholder="0"
+                  
                 />
               </div>
             </div>
@@ -321,11 +330,45 @@ export default function UpdateForm({ person, onClose }) {
         });
       }}
       options={[
-        { value: 'IT', label: 'Italy' },
+        { value: 'IT', label: 'Italia' },
         { value: 'CA', label: 'Canada' },
-        { value: 'MX', label: 'Mexico' },
-      ]}
+        { value: 'MX', label: 'Messico' },
+        { value: 'FR', label: 'Francia' },
+        { value: 'DE', label: 'Germania' },
+        { value: 'ES', label: 'Spagna' },
+        { value: 'PT', label: 'Portogallo' },
+        { value: 'GB', label: 'Regno Unito' },
+        { value: 'US', label: 'Stati Uniti' },
+        { value: 'AU', label: 'Australia' },
+        { value: 'JP', label: 'Giappone' },
+        { value: 'CN', label: 'Cina' },
+        { value: 'IN', label: 'India' },
+        { value: 'BR', label: 'Brasile' },
+        { value: 'AR', label: 'Argentina' },
+        { value: 'RU', label: 'Russia' },
+        { value: 'ZA', label: 'Sudafrica' },
+        { value: 'EG', label: 'Egitto' },
+        { value: 'TR', label: 'Turchia' },
+        { value: 'GR', label: 'Grecia' },
+        { value: 'NL', label: 'Paesi Bassi' },
+        { value: 'SE', label: 'Svezia' },
+        { value: 'NO', label: 'Norvegia' },
+        { value: 'FI', label: 'Finlandia' },
+        { value: 'DK', label: 'Danimarca' },
+        { value: 'CH', label: 'Svizzera' },
+        { value: 'AT', label: 'Austria' },
+        { value: 'BE', label: 'Belgio' },
+        { value: 'PL', label: 'Polonia' },
+        { value: 'CZ', label: 'Repubblica Ceca' },
+        { value: 'HU', label: 'Ungheria' },
+        { value: 'SK', label: 'Slovacchia' },
+        { value: 'IE', label: 'Irlanda' },
+        { value: 'NZ', label: 'Nuova Zelanda' }
+      ]
+      }
       placeholder="Seleziona un paese"
+      isClearable
+      isSearchable
     />
   </div>
 </div>

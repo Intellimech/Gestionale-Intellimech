@@ -1,51 +1,84 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import Cookies from 'js-cookie';
 import Select from 'react-tailwindcss-select';
 import toast, { Toaster } from 'react-hot-toast';
 
 export default function UserCreateForm() {
   const [salesorder, setSalesOrder] = useState([]);
   const [selectedSalesOrder, setSelectedSalesOrder] = useState([]);
+  const [quotationRequestsToUpdate, setQuotationRequestsToUpdate] = useState([]);
+  const [showAdditionalInput, setShowAdditionalInput] = useState(false);
+  const [additionalInputValue, setAdditionalInputValue] = useState("");
 
+  // Fetch sales orders and set them up
   useEffect(() => {
-    
-    axios.get(`${process.env.REACT_APP_API_URL}/salesorder/read/`, )
-    .then((response) => {
-      const salesorder = response.data.salesorders.map((salesorder) => ({
-        value: salesorder.id_salesorder,
-        label: salesorder.name,
-      }));
-      setSalesOrder(salesorder);
-    })
-    .catch((error) => {
-      console.error('Error fetching sales orders:', error);
-    });
+    axios.get(`${process.env.REACT_APP_API_URL}/salesorder/read/`)
+      .then((response) => {
+        const salesorder = response.data.salesorders.map((salesorder) => ({
+          value: salesorder.id_salesorder,
+          label: salesorder.name,
+          offer: salesorder.Offer, // We need this for the QuotationRequest check
+        }));
+        setSalesOrder(salesorder);
+      })
+      .catch((error) => {
+        console.error('Error fetching sales orders:', error);
+      });
   }, []);
 
-  const handleSalesOrderChange = (value) => {
-    setSelectedSalesOrder(value);
+  // Handle sales order selection
+  const handleSalesOrderChange = (values) => {
+    setSelectedSalesOrder(values);
+
+    // Find orders with ProjectType id_projecttype === 5
+    const quotationRequests = values
+      .filter(order => order?.offer?.QuotationRequest?.ProjectType?.id_projecttype === 5)
+      .map(order => order.offer.QuotationRequest.id_quotationrequest);
+
+    setQuotationRequestsToUpdate(quotationRequests);
+
+    // Show additional input only if there's at least one matching ProjectType
+    setShowAdditionalInput(quotationRequests.length > 0);
   };
 
+  // Handle additional input change
+  const handleAdditionalInputChange = (e) => {
+    setAdditionalInputValue(e.target.value);
+  };
+
+  // Create job handler
   const createJob = (event) => {
     event.preventDefault();
-  
+
     const jsonObject = {
       SalesOrders: selectedSalesOrder.map((salesorder) => salesorder.value),
     };
 
-    // Using toast.promise for notifications
+    // Create the job
     toast.promise(
-      axios.post(`${process.env.REACT_APP_API_URL}/job/create`, jsonObject,),
-     toast.loading ("In Creazione")
-    )
-    .then((response) => {
-       toast.success('Job creato con successo!');
-     
-    })
-    .catch((error) => {
-      toast.error('Errore durante la creazione del job');
-    });
+      axios.post(`${process.env.REACT_APP_API_URL}/job/create`, jsonObject),
+      {
+        loading: "In Creazione...",
+        success: "Job creato con successo!",
+        error: "Errore durante la creazione del job.",
+      }
+    );
+
+    // Update QuotationRequests if any
+    if (quotationRequestsToUpdate.length > 0) {
+      quotationRequestsToUpdate.forEach((id_quotationrequest) => {
+        toast.promise(
+          axios.put(`${process.env.REACT_APP_API_URL}/quotationrequest/update/${id_quotationrequest}`, {externalcode: additionalInputValue}),
+          {
+            loading: `Aggiornamento QuotationRequest ${id_quotationrequest}...`,
+            success: `QuotationRequest ${id_quotationrequest} aggiornata con successo!`,
+            error: `Errore durante l'aggiornamento della QuotationRequest ${id_quotationrequest}.`,
+          }
+        );
+      });
+    }
+    console.log(additionalInputValue);
+    window.location.reload();
   };
 
   return (
@@ -70,21 +103,42 @@ export default function UserCreateForm() {
                   value={selectedSalesOrder}
                   onChange={handleSalesOrderChange}
                   isMultiple={true}
+                  isClearable
                 />
               </div>
             </div>
+
+            {/* Additional Input Field */}
+            {showAdditionalInput && (
+              <div className="col-span-full">
+                <label htmlFor="additionalInput" className="block text-sm font-medium leading-6 text-gray-900">
+                  CUP
+                </label>
+                <div className="mt-2">
+                  <input
+                    type="text"
+                    id="additionalInput"
+                    name="additionalInput"
+                    value={additionalInputValue}
+                    onChange={handleAdditionalInputChange}
+                    className="block w-full rounded-md border-gray-300 shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] sm:text-sm"
+                    placeholder="Inserisci valore aggiuntivo"
+                  />
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
 
-      {/* Create Job Button */}
+      {/* Buttons */}
       <div className="mt-6 flex items-center justify-end gap-x-6">
         <button
           onClick={createJob}
           type="submit"
-          className="block rounded-md bg-[#A7D0EB] px-2 py-1 text-center text-xs font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
+          className="block rounded-md bg-[#A7D0EB] px-4 py-2 text-center text-sm font-bold leading-5 text-black shadow-sm hover:bg-[#7fb7d4] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#7fb7d4]"
         >
-          Crea
+          Crea Job
         </button>
       </div>
     </form>

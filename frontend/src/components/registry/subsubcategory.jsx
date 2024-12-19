@@ -396,6 +396,7 @@ const deleteItem = async (SubSubcategoryID) => {
             
           <Select
             isSearchable
+            isClearable
             placeholder="Seleziona una categoria"
             value={selectedSubcategory ? { label: selectedSubcategory.name, value: selectedSubcategory.id_subcategory } : null}
             options={subcategories.map(subcategory => ({ label: subcategory.name, value: subcategory.id_subcategory }))}

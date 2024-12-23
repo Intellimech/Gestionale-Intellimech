@@ -11,6 +11,7 @@ export default function TaskRevision({ task, onChange, onAddChild, onRemove, lev
       ? { value: task.assignedToUser.id_user, label: `${task.assignedToUser.name} ${task.assignedToUser.surname}` }
       : null
   );
+  console.log("user", selectedUser)
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -72,6 +73,27 @@ export default function TaskRevision({ task, onChange, onAddChild, onRemove, lev
     onChange(updatedTask);
   };
 
+  const handleClientCheckbox = (e) => {
+    const isChecked = e.target.checked;
+    const updatedTask = {
+      ...task,
+      client: isChecked,
+      assignedToUser: null // Clear assigned user when client is checked
+    };
+    setSelectedUser(null); // Clear the selected user in the UI
+    onChange(updatedTask);
+  };
+
+  const handleUserSelect = (option) => {
+    setSelectedUser(option);
+    const updatedTask = {
+      ...task,
+      client: false,
+      assignedTo: option ? option.value : null
+    };
+    onChange(updatedTask);
+  };
+
   return (
     <div className="border p-4 mb-4 rounded-lg shadow-sm bg-gray-50" style={indentStyle}>
       <table className="w-full text-sm">
@@ -127,23 +149,44 @@ export default function TaskRevision({ task, onChange, onAddChild, onRemove, lev
           <tr>
             <td className="w-1/3 p-2 text-left font-medium">Assegnato a:</td>
             <td className="w-2/3 p-2">
-            <Select
-              value={selectedUser}
-              onChange={(option) => {
-                setSelectedUser(option);
-                handleInputChange('assignedTo', option?.value || null);
-              }}
-              options={users}
-              classNames={{
-                menuButton: () =>
-                  'text-sm text-gray-500 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-[#7fb7d4] focus:border-[#7fb7d4] inline-flex items-center space-x-2 px-2 py-1', // Aggiunto inline-flex
-              }}
-              primaryColor="[#7fb7d4]"
-              isSearchable
-              isClearable
-              placeholder="Seleziona un utente"
-            />
-
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id={`client-${task?.id || 'new'}`}
+                    checked={task?.client || false}
+                    onChange={handleClientCheckbox}
+                    disabled={!!selectedUser}
+                    className="rounded border-gray-300 text-[#7fb7d4] focus:ring-[#7fb7d4] disabled:opacity-50 disabled:cursor-not-allowed"
+                  />
+                  <label
+                    htmlFor={`client-${task?.id || 'new'}`}
+                    className={`text-sm ${!!selectedUser ? 'text-gray-400' : 'text-gray-600'}`}
+                  >
+                    Assegna al cliente
+                  </label>
+                </div>
+                
+                {!task?.client && (
+                  <Select
+                    value={selectedUser}
+                    onChange={(option) => {
+                      setSelectedUser(option);
+                      handleInputChange('assignedTo', option?.value || null);
+                      handleUserSelect(option);
+                    }}
+                    options={users}
+                    classNames={{
+                      menuButton: () =>
+                        'text-sm text-gray-500 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-[#7fb7d4] focus:border-[#7fb7d4] inline-flex items-center space-x-2 px-2 py-1',
+                    }}
+                    primaryColor="[#7fb7d4]"
+                    isSearchable
+                    isClearable
+                    placeholder="Seleziona un utente"
+                  />
+                )}
+              </div>
             </td>
           </tr>
         </tbody>

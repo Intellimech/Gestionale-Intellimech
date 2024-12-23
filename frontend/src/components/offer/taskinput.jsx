@@ -31,6 +31,22 @@ export default function TaskForm({ key, task, name, onChange, onAddChild, onRemo
     onChange({ ...task, [field]: value });
   };
 
+  const handleClientCheckbox = (e) => {
+    onChange({
+      ...task,
+      client: e.target.checked,
+      assignedTo: e.target.checked ? null : task.assignedTo
+    });
+  };
+
+  const handleUserSelect = (value) => {
+    onChange({
+      ...task,
+      assignedTo: value,
+      client: value ? false : task.client // Reset client flag if user is selected
+    });
+  };
+
   const showAddSubtaskButton = level === 1 || hasChildren;
   return (
     <div className="border p-4 mb-4 rounded-lg shadow-sm bg-gray-50" style={indentStyle}>
@@ -93,19 +109,40 @@ export default function TaskForm({ key, task, name, onChange, onAddChild, onRemo
           <tr>
             <td className="w-1/3 p-2 text-left font-medium">Assegnato a:</td>
             <td className="w-2/3 p-2">
-              <Select
-                value={task?.assignedTo}
-                onChange={(value) => handleInputChange('assignedTo', value)}
-                options={users.map((user) => ({ value: user.value, label: user.label }))}
-                classNames={{
-                  menuButton: () =>
-                    'text-sm text-gray-500 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-[#7fb7d4] focus:border-[#7fb7d4] inline-flex items-center space-x-2 px-2 py-1', // Aggiunto inline-flex
-                }}
-                primaryColor="[#7fb7d4]"
-                isSearchable
-                isClearable
-                placeholder="Seleziona un utente"
-              />
+              <div className="space-y-2">
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id={`client-${name}`}
+                    checked={task?.client || false}
+                    onChange={handleClientCheckbox}
+                    disabled={!!task?.assignedTo}
+                    className="rounded border-gray-300 text-[#7fb7d4] focus:ring-[#7fb7d4] disabled:opacity-50 disabled:cursor-not-allowed"
+                  />
+                  <label 
+                    htmlFor={`client-${name}`} 
+                    className={`text-sm ${!!task?.assignedTo ? 'text-gray-400' : 'text-gray-600'}`}
+                  >
+                    Assegna al cliente
+                  </label>
+                </div>
+                
+                {!task?.client && (
+                  <Select
+                    value={task?.assignedTo}
+                    onChange={handleUserSelect}
+                    options={users.map((user) => ({ value: user.value, label: user.label }))}
+                    classNames={{
+                      menuButton: () =>
+                        'text-sm text-gray-500 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-[#7fb7d4] focus:border-[#7fb7d4] inline-flex items-center space-x-2 px-2 py-1',
+                    }}
+                    primaryColor="[#7fb7d4]"
+                    isSearchable
+                    isClearable
+                    placeholder="Seleziona un utente"
+                  />
+                )}
+              </div>
             </td>
           </tr>
         </tbody>
@@ -154,4 +191,4 @@ export default function TaskForm({ key, task, name, onChange, onAddChild, onRemo
       </div>
     </div>
   );
-}  
+}

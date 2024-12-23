@@ -14,6 +14,7 @@ export default function UserCreateForm() {
   const [technicalArea, setTechnicalArea] = useState([]);
   const [users, setUsers] = useState([]);
   const [totalHours, setTotalHours] = useState(0);
+  const [client, setClient] = useState(false);
   const [totalValue, setTotalValue] = useState(0);
  
   
@@ -24,6 +25,7 @@ export default function UserCreateForm() {
     hours: 0, 
     value: 0, 
     assignedTo: '', 
+    client: false,
     estimatedstart: new Date().toISOString().split('T')[0],
     estimatedend: new Date().toISOString().split('T')[0],
     children: [] 
@@ -97,6 +99,7 @@ export default function UserCreateForm() {
         hours: 0, 
         value: 0, 
         assignedTo: '', 
+        client: false,
         estimatedstart: new Date().toISOString().split('T')[0],
         estimatedend: new Date().toISOString().split('T')[0],
         children: [] 
@@ -109,6 +112,7 @@ export default function UserCreateForm() {
         hours: 0, 
         value: 0, 
         assignedTo: '', 
+        client: false,
         estimatedstart: new Date().toISOString().split('T')[0],
         estimatedend: new Date().toISOString().split('T')[0],
         children: [] 
@@ -271,6 +275,7 @@ export default function UserCreateForm() {
     jsonObject.hour=totalHours;
     jsonObject.team = selectedTeam?.map((team) => team.value);
     jsonObject.quotationrequest = selectedQuotationRequest?.value;
+    jsonObject.client= client; 
   
     // Aggiungi i dati delle commercial offers
     jsonObject.commercialoffers = commercialoffers.map(offer => ({
@@ -321,94 +326,90 @@ export default function UserCreateForm() {
     <Toaster />
     
     <table className="w-full mb-4">
-      <tbody>
-        <tr>
-          <td className="w-1/3 p-2 text-left font-medium">Richiesta di offerta</td>
-          <td className="w-2/3 p-2">
-            <Select
-              id="quotationrequest"
-              name="quotationrequest"
-              value={selectedQuotationRequest}
-              onChange={handleQuotationRequestChange}
-              options={quotationRequest
-                .filter((item) => item.status === "Approvata")
-                .map((item) => ({
-                  value: item.id_quotationrequest,
-                  label: `${item.name} - ${item.Company.name}`,
-                }))}
-              placeholder="Select..."
-              isClearable
-            />
-          </td>
-        </tr>
-        <tr>
-          <td className="w-1/3 p-2 text-left font-medium">Ore</td>
-          <td className="w-2/3 p-2">
-          <input
+        <tbody>
+          <tr>
+            <td className="w-1/3 p-2 text-left font-medium">Richiesta di offerta</td>
+            <td className="w-2/3 p-2">
+              <Select
+                id="quotationrequest"
+                name="quotationrequest"
+                value={selectedQuotationRequest}
+                onChange={handleQuotationRequestChange}
+                options={quotationRequest
+                  .filter((item) => item.status === "Approvata")
+                  .map((item) => ({
+                    value: item.id_quotationrequest,
+                    label: `${item.name} - ${item.Company.name}`,
+                  }))}
+                placeholder="Select..."
+                isClearable
+              />
+            </td>
+          </tr>
+          <tr>
+            <td className="w-1/3 p-2 text-left font-medium">Ore</td>
+            <td className="w-2/3 p-2">
+              <input
                 id="hour"
                 name="hour"
                 type="number"
-                className="w-full px-2 py-1 rounded border-gray-300 focus:border-[#7fb7d4] focus:ring-[#7fb7d4]"
+                className="w-full px-2 py-1 rounded border-gray-300 focus:border-[#7fb7d4] focus:ring-[#7fb7d4] bg-gray-50"
                 value={totalHours}
                 readOnly
               />
-          </td>
-        </tr>
-        <tr>
-          <td className="w-1/3 p-2 text-left font-medium">Valore Totale Offerte Commerciali</td>
-          <td className="w-2/3 p-2">
-            <div className="relative rounded-md shadow-sm">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <span className="text-gray-500 sm:text-sm">€</span>
+            </td>
+          </tr>
+          <tr>
+            <td className="w-1/3 p-2 text-left font-medium">Valore Totale Offerte Commerciali</td>
+            <td className="w-2/3 p-2">
+              <div className="relative rounded-md shadow-sm">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <span className="text-gray-500 sm:text-sm">€</span>
+                </div>
+                <input
+                  type="text"
+                  className="block w-full pl-7 pr-12 rounded-md border-gray-300 focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm bg-gray-50"
+                  value={totalCommercialAmount.toFixed(2)}
+                  readOnly
+                />
               </div>
+            </td>
+          </tr>
+          <tr>
+            <td className="w-1/3 p-2 text-left font-medium">Data di inizio stimata</td>
+            <td className="w-2/3 p-2">
               <input
-                type="text"
-                className="block w-full pl-7 pr-12 rounded-md border-gray-300 focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
-                value={totalCommercialAmount.toFixed(2)}
+                type="date"
+                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm bg-gray-50"
+                value={estimatedStartDate}
                 readOnly
               />
-            
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td className="w-1/3 p-2 text-left font-medium">Data di inizio stimata</td>
-          <td className="w-2/3 p-2">
-            <input
-              type="date"
-              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
-              value={estimatedStartDate}
-              readOnly
-            />
-          </td>
-        </tr>
-        <tr>
-          <td className="w-1/3 p-2 text-left font-medium">Data di fine stimata</td>
-          <td className="w-2/3 p-2">
-            <input
-              type="date"
-              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
-              value={estimatedEndDate}
-              readOnly
-            />
-          </td>
-        </tr>
-        <tr>
-          <td className="w-1/3 p-2 text-left font-medium">Descrizione</td>
-          <td className="w-2/3 p-2">
-            <textarea
-              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
-              rows={3}
-              value={description}
-              
-               onChange={(e) => setDescription(e.target.value)} // Aggiorna lo stato description
+            </td>
+          </tr>
+          <tr>
+            <td className="w-1/3 p-2 text-left font-medium">Data di fine stimata</td>
+            <td className="w-2/3 p-2">
+              <input
+                type="date"
+                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm bg-gray-50"
+                value={estimatedEndDate}
+                readOnly
               />
-
-          
-          </td>
-        </tr>
-      </tbody>
-    </table>
+            </td>
+          </tr>
+          <tr>
+            <td className="w-1/3 p-2 text-left font-medium">Descrizione</td>
+            <td className="w-2/3 p-2">
+              <textarea
+                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
+                rows={3}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+            </td>
+          </tr>
+        </tbody>
+      </table>
 
     <div>
       <h3 className="text-lg font-medium leading-6 text-gray-900 mb-2">Tasks</h3>

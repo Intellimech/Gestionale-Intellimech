@@ -111,6 +111,7 @@ router.post('/update', async (req, res) => {
           description: task.description,
           percentage: quotationData.percentage || 0,
           assignedTo: task.assignedTo || null,
+          client: task.client || false,
           parentTask: parentId || null,
           createdBy: user.id_user,
           id_offer: existingOffer.id_offer

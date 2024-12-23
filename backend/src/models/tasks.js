@@ -34,7 +34,11 @@ Tasks.init(
     
     assignedTo: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: true
+    },
+    client: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true
     },
     parentTask: {
       type: DataTypes.INTEGER,

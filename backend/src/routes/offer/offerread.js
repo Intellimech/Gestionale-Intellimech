@@ -64,7 +64,7 @@ router.get("/read/", async (req, res) => {
                  },
                 {
                   model: Tasks,
-                  attributes: ["id_task", "name", "hour","description", "percentage", "assignedTo", "estimatedend", "estimatedstart"],
+                  attributes: ["id_task", "name", "hour","description", "percentage", "assignedTo", "estimatedend", "estimatedstart", "client"],
                   include: [
                     {
                       model: sequelize.models.User,
@@ -155,7 +155,7 @@ router.get("/read/:id", async (req, res) => {
           },
           {
             model: Tasks,
-            attributes: ["id_task", "name", "hour","description", "percentage", "assignedTo", "estimatedend", "estimatedstart"],
+            attributes: ["id_task", "name", "hour","description", "percentage", "assignedTo", "estimatedend", "estimatedstart", "client"],
           },
           {
             model: sequelize.models.User,

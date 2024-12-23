@@ -12,9 +12,26 @@ router.post("/create", async (req, res) => {
 
   if (isNaN(Date.parse(estimatedstart)) || isNaN(Date.parse(estimatedend))) {
     return res.status(400).json({
-      message: "Invalid date format for estimatedstart or estimatedend",
+      message: "Data selezionata non valida",
     });
   }
+
+  let missingFields = [];
+
+if (!quotationrequest) missingFields.push("Richiesta di offerta");
+if (!tasks) missingFields.push("Task");
+if (!description) missingFields.push("Descrizione");
+if (!commercialoffers) missingFields.push("Offerta Commerciale");
+
+
+
+// Se ci sono campi mancanti, restituiamo l'errore con i campi mancanti
+if (missingFields.length > 0) {
+  return res.status(400).json({
+    message: "Campi mancanti: " + missingFields.join(", "),
+  });
+}
+
 
   const Offer = sequelize.models.Offer;
   const Tasks = sequelize.models.Tasks;
@@ -42,6 +59,7 @@ router.post("/create", async (req, res) => {
       amount: amount,
       description: description,
       hour: hour,
+
       estimatedstart: new Date(estimatedstart),
       estimatedend: new Date(estimatedend),
       quotationrequest: quotationrequest,
@@ -87,6 +105,7 @@ router.post("/create", async (req, res) => {
             description: task.description,
             percentage: percentage || 0,
             assignedTo: task.assignedTo || null,
+            client: task?.client || false,
             parentTask: parentId || null,
           createdBy: user.id_user,
           id_offer: offer.id_offer
@@ -219,6 +238,7 @@ router.post("/create/rev", async (req, res) => {
             description: task.description,
             percentage: percentage || 0,
             assignedTo: task.assignedTo ,
+            client: task.client || false,
             parentTask: parentId || null,
             createdBy: user.id_user,
             id_offer: offer.id_offer

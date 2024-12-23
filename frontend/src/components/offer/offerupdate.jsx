@@ -358,7 +358,7 @@ const createOffer = async (event) => {
   // Gestione dei tasks
   jsonObject.tasks = tasks.map((task, index) => {
     const originalTask = initialoffer.tasks?.[index] || {};
-    
+        
     return {
       ...originalTask, // Mantiene i valori originali
       
@@ -369,6 +369,7 @@ const createOffer = async (event) => {
       estimatedstart: task.estimatedstart !== originalTask.estimatedstart ? task.estimatedstart : originalTask.estimatedstart,
       estimatedend: task.estimatedend !== originalTask.estimatedend ? task.estimatedend : originalTask.estimatedend,
       assignedTo: task.assignedTo || originalTask.assignedTo?.id_user,
+      client: task.client || originalTask.client,
       
       // Gestione ricorsiva dei sottocompiti (children)
       children: task?.children?.map((child, childIndex) => {
@@ -382,6 +383,8 @@ const createOffer = async (event) => {
           estimatedstart: child.estimatedstart !== originalChild.estimatedstart ? child.estimatedstart : originalChild.estimatedstart,
           estimatedend: child.estimatedend !== originalChild.estimatedend ? child.estimatedend : originalChild.estimatedend,
           assignedTo: child.assignedTo?.value || originalChild.assignedTo?.id_user,
+          client: child?.client || originalChild?.client,
+
         };
       })
     };
@@ -475,7 +478,7 @@ const createOffer = async (event) => {
               <input
                 id="quotationrequest"
                 name="quotationrequest"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
+               className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm bg-gray-50"
                 value={quotationRequest || ''}
                 readOnly
               />
@@ -505,7 +508,7 @@ const createOffer = async (event) => {
                 id="hour"
                 name="hour"
                 type="number"
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
+               className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm bg-gray-50"
                 value={totalHours}
                 readOnly
               />
@@ -520,7 +523,7 @@ const createOffer = async (event) => {
               </div>
               <input
                 type="text"
-                className="block w-full pl-7 pr-12 rounded-md border-gray-300 focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
+               className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm bg-gray-50"
                 value={totalCommercialAmount.toFixed(2)}
                 readOnly
               />
@@ -533,7 +536,7 @@ const createOffer = async (event) => {
           <td className="w-2/3 p-2">
             <input
               type="date"
-              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
+             className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm bg-gray-50"
               value={estimatedStartDate}
               readOnly
             />
@@ -544,7 +547,7 @@ const createOffer = async (event) => {
           <td className="w-2/3 p-2">
             <input
               type="date"
-              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm"
+              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-[#7fb7d4] focus:ring-[#7fb7d4] sm:text-sm bg-gray-50"
               value={estimatedEndDate}
               readOnly
             />

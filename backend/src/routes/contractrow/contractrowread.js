@@ -21,7 +21,6 @@ router.get("/read", (req, res) => {
 
     const user = req.user;  // Assuming req.user is populated by the authentication middleware
     console.log("ContractRow model:", sequelize.models.ContractRow);
-    console.log("User:", req.user);
     
     ContractRow.findAll({
        

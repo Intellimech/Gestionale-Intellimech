@@ -37,7 +37,7 @@ export default function ContractUpdateForm({ contract: initialContract, onChange
   const [job, setJob]= useState(initialContract ? initialContract.job : '');
   const [deposit, setDeposit]= useState(initialContract ? initialContract.deposit : '')
  
-console.log("sono initialocontract",initialContract);
+console.log("sono initial contract",initialContract);
 
 
 
@@ -285,6 +285,8 @@ console.log("ehi ciao", initialContract)
       payment: selectedPaymentMethod,
       date_start: selectedDatestart,
       deposit: deposit,
+      recurrence: recurrence,
+      recurrence_number: recurrence_number,
       banktransfer: selectedBank,
       referent: selectedUser.value,
       job: job,
@@ -305,6 +307,8 @@ console.log("ehi ciao", initialContract)
        
       }))
     };
+    
+    console.log(jsonObject);
 
     toast.promise(
       axios.put(`${process.env.REACT_APP_API_URL}/contract/update`, jsonObject),
@@ -314,11 +318,11 @@ console.log("ehi ciao", initialContract)
         error: 'Errore durante la modifica della richiesta di acquisto',
       }
     )
-      .then((response) => {
-        window.location.reload();
-        console.log("sto modificando", jsonObject);
-        setCreateSuccess(true);
-      })
+       .then((response) => {
+         window.location.reload();
+         console.log("sto modificando", jsonObject);
+         setCreateSuccess(true);
+       })
       .catch((error) => {
         console.log(jsonObject);
         console.error('Error details:', error.response ? error.response.data : error.message);
@@ -504,8 +508,9 @@ console.log("ehi ciao", initialContract)
                     value={recurrence_number}
                     onChange={(selectedOption) => {
                      
-                      setContract({ ...contract, recurrence_number: selectedOption.value });
-                      setRecurrenceNumber(selectedOption.value);
+                      setContract({ ...contract, recurrence_number: selectedOption.target.value });
+                      setRecurrenceNumber(selectedOption.target.value);
+                      console.log("miao" , selectedOption.target.value)
                     }}
                     min="1"
                     placeholder="N. di ricorrenze"
@@ -523,8 +528,8 @@ console.log("ehi ciao", initialContract)
                     value={deposit}
                     onChange={(selectedOption) => {
                      
-                      setContract({ ...contract, deposit: selectedOption.value });
-                      setDeposit(selectedOption.value);
+                      setContract({ ...contract, deposit: selectedOption.target.value });
+                      setDeposit(selectedOption.target.value);
                     }}
                     min="1"
                     placeholder="Acconto"

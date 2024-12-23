@@ -3,12 +3,12 @@ import Select from 'react-tailwindcss-select';
 import { TrashIcon } from '@heroicons/react/20/solid';
 
 export default function ContractUpdateRow({
-  contractrow = {}, // Valore predefinito come oggetto vuoto
+  contractrow , // Valore predefinito come oggetto vuoto
   recurrence_number,
   index,
-  categories = [],
-  subcategories = [],
-  subsubcategories = [],
+  categories,
+  subcategories,
+  subsubcategories,
   onChange,
   onRemove,
   handleCategoryChange,

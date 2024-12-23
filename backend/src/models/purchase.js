@@ -52,7 +52,7 @@ Purchase.init(
     },
     job: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: true
     },
     //Add owner field - Who asked for the purchase
     createdBy: {
@@ -61,6 +61,10 @@ Purchase.init(
     },
     updatedBy: {
       type: DataTypes.INTEGER,
+      allowNull: true
+    },
+    date: {
+      type: DataTypes.DATE,
       allowNull: true
     },
     deletedBy: {
@@ -83,6 +87,7 @@ Purchase.init(
     },
     purchaserows: {
       type: DataTypes.VIRTUAL,
+      allowNull: false,
       get() {
         if (this.PurchaseRows) {
           return this.PurchaseRows.length;

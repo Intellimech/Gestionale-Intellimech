@@ -21,7 +21,9 @@ router.put("/update", async (req, res) => {
   try {
     console.log('Request Body:', req.body); // Log della richiesta
 
-    const { id_contract, id_company, payment_method, date_start, date_end, banktransfer, total, taxed_total, recurrence, recurrence_number,  currency, status, contractrows , deposit, referent, job} = req.body;
+    const { id_contract, id_company, payment, date_start, date_end, banktransfer, total, taxed_total, recurrence, recurrence_number,  currency, status, contractrows , deposit, referent, job} = req.body;
+
+    console.log(req.body);
 
     if (!id_contract) {
       return res.status(400).json({ message: "Contract ID is required" });
@@ -32,7 +34,8 @@ router.put("/update", async (req, res) => {
     if (!contract) {
       return res.status(404).json({ message: "Contract not found" });
     }
-
+  // Modifica il nome solo se lo stato dell'acquisto è "Approvato"
+  if (contract.status === "Approvato") {
     if (contract.name) {
       const match = contract.name.match(/_R(\d+)$/); // Cerca suffisso _R0, _R1, etc.
       if (match) {
@@ -43,20 +46,21 @@ router.put("/update", async (req, res) => {
         contract.name = `${contract.name}_R1`;
       }
     }
+  }
 
     contract.id_company = id_company || contract.id_company;
-    contract.payment_method = payment_method || contract.payment_method;
+    contract.payment_method = payment || contract.payment_method;
     contract.contract_start_date = date_start || contract.date_start;
     contract.contract_start_end = date_end || contract.date_end;
-    contract.deposit = deposit || contract.deposit;
+    contract.deposit = deposit ;
     contract.job= job || contract.job;
     contract.banktransfer = banktransfer || contract.banktransfer;
-    contract.referent = referent || contract.referent;
+    contract.referent = referent;
     contract.currency = currency || contract.currency;
-    contract.status = status || contract.status;
+    contract.status = "In Approvazione" || contract.status;
     contract.total = total || contract.total;
     contract.taxed_total = taxed_total || contract.taxed_total;
-    contract.recurrence = recurrence || contract.recurrence;
+    contract.recurrence = recurrence;
     contract.recurrence_number = recurrence_number || contract.recurrence_number;
     contract.updatedBy = user.id_user;
     contract.updatedAt = new Date();
@@ -77,7 +81,7 @@ router.put("/update", async (req, res) => {
         let ContractRowName = `${parts[0]}_${parts[1]}_${increment}_${parts[2]}`;
       
         // Estrarre il nome base (senza suffisso numerico)
-        const baseName = contractrow.name.replace(/_R\d+$/, "");
+        const baseName = contractrow?.name?.replace(/_R\d+$/, "");
       
         const existingRow = await ContractRow.findOne({
           where: {

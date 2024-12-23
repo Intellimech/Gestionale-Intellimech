@@ -40,11 +40,11 @@ ContractRow.init(
     },
     totalprice: {
       type: DataTypes.DOUBLE,
-      allowNull: false,
+      allowNull: true,
     },
     taxed_totalprice: {
       type: DataTypes.DOUBLE,
-      allowNull: false,
+      allowNull: true,
     },
     category: {
       type: DataTypes.INTEGER(50),

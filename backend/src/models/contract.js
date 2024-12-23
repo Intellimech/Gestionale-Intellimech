@@ -48,7 +48,7 @@ Contract.init(
     },
     job: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
     },
     referent: {
       type: DataTypes.INTEGER,

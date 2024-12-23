@@ -111,17 +111,31 @@ router.get('/read/:id', async (req, res) => {
           attributes: ['id_company', 'name'],
         },
         {
+          model: sequelize.models.User,
+          as: 'createdByUser',
+          attributes: ['id_user', 'name', 'surname']
+        
+        },       
+         {
+          model: sequelize.models.Currency,
+          attributes: ['name', 'code', 'symbol'],
+        },
+        {
+          model: sequelize.models.Recurrence,
+          attributes: ['name', 'name'],
+        },
+        {
+          model: sequelize.models.PaymentMethod,
+          attributes: ['name'],
+        },
+        {
           model: sequelize.models.Job,
           attributes: ["name" ],
         },
         {
           model: sequelize.models.User,
-          as: 'createdByUser',
+          as: 'referentUser',
           attributes: ['id_user', 'name', 'surname'],
-          foreignKey: 'createdBy'
-        },        {
-          model: sequelize.models.Currency,
-          attributes: ['name', 'code', 'symbol'],
         },
           {
             model: ContractRow,

@@ -9,11 +9,14 @@ import quotationrequestread from './quotationrequestread.js';
 import quotationrequestcreate from './quotationrequestcreate.js';
 import quotationrequestaccept from './quotationrequestaccept.js';
 import quotationrequestrefused from './quotationrequestrefused.js';
+import quotationrequestupdate from './quotationrequestupdate.js';
+
 
 import Protect from '../../middleware/authmiddleware.js'; 
 router.use(Protect);
 
 router.use('/quotationrequest', quotationrequestread);
+router.use('/quotationrequest', quotationrequestupdate);
 router.use('/quotationrequest', quotationrequestcreate);
 router.use('/quotationrequest', quotationrequestaccept);
 router.use('/quotationrequest', quotationrequestrefused);

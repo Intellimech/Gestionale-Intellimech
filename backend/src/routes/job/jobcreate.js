@@ -35,7 +35,7 @@ router.post("/create/", async (req, res) => {
     
     const user = req.user;  // Assuming req.user is populated by the authentication middleware
 
-   
+    
 
         try {
             const countjob = await Job.findAll({
@@ -43,7 +43,6 @@ router.post("/create/", async (req, res) => {
             });
 
             const jobCount = countjob.length;
-            console.log("Number of offers:", jobCount);
             
             let status = "Aperta";
 
@@ -56,7 +55,6 @@ router.post("/create/", async (req, res) => {
                 createdBy: user.id_user,
             });
 
-            console.log(job);
 
             if (job) {
                 for (const salesOrder of SalesOrders) {

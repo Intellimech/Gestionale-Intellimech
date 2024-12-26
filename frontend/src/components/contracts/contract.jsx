@@ -72,6 +72,8 @@ export default function Example({ permissions }) {
       .then((response) => {
 
         setContract(Array.isArray(response.data.contracts) ? response.data.contracts : []);
+        
+        console.error("miao guarda qui:", response.data);
         setItems(Array.isArray(response.data.contracts) ? response.data.contracts : []);
            // Ricarica i dati ogni 5 secondi dopo aver completato la richiesta
         setTimeout(fetchOrders, 5000);

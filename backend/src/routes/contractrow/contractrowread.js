@@ -23,7 +23,45 @@ router.get("/read", (req, res) => {
     console.log("ContractRow model:", sequelize.models.ContractRow);
     
     ContractRow.findAll({
-       
+        include: [
+            {
+              model: sequelize.models.Category,
+              attributes: ["name"],
+            },
+            {
+              model: sequelize.models.Subcategory,
+              attributes: ["name"],
+            },
+            {
+              model: sequelize.models.Subsubcategory,
+              attributes: ["name"],
+            },
+            {
+                model: sequelize.models.Contract,
+                attributes: ["currency"],
+                include: [
+                    {
+                        model: sequelize.models.Currency,
+                        attributes: ["symbol"],
+                      },
+                      {
+                        model: sequelize.models.Recurrence,
+                        attributes: ["name"],
+                      },
+                      {
+                        model: sequelize.models.User,
+                  as: 'referentUser',
+                  attributes: ['id_user', 'name', 'surname'],
+                      },
+
+                ]
+                
+              },
+              
+
+
+
+          ],
     })
     .then((contractrows) => {
         console.log("ContractRows found:", contractrows);

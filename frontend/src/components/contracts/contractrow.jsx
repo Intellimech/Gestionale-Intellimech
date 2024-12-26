@@ -64,7 +64,7 @@ export default function Example({ permissions }) {
       .get(`${process.env.REACT_APP_API_URL}/contractrow/read`, )
       .then((response) => {
         setContractOrder(Array.isArray(response.data.contractrows) ? response.data.contractrows : []);
-        console.log(response.data.contractrows);
+        console.log("miao", response.data.con+tractrows);
         setItems(Array.isArray(response.data.contractrows) ? response.data.contractrows : []);
       })
       .catch((error) => {
@@ -164,8 +164,8 @@ export default function Example({ permissions }) {
         <div className="flex items-center justify-between">
           {/* Titolo e descrizione */}
           <div>
-            <h1 className="text-base font-semibold leading-6 text-gray-900">Righe di Ordini di Acquisto</h1>
-            <p className="mt-2 text-sm text-gray-700">Lista delle righe di Ordini di Acquisto presenti a sistema</p>
+            <h1 className="text-base font-semibold leading-6 text-gray-900">Righe di Contratto</h1>
+            <p className="mt-2 text-sm text-gray-700">Lista delle righe di Contratto</p>
           </div>
 
           {/* Contenitore Bottoni */}
@@ -213,14 +213,28 @@ export default function Example({ permissions }) {
                       value={searchQueries.id_company}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('id_company')}
-                      className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+                      className="mt-0.5 px-1 py-0.5 w-[180px] text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
                         placeholder=""
                       rows={1}
                     />
                   </th>
-                 
+                  <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('subcategory')}>
+                  <br/>Ricorrenza
+                    {sortColumn === 'subcategory'  && sortDirection !== '' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
+                    <br />
+                    <input
+                      value={searchQueries.subcategory}
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={handleSearchInputChange('subcategory')}
+                      className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+                      placeholder=""
+                      rows={1}
+                    />
+                  </th>
                   <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('payment_method')}>
-                    Prezzo Unitario
+                  Importo<br/>Unitario <br/>IVA Esclusa
                     {sortColumn === 'payment_method' && sortDirection !== '' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
                     ) : null}
@@ -235,7 +249,7 @@ export default function Example({ permissions }) {
                     />
                   </th>
                   <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('total')}>
-                    Prezzo Unitario Tassato
+                  Importo <br/>Unitario  <br/> IVA Inclusa
                     {sortColumn === 'total'  && sortDirection !== '' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
                     ) : null}
@@ -249,23 +263,8 @@ export default function Example({ permissions }) {
                       rows={1}
                     />
                   </th>
-                  <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('IVA')}>
-                  <br/>Quantità
-                    {sortColumn === 'IVA' && sortDirection !== '' ? (
-                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
-                    ) : null}
-                    <br />
-                    <input
-                      value={searchQueries.IVA}
-                      onClick={(e) => e.stopPropagation()}
-                      onChange={handleSearchInputChange('IVA')}
-                      className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
-                      placeholder=""
-                      rows={1}
-                    />
-                  </th>
                   <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('status')}>
-                  <br/> VAT
+                  <br/> IVA
                     {sortColumn === 'status'  && sortDirection !== '' ? (
                       sortDirection === 'asc' ? null : null // Non renderizzare nulla
                     ) : null}
@@ -276,36 +275,6 @@ export default function Example({ permissions }) {
                       onChange={handleSearchInputChange('status')}
                       className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
                          placeholder=""
-                      rows={1}
-                    />
-                  </th>
-                  <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('total')}>
-                    Prezzo Totale
-                    {sortColumn === 'total'  && sortDirection !== '' ? (
-                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
-                    ) : null}
-                    <br />
-                    <input
-                      value={searchQueries.total}
-                      onClick={(e) => e.stopPropagation()}
-                      onChange={handleSearchInputChange('total')}
-                      className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
-                         placeholder=""
-                      rows={1}
-                    />
-                  </th>
-                  <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('IVA')}>
-                    Prezzo Totale Tassato
-                    {sortColumn === 'IVA' && sortDirection !== '' ? (
-                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
-                    ) : null}
-                    <br />
-                    <input
-                      value={searchQueries.IVA}
-                      onClick={(e) => e.stopPropagation()}
-                      onChange={handleSearchInputChange('IVA')}
-                      className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
-                        placeholder=""
                       rows={1}
                     />
                   </th>
@@ -354,6 +323,7 @@ export default function Example({ permissions }) {
                       rows={1}
                     />
                   </th>
+                 
 
                   <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('Invoices')}>
                   <br/>Fatturazione
@@ -370,7 +340,22 @@ export default function Example({ permissions }) {
                       rows={1}
                     />
                   </th>
-                 
+                  <th scope="col" className="px-1 py-1.5 text-left text-xs font-medium text-gray-900 cursor-pointer" onClick={() => handleSort('Invoices')}>
+                  Referente  <br />  Interno
+                    {sortColumn === 'Invoices'  && sortDirection !== '' ? (
+                      sortDirection === 'asc' ? null : null // Non renderizzare nulla
+                    ) : null}
+                    <br />
+                    <input
+                      value={searchQueries.Invoices}
+                      onClick={(e) => e.stopPropagation()}
+                      onChange={handleSearchInputChange('Invoices')}
+                      className="mt-0.5 px-1 py-0.5 w-16 text-xs border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4]"
+                      placeholder=""
+                      rows={1}
+                    />
+                  </th>
+                                
                  
                   <th scope="col" className="relative px-2 py-3.5">
                     <span className="sr-only">Azioni</span>
@@ -393,7 +378,7 @@ export default function Example({ permissions }) {
                     }
                         className={classNames(
                          'whitespace-nowrap px-1 py-1.5 text-xs font-medium',
-                          selectedItems.includes(item) ? 'text-red-600' : 'text-gray-700'
+                          selectedItems.includes(item) ? 'text-red-600' : 'text-gray-700',
                         )}
                       >
                         {item.name}
@@ -402,22 +387,16 @@ export default function Example({ permissions }) {
                           {item.description}
                         </td>
                         <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
-                          {item.unit_price}
+                          {item.Contract.Recurrence?.name}
                         </td>
+                        <td  className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
+                        {Number(item.unit_price).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + item.Contract.Currency?.symbol}
+</td>
                         <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
-                          {item.taxed_unit_price}
-                        </td>
-                        <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
-                          {item.quantity}
-                        </td>
-                        <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
+    {Number(item.taxed_unit_price).toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ' + item.Contract.Currency?.symbol}
+</td>
+                        <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700 text-right">
                           {item.vat}
-                        </td>
-                        <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
-                          {item.totalprice}
-                        </td>
-                        <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
-                          {item.taxed_totalprice}
                         </td>
                         <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
                           {item.Category?.name}
@@ -427,6 +406,7 @@ export default function Example({ permissions }) {
                         </td>
                         <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
                           {item.Subsubcategory?.name}
+                          
                         </td>
                         <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
                           {item?.Invoices?.length > 0 ? (
@@ -440,8 +420,10 @@ export default function Example({ permissions }) {
                           )}
                         </td>
                         <td className="whitespace-nowrap px-1 py-1.5 text-xs text-gray-700">
-                          {item.createdByUser?.name.slice(0, 2).toUpperCase() + item.createdByUser?.surname.slice(0, 2).toUpperCase()}
+                          {item?.Contract.referentUser?.name.slice(0, 2).toUpperCase() + item?.Contract.referentUser?.surname.slice(0, 2).toUpperCase()}
                         </td>
+                        
+                        
                     </tr>
                   ))}
                 </tbody>

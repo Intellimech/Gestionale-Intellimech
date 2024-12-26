@@ -599,7 +599,7 @@ export default function Example({ permissions }) {
                       value={searchQueries.description}
                       onClick={(e) => e.stopPropagation()}
                       onChange={handleSearchInputChange('description')}
-                      className="mt-1 px-1 py-0.5 w-16 border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
+                      className="mt-1 px-1 py-0.5 w-[180px] border border-gray-300 rounded-md shadow-sm focus:ring-[#7fb7d4] focus:border-[#7fb7d4] text-xs"
                       placeholder=""
                     />
                   </th>
